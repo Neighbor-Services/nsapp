@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "681650672596",
+    "firebase_url": "https://neighbor-service-app-default-rtdb.firebaseio.com",
+    "project_id": "neighbor-service-app",
+    "storage_bucket": "neighbor-service-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681650672596:android:027404ec6ca9ab3b41fc41",
+        "android_client_info": {
+          "package_name": "com.neighborservice.nsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681650672596-63tt9p86fh3lplteje92dh88lrm8p7u9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighborservice.nsapp",
+            "certificate_hash": "059bf50c3b0168372e45119e9ca7c89827c5ef62"
+          }
+        },
+        {
+          "client_id": "681650672596-bgg8vijk18f48mo3jp1r92odkbd44id3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACCQQdSQl4HxPpmYZALC9py5cejq0hDOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681650672596-bgg8vijk18f48mo3jp1r92odkbd44id3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "681650672596-1cp4v0c71pusvrhf4pd88fm8b8a6b9tb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.neighborservicesolution.neighborService"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681650672596:android:3fae9f11dce59ef141fc41",
+        "android_client_info": {
+          "package_name": "com.neighborservicesolutionsllc.nsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681650672596-s0rb2p9vkhk1fnf3ulu48e1emaa35ogd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neighborservicesolutionsllc.nsapp",
+            "certificate_hash": "bd34659df1a95da175b9ea8e62e80da69283c405"
+          }
+        },
+        {
+          "client_id": "681650672596-bgg8vijk18f48mo3jp1r92odkbd44id3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACCQQdSQl4HxPpmYZALC9py5cejq0hDOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681650672596-bgg8vijk18f48mo3jp1r92odkbd44id3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "681650672596-1cp4v0c71pusvrhf4pd88fm8b8a6b9tb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.neighborservicesolution.neighborService"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="375px" height="220px" viewBox="0 0 375 220" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient gradientUnits="objectBoundingBox" x1="-0.010666667" y1="1" x2="1" y2="7.355909E-08" id="gradient_1">
+      <stop offset="0%" stop-color="#0D0140" />
+      <stop offset="100%" stop-color="#36353C" />
+    </linearGradient>
+    <linearGradient gradientUnits="objectBoundingBox" x1="0.9056576" y1="1.0347743" x2="0.2554804" y2="0.1881532" id="gradient_2">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient gradientUnits="objectBoundingBox" x1="0.73941237" y1="1.1403292" x2="0.35133743" y2="0.13455874" id="gradient_3">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient gradientUnits="objectBoundingBox" x1="0.59147197" y1="1.164962" x2="0.43971622" y2="0.10833168" id="gradient_4">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient gradientUnits="objectBoundingBox" x1="0.4493507" y1="1.1693103" x2="0.52357054" y2="0.10442102" id="gradient_5">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+    <filter filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB" id="filter_1">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 128 0" />
+      <feOffset dx="0" dy="4" />
+      <feGaussianBlur stdDeviation="31" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.6 0 0 0 0 0.67058825 0 0 0 0 0.7764706 0 0 0 0.18039216 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect0_dropShadow" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect0_dropShadow" result="shape" />
+    </filter>
+  </defs>
+  <g id="Background">
+    <path d="M0 30C0 13.4315 13.4315 0 30 0L345 0C361.569 0 375 13.4315 375 30L375 190C375 206.569 361.569 220 345 220L30 220C13.4315 220 0 206.569 0 190L0 30L0 30Z" id="Rectangle-7" fill="url(#gradient_1)" fill-rule="evenodd" stroke="none" filter="url(#filter_1)" />
+    <path d="M410.049 46.4066C411.113 56.7827 411.817 63.6627 413.375 63.8616C416.441 64.2531 422.811 38.7722 441.716 -36.8522L443.057 -42.2186L311.59 -237.32L-111.064 -134.885L-218.567 18.6974L-147.518 229.159L13.6307 336.572C-16.8194 283.571 -124.433 85.0325 69.0311 106.192C199.263 120.436 207.824 88.4843 218.773 47.6224C228.156 12.6069 239.291 -28.9514 330.243 -53.5908C397.926 -71.9265 406.262 9.43436 410.049 46.4066L410.049 46.4066Z" id="Vector-234" fill="url(#gradient_2)" fill-opacity="0.12" fill-rule="evenodd" stroke="none" />
+    <path d="M437.124 161.148C435.267 171.412 434.035 178.217 435.476 178.84C438.313 180.067 451.503 157.354 490.65 89.9451L493.428 85.1619L421.26 -138.757L-13.22 -157.625L-159.118 -39.9032L-149.258 182.009L-48.525 319.787C-63.0725 260.418 -87.0872 49.9475 92.9081 123.959C214.073 173.781 231.165 145.459 253.022 109.24C271.752 78.2032 293.982 41.3667 388.2 42.9326C458.313 44.0977 443.745 124.577 437.124 161.148L437.124 161.148Z" id="Vector-235" fill="url(#gradient_3)" fill-opacity="0.12" fill-rule="evenodd" stroke="none" />
+    <path d="M415.885 259.807C411.726 269.373 408.968 275.715 410.229 276.652C412.709 278.496 430.751 259.408 484.295 202.756L488.095 198.736L469.13 -35.7596L50.5199 -153.634L-118.462 -72.4575L-159.689 145.814L-71.8725 318.425C-72.4362 257.303 -68.9241 31.5023 89.3358 144.771C195.87 221.019 218.993 197.365 248.565 167.114C273.906 141.192 303.981 110.426 395.336 133.529C463.318 150.721 430.705 225.724 415.885 259.807L415.885 259.807Z" id="Vector-236" fill="url(#gradient_4)" fill-opacity="0.12" fill-rule="evenodd" stroke="none" />
+    <path d="M385.372 346.298C379.291 354.773 375.259 360.392 376.294 361.573C378.33 363.899 399.988 349.039 464.264 304.937L468.826 301.808L499.681 68.5784L115.292 -134.829L-66.9973 -91.0676L-153.276 113.623L-103.79 300.859C-91.4658 240.989 -40.4694 20.9943 90.3806 165.058C178.463 262.035 206.05 243.783 241.331 220.44C271.563 200.437 307.445 176.697 391.883 218.525C454.719 249.651 407.039 316.102 385.372 346.298L385.372 346.298Z" id="Vector-237" fill="url(#gradient_5)" fill-opacity="0.12" fill-rule="evenodd" stroke="none" />
+  </g>
+</svg>

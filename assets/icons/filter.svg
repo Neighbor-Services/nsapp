@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M2 13.7522C2 12.0953 3.34315 10.7522 5 10.7522C6.65685 10.7522 8 12.0953 8 13.7522C8 15.409 6.65685 16.7522 5 16.7522C3.34315 16.7522 2 15.409 2 13.7522Z" id="path_1" />
+    <path d="M9 5.36624C9 3.70939 10.3431 2.36624 12 2.36624C13.6569 2.36624 15 3.70939 15 5.36624C15 7.0231 13.6569 8.36624 12 8.36624C10.3431 8.36624 9 7.0231 9 5.36624Z" id="path_2" />
+    <path d="M16 15.3193C16 13.6624 17.3431 12.3193 19 12.3193C20.6569 12.3193 22 13.6624 22 15.3193C22 16.9761 20.6569 18.3193 19 18.3193C17.3431 18.3193 16 16.9761 16 15.3193Z" id="path_3" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_1" />
+    </clipPath>
+    <clipPath id="clip_2">
+      <use xlink:href="#path_2" />
+    </clipPath>
+    <clipPath id="clip_3">
+      <use xlink:href="#path_3" />
+    </clipPath>
+  </defs>
+  <g id="Icon-filter">
+    <path d="M0 0L24 0L24 24L0 24L0 0Z" id="Rectangle-4" fill="none" fill-rule="evenodd" stroke="none" />
+    <g id="Ellipse-2">
+      <g clip-path="url(#clip_1)">
+        <use xlink:href="#path_1" fill="none" stroke="#FFFFFF" stroke-width="3" />
+      </g>
+    </g>
+    <g id="Ellipse-3">
+      <g clip-path="url(#clip_2)">
+        <use xlink:href="#path_2" fill="none" stroke="#FFFFFF" stroke-width="3" />
+      </g>
+    </g>
+    <g id="Ellipse-4">
+      <g clip-path="url(#clip_3)">
+        <use xlink:href="#path_3" fill="none" stroke="#FFFFFF" stroke-width="3" />
+      </g>
+    </g>
+    <path d="M5 2.75C5.41421 2.75 5.75 3.08579 5.75 3.5L5.75 11.2284C5.75 11.6426 5.41421 11.9784 5 11.9784C4.58579 11.9784 4.25 11.6426 4.25 11.2284L4.25 3.5C4.25 3.08579 4.58579 2.75 5 2.75L5 2.75Z" id="Vector-2" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
+    <path d="M5 15.4186C5.41421 15.4186 5.75 15.7544 5.75 16.1686L5.75 20.0431C5.75 20.4573 5.41421 20.7931 5 20.7931C4.58579 20.7931 4.25 20.4573 4.25 20.0431L4.25 16.1686C4.25 15.7544 4.58579 15.4186 5 15.4186L5 15.4186Z" id="Vector-5" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
+    <path d="M12 7.11057C12.4142 7.11057 12.75 7.44635 12.75 7.86057L12.75 20.0431C12.75 20.4573 12.4142 20.7931 12 20.7931C11.5858 20.7931 11.25 20.4573 11.25 20.0431L11.25 7.86057C11.25 7.44635 11.5858 7.11057 12 7.11057L12 7.11057Z" id="Vector-3" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
+    <path d="M19.75 3.5C19.75 3.08579 19.4142 2.75 19 2.75C18.5858 2.75 18.25 3.08579 18.25 3.5L18.25 12.8612C18.25 13.2755 18.5858 13.6112 19 13.6112C19.4142 13.6112 19.75 13.2755 19.75 12.8612L19.75 3.5L19.75 3.5Z" id="Vector-4" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
+    <path d="M19 16.9922C19.4142 16.9922 19.75 17.328 19.75 17.7422L19.75 20.0431C19.75 20.4573 19.4142 20.7931 19 20.7931C18.5858 20.7931 18.25 20.4573 18.25 20.0431L18.25 17.7422C18.25 17.328 18.5858 16.9922 19 16.9922L19 16.9922Z" id="Vector-6" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
+  </g>
+</svg>

@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:nsapp/core/constants/app_colors.dart';
+
+class SenderChatTextWidget extends StatelessWidget {
+  final String message;
+  final DateTime dateTime;
+  final VoidCallback onLongPressed;
+  const SenderChatTextWidget({
+    super.key,
+    required this.message,
+    required this.dateTime,
+    required this.onLongPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final timestampColor = isDark
+        ? Colors.white.withAlpha(100)
+        : Colors.black54;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: GestureDetector(
+          onLongPress: onLongPressed,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.75,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: appDeepBlueColor1,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(6),
+                  ),
+                  border: Border.all(
+                    color: Colors.white.withAlpha(30),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: appDeepBlueColor1.withAlpha(40),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: SelectableText(
+                  message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    height: 1.45,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 4, right: 4),
+                child: Text(
+                  DateFormat("HH:mm").format(dateTime.toLocal()),
+                  style: TextStyle(
+                    color: timestampColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
