@@ -20,7 +20,7 @@ class _BiometricPageState extends State<BiometricPage> {
       final bool hasBiometric = await localAuthentication.canCheckBiometrics;
       final isAuthenticated = await localAuthentication.authenticate(
         localizedReason: "Unlock Neighbor Service",
-        options: AuthenticationOptions(biometricOnly: hasBiometric),
+        biometricOnly: hasBiometric,
       );
 
       if (isAuthenticated) {

@@ -101,7 +101,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    // final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
     final request = SeekerRequestDetailState.request.request;
 
     return Scaffold(

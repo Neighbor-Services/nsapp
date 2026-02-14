@@ -220,10 +220,8 @@ class _SettingsPageState extends State<SettingsPage>
                                               .authenticate(
                                                 localizedReason:
                                                     "Unlock neighbor service",
-                                                options:
-                                                    const AuthenticationOptions(
-                                                      biometricOnly: true,
-                                                    ),
+
+                                                biometricOnly: true,
                                               );
                                       if (isAuthenticated) {
                                         scaffold.currentContext!

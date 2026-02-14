@@ -809,43 +809,4 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       );
     }
   }
-
-  PopupMenuItem<int> _buildPopupItem(
-    BuildContext context,
-    int value,
-    IconData icon,
-    String title,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconBg = isDark
-        ? Colors.white.withAlpha(10)
-        : Colors.black.withAlpha(5);
-    final iconColor = isDark ? Colors.white : Colors.black87;
-    final textColor = isDark ? Colors.white : Colors.black87;
-
-    return PopupMenuItem<int>(
-      value: value,
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: iconColor, size: 18),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

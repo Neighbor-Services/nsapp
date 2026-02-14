@@ -46,7 +46,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    // final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
     final secondaryTextColor = isDark
         ? Colors.white.withAlpha(180)
         : Colors.black54;

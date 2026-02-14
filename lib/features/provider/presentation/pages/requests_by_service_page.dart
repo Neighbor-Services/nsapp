@@ -6,7 +6,6 @@ import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 

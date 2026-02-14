@@ -69,7 +69,7 @@ class _GlassButtonState extends State<GlassButton>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = widget.isPrimary
         ? appOrangeColor1
         : Colors.white.withAlpha(25);

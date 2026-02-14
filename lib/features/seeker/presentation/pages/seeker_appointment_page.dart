@@ -57,8 +57,8 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     final secondaryTextColor = isDark
         ? Colors.white.withAlpha(150)
         : const Color(0xFF1E1E2E).withAlpha(150);
-    final iconBg = isDark ? Colors.white12 : Colors.black.withAlpha(10);
-    final iconColor = isDark ? Colors.white : Colors.black87;
+    // final iconBg = isDark ? Colors.white12 : Colors.black.withAlpha(10);
+    // final iconColor = isDark ? Colors.white : Colors.black87;
 
     return Scaffold(
       body: BlocConsumer<SeekerBloc, SeekerState>(

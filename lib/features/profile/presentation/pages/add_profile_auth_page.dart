@@ -687,9 +687,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
 
   void _showImagePickerBottomSheet(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sheetBg = isDark
-        ? const Color(0xFF1E1E2E).withAlpha(200)
-        : Colors.white.withAlpha(240);
+    // final sheetBg = isDark
+    //     ? const Color(0xFF1E1E2E).withAlpha(200)
+    //     : Colors.white.withAlpha(240);
     final handleColor = isDark
         ? Colors.white.withAlpha(60)
         : Colors.black.withAlpha(20);
@@ -744,9 +744,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
 
   void _showLocationBottomSheet(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sheetBg = isDark
-        ? const Color(0xFF1E1E2E).withAlpha(200)
-        : Colors.white.withAlpha(240);
+    // final sheetBg = isDark
+    //     ? const Color(0xFF1E1E2E).withAlpha(200)
+    //     : Colors.white.withAlpha(240);
     final handleColor = isDark
         ? Colors.white.withAlpha(60)
         : Colors.black.withAlpha(20);
