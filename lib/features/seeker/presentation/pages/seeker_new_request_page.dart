@@ -109,10 +109,12 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               );
             });
           }
-          if (state is FailureCreateRequestState)
+          if (state is FailureCreateRequestState) {
             customAlert(context, AlertType.error, "Request failed to add");
-          if (state is MapLocationState)
+          }
+          if (state is MapLocationState) {
             locController.text = MapLocationState.address;
+          }
         },
         builder: (context, state) {
           if (UseMapState.useMap) locController.text = MapLocationState.address;

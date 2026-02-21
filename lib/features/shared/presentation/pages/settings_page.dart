@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/constants/dimension.dart';
@@ -183,7 +184,7 @@ class _SettingsPageState extends State<SettingsPage>
                               trailing: Switch.adaptive(
                                 value:
                                     ThemeModeState.themeMode == ThemeMode.dark,
-                                activeColor: appOrangeColor1,
+                                activeThumbColor: appOrangeColor1,
                                 onChanged: (val) {
                                   context.read<SharedBloc>().add(
                                     ToggleThemeModeEvent(
@@ -208,7 +209,7 @@ class _SettingsPageState extends State<SettingsPage>
                               subtitle: "Unlock with fingerprint or face",
                               trailing: Switch.adaptive(
                                 value: UseBiometricState.usebiometric,
-                                activeColor: appOrangeColor1,
+                                activeThumbColor: appOrangeColor1,
                                 onChanged: (val) async {
                                   try {
                                     final bool hasBiometric =
@@ -232,6 +233,21 @@ class _SettingsPageState extends State<SettingsPage>
                                               ),
                                             );
                                       }
+                                    } else if (!val) {
+                                      // Disabling without auth check
+                                      const secureStorage =
+                                          FlutterSecureStorage();
+                                      await secureStorage.delete(key: "email");
+                                      await secureStorage.delete(
+                                        key: "password",
+                                      );
+                                      scaffold.currentContext!
+                                          .read<SharedBloc>()
+                                          .add(
+                                            UseBiometricEvent(
+                                              usebiometric: val,
+                                            ),
+                                          );
                                     } else {
                                       customAlert(
                                         context,
@@ -274,6 +290,26 @@ class _SettingsPageState extends State<SettingsPage>
                             if (Helpers.isProvider(
                               SuccessGetProfileState.profile.userType,
                             )) ...[
+                              _buildDivider(context),
+                              _buildSettingsTile(
+                                context: context,
+                                icon: Icons.payments_outlined,
+                                iconColor: Colors.orange,
+                                title: "Preferred Payment Method",
+                                subtitle: SuccessGetProfileState.profile
+                                            .preferredPaymentMode ==
+                                        'IN_APP'
+                                    ? "In-App Payments"
+                                    : "On-Site Payments",
+                                onTap: () => _showPaymentModeSheet(context),
+                              ),
+                            ],
+                            if (Helpers.isProvider(
+                              SuccessGetProfileState.profile.userType,
+                            ) &&
+                                SuccessGetProfileState.profile
+                                        .preferredPaymentMode !=
+                                    'ON_SITE') ...[
                               _buildDivider(context),
                               _buildSettingsTile(
                                 context: context,
@@ -525,5 +561,154 @@ class _SettingsPageState extends State<SettingsPage>
         );
       },
     );
+  }
+
+  void _showPaymentModeSheet(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final profile = SuccessGetProfileState.profile;
+
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(28),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Preferred Payment Method",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Choose how you'd like to receive payments from seekers.",
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white60 : Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildPaymentOption(
+              context: context,
+              icon: Icons.account_balance_wallet_rounded,
+              title: "In-App Payments",
+              description: "Secure payments handled through the app",
+              value: "IN_APP",
+              currentValue: profile.preferredPaymentMode ?? "ON_SITE",
+              onChanged: (val) => _updatePaymentMode(context, val),
+            ),
+            const SizedBox(height: 16),
+            _buildPaymentOption(
+              context: context,
+              icon: Icons.handshake_rounded,
+              title: "On-Site Payments",
+              description: "Direct payments from seekers at the service location",
+              value: "ON_SITE",
+              currentValue: profile.preferredPaymentMode ?? "ON_SITE",
+              onChanged: (val) => _updatePaymentMode(context, val),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentOption({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String description,
+    required String value,
+    required String currentValue,
+    required Function(String) onChanged,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isSelected = value == currentValue;
+
+    return InkWell(
+      onTap: () => onChanged(value),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Colors.blueAccent.withAlpha(20)
+              : (isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5)),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? Colors.blueAccent.withAlpha(100)
+                : (isDark ? Colors.white.withAlpha(20) : Colors.black.withAlpha(10)),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.blueAccent.withAlpha(40)
+                    : (isDark ? Colors.white.withAlpha(15) : Colors.white),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? Colors.blueAccent : (isDark ? Colors.white70 : Colors.black45),
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.white60 : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle_rounded, color: Colors.blueAccent, size: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _updatePaymentMode(BuildContext context, String mode) {
+    if (SuccessGetProfileState.profile.preferredPaymentMode == mode) {
+      Get.back();
+      return;
+    }
+
+    final updatedProfile = SuccessGetProfileState.profile;
+    updatedProfile.preferredPaymentMode = mode;
+
+    context.read<ProfileBloc>().add(UpdateProfileEvent(profile: updatedProfile));
+    Get.back();
+    customAlert(context, AlertType.success, "Payment preference updated");
   }
 }

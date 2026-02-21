@@ -194,6 +194,7 @@ class PlatformPopupMenu extends StatelessWidget {
         : Colors.grey.withAlpha(30);
 
     return PopupMenuButton<int>(
+      key: const ValueKey('home_app_bar_popup_menu'),
       icon: icon,
       color: popupBg,
       elevation: 10,

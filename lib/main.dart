@@ -73,6 +73,7 @@ class NeighborServiceApp extends StatelessWidget {
         BlocProvider<ProviderBloc>(create: (_) => di.sl<ProviderBloc>()),
       ],
       child: BlocBuilder<SharedBloc, SharedState>(
+        buildWhen: (previous, current) => current is ThemeModeState,
         builder: (context, snapshot) {
           return GetMaterialApp(
             title: "Neighbor Service App",

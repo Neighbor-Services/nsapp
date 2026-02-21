@@ -214,7 +214,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
         data: json.encode({"user_type": userType, "catalog_service": service}),
         options: Options(headers: dioHeaders(token)),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return true;
       }
       return false;

@@ -69,7 +69,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
           if (state is SuccessVerifyEmailState) {
             customAlert(context, AlertType.success, "Verification successful!");
             Future.delayed(const Duration(seconds: 3), () {
-              Get.toNamed("/forgot-password");
+              if (mounted) {
+                Get.toNamed("/forgot-password");
+              }
             });
           }
           if (state is FailureVerifyOtpState) {

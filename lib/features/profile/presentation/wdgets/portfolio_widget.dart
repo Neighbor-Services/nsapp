@@ -92,6 +92,36 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
+                      SizedBox(height: 16),
+                        SolidContainer(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.payments_rounded, color: appWhiteColor),
+                                  SizedBox(width: 8),
+                                  CustomTextWidget(
+                                    text: "PREFERRED PAYMENT METHOD",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: appWhiteColor,
+                                  ),
+                                ],
+                              ),
+                              Divider(color: Colors.white24, height: 24),
+                              CustomTextWidget(
+                                text: (profile?.preferredPaymentMode ?? "ON_SITE")
+                                    .replaceAll("_", " ")
+                                    .toUpperCase(),
+                                color: Colors.white.withAlpha(200),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 24),
                       if (aboutData.about != null) ...[
                         SolidContainer(
                           width: double.infinity,
@@ -179,7 +209,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 24),
+                        
                       ],
 
                       // NEW: Portfolio Gallery

@@ -45,7 +45,9 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
   Future<void> _moveCamera() async {
     if (_providerLocation != null) {
       final controller = await _controller.future;
-      controller.animateCamera(CameraUpdate.newLatLng(_providerLocation!));
+      if (mounted) {
+        controller.animateCamera(CameraUpdate.newLatLng(_providerLocation!));
+      }
     }
   }
 

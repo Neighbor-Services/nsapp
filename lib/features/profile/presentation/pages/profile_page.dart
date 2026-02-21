@@ -470,6 +470,12 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           if (Helpers.isProvider(profile.userType)) ...[
             _buildGlassDivider(),
+            _buildInfoRow(
+              "Payment Preference",
+              profile.preferredPaymentMode ?? "BOTH",
+              Icons.payments_rounded,
+            ),
+            _buildGlassDivider(),
             InkWell(
               onTap: () {
                 // Navigate to Add Service Package Page

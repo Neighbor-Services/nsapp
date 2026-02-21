@@ -446,11 +446,11 @@ class _AppointmentDetailBottomSheetState
   Widget _buildStatusBadge(Appointment appt, bool isDark) {
     Color color = Colors.blue;
     String text = appt.status ?? "Scheduled";
-    if (appt.status == 'COMPLETED')
+    if (appt.status == 'COMPLETED') {
       color = Colors.green;
-    else if (appt.status == 'CANCELLED')
+    } else if (appt.status == 'CANCELLED') {
       color = Colors.red;
-    else if (appt.isFunded == false) {
+    } else if (appt.isFunded == false) {
       color = Colors.amber;
       text = "Awaiting Funding";
     }

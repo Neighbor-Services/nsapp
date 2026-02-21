@@ -195,7 +195,7 @@ class _AISearchPageState extends State<AISearchPage> {
                                 color: Colors.redAccent,
                                 size: 48,
                               ),
-                              const SizedBox(height: 16),
+                               SizedBox(height: 16),
                               Text(
                                 "Failed to find providers. Please try again.",
                                 style: TextStyle(color: Colors.white70),

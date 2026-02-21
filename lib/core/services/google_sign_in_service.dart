@@ -11,7 +11,7 @@ class GoogleSignInService {
       );
       return account;
     } catch (e) {
-      print("Google Sign-In Error: $e");
+      
       return null;
     }
   }
@@ -26,9 +26,9 @@ class GoogleSignInService {
     GoogleSignInAccount account,
   ) async {
     try {
-      return await account.authentication;
+      return account.authentication;
     } catch (e) {
-      print("Google Auth Error: $e");
+     
       return null;
     }
   }

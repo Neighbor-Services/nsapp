@@ -714,9 +714,9 @@ class _ProviderAppointmentCalendarPageState
                         colorScheme: const ColorScheme.dark(
                           primary: appOrangeColor1,
                           onPrimary: Colors.white,
-                          surface: const Color(0xFF1E1E2E),
+                          surface:  Color(0xFF1E1E2E),
                         ),
-                        dialogTheme: const DialogThemeData(
+                        dialogTheme:  DialogThemeData(
                           backgroundColor: Color(0xFF1E1E2E),
                         ),
                       ),

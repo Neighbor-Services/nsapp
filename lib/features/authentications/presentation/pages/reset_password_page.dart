@@ -68,7 +68,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
               "Verification code sent to ${emailTextController.text.trim()}",
             );
             Future.delayed(const Duration(seconds: 3), () {
-              Get.toNamed("/forgot-password");
+              if (mounted) {
+                Get.toNamed("/forgot-password");
+              }
             });
           }
           if (state is FailureSendEmailVerificationState) {

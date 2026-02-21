@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_widget/google_maps_widget.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/services/location_service.dart';
@@ -21,6 +21,8 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
 
   String distance = "...";
   String duration = "...";
+  List<LatLng> polylinePoints = [];
+  Set<Marker> markers = {};
 
   @override
   void initState() {
@@ -30,17 +32,64 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
 
   Future<void> _fetchDirections() async {
     try {
-      final results = await LocationService.getDistance(
-        lat: RequestDirectionState.request.latitude ?? 0.0,
-        lng: RequestDirectionState.request.longitude ?? 0.0,
+      final destinationLat = RequestDirectionState.request.latitude ?? 0.0;
+      final destinationLng = RequestDirectionState.request.longitude ?? 0.0;
+
+      final results = await LocationService.getFullDirections(
+        lat: destinationLat,
+        lng: destinationLng,
       );
+      
+      final points = await LocationService.getPolylinePoints(
+        sourceLat: locationData.latitude,
+        sourceLng: locationData.longitude,
+        destLat: destinationLat,
+        destLng: destinationLng,
+      );
+
+      if (!mounted) return;
       setState(() {
-        distance = results.text;
-        duration = results.text;
+        distance = results["distance"];
+        duration = results["duration"];
+        polylinePoints = points;
+        
+        markers = {
+          Marker(
+            markerId: const MarkerId("source"),
+            position: LatLng(locationData.latitude, locationData.longitude),
+            infoWindow: const InfoWindow(title: "My Location"),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          ),
+          Marker(
+            markerId: const MarkerId("destination"),
+            position: LatLng(destinationLat, destinationLng),
+            infoWindow: const InfoWindow(title: "Request Location"),
+          ),
+        };
       });
+      
+      if (points.isNotEmpty) {
+        final GoogleMapController controller = await _controller.future;
+        if (mounted) {
+          _fitBounds(controller, destinationLat, destinationLng);
+        }
+      }
     } catch (e) {
       debugPrint("Error fetching directions: $e");
     }
+  }
+
+  void _fitBounds(GoogleMapController controller, double destLat, double destLng) {
+    double minLat = locationData.latitude < destLat ? locationData.latitude : destLat;
+    double maxLat = locationData.latitude > destLat ? locationData.latitude : destLat;
+    double minLng = locationData.longitude < destLng ? locationData.longitude : destLng;
+    double maxLng = locationData.longitude > destLng ? locationData.longitude : destLng;
+
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
+    controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
   }
 
   @override
@@ -52,29 +101,27 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
           SizedBox(
             width: size(context).width,
             height: size(context).height,
-            child: GoogleMapsWidget(
-              defaultCameraZoom: 15.0,
-              indoorViewEnabled: true,
-              trafficEnabled: true,
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(locationData.latitude, locationData.longitude),
+                zoom: 13.0,
+              ),
               onMapCreated: (GoogleMapController controller) {
                 // ignore: deprecated_member_use
                 controller.setMapStyle(mapStyle);
                 _controller.complete(controller);
               },
-              apiKey: mapAPIKey,
-              compassEnabled: true,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
-              routeWidth: 4,
-              routeColor: appDeepBlueColor1,
-              sourceLatLng: LatLng(
-                locationData.latitude,
-                locationData.longitude,
-              ),
-              destinationLatLng: LatLng(
-                RequestDirectionState.request.latitude ?? 0.0,
-                RequestDirectionState.request.longitude ?? 0.0,
-              ),
+              markers: markers,
+              polylines: {
+                Polyline(
+                  polylineId: const PolylineId("route"),
+                  points: polylinePoints,
+                  color: appDeepBlueColor1,
+                  width: 5,
+                ),
+              },
             ),
           ),
           // Navigation Info Card

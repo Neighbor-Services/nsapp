@@ -68,9 +68,11 @@ class _AddAboutPageState extends State<AddAboutPage> {
               "Portfolio Created Successfully",
             );
             Future.delayed(const Duration(seconds: 3), () {
-              context.read<ProviderBloc>().add(
-                NavigateProviderEvent(page: 1, widget: ProviderHomePage()),
-              );
+              if (mounted) {
+                context.read<ProviderBloc>().add(
+                  NavigateProviderEvent(page: 1, widget: ProviderHomePage()),
+                );
+              }
             });
           } else if (state is FailureAddAboutState) {
             customAlert(context, AlertType.error, "Failed To Create Portfolio");

@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
@@ -7,12 +6,12 @@ import 'package:nsapp/core/models/appointment.dart';
 enum AlertType { success, error, warning }
 
 class DialogUtils {
-  static void showCustomAlert(
+  static Future<void> showCustomAlert(
     BuildContext context,
     AlertType type,
     String message, {
     bool autoPop = true,
-  }) {
+  }) async {
     showDialog(
       context: context,
       builder: (context) {
@@ -132,7 +131,9 @@ class DialogUtils {
     );
     if (autoPop) {
       Future.delayed(const Duration(seconds: 3), () {
-        Navigator.pop(context);
+        if (context.mounted) {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
       });
     }
   }

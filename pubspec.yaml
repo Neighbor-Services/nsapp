@@ -37,6 +37,7 @@ dependencies:
   google_maps_directions:
   google_sign_in:
   local_auth:
+  flutter_secure_storage: ^9.2.4
   internet_connection_checker_plus:
   shared_preferences:
   url_launcher:
@@ -50,7 +51,6 @@ dependencies:
   web_socket_channel:
   web_socket: 
   flutter_otp_text_field: 
-  custom_radio_grouped_button: ^2.2.0
   intl: ^0.20.2
   uuid: ^4.5.2
   hive: ^2.2.3
@@ -61,6 +61,7 @@ dependencies:
   permission_handler: ^11.3.1
   device_info_plus: ^11.1.0
   agora_rtc_engine: ^6.4.0
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

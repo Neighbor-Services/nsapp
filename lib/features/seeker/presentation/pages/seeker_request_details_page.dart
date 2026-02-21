@@ -20,7 +20,6 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/core/services/payment_service.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/string_constants.dart';

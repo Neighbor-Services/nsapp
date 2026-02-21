@@ -121,22 +121,24 @@ class ProviderDrawerWidget extends StatelessWidget {
                       isDark: isDark,
                       textColor: textColor,
                     ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.account_balance_wallet_rounded,
-                      title: "Wallet",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: 1,
-                            widget: const WalletPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
+                    if (SuccessGetProfileState.profile.preferredPaymentMode !=
+                        'ON_SITE')
+                      _buildDrawerItem(
+                        context,
+                        icon: Icons.account_balance_wallet_rounded,
+                        title: "Wallet",
+                        onTap: () {
+                          context.read<ProviderBloc>().add(
+                            NavigateProviderEvent(
+                              page: 1,
+                              widget: const WalletPage(),
+                            ),
+                          );
+                          Navigator.pop(context);
+                        },
+                        isDark: isDark,
+                        textColor: textColor,
+                      ),
                     _buildDrawerItem(
                       context,
                       icon: Icons.gavel_rounded,

@@ -13,8 +13,6 @@ class LocationService {
     required double lat,
     required double lng,
   }) async {
-    // Assuming locationData is up-to-date or fetching it here if needed.
-    // For now using the global locationData from init.dart as per original code.
     var directions = await gmd.distance(
       locationData.latitude,
       locationData.longitude,
@@ -23,6 +21,91 @@ class LocationService {
       googleAPIKey: mapAPIKey,
     );
     return directions;
+  }
+
+  static Future<Map<String, dynamic>> getFullDirections({
+    required double lat,
+    required double lng,
+  }) async {
+    try {
+      final results = await gmd.distance(
+        locationData.latitude,
+        locationData.longitude,
+        lat,
+        lng,
+        googleAPIKey: mapAPIKey,
+      );
+      
+      return {
+        "distance": results.text,
+        "duration": "${(results.meters / 1000 * 2).toStringAsFixed(1)} min",
+      };
+    } catch (e) {
+      return {
+        "distance": "...",
+        "duration": "...",
+      };
+    }
+  }
+
+  static Future<List<LatLng>> getPolylinePoints({
+    required double sourceLat,
+    required double sourceLng,
+    required double destLat,
+    required double destLng,
+  }) async {
+    try {
+      final response = await dio.get(
+        "https://maps.googleapis.com/maps/api/directions/json",
+        queryParameters: {
+          "origin": "$sourceLat,$sourceLng",
+          "destination": "$destLat,$destLng",
+          "key": mapAPIKey,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data["status"] == "OK") {
+          final points = data["routes"][0]["overview_polyline"]["points"];
+          return _decodePolyline(points);
+        }
+      }
+      return [];
+    } catch (e) {
+      debugPrint("Error fetching polyline points: $e");
+      return [];
+    }
+  }
+
+  static List<LatLng> _decodePolyline(String encoded) {
+    List<LatLng> points = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      points.add(LatLng(lat / 1E5, lng / 1E5));
+    }
+    return points;
   }
 
   static Future<bool> getLocation() async {

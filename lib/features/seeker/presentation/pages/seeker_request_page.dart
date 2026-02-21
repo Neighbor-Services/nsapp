@@ -487,10 +487,12 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                   hintText: "Amount (\$)",
                                                   label: "Amount (\$)",
                                                   validator: (val) {
-                                                    if (val!.isEmpty)
+                                                    if (val!.isEmpty) {
                                                       return "Required";
-                                                    if (!val.isNum)
+                                                    }
+                                                    if (!val.isNum) {
                                                       return "Invalid";
+                                                    }
                                                     return null;
                                                   },
                                                 ),

@@ -60,7 +60,9 @@ class _LoginAuthPageState extends State<LoginAuthPage>
     // Start animations
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
-      _slideController.forward();
+      if (mounted) {
+        _slideController.forward();
+      }
     });
   }
 

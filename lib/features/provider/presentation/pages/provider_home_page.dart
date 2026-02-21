@@ -118,8 +118,11 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         const SizedBox(height: 16),
                         _buildExploreCard(context),
                         const SizedBox(height: 16),
-                        _buildWalletCard(context),
-                        const SizedBox(height: 32),
+                        if (SuccessGetProfileState.profile.preferredPaymentMode !=
+                            'ON_SITE') ...[
+                          _buildWalletCard(context),
+                          const SizedBox(height: 32),
+                        ],
 
                         const SizedBox(height: 40),
                       ],
@@ -160,75 +163,77 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                       ),
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Total Balance",
-                                    style: TextStyle(
-                                      color: Colors.white.withAlpha(180),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  context.read<ProviderBloc>().add(
-                                    NavigateProviderEvent(
-                                      page: 1,
-                                      widget: const WalletPage(),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withAlpha(40),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Colors.white.withAlpha(60),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Wallet",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                        ),
+                          if (profile.preferredPaymentMode != 'ON_SITE') ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Total Balance",
+                                      style: TextStyle(
+                                        color: Colors.white.withAlpha(180),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
                                       ),
-                                      SizedBox(width: 8),
-                                      Icon(
-                                        Icons.arrow_forward_ios_rounded,
-                                        size: 10,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
+                                      style: const TextStyle(
                                         color: Colors.white,
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ],
+                                    ),
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    context.read<ProviderBloc>().add(
+                                      NavigateProviderEvent(
+                                        page: 1,
+                                        widget: const WalletPage(),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withAlpha(40),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.white.withAlpha(60),
+                                      ),
+                                    ),
+                                    child: const Row(
+                                      children: [
+                                        Text(
+                                          "Wallet",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 10,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                          ],
                           Row(
                             children: [
                               _buildDashboardStat(

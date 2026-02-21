@@ -387,8 +387,9 @@ class Helpers {
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (e is DioException && e.response?.statusCode == 401)
+      if (e is DioException && e.response?.statusCode == 401) {
         await deletePref("token");
+      }
       return false;
     }
   }

@@ -80,7 +80,6 @@ class _AboutPageState extends State<AboutPage>
             }
 
             final profile = snapshot.data!;
-            final isFavorite = Helpers.isMyFavorite(profile.user?.id ?? "");
 
             return NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -266,6 +265,36 @@ class _AboutPageState extends State<AboutPage>
                                   ),
                                 ),
 
+                                // Payment Mode
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? Colors.white.withAlpha(10)
+                                        : Colors.black.withAlpha(5),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? Colors.white.withAlpha(15)
+                                          : Colors.black.withAlpha(10),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "PAYMENT MODE: ${profile.preferredPaymentMode}",
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white.withAlpha(200)
+                                          : Colors.black87,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+
                                 const SizedBox(height: 12),
 
                                 // Rating
@@ -304,113 +333,98 @@ class _AboutPageState extends State<AboutPage>
                                 const SizedBox(height: 20),
 
                                 // Action Buttons
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    // Chat Button
-                                    _buildActionButton(
-                                      icon: Icons.chat_bubble_outline_rounded,
-                                      label: "Chat",
-                                      color: Colors.blueAccent,
-                                      onTap: () {
-                                        // Logic to open chat
-                                        if (profile.user != null) {
-                                          context.read<MessageBloc>().add(
-                                            SetMessageReceiverEvent(
-                                              profile: profile,
-                                            ),
-                                          );
-                                          context.read<MessageBloc>().add(
-                                            SetSeenMessageEvent(
-                                              reciever: profile.user!.id!,
-                                            ),
-                                          );
-                                          if (DashboardState.isProvider) {
-                                            context.read<ProviderBloc>().add(
-                                              NavigateProviderEvent(
-                                                page: 4,
-                                                widget: const ChatPage(),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Chat Button
+                                      _buildActionButton(
+                                        icon: Icons.chat_bubble_outline_rounded,
+                                        label: "Chat",
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(0xFF2196F3),
+                                            Color(0xFF1976D2),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          if (profile.user != null) {
+                                            context.read<MessageBloc>().add(
+                                              SetMessageReceiverEvent(
+                                                profile: profile,
                                               ),
                                             );
-                                          } else {
-                                            context.read<SeekerBloc>().add(
-                                              NavigateSeekerEvent(
-                                                page: 4,
-                                                widget: const ChatPage(),
+                                            context.read<MessageBloc>().add(
+                                              SetSeenMessageEvent(
+                                                reciever: profile.user!.id!,
                                               ),
                                             );
+                                            if (DashboardState.isProvider) {
+                                              context.read<ProviderBloc>().add(
+                                                NavigateProviderEvent(
+                                                  page: 4,
+                                                  widget: const ChatPage(),
+                                                ),
+                                              );
+                                            } else {
+                                              context.read<SeekerBloc>().add(
+                                                NavigateSeekerEvent(
+                                                  page: 4,
+                                                  widget: const ChatPage(),
+                                                ),
+                                              );
+                                            }
                                           }
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(width: 6),
+                                        },
+                                      ),
+                                      const SizedBox(width: 8),
 
-                                    // Request Service Button
-                                    _buildActionButton(
-                                      icon: Icons.handshake_rounded,
-                                      label: "Request Service",
-                                      color: const Color(0xFF6C63FF),
-                                      onTap: () {
-                                        if (profile.user != null) {
-                                          if (DashboardState.isProvider) {
-                                            // Providers can't request services from others in this mode
-                                            customAlert(
-                                              context,
-                                              AlertType.error,
-                                              "Switch to Seeker mode to request service",
-                                            );
-                                            return;
-                                          }
-                                          context.read<SeekerBloc>().add(
-                                            NavigateSeekerEvent(
-                                              page:
-                                                  4, // Using a temp page index or standard navigation
-                                              widget: SeekerNewRequestPage(
-                                                targetProviderId:
-                                                    profile.user!.id,
-                                                initialServiceId:
-                                                    profile.catalogServiceId,
-                                                initialServiceName:
-                                                    profile.catalogServiceName,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(width: 6),
+                                      // Request Service Button - More prominent
+                                      Expanded(
+                                        flex: 2,
+                                        child: _buildActionButton(
+                                          icon: Icons.handshake_rounded,
+                                          label: "Request Service",
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Color(0xFF6C63FF),
+                                              Color(0xFF5A52D5),
+                                            ],
+                                          ),
+                                          onTap: () {
+                                            if (profile.user != null) {
+                                              if (DashboardState.isProvider) {
+                                                customAlert(
+                                                  context,
+                                                  AlertType.error,
+                                                  "Switch to Seeker mode to request service",
+                                                );
+                                                return;
+                                              }
+                                              context.read<SeekerBloc>().add(
+                                                NavigateSeekerEvent(
+                                                  page: 4,
+                                                  widget: SeekerNewRequestPage(
+                                                    targetProviderId:
+                                                        profile.user!.id,
+                                                    initialServiceId:
+                                                        profile.catalogServiceId,
+                                                    initialServiceName: profile
+                                                        .catalogServiceName,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
 
-                                    // Favorite Button
-                                    _buildActionButton(
-                                      icon: isFavorite
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      label: isFavorite ? "Saved" : "Save",
-                                      color: isFavorite
-                                          ? Colors.redAccent
-                                          : const Color.fromARGB(
-                                              255,
-                                              8,
-                                              117,
-                                              54,
-                                            ).withValues(alpha: 20),
-                                      textColor: Colors.white,
-                                      onTap: () {
-                                        if (isFavorite) {
-                                          // Remove logic needs finding the ID from list
-                                        } else {
-                                          context.read<SeekerBloc>().add(
-                                            AddToFavoriteEvent(
-                                              userId: profile.user!.id!,
-                                            ),
-                                          );
-                                        }
-                                        setState(() {
-                                          _loadProfile();
-                                        });
-                                      },
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -482,36 +496,42 @@ class _AboutPageState extends State<AboutPage>
   Widget _buildActionButton({
     required IconData icon,
     required String label,
-    required Color color,
+    required Gradient gradient,
     Color textColor = Colors.white,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(30),
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 40),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: (gradient as LinearGradient).colors.first.withAlpha(60),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 18, color: textColor),
-            const SizedBox(width: 8),
+            const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
                 color: textColor,
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
+                fontSize: 13,
+                letterSpacing: 0.2,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

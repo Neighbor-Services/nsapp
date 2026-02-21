@@ -11,6 +11,7 @@ import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../bloc/shared_bloc.dart';
 
@@ -89,13 +90,29 @@ class _SplashScreenPageState extends State<SplashScreenPage>
             } else {
               Get.offAllNamed('/add-profile');
             }
-          } else {
+            } else {
+            // Not authenticated, check for biometric credentials
+            final usebiometric = await Helpers.getBool("usebiometric");
+            if (usebiometric) {
+              const secureStorage = FlutterSecureStorage();
+              final email = await secureStorage.read(key: "email");
+              final password = await secureStorage.read(key: "password");
+
+              if (email != null && password != null) {
+                Get.offAllNamed('/biometric');
+                return;
+              }
+            }
+
             await Future.delayed(const Duration(seconds: 3));
-            Get.offAllNamed('/login');
+            if (mounted) {
+              Get.offAllNamed('/login');
+            }
           }
           break;
         case InternetStatus.disconnected:
-          Future.delayed(Duration(seconds: 3), () {
+          Future.delayed(const Duration(seconds: 3), () {
+            if (!mounted) return;
             showDialog(
               context: context,
               barrierDismissible: false,

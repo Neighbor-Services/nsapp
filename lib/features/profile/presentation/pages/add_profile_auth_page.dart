@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
+import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -38,6 +38,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
   late GlobalKey<FormState> key;
   bool isImage = true;
   String catalogServiceId = "";
+  String preferredPaymentMode = "ON_SITE";
 
   @override
   void initState() {
@@ -73,7 +74,11 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
             );
             Future.delayed(
               const Duration(seconds: 3),
-              () => Get.offAllNamed("/home"),
+              () {
+                if (mounted) {
+                  Get.offAllNamed("/home");
+                }
+              },
             );
           }
           if (state is FailureCreateProfileState) {
@@ -258,42 +263,21 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                               const SizedBox(height: 24),
                               _buildLabel("Gender"),
                               const SizedBox(height: 12),
-                              CustomRadioButton(
-                                buttonLables: const ["Male", "Female"],
-                                defaultSelected: "Male",
-                                width: 135,
-                                height: 52,
-                                wrapAlignment: WrapAlignment.spaceBetween,
-                                elevation: 0,
-                                buttonValues: const ["Male", "Female"],
-                                unSelectedColor:
-                                    (Theme.of(context).brightness ==
-                                        Brightness.dark)
-                                    ? Colors.white.withAlpha(15)
-                                    : Colors.grey.withAlpha(20),
-                                unSelectedBorderColor:
-                                    (Theme.of(context).brightness ==
-                                        Brightness.dark)
-                                    ? Colors.white.withAlpha(20)
-                                    : Colors.grey.withAlpha(30),
-                                selectedBorderColor: Colors.blueAccent
-                                    .withAlpha(100),
-                                selectedColor: Colors.blueAccent.withAlpha(50),
-                                radius: 18,
-                                buttonTextStyle: ButtonTextStyle(
-                                  unSelectedColor:
-                                      (Theme.of(context).brightness ==
-                                          Brightness.dark)
-                                      ? Colors.white.withAlpha(140)
-                                      : Colors.black54,
-                                  selectedColor: Colors.white,
-                                  textStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
+                                CustomSegmentedControl<String>(
+                                  buttonLables: const ["Male", "Female"],
+                                  buttonValues: const ["Male", "Female"],
+                                  defaultSelected: gender,
+                                  onValueChanged: (val) {
+                                    setState(() {
+                                      gender = val;
+                                    });
+                                  },
+                                  width: 270,
+                                  height: 52,
+                                  radius: 18,
+                                  selectedColor: Colors.blueAccent.withAlpha(50),
+                                  textColor: Colors.white,
                                 ),
-                                radioButtonValue: (val) => gender = val!,
-                              ),
                               const SizedBox(height: 24),
                               SolidTextField(
                                 controller: dateOfBirthTextController,
@@ -314,56 +298,31 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                               const SizedBox(height: 24),
                               _buildLabel("User Role"),
                               const SizedBox(height: 12),
-                              CustomRadioButton(
-                                buttonLables: const [
-                                  userTypeSeeker,
-                                  userTypeProvider,
-                                ],
-                                defaultSelected: userTypeProvider,
-                                width: 135,
-                                height: 52,
-                                wrapAlignment: WrapAlignment.spaceBetween,
-                                elevation: 0,
-                                buttonValues: const [
-                                  userTypeSeeker,
-                                  userTypeProvider,
-                                ],
-                                unSelectedColor:
-                                    (Theme.of(context).brightness ==
-                                        Brightness.dark)
-                                    ? Colors.white.withAlpha(15)
-                                    : Colors.grey.withAlpha(20),
-                                unSelectedBorderColor:
-                                    (Theme.of(context).brightness ==
-                                        Brightness.dark)
-                                    ? Colors.white.withAlpha(20)
-                                    : Colors.grey.withAlpha(30),
-                                selectedBorderColor: Colors.blueAccent
-                                    .withAlpha(100),
-                                selectedColor: Colors.blueAccent.withAlpha(50),
-                                radius: 18,
-                                buttonTextStyle: ButtonTextStyle(
-                                  unSelectedColor:
-                                      (Theme.of(context).brightness ==
-                                          Brightness.dark)
-                                      ? Colors.white.withAlpha(140)
-                                      : Colors.black54,
-                                  selectedColor: Colors.white,
-                                  textStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
+                                CustomSegmentedControl<String>(
+                                  buttonLables: const [
+                                    userTypeSeeker,
+                                    userTypeProvider,
+                                  ],
+                                  buttonValues: const [
+                                    userTypeSeeker,
+                                    userTypeProvider,
+                                  ],
+                                  defaultSelected: userTypeProvider,
+                                  onValueChanged: (val) {
+                                    context.read<ProfileBloc>().add(
+                                          SetUserTypeEvent(
+                                            userType: Helpers.isProvider(val)
+                                                ? 'provider'
+                                                : 'seeker',
+                                          ),
+                                        );
+                                  },
+                                  width: 270,
+                                  height: 52,
+                                  radius: 18,
+                                  selectedColor: Colors.blueAccent.withAlpha(50),
+                                  textColor: Colors.white,
                                 ),
-                                radioButtonValue: (val) {
-                                  context.read<ProfileBloc>().add(
-                                    SetUserTypeEvent(
-                                      userType: Helpers.isProvider(val)
-                                          ? 'provider'
-                                          : 'seeker',
-                                    ),
-                                  );
-                                },
-                              ),
                               const SizedBox(height: 24),
                               Row(
                                 children: [
@@ -564,15 +523,27 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                     hintText: "Enter your custom service",
                                     label: "Custom Service",
                                     prefixIcon: Icons.add_business_outlined,
-                                    validator: (val) {
-                                      if (val!.isEmpty) {
-                                        return "Service specification is required";
-                                      }
-                                      return null;
-                                    },
                                   ),
+                                  ],
+                                  const SizedBox(height: 24),
+                                  _buildLabel("Preferred Payment Method"),
+                                  const SizedBox(height: 12),
+                                    CustomSegmentedControl<String>(
+                                      buttonLables: const ["In-App", "On-Site"],
+                                      buttonValues: const ["IN_APP", "ON_SITE"],
+                                      defaultSelected: "ON_SITE",
+                                      onValueChanged: (val) {
+                                        setState(() {
+                                          preferredPaymentMode = val;
+                                        });
+                                      },
+                                      width: 270,
+                                      height: 52,
+                                      radius: 18,
+                                      selectedColor: Colors.blueAccent.withAlpha(50),
+                                      textColor: Colors.white,
+                                    ),
                                 ],
-                              ],
                             ],
                           ),
                         ),
@@ -624,8 +595,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                               service: (OtherServiceSelectState.others)
                                   ? serviceTextController.text.trim()
                                   : serviceType,
-                              userType: UserTypeProfileState.userType,
-                              catalogServiceId: catalogServiceId,
+                                userType: UserTypeProfileState.userType,
+                                preferredPaymentMode: preferredPaymentMode,
+                                catalogServiceId: catalogServiceId,
                               latitude: (locController.text.isNotEmpty)
                                   ? (UseMapState.useMap)
                                         ? MapLocationState.location.latitude
@@ -785,15 +757,19 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 );
                 final success = await Helpers.getLocation();
                 if (success) {
-                  locController.text = myAddress;
-                  Get.back();
+                  if (mounted) {
+                    locController.text = myAddress;
+                    Get.back();
+                  }
                 } else {
-                  Get.back();
-                  customAlert(
-                    context,
-                    AlertType.error,
-                    "Unable to get location. Please check location permissions and services.",
-                  );
+                  if (mounted) {
+                    Get.back();
+                    customAlert(
+                      context,
+                      AlertType.error,
+                      "Unable to get location. Please check location permissions and services.",
+                    );
+                  }
                 }
               },
             ),

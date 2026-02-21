@@ -55,7 +55,9 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
 
     _fadeController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
-      _slideController.forward();
+      if (mounted) {
+        _slideController.forward();
+      }
     });
   }
 
@@ -96,13 +98,17 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
               "Email verification sent to your email",
             );
             Future.delayed(const Duration(seconds: 3), () {
-              Get.toNamed("/otp");
+              if (mounted) {
+                Get.toNamed("/otp");
+              }
             });
           }
           if (state is SuccessGoogleRegisterAuthenticationState) {
             customAlert(context, AlertType.success, "Registration successful!");
             Future.delayed(const Duration(seconds: 3), () {
-              Get.toNamed("/login");
+              if (mounted) {
+                Get.toNamed("/login");
+              }
             });
           }
         },

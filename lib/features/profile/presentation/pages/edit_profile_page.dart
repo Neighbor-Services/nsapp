@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
+import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -41,6 +41,7 @@ class _EditProfilePageState extends State<EditProfilePage>
   int provider = 1;
   String serviceType = "";
   String catalogServiceId = "";
+  String preferredPaymentMode = "ON_SITE";
   late GlobalKey<FormState> key;
   bool isImage = true;
   late AnimationController _fadeController;
@@ -79,6 +80,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     countryCode = profile.countryCode ?? "";
     gender = profile.gender ?? "MALE";
     catalogServiceId = profile.catalogServiceId ?? "";
+    preferredPaymentMode = profile.preferredPaymentMode ?? "BOTH";
 
     String initialUserType = profile.userType ?? "FEMALE";
     context.read<ProfileBloc>().add(
@@ -137,8 +139,10 @@ class _EditProfilePageState extends State<EditProfilePage>
             );
             customAlert(context, AlertType.success, "Profile updated");
             context.read<SharedBloc>().add(GetServicesEvent());
-            Future.delayed(Duration(seconds: 3), () {
-              Navigator.pop(context);
+            Future.delayed(const Duration(seconds: 3), () {
+              if (mounted) {
+                Navigator.pop(context);
+              }
             });
           }
           if (state is FailureUpdateProfileState) {
@@ -390,93 +394,49 @@ class _EditProfilePageState extends State<EditProfilePage>
                                     const SizedBox(height: 24),
                                     _buildLabel("Gender"),
                                     const SizedBox(height: 12),
-                                    CustomRadioButton(
+                                    CustomSegmentedControl<String>(
                                       buttonLables: const ["Male", "Female"],
-                                      defaultSelected: gender == "MALE"
-                                          ? "Male"
-                                          : "Female",
-                                      width: 120,
-                                      height: 50,
-                                      wrapAlignment: WrapAlignment.center,
-                                      elevation: 0,
                                       buttonValues: const ["Male", "Female"],
-                                      unSelectedColor: Colors.white.withAlpha(
-                                        15,
-                                      ),
-                                      unSelectedBorderColor: Colors.white
-                                          .withAlpha(20),
-                                      selectedBorderColor: Colors.blueAccent
-                                          .withAlpha(100),
-                                      selectedColor: Colors.blueAccent
-                                          .withAlpha(40),
+                                      defaultSelected:
+                                          gender == "MALE" ? "Male" : "Female",
+                                      onValueChanged: (val) {
+                                        setState(() {
+                                          gender = val;
+                                        });
+                                      },
+                                      width: 240,
+                                      height: 50,
                                       radius: 16,
-                                      buttonTextStyle: ButtonTextStyle(
-                                        unSelectedColor: Colors.white.withAlpha(
-                                          140,
-                                        ),
-                                        selectedColor: Colors.white,
-                                        textStyle: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      radioButtonValue: (val) =>
-                                          gender = val ?? "Male",
+                                      selectedColor: Colors.blueAccent.withAlpha(40),
+                                      textColor: Colors.white,
                                     ),
                                     const SizedBox(height: 24),
                                     _buildLabel("Role Type"),
                                     const SizedBox(height: 12),
-                                    CustomRadioButton(
+                                    CustomSegmentedControl<String>(
                                       buttonLables: const [
                                         "SEEKER",
+                                        "PROVIDER",
+                                      ],
+                                      buttonValues: const [
+                                        userTypeSeeker,
                                         userTypeProvider,
                                       ],
-                                      defaultSelected:
-                                          Helpers.isProvider(
-                                            SuccessGetProfileState
-                                                .profile
-                                                .userType,
-                                          )
+                                      defaultSelected: Helpers.isProvider(
+                                        SuccessGetProfileState.profile.userType,
+                                      )
                                           ? userTypeProvider
                                           : userTypeSeeker,
-                                      width: 120,
-                                      height: 50,
-                                      wrapAlignment: WrapAlignment.center,
-                                      elevation: 0,
-                                      buttonValues: const [
-                                        "SEEKER",
-                                        userTypeProvider,
-                                      ],
-                                      unSelectedColor: isDark
-                                          ? Colors.white.withAlpha(15)
-                                          : Colors.grey.withAlpha(20),
-                                      unSelectedBorderColor: isDark
-                                          ? Colors.white.withAlpha(20)
-                                          : Colors.grey.withAlpha(30),
-                                      selectedBorderColor: Colors.blueAccent
-                                          .withAlpha(100),
-                                      selectedColor: Colors.blueAccent
-                                          .withAlpha(40),
-                                      radius: 16,
-                                      buttonTextStyle: ButtonTextStyle(
-                                        unSelectedColor: isDark
-                                            ? Colors.white.withAlpha(140)
-                                            : Colors.black54,
-                                        selectedColor: isDark
-                                            ? Colors.white
-                                            : Colors.blueAccent,
-                                        textStyle: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      radioButtonValue: (val) {
+                                      onValueChanged: (val) {
                                         context.read<ProfileBloc>().add(
-                                          SetUserTypeEvent(
-                                            userType: val == userTypeProvider
-                                                ? userTypeProvider
-                                                : userTypeSeeker,
-                                          ),
-                                        );
+                                              SetUserTypeEvent(userType: val),
+                                            );
                                       },
+                                      width: 240,
+                                      height: 50,
+                                      radius: 16,
+                                      selectedColor: Colors.blueAccent.withAlpha(40),
+                                      textColor: isDark ? Colors.white : Colors.blueAccent,
                                     ),
                                     const SizedBox(height: 24),
                                     Row(
@@ -711,6 +671,34 @@ class _EditProfilePageState extends State<EditProfilePage>
                                           },
                                         ),
                                       ],
+                                      if (Helpers.isProvider(
+                                        UserTypeProfileState.userType,
+                                      )) ...[
+                                        const SizedBox(height: 24),
+                                        _buildLabel("Preferred Payment Mode"),
+                                        const SizedBox(height: 12),
+                                        CustomSegmentedControl<String>(
+                                          buttonLables: const [
+                                            "In-App",
+                                            "On-Site",
+                                          ],
+                                          buttonValues: const [
+                                            "IN_APP",
+                                            "ON_SITE",
+                                          ],
+                                          defaultSelected: preferredPaymentMode,
+                                          onValueChanged: (val) {
+                                            setState(() {
+                                              preferredPaymentMode = val;
+                                            });
+                                          },
+                                          width: 240,
+                                          height: 50,
+                                          radius: 16,
+                                          selectedColor: Colors.blueAccent.withAlpha(40),
+                                          textColor: isDark ? Colors.white : Colors.blueAccent,
+                                        ),
+                                      ],
                                     ],
                                   ],
                                 ),
@@ -931,15 +919,19 @@ class _EditProfilePageState extends State<EditProfilePage>
                 );
                 final success = await Helpers.getLocation();
                 if (success) {
-                  locController.text = myAddress;
-                  Get.back();
+                  if (mounted) {
+                    locController.text = myAddress;
+                    Get.back();
+                  }
                 } else {
-                  Get.back();
-                  customAlert(
-                    context,
-                    AlertType.error,
-                    "Unable to get location. Please check location permissions and services.",
-                  );
+                  if (mounted) {
+                    Get.back();
+                    customAlert(
+                      context,
+                      AlertType.error,
+                      "Unable to get location. Please check location permissions and services.",
+                    );
+                  }
                 }
               },
             ),
@@ -1000,6 +992,7 @@ class _EditProfilePageState extends State<EditProfilePage>
             : serviceType,
         userType: UserTypeProfileState.userType,
         catalogServiceId: catalogServiceId,
+        preferredPaymentMode: preferredPaymentMode,
         longitude: (UseMapState.useMap)
             ? MapLocationState.location.longitude.toString()
             : profileData.longitude,

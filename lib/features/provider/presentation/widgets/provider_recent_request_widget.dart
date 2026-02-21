@@ -42,18 +42,18 @@ class _ProviderRecentRequestWidgetState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
     final secondaryTextColor = isDark
-        ? Colors.white.withOpacity(0.7)
-        : const Color(0xFF1E1E2E).withOpacity(0.7);
+        ? Colors.white.withValues(alpha: 0.7)
+        : const Color(0xFF1E1E2E).withValues(alpha: 0.7);
     final cardColor = isDark ? const Color(0xFF2D2D44) : Colors.white;
     final borderColor = isDark
-        ? Colors.white.withOpacity(0.1)
-        : Colors.black.withOpacity(0.1);
+        ? Colors.white.withValues(alpha: 0.1)
+        : Colors.black.withValues(alpha: 0.1);
     final decorativeCircleColor = isDark
-        ? Colors.white.withOpacity(0.05)
-        : Colors.black.withOpacity(0.05);
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.05);
     final tagBgColor = isDark
-        ? Colors.white.withOpacity(0.1)
-        : Colors.black.withOpacity(0.05);
+        ? Colors.white.withValues(alpha: 0.1)
+        : Colors.black.withValues(alpha: 0.05);
 
     return BlocBuilder<ProviderBloc, ProviderState>(
       builder: (context, state) {
@@ -97,7 +97,7 @@ class _ProviderRecentRequestWidgetState
                           border: Border.all(color: borderColor),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -147,8 +147,8 @@ class _ProviderRecentRequestWidgetState
                                         CircleAvatar(
                                           radius: 20,
                                           backgroundColor: isDark
-                                              ? Colors.white.withOpacity(0.1)
-                                              : Colors.black.withOpacity(0.05),
+                                              ? Colors.white.withValues(alpha: 0.1)
+                                              : Colors.black.withValues(alpha: 0.05),
                                           child: Icon(
                                             Icons.person,
                                             color: isDark
@@ -271,9 +271,9 @@ class _ProviderRecentRequestWidgetState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Text(
         status.toUpperCase(),

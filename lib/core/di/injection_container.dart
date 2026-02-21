@@ -112,6 +112,7 @@ import 'package:nsapp/features/shared/domain/usecase/search_places_use_case.dart
 import 'package:nsapp/features/shared/domain/usecase/set_seen_notification_use_case.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_disputes_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_use_case.dart';
 
@@ -123,6 +124,7 @@ Future<void> init() async {
     cacheOptions: const SharedPreferencesWithCacheOptions(),
   );
   sl.registerLazySingleton<SharedPreferencesWithCache>(() => prefs);
+  sl.registerLazySingleton(() => const FlutterSecureStorage());
   sl.registerLazySingleton(() => Dio());
   // sl.registerLazySingleton(() => InternetConnectionCheckerPlus());
   sl.registerLazySingleton(() => NotificationSocketService());
@@ -282,6 +284,7 @@ Future<void> init() async {
   // ! Blocs
   sl.registerFactory(
     () => AuthenticationBloc(
+      sl(),
       sl(),
       sl(),
       sl(),

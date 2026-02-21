@@ -122,7 +122,7 @@ class PaymentService {
       );
 
       await Stripe.instance.initCustomerSheet(
-        customerSheetInitParams: CustomerSheetInitParams(
+        customerSheetInitParams: CustomerSheetInitParams.adapter(
           customerEphemeralKeySecret: customerModel.customer!.ephemeralSecret!,
           customerId: customerModel.customer!.stripeCustomerId!,
           merchantDisplayName: "Neighbor Services",

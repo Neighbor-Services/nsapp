@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/helpers/use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/change_password_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/login_use_case.dart';
@@ -29,6 +31,7 @@ class AuthenticationBloc
   final VerifyEmailUseCase verifyEmailUseCase;
   final SendEmailVerificationUseCase sendEmailVerificationUseCase;
   final RequestPasswordResetUseCase requestPasswordResetUseCase;
+  final FlutterSecureStorage secureStorage;
 
   AuthenticationBloc(
     this.loginUseCase,
@@ -42,20 +45,37 @@ class AuthenticationBloc
     this.verifyEmailUseCase,
     this.sendEmailVerificationUseCase,
     this.requestPasswordResetUseCase,
+    this.secureStorage,
   ) : super(InitialAuthenticationState()) {
     on<LoginAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
       final results = await loginUseCase.call(
         AuthParams(email: event.email, password: event.password),
       );
+
+      bool isSuccess = false;
+      String? message;
+
       results.fold(
-        (l) => emit(
-          FailureLoginAuthenticationState(
-            message: l.massege ?? "Email or password is incorrect",
-          ),
-        ),
-        (r) => emit(SuccessLoginAuthenticationState()),
+        (l) {
+          isSuccess = false;
+          message = l.massege ?? "Email or password is incorrect";
+        },
+        (r) {
+          isSuccess = true;
+        },
       );
+
+      if (isSuccess) {
+        final useBiometric = await Helpers.getBool("usebiometric");
+        if (useBiometric) {
+          await secureStorage.write(key: "email", value: event.email);
+          await secureStorage.write(key: "password", value: event.password);
+        }
+        emit(SuccessLoginAuthenticationState());
+      } else {
+        emit(FailureLoginAuthenticationState(message: message!));
+      }
     });
     on<RegisterAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());

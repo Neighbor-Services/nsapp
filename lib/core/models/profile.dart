@@ -76,6 +76,8 @@ class Profile {
   String? subscriptionTier;
   @HiveField(33)
   List<PerformanceBadge>? performanceBadges;
+  @HiveField(34)
+  String? preferredPaymentMode;
 
   Profile({
     this.id,
@@ -109,6 +111,7 @@ class Profile {
     this.isIdentityVerified,
     this.subscriptionTier,
     this.performanceBadges,
+    this.preferredPaymentMode,
   });
 
   Profile.fromJson(Map<String, dynamic> json) {
@@ -173,6 +176,7 @@ class Profile {
         performanceBadges!.add(PerformanceBadge.fromJson(v));
       });
     }
+    preferredPaymentMode = json['preferred_payment_mode'];
   }
 
   Map<String, dynamic> toJson() {
@@ -207,6 +211,7 @@ class Profile {
     data['total_reviews'] = totalReviews;
     data['bio'] = bio;
     data['subscription_tier'] = subscriptionTier ?? 'NONE';
+    data['preferred_payment_mode'] = preferredPaymentMode ?? 'ON_SITE';
     if (performanceBadges != null) {
       data['performance_badges'] = performanceBadges!
           .map((v) => v.toJson())

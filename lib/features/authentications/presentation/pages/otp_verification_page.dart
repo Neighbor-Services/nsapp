@@ -70,7 +70,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
           if (state is SuccessVerifyOtpState) {
             customAlert(context, AlertType.success, "Verification successful!");
             Future.delayed(const Duration(seconds: 3), () {
-              Get.offAndToNamed("login");
+              if (mounted) {
+                Get.offAndToNamed("login");
+              }
             });
           }
           if (state is FailureVerifyOtpState) {

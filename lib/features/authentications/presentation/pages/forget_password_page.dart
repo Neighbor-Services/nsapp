@@ -79,7 +79,9 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
               "Password changed successfully!",
             );
             Future.delayed(const Duration(seconds: 3), () {
-              Get.offAndToNamed("/login");
+              if (mounted) {
+                Get.offAndToNamed("/login");
+              }
             });
           }
         },

@@ -43,6 +43,10 @@
 		<string>This app needs access to camera when open.</string>
 		<key>NSFaceIDUsageDescription</key>
 		<string>Authenticate using face id?</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Your location is used to provide real-time updates on requests and identify job providers nearby, even when the app is in the background.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Your location is used to provide real-time updates on requests and identify job providers nearby, even when the app is in the background.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Your location is used to provide real-time update on requests and job provider nearby on the map</string>
 		<key>NSPhotoLibraryUsageDescription</key>
