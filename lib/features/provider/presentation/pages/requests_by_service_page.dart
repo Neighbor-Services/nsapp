@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class RequestsByServicePage extends StatefulWidget {
   final String serviceId;
@@ -49,15 +49,9 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
-    final backBtnColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final backBtnIconColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
+    final backBtnIconColor = context.appColors.primaryTextColor;
 
     return Scaffold(
       body: GradientBackground(
@@ -66,7 +60,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -76,14 +70,13 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: backBtnColor,
+                          color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isDark
-                                ? Colors.white.withAlpha(40)
-                                : Colors.black.withAlpha(20),
+                            color: context.appColors.glassBorder,
+                            width: 1.5,
                           ),
                         ),
                         child: Icon(
@@ -99,19 +92,22 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.serviceName,
+                            widget.serviceName.toUpperCase(),
                             style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w900,
                               color: textColor,
+                              letterSpacing: 1.2,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "Available Requests",
+                            "AVAILABLE REQUESTS",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
                               color: secondaryTextColor,
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ],
@@ -172,7 +168,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                           }
 
                           return ListView.separated(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: 20,
                               vertical: 16,
                             ),
@@ -212,14 +208,9 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     final request = requestData.request;
     if (request == null) return const SizedBox.shrink();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
-    final locationIconColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(120);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
+    final locationIconColor = context.appColors.glassBorder;
 
     return GestureDetector(
       onTap: () {
@@ -238,7 +229,9 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
         );
       },
       child: SolidContainer(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
+        borderColor: context.appColors.glassBorder,
+        borderWidth: 1.5,
         // backgroundColor handled by SolidContainer
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,11 +240,12 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
               children: [
                 Expanded(
                   child: Text(
-                    request.title ?? "Untitled Request",
+                    request.title?.toUpperCase() ?? "UNTITLED REQUEST",
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
                       color: textColor,
+                      letterSpacing: 0.5,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -282,12 +276,12 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                 ),
                 if (request.distance != null) ...[
                   const SizedBox(width: 12),
-                  const Icon(Icons.near_me, color: appOrangeColor1, size: 16),
+                  Icon(Icons.near_me, color: context.appColors.secondaryColor, size: 16),
                   const SizedBox(width: 4),
                   Text(
                     "${request.distance!.toStringAsFixed(1)} km",
-                    style: const TextStyle(
-                      color: appOrangeColor1,
+                    style: TextStyle(
+                      color: context.appColors.secondaryColor,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -302,14 +296,14 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                 children: [
                   Icon(
                     Icons.people_outline,
-                    color: Colors.blue.withAlpha(200),
+                    color: context.appColors.infoColor.withAlpha(200),
                     size: 16,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     "${request.proposalsCount} proposal${request.proposalsCount! > 1 ? 's' : ''}",
                     style: TextStyle(
-                      color: Colors.blue.withAlpha(200),
+                      color: context.appColors.infoColor.withAlpha(200),
                       fontSize: 12,
                     ),
                   ),
@@ -326,31 +320,35 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     Color color;
     switch (status?.toUpperCase()) {
       case 'OPEN':
-        color = Colors.green;
+        color = context.appColors.successColor;
         break;
       case 'IN_PROGRESS':
-        color = Colors.blue;
+        color = context.appColors.infoColor;
         break;
       case 'COMPLETED':
         color = Colors.grey;
         break;
       default:
-        color = Colors.green;
+        color = context.appColors.successColor;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withAlpha(30),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withAlpha(100)),
+        border: Border.all(
+          color: color.withAlpha(100),
+          width: 1.5,
+        ),
       ),
       child: Text(
         status?.toUpperCase() ?? "OPEN",
         style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
+          fontSize: 8,
+          fontWeight: FontWeight.w900,
           color: color,
+          letterSpacing: 0.5,
         ),
       ),
     );

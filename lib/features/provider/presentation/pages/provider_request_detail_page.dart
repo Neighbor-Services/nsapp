@@ -12,6 +12,7 @@ import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import '../../../shared/presentation/bloc/shared_bloc.dart';
 import '../../../shared/presentation/widget/loading_widget.dart';
 
@@ -92,7 +93,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 700),
+                    constraints: BoxConstraints(maxWidth: 700),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: SingleChildScrollView(
@@ -114,49 +115,30 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                     );
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(25)
-                                          : Colors.white,
+                                      color: context.appColors.cardBackground,
                                       borderRadius: BorderRadius.circular(14),
                                       border: Border.all(
-                                        color: isDark
-                                            ? Colors.white.withAlpha(40)
-                                            : Colors.black.withAlpha(10),
-                                        width: 1,
+                                        color: context.appColors.glassBorder,
+                                        width: 1.5,
                                       ),
-                                      boxShadow: isDark
-                                          ? null
-                                          : [
-                                              BoxShadow(
-                                                color: Colors.black.withAlpha(
-                                                  5,
-                                                ),
-                                                blurRadius: 10,
-                                                spreadRadius: 2,
-                                              ),
-                                            ],
                                     ),
                                     child: Icon(
                                       Icons.arrow_back_ios_new_rounded,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Colors.black87,
+                                      color: context.appColors.primaryTextColor,
                                       size: 20,
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 Text(
-                                  "Request Details",
+                                  "REQUEST DETAILS",
                                   style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.black87,
-                                    letterSpacing: -0.5,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: context.appColors.primaryTextColor,
+                                    letterSpacing: 1.2,
                                   ),
                                 ),
                                 const Spacer(),
@@ -173,14 +155,10 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                     );
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: appDeepBlueColor1.withAlpha(40),
+                                      color: context.appColors.primaryColor,
                                       borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(
-                                        color: appDeepBlueColor1.withAlpha(80),
-                                        width: 1,
-                                      ),
                                     ),
                                     child: const Icon(
                                       Icons.chat_bubble_rounded,
@@ -227,18 +205,10 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 80 : 30),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        
         border: Border.all(
-          color: isDark
-              ? Colors.white.withAlpha(30)
-              : Colors.black.withAlpha(5),
-          width: 1,
+          color: context.appColors.glassBorder,
+          width: 1.5,
         ),
       ),
       child: ClipRRect(
@@ -290,23 +260,19 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
               child: Container(
                 height: 120,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [Colors.black.withAlpha(180), Colors.transparent],
-                  ),
+                 
                 ),
               ),
             ),
             if (!hasImage)
-              const Center(
+              Center(
                 child: Text(
                   "NO IMAGE PROVIDED",
                   style: TextStyle(
-                    color: Colors.white24,
+                    color: context.appColors.primaryTextColor,
                     letterSpacing: 2,
                     fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
               ),
@@ -318,37 +284,26 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
 
   Widget _buildUserInfoCard(dynamic user, dynamic request, bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withAlpha(20) : Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withAlpha(30)
-              : Colors.black.withAlpha(10),
+          color: context.appColors.glassBorder,
+          width: 1.5,
         ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
       ),
       child: Row(
         children: [
           Container(
             decoration: BoxDecoration(
+              
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white.withAlpha(40), width: 2),
             ),
             child: CircleAvatar(
               radius: 30,
-              backgroundColor: isDark
-                  ? Colors.white.withAlpha(10)
-                  : Colors.black.withAlpha(5),
+              backgroundColor: context.appColors.glassBorder,
               backgroundImage:
                   (user.profilePictureUrl != null &&
                       user.profilePictureUrl != "")
@@ -365,11 +320,12 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      user.firstName ?? "User",
+                      (user.firstName ?? "User").toUpperCase(),
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: context.appColors.primaryTextColor,
+                        letterSpacing: 0.5,
                       ),
                     ),
                     _buildStatusBadge(
@@ -382,23 +338,24 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.orangeAccent.withAlpha(30),
+                        color: context.appColors.primaryColor.withAlpha(30),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: Colors.orangeAccent.withAlpha(50),
+                          color: context.appColors.primaryColor.withAlpha(50),
                         ),
                       ),
                       child: Text(
-                        request.service?.name ?? "Service",
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orangeAccent,
+                        (request.service?.name ?? "Service").toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: context.appColors.primaryColor,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -409,9 +366,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                       ).format(request.createdAt ?? DateTime.now()),
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark
-                            ? Colors.white.withAlpha(120)
-                            : Colors.black54,
+                        color: context.appColors.secondaryTextColor,
                       ),
                     ),
                   ],
@@ -427,33 +382,23 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   Widget _buildRequestDetailsCard(dynamic request, bool isDark) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withAlpha(15) : Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withAlpha(25)
-              : Colors.black.withAlpha(10),
+          color: context.appColors.glassBorder,
+          width: 1.5,
         ),
-        boxShadow: isDark
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+               Icon(
                 Icons.info_outline_rounded,
-                color: Colors.blueAccent,
+                color: context.appColors.primaryColor,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -461,23 +406,21 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                 "REQUEST SUMMARY",
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                   letterSpacing: 1.2,
-                  color: isDark
-                      ? Colors.white.withAlpha(160)
-                      : Colors.black54.withAlpha(180),
+                  color: context.appColors.secondaryTextColor,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
           Text(
-            request.title ?? "Service Request",
+            (request.title ?? "Service Request").toUpperCase(),
             style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
-              letterSpacing: -0.5,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: context.appColors.primaryTextColor,
+              letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 12),
@@ -486,7 +429,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
             style: TextStyle(
               fontSize: 15,
               height: 1.6,
-              color: isDark ? Colors.white.withAlpha(180) : Colors.black54,
+              color: context.appColors.secondaryTextColor,
             ),
           ),
         ],
@@ -501,50 +444,15 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   ) {
     final isAccepted = IsRequestAcceptedState.accepted;
 
-    return Container(
-      width: double.infinity,
+    return SolidButton(
+      label: isAccepted ? "CANCEL INTEREST" : "ACCEPT & PROPOSE",
+      allCaps: true,
+      textColor: Colors.white,
+      onPressed: () => isAccepted
+          ? _cancelRequest(context, request)
+          : _acceptRequest(context, request),
+      isPrimary: !isAccepted,
       height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: (isAccepted ? Colors.redAccent : appDeepBlueColor1)
-                .withAlpha(isDark ? 80 : 30),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: () => isAccepted
-            ? _cancelRequest(context, request)
-            : _acceptRequest(context, request),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isAccepted ? Colors.redAccent : appDeepBlueColor1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 0,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isAccepted ? Icons.close_rounded : Icons.check_rounded,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              isAccepted ? "Cancel Interest" : "Accept & Propose",
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -582,28 +490,28 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     IconData icon;
     switch (status.toUpperCase()) {
       case 'DONE':
-        color = Colors.blueAccent;
+        color = context.appColors.infoColor;
         icon = Icons.verified_rounded;
         break;
       case 'IN_PROGRESS':
-        color = Colors.orangeAccent;
+        color = context.appColors.warningColor;
         icon = Icons.timelapse_rounded;
         break;
       case 'CANCELLED':
-        color = Colors.redAccent;
+        color = context.appColors.errorColor;
         icon = Icons.cancel_rounded;
         break;
       default:
-        color = Colors.greenAccent;
+        color = context.appColors.successColor;
         icon = Icons.new_releases_rounded;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withAlpha(30),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withAlpha(60), width: 1),
+        color: context.appColors.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withAlpha(150), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -611,11 +519,12 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
           Text(
-            status,
+            status.toUpperCase(),
             style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
               color: color,
+              letterSpacing: 0.5,
             ),
           ),
         ],

@@ -9,6 +9,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class CreateDisputePageNew extends StatefulWidget {
   const CreateDisputePageNew({super.key});
@@ -45,9 +46,9 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
     if (_formKey.currentState!.validate()) {
       if (_selectedUserId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+           SnackBar(
             content: Text('Please select a user to dispute against'),
-            backgroundColor: Colors.red,
+            backgroundColor: context.appColors.errorColor,
           ),
         );
         return;
@@ -65,283 +66,289 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(
-          'Raise Dispute',
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withAlpha(50)
-                  : Colors.black.withAlpha(10),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: textColor,
-              size: 18,
-            ),
-          ),
-        ),
-      ),
-      body: GradientBackground(
-        child: BlocConsumer<SharedBloc, SharedState>(
-          listener: (context, state) {
-            if (state is SuccessCreateDisputeState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Dispute raised successfully.'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              context.read<SharedBloc>().add(GetMyDisputesEvent());
-              Navigator.pop(context);
-            } else if (state is FailureCreateDisputeState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Failed to raise dispute. Please try again.'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 100, 20, 20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header Section
-                    SolidContainer(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
+      
+      body: SafeArea(
+        child: GradientBackground(
+          child: BlocConsumer<SharedBloc, SharedState>(
+            listener: (context, state) {
+              if (state is SuccessCreateDisputeState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                   SnackBar(
+                    content: Text('Dispute raised successfully.'),
+                    backgroundColor: context.appColors.successColor,
+                  ),
+                );
+                context.read<SharedBloc>().add(GetMyDisputesEvent());
+                Navigator.pop(context);
+              } else if (state is FailureCreateDisputeState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                   SnackBar(
+                    content: Text('Failed to raise dispute. Please try again.'),
+                    backgroundColor: context.appColors.errorColor,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              return ListView(
+                
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Container(
+                    margin: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: context.appColors.glassBorder,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: textColor,
+                      size: 18,
+                    ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 16),
+                                  Text(
+                                    'Raise Dispute'.toUpperCase(),
+                                    style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 20),
+                                  ),
+                      ],
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: Colors.orange.withAlpha(30),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: Colors.orange.withAlpha(50),
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.gavel_rounded,
-                              color: Colors.orange,
-                              size: 28,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          // Header Section
+                          SolidContainer(
+                            padding: EdgeInsets.all(20),
+                            child: Row(
                               children: [
-                                Text(
-                                  'Raise a Dispute',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
+                                Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    color: context.appColors.primaryColor.withAlpha(30),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: context.appColors.primaryColor.withAlpha(50),
+                                    ),
+                                  ),
+                                  child:   Icon(
+                                    Icons.gavel_rounded,
+                                    color: context.appColors.primaryColor,
+                                    size: 28,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Report an issue with a user',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: secondaryTextColor,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Raise a Dispute',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: textColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Report an issue with a user',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: secondaryTextColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // User Selection Section
-                    SolidContainer(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Who are you disputing against?',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: textColor.withAlpha(200),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          GestureDetector(
-                            onTap: () {
-                              _showUserSelectionDialog(
-                                isDark,
-                                textColor,
-                                secondaryTextColor,
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withAlpha(10)
-                                    : Colors.black.withAlpha(5),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(30)
-                                      : Colors.black.withAlpha(10),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.person_outline_rounded,
-                                    color: secondaryTextColor,
+                          const SizedBox(height: 24),
+                  
+                          // User Selection Section
+                          SolidContainer(
+                            padding: EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Who are you disputing against?',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: textColor.withAlpha(200),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      _selectedUserName ?? 'Select a user',
-                                      style: TextStyle(
-                                        color: _selectedUserName != null
-                                            ? textColor
-                                            : textColor.withAlpha(100),
-                                        fontSize: 15,
+                                ),
+                                const SizedBox(height: 16),
+                                GestureDetector(
+                                  onTap: () {
+                                    _showUserSelectionDialog(
+                                  
+                                      textColor,
+                                      secondaryTextColor
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.glassBorder,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
                                       ),
                                     ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.person_outline_rounded,
+                                          color: secondaryTextColor,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            _selectedUserName ?? 'Select a user',
+                                            style: TextStyle(
+                                              color: _selectedUserName != null
+                                                  ? textColor
+                                                  : textColor.withAlpha(100),
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          color: secondaryTextColor,
+                                          size: 16,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    color: secondaryTextColor,
-                                    size: 16,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                  
+                          // Form Section
+                          SolidContainer(
+                            padding: EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Dispute Details',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: textColor.withAlpha(200),
                                   ),
-                                ],
+                                ),
+                                const SizedBox(height: 20),
+                                SolidTextField(
+                                  controller: _reasonController,
+                                  hintText: 'Reason for dispute',
+                                  prefixIcon: Icons.warning_amber_rounded,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a reason';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                                SolidTextField(
+                                  controller: _descriptionController,
+                                  hintText: 'Describe the issue in detail',
+                                  // prefixIcon: Icons.description_outlined,
+                                  isMultiLine: true,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please describe the issue';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                  
+                          // Info Card
+                          Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: context.appColors.warningColor.withAlpha(40),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: context.appColors.warningColor.withAlpha(100),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Form Section
-                    SolidContainer(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Dispute Details',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: textColor.withAlpha(200),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline_rounded,
+                                  color: context.appColors.warningColor.withAlpha(200),
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Our team will review your dispute within 24-48 hours',
+                                    style: TextStyle(
+                                      color: context.appColors.warningColor,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          SolidTextField(
-                            controller: _reasonController,
-                            hintText: 'Reason for dispute',
-                            prefixIcon: Icons.warning_amber_rounded,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a reason';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          SolidTextField(
-                            controller: _descriptionController,
-                            hintText: 'Describe the issue in detail',
-                            prefixIcon: Icons.description_outlined,
-                            isMultiLine: true,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please describe the issue';
-                              }
-                              return null;
-                            },
+                          const SizedBox(height: 24),
+                  
+                          // Submit Button
+                          SolidButton(
+                            label: 'Submit Dispute',
+                            isLoading: state is SharedLoadingState,
+                            onPressed: _submitDispute,
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
-
-                    // Info Card
-                    SolidContainer(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.info_outline_rounded,
-                            color: Colors.blue.withAlpha(200),
-                            size: 24,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'Our team will review your dispute within 24-48 hours',
-                              style: TextStyle(
-                                color: secondaryTextColor,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Submit Button
-                    SolidButton(
-                      label: 'Submit Dispute',
-                      isLoading: state is SharedLoadingState,
-                      onPressed: _submitDispute,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   void _showUserSelectionDialog(
-    bool isDark,
     Color textColor,
     Color secondaryTextColor,
   ) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: isDark
-            ? const Color(0xFF1E1E2E).withAlpha(240)
-            : Colors.white.withAlpha(245),
+        backgroundColor: context.appColors.cardBackground,
         title: Text(
           'Select User',
           style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
@@ -392,16 +399,12 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                   final user = chat.other;
 
                   return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
+                    margin: EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withAlpha(10)
-                          : Colors.black.withAlpha(5),
+                      color: context.appColors.cardBackground,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isDark
-                            ? Colors.white.withAlpha(30)
-                            : Colors.black.withAlpha(10),
+                        color: context.appColors.glassBorder,
                       ),
                     ),
                     child: ListTile(
@@ -412,11 +415,11 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                         });
                         if (_selectedUserId == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                             SnackBar(
                               content: Text(
                                 'Cannot select this user (missing user ID)',
                               ),
-                              backgroundColor: Colors.red,
+                              backgroundColor: context.appColors.errorColor,
                             ),
                           );
                           return;
@@ -424,9 +427,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                         Navigator.pop(dialogContext);
                       },
                       leading: CircleAvatar(
-                        backgroundColor: isDark
-                            ? Colors.white10
-                            : Colors.black12,
+                        backgroundColor: context.appColors.glassBorder,
                         backgroundImage:
                             (user?.profilePictureUrl != null &&
                                 user!.profilePictureUrl!.isNotEmpty)

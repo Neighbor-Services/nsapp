@@ -15,14 +15,8 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(20);
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(60)
-        : Colors.black.withAlpha(20);
+    final backgroundColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
 
     return BlocBuilder<MessageBloc, MessageState>(
       builder: (context, messageState) {
@@ -33,17 +27,15 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
               builder: (context, state) {
                 return Container(
                   height: 72,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: backgroundColor,
-                    border: Border.all(color: borderColor, width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: shadowColor,
-                        blurRadius: 25,
-                        offset: const Offset(0, 10),
+                    border: Border(
+                      top: BorderSide(
+                        color: borderColor,
+                        width: 1.5,
                       ),
-                    ],
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -51,6 +43,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                       _buildNavIcon(
                         context: context,
                         icon: Icons.home_rounded,
+                        label: 'Home',
                         isActive: NavigatorProviderState.page == 1,
                         onTap: () {
                           context.read<ProviderBloc>().add(
@@ -64,6 +57,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                       _buildNavIcon(
                         context: context,
                         icon: Icons.notifications_rounded,
+                        label: 'Notifications',
                         isActive: NavigatorProviderState.page == 2,
                         badgeCount: SuccessGetMyNotificationsState.unreadCount,
                         onTap: () {
@@ -79,6 +73,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                       _buildNavIcon(
                         context: context,
                         icon: Icons.chat_bubble_rounded,
+                        label: 'Chat',
                         isActive: NavigatorProviderState.page == 4,
                         badgeCount:
                             SuccessGetMyMessagesState.unreadMessageCount,
@@ -94,6 +89,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                       _buildNavIcon(
                         context: context,
                         icon: Icons.calendar_month_rounded,
+                        label: 'Appointments',
                         isActive: NavigatorProviderState.page == 5,
                         onTap: () {
                           context.read<ProviderBloc>().add(
@@ -118,53 +114,36 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
   Widget _buildNavIcon({
     required BuildContext context,
     required IconData icon,
+    required String label,
     required bool isActive,
     required VoidCallback onTap,
     int badgeCount = 0,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final inactiveColor = isDark
-        ? Colors.white.withAlpha(160)
-        : Colors.black.withAlpha(100);
+    final inactiveColor = context.appColors.hintTextColor;
 
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Badge(
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: context.appColors.errorColor,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 icon,
                 size: 26,
-                color: isActive ? appDeepBlueColor1 : inactiveColor,
+                color: isActive ? context.appColors.primaryColor : inactiveColor,
               ),
-              if (isActive) ...[
                 const SizedBox(height: 4),
-                Container(
-                  width: 4,
-                  height: 4,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: appDeepBlueColor1,
-                    boxShadow: [
-                      BoxShadow(
-                        color: appDeepBlueColor1,
-                        blurRadius: 6,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9)),
+             
             ],
           ),
         ),
@@ -180,28 +159,27 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
         );
       },
       child: Container(
-        width: 48,
-        height: 48,
+        width: 52,
+        height: 52,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [appDeepBlueColor1, Color(0xFF4A90E2)],
+          color: context.appColors.primaryColor,
+          border: Border.all(
+            color: Colors.white24,
+            width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: appDeepBlueColor1.withAlpha(100),
+              color: context.appColors.primaryColor.withAlpha(80),
               blurRadius: 12,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             ),
           ],
         ),
         child: Center(
-          child: Image.asset(
-            providerJobLogo,
-            width: 24,
-            height: 24,
+          child: Icon(
+            Icons.work_rounded,
+            size: 26,
             color: Colors.white,
           ),
         ),

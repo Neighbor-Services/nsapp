@@ -29,7 +29,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                   height: size(context).height,
                   child: InteractiveViewer(
                     panEnabled: true,
-                    boundaryMargin: const EdgeInsets.all(20),
+                    boundaryMargin: EdgeInsets.all(20),
                     minScale: 0.5,
                     maxScale: 5,
                     child: CachedNetworkImage(
@@ -70,7 +70,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                 child: GestureDetector(
                   onTap: () => Get.back(),
                   child: Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.black.withAlpha(50),
                       shape: BoxShape.circle,

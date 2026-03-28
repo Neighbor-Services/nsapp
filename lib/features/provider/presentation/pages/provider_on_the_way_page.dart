@@ -5,6 +5,7 @@ import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/services/tracking_service.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 
 class ProviderOnTheWayPage extends StatefulWidget {
   final String appointmentId;
@@ -67,11 +68,14 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
             left: 20,
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              child: const SolidContainer(
+              child: SolidContainer(
                 padding: EdgeInsets.all(12),
+                borderRadius: BorderRadius.circular(12),
+                borderColor: context.appColors.glassBorder,
+                borderWidth: 1.5,
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white,
+                  color: context.appColors.primaryTextColor,
                   size: 20,
                 ),
               ),
@@ -82,41 +86,44 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
             left: 20,
             right: 20,
             child: SolidContainer(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.green.withAlpha(50),
+                          color: context.appColors.successColor.withAlpha(50),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child:  Icon(
                           Icons.navigation_rounded,
-                          color: Colors.green,
+                          color: context.appColors.successColor,
                         ),
                       ),
                       const SizedBox(width: 16),
-                      const Expanded(
+                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "You are on the way",
+                              "YOU ARE ON THE WAY",
                               style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                                color: context.appColors.primaryTextColor,
+                                fontWeight: FontWeight.w900,
                                 fontSize: 16,
+                                letterSpacing: 0.5,
                               ),
                             ),
                             Text(
-                              "Your location is being shared with the seeker.",
+                              "YOUR LOCATION IS SHARED WITH THE SEEKER.",
                               style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
+                                color: context.appColors.secondaryTextColor.withAlpha(150),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 9,
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ],
@@ -125,24 +132,14 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
+                  SolidButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    child: const Text(
-                      "I have Arrived",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    label: "I HAVE ARRIVED",
+                    allCaps: true,
+                    isPrimary: true,
+                    height: 50,
                   ),
                 ],
               ),

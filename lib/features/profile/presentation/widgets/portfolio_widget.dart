@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -10,6 +9,7 @@ import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/profile/presentation/widgets/portfolio_gallery.dart';
+import 'package:nsapp/core/core.dart';
 
 class PortfolioWidget extends StatefulWidget {
   const PortfolioWidget({super.key});
@@ -39,7 +39,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
             return FutureBuilder<Profile?>(
@@ -63,7 +63,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                     final aboutData = aboutSnapshot.data ?? AboutData();
 
                     return ListView(
-                      padding: const EdgeInsets.only(bottom: 40),
+                      padding: EdgeInsets.only(bottom: 40),
                       physics: const BouncingScrollPhysics(),
                       children: [
                         if (aboutData.about != null) ...[
@@ -141,23 +141,17 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                   Icon(
                                     Icons.photo_library_rounded,
                                     color:
-                                        (Theme.of(context).brightness ==
-                                            Brightness.dark)
-                                        ? Colors.white
-                                        : Colors.black87,
+                                        context.appColors.primaryBackground,
                                     size: 20,
                                   ),
                                   const SizedBox(width: 12),
                                   CustomTextWidget(
                                     text: "PORTFOLIO",
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w900,
                                     fontSize: 18,
                                     color:
-                                        (Theme.of(context).brightness ==
-                                            Brightness.dark)
-                                        ? Colors.white
-                                        : Colors.black87,
-                                    letterSpacing: 0.5,
+                                        context.appColors.primaryBackground,
+                                    letterSpacing: 1.2,
                                   ),
                                 ],
                               ),
@@ -176,16 +170,13 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
                                         color:
-                                            (Theme.of(context).brightness ==
-                                                Brightness.dark)
-                                            ? Colors.white.withAlpha(30)
-                                            : Colors.black.withAlpha(10),
+                                            context.appColors.glassBorder,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withAlpha(40),
                                           blurRadius: 10,
-                                          offset: const Offset(0, 4),
+                                          offset: Offset(0, 4),
                                         ),
                                       ],
                                     ),
@@ -226,7 +217,6 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     required String title,
     required String content,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SolidContainer(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -236,38 +226,46 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withAlpha(20)
-                      : Colors.orange.withAlpha(30),
-                  borderRadius: BorderRadius.circular(10),
+                  color: context.appColors.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: appOrangeColor1, size: 20),
+                child: Icon(
+                  icon,
+                  color: context.appColors.primaryColor,
+                  size: 20,
+                ),
               ),
-              const SizedBox(width: 12),
-              CustomTextWidget(
-                text: title,
-                fontWeight: FontWeight.w800,
-                fontSize: 12,
-                color: isDark ? Colors.white.withAlpha(150) : Colors.black54,
-                letterSpacing: 1.2,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: context.appColors.primaryTextColor,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(
-              color: isDark ? Colors.white12 : Colors.black12,
               height: 1,
+              thickness: 0.5,
             ),
           ),
-          CustomTextWidget(
-            text: content.toUpperCase(),
-            color: isDark ? Colors.white : Colors.black87,
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            height: 1.5,
+          Text(
+            content.toUpperCase(),
+            style: TextStyle(
+              color: context.appColors.primaryTextColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
           ),
         ],
       ),

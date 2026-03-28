@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 const Color appOrangeColor1 = Color(0xFFFCA34D);
 const Color appOrangeColor2 = Color(0xFFFBB359);
 const Color appLightPurpleColor1 = Color(0xFFD6CDFE);
-const Color appDeepBlueColor1 = Color(0xFF1564C0);
-const Color appDeepBlueColor2 = Color(0xFF0D47A1); // Deep blue for backgrounds
+const Color appDeepBlueColor1 = Color(0xFF5E17EB);
+const Color appDeepBlueColor2 = Color(0xFF5E17EB); // Deep blue for backgrounds
 const Color appSuffixIconColor = Color(0xFF60778C);
 const Color appShadowColor = Color(0xFF99ABC6);
 const Color appSmallTextColor = Color(0xFF524B6B);
 const Color appBackgroundColor = Color(0xFFF9F9F9);
-const Color appBlueCardColor = Color(0xFF130160);
-const Color appLightBlueCard = Color(0xFFAFECFE);
+const Color appBlueCardColor = Color(0xFF5E17EB);
+const Color appLightBlueCard = Color(0xFFF5F5F5);
 const Color appMiddleBlueCard = Color(0xFFBEAFFE);
 const Color appCardFooterColor = Color(0xFFC4C4C4);
 const Color appFilterAppBarColor = Color(0xFF0D0140);
@@ -20,6 +20,10 @@ const Color appBlackColor = Color(0xFF000000);
 const Color appGreyColor = Color(0xFF999999);
 const Color appLightTextColor = Color(0xFF60778C);
 const Color appDarkTextColor = Color(0xFF333333);
+const Color appSuccessColor = Color(0xFF4CAF50);
+const Color appErrorColor = Color(0xFFE53935);
+const Color appWarningColor = Color(0xFFFFB300);
+const Color appInfoColor = Color(0xFF1E88E5);
 
 // Glassmorphism Colors
 const Color glassWhite = Color(0x1AFFFFFF);

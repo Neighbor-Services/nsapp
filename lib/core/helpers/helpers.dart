@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_directions/google_maps_directions.dart' as gmd;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/constants/urls.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/account_link.dart';
 import 'package:nsapp/core/models/customer.dart';
@@ -22,6 +21,7 @@ import 'package:nsapp/core/services/dialog_utils.dart';
 import 'package:nsapp/core/services/location_service.dart';
 import 'package:nsapp/core/utils/media_utils.dart';
 import 'package:nsapp/core/utils/date_utils_helper.dart';
+import 'package:nsapp/core/core.dart';
 
 export 'package:nsapp/core/services/payment_service.dart';
 export 'package:nsapp/core/services/dialog_utils.dart';
@@ -143,13 +143,13 @@ servicesWidget(List<Service> services, BuildContext context) {
   return services.map((service) {
     if (services.indexOf(service) < 5) {
       return Container(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        margin: const EdgeInsets.all(5),
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        margin: EdgeInsets.all(5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: isDark ? Colors.white.withAlpha(20) : Colors.white,
+          color: context.appColors.surfaceBackground,
           border: Border.all(
-            color: isDark ? Colors.white12 : Colors.black.withAlpha(10),
+            color: context.appColors.glassBorder,
           ),
           boxShadow: isDark
               ? null
@@ -157,13 +157,13 @@ servicesWidget(List<Service> services, BuildContext context) {
                   BoxShadow(
                     color: Colors.black.withAlpha(5),
                     blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                 ],
         ),
         child: CustomTextWidget(
           text: service.name ?? "",
-          color: isDark ? Colors.white : Colors.black87,
+          color: context.appColors.primaryTextColor,
         ),
       );
     } else {
@@ -176,13 +176,13 @@ allServicesWidget(List<Service> services, BuildContext context) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
   return services.map((service) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-      margin: const EdgeInsets.all(5),
+      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+      margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: isDark ? const Color(0xFF2E2E3E) : Colors.white,
+        color: context.appColors.cardBackground,
         border: Border.all(
-          color: isDark ? Colors.white12 : Colors.black.withAlpha(10),
+          color: context.appColors.glassBorder,
         ),
         boxShadow: isDark
             ? null
@@ -190,13 +190,13 @@ allServicesWidget(List<Service> services, BuildContext context) {
                 BoxShadow(
                   color: Colors.black.withAlpha(5),
                   blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  offset: Offset(0, 4),
                 ),
               ],
       ),
       child: CustomTextWidget(
         text: service.name ?? "",
-        color: isDark ? Colors.white : Colors.black87,
+        color: context.appColors.primaryTextColor,
         fontWeight: FontWeight.w500,
       ),
     );

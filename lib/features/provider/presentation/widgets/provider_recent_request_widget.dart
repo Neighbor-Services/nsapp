@@ -7,6 +7,7 @@ import 'package:nsapp/features/provider/presentation/pages/provider_request_deta
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
 import '../../../shared/presentation/widget/empty_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProviderRecentRequestWidget extends StatefulWidget {
   const ProviderRecentRequestWidget({super.key});
@@ -38,22 +39,12 @@ class _ProviderRecentRequestWidgetState
   }
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withValues(alpha: 0.7)
-        : const Color(0xFF1E1E2E).withValues(alpha: 0.7);
-    final cardColor = isDark ? const Color(0xFF2D2D44) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.1);
-    final decorativeCircleColor = isDark
-        ? Colors.white.withValues(alpha: 0.05)
-        : Colors.black.withValues(alpha: 0.05);
-    final tagBgColor = isDark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.05);
+    Widget build(BuildContext context) {
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
+    final cardColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final tagBgColor = context.appColors.glassBorder;
 
     return BlocBuilder<ProviderBloc, ProviderState>(
       builder: (context, state) {
@@ -87,21 +78,18 @@ class _ProviderRecentRequestWidgetState
                       },
                       child: Container(
                         width: 260,
-                        margin: const EdgeInsets.only(
+                        margin: EdgeInsets.only(
                           right: 20,
                           bottom: 10,
                           top: 4,
                         ),
                         decoration: BoxDecoration(
+                          color: cardColor,
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: borderColor),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 15,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
+                          border: Border.all(
+                            color: borderColor,
+                            width: 1.5,
+                          ),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(24),
@@ -109,20 +97,10 @@ class _ProviderRecentRequestWidgetState
                             fit: StackFit.expand,
                             children: [
                               Container(color: cardColor),
-                              Positioned(
-                                top: -20,
-                                right: -20,
-                                child: Container(
-                                  width: 120,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: decorativeCircleColor,
-                                  ),
-                                ),
-                              ),
+                              // Removed decorative circle for solid aesthetic
+                              const SizedBox.shrink(),
                               Padding(
-                                padding: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -146,14 +124,10 @@ class _ProviderRecentRequestWidgetState
                                       children: [
                                         CircleAvatar(
                                           radius: 20,
-                                          backgroundColor: isDark
-                                              ? Colors.white.withValues(alpha: 0.1)
-                                              : Colors.black.withValues(alpha: 0.05),
+                                          backgroundColor: context.appColors.glassBorder,
                                           child: Icon(
                                             Icons.person,
-                                            color: isDark
-                                                ? Colors.white
-                                                : Colors.black54,
+                                            color: context.appColors.primaryTextColor,
                                             size: 20,
                                           ),
                                         ),
@@ -168,8 +142,9 @@ class _ProviderRecentRequestWidgetState
                                                     "User",
                                                 style: TextStyle(
                                                   color: textColor,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w900,
                                                   fontSize: 16,
+                                                  letterSpacing: 0.5,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -192,7 +167,7 @@ class _ProviderRecentRequestWidgetState
                                                           : "Distance N/A",
                                                       style: TextStyle(
                                                         color:
-                                                            secondaryTextColor,
+                                                            context.appColors.hintTextColor,
                                                         fontSize: 12,
                                                       ),
                                                       maxLines: 1,
@@ -236,17 +211,18 @@ class _ProviderRecentRequestWidgetState
 
   Widget _buildTag(String label, Color bgColor, Color textColor) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: context.appColors.glassBorder,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        label,
+        label.toUpperCase(),
         style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: textColor,
+          fontSize: 8,
+          fontWeight: FontWeight.w900,
+          color: context.appColors.primaryTextColor,
+          letterSpacing: 0.5,
         ),
       ),
     );
@@ -256,31 +232,31 @@ class _ProviderRecentRequestWidgetState
     Color color;
     switch (status.toUpperCase()) {
       case 'DONE':
-        color = const Color.fromARGB(255, 20, 117, 72);
+        color = Color.fromARGB(255, 20, 117, 72);
         break;
       case 'IN_PROGRESS':
-        color = const Color.fromARGB(255, 10, 83, 143);
+        color = Color.fromARGB(255, 10, 83, 143);
         break;
       case 'CANCELLED':
-        color = Colors.red;
+        color = context.appColors.errorColor;
         break;
       default:
-        color = const Color.fromARGB(255, 129, 81, 4);
+        color = Color.fromARGB(255, 129, 81, 4);
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
+        color: color,
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         status.toUpperCase(),
         style: TextStyle(
           fontSize: 8,
-          fontWeight: FontWeight.bold,
-          color: color,
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
+          letterSpacing: 0.5,
         ),
       ),
     );

@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/core/constants/urls.dart';
+import 'package:nsapp/core/core.dart';
 
 class SenderChatImageWidget extends StatelessWidget {
   final String message;
@@ -34,13 +33,10 @@ class SenderChatImageWidget extends StatelessWidget {
       finalUrl = finalUrl.replaceFirst('http://', 'https://');
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final timestampColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black54;
+    final timestampColor = context.appColors.secondaryTextColor;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),
+      padding: EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),
       child: Align(
         alignment: Alignment.centerRight,
         child: GestureDetector(
@@ -52,26 +48,20 @@ class SenderChatImageWidget extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
-                padding: const EdgeInsets.all(8),
+                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: appDeepBlueColor1,
-                  borderRadius: const BorderRadius.only(
+                  color: context.appColors.cardBackground,
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                     bottomLeft: Radius.circular(24),
                     bottomRight: Radius.circular(6),
                   ),
                   border: Border.all(
-                    color: Colors.white.withAlpha(30),
+                    color: context.appColors.glassBorder,
                     width: 1,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: appDeepBlueColor1.withAlpha(40),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                 
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +83,7 @@ class SenderChatImageWidget extends StatelessWidget {
                                 width: double.infinity,
                                 height: 250,
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withAlpha(5),
+                                  color: context.appColors.cardBackground,
                                   image: DecorationImage(
                                     image: AssetImage(logo2Assets),
                                     fit: BoxFit.cover,
@@ -103,7 +93,7 @@ class SenderChatImageWidget extends StatelessWidget {
                                 child: Center(
                                   child: CircularProgressIndicator(
                                     value: downloadProgress.progress,
-                                    color: Colors.white,
+                                    color: context.appColors.primaryColor,
                                     strokeWidth: 2,
                                   ),
                                 ),
@@ -111,11 +101,11 @@ class SenderChatImageWidget extends StatelessWidget {
                           errorWidget: (context, url, error) => Container(
                             height: 150,
                             width: double.infinity,
-                            color: Colors.white.withAlpha(10),
-                            child: const Icon(
+                            color: context.appColors.cardBackground,
+                            child: Icon(
                               Icons.broken_image_outlined,
                               size: 40,
-                              color: Colors.white,
+                              color: context.appColors.primaryTextColor,
                             ),
                           ),
                         ),
@@ -123,11 +113,11 @@ class SenderChatImageWidget extends StatelessWidget {
                     ),
                     if (withText)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
+                        padding: EdgeInsets.fromLTRB(8, 12, 8, 4),
                         child: SelectableText(
                           message,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: context.appColors.primaryTextColor,
                             fontSize: 15,
                             height: 1.4,
                           ),
@@ -137,7 +127,7 @@ class SenderChatImageWidget extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 4, right: 4),
+                padding: EdgeInsets.only(top: 4, right: 4),
                 child: Text(
                   DateFormat("HH:mm").format(dateTime.toLocal()),
                   style: TextStyle(

@@ -7,6 +7,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -46,11 +47,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : Colors.black54;
 
     return Scaffold(
       body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
@@ -90,7 +86,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                 opacity: _fadeAnimation,
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 500),
+                    constraints: BoxConstraints(maxWidth: 500),
                     child: Column(
                       children: [
                         // App Bar
@@ -101,24 +97,20 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                           ),
                           child: Row(
                             children: [
-                              IconButton(
-                                onPressed: () => Get.back(),
-                                icon: Container(
-                                  padding: const EdgeInsets.all(8),
+                              GestureDetector(
+                                onTap: () => Get.back(),
+                                child: Container(
+                                  padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.white.withAlpha(20)
-                                        : Colors.black.withAlpha(10),
-                                    borderRadius: BorderRadius.circular(12),
+                                    color: context.appColors.cardBackground,
+                                    shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(30)
-                                          : Colors.black.withAlpha(20),
+                                      color: context.appColors.glassBorder,
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
-                                    color: textColor,
+                                    color: context.appColors.primaryTextColor,
                                     size: 18,
                                   ),
                                 ),
@@ -130,58 +122,25 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                         Expanded(
                           child: SingleChildScrollView(
                             physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            padding: EdgeInsets.symmetric(horizontal: 24),
                             child: Column(
                               children: [
-                                const SizedBox(height: 20),
-
-                                // Icon
-                                Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: isDark
-                                          ? [
-                                              Colors.white.withAlpha(50),
-                                              Colors.white.withAlpha(20),
-                                            ]
-                                          : [
-                                              Colors.black.withAlpha(10),
-                                              Colors.black.withAlpha(5),
-                                            ],
-                                    ),
-                                    border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(40)
-                                          : Colors.black.withAlpha(20),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.lock_reset_rounded,
-                                    size: 50,
-                                    color: textColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 32),
+                                const SizedBox(height: 40),
 
                                 // Glass Container
                                 SolidContainer(
-                                  padding: const EdgeInsets.all(28),
+                                  padding: EdgeInsets.all(28),
                                   child: Form(
                                     key: formKey,
                                     child: Column(
                                       children: [
                                         Text(
-                                          "Reset Password",
+                                          "RESET PASSWORD",
                                           style: TextStyle(
                                             fontSize: 28,
-                                            fontWeight: FontWeight.bold,
-                                            color: textColor,
+                                            fontWeight: FontWeight.w900,
+                                            color: context.appColors.primaryTextColor,
+                                            letterSpacing: 1.2,
                                           ),
                                         ),
                                         const SizedBox(height: 12),
@@ -190,17 +149,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: secondaryTextColor,
+                                            color: context.appColors.secondaryTextColor,
                                             height: 1.5,
+                                            letterSpacing: 0.3,
                                           ),
                                         ),
                                         const SizedBox(height: 32),
 
                                         SolidTextField(
                                           controller: emailTextController,
-                                          label: "Email Address",
+                                          label: "EMAIL",
+                                          allCapsLabel: true,
                                           hintText: "Enter your email",
-                                          prefixIcon: Icons.email_outlined,
+                                          prefixIcon: Icons.email_rounded,
                                           keyboardType:
                                               TextInputType.emailAddress,
                                           validator: (val) {
@@ -216,6 +177,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
 
                                         SolidButton(
                                           label: "SEND VERIFICATION CODE",
+                                          allCaps: true,
                                           isLoading: _isLoading,
                                           onPressed: () {
                                             if (formKey.currentState!
@@ -236,29 +198,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 32),
 
                                 // Back to login
                                 GestureDetector(
                                   onTap: () => Get.toNamed("/login"),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_back_rounded,
-                                        size: 18,
-                                        color: secondaryTextColor,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        "Back to Login",
-                                        style: TextStyle(
-                                          color: secondaryTextColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
+                                  child: Text(
+                                    "Back to Login",
+                                    style: TextStyle(
+                                      color: context.appColors.secondaryTextColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 40),

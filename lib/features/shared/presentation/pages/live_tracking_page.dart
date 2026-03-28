@@ -90,14 +90,22 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
             left: 20,
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              child: const SolidContainer(
-                padding: EdgeInsets.all(12),
-                child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white,
-                  size: 20,
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: context.appColors.cardBackground,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: context.appColors.glassBorder,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: context.appColors.primaryTextColor,
+                    size: 20,
+                  ),
                 ),
-              ),
             ),
           ),
           Positioned(
@@ -105,21 +113,21 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
             left: 20,
             right: 20,
             child: SolidContainer(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withAlpha(50),
+                          color: context.appColors.infoColor.withAlpha(50),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child:  Icon(
                           Icons.delivery_dining_rounded,
-                          color: Colors.blue,
+                          color: context.appColors.infoColor,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -128,18 +136,21 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${widget.providerName} is on the way!",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                              "${widget.providerName} IS ON THE WAY!".toUpperCase(),
+                              style: TextStyle(
+                                color: context.appColors.primaryTextColor,
+                                fontWeight: FontWeight.w900,
                                 fontSize: 16,
+                                letterSpacing: 0.5,
                               ),
                             ),
-                            const Text(
-                              "Tracking live location...",
+                            Text(
+                              "TRACKING LIVE LOCATION...",
                               style: TextStyle(
-                                color: Colors.white70,
+                                color: context.appColors.secondaryTextColor,
                                 fontSize: 12,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.0,
                               ),
                             ),
                           ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nsapp/core/core.dart';
 
 class ReceiverChatTextWidget extends StatelessWidget {
   final String message;
@@ -13,23 +14,14 @@ class ReceiverChatTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bubbleColor = isDark
-        ? const Color(0xFF2E2E3E)
-        : const Color(0xFFEFEFEF);
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final timestampColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black54;
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(30)
-        : Colors.grey.withAlpha(20);
+    final bubbleColor = context.appColors.cardBackground;
+    final textColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
+    final timestampColor = context.appColors.glassBorder;
+    final shadowColor = context.appColors.glassBorder;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
+      padding: EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Column(
@@ -39,10 +31,10 @@ class ReceiverChatTextWidget extends StatelessWidget {
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: bubbleColor,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
                   bottomRight: Radius.circular(24),
@@ -53,7 +45,7 @@ class ReceiverChatTextWidget extends StatelessWidget {
                   BoxShadow(
                     color: shadowColor,
                     blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
@@ -68,7 +60,7 @@ class ReceiverChatTextWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 4, left: 4),
+              padding: EdgeInsets.only(top: 4, left: 4),
               child: Text(
                 DateFormat("HH:mm").format(dateTime.toLocal()),
                 style: TextStyle(

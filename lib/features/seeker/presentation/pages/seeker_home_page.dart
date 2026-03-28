@@ -13,6 +13,7 @@ import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_
 import 'package:nsapp/core/models/request_data.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerHomePage extends StatefulWidget {
   const SeekerHomePage({super.key});
@@ -59,7 +60,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
+              constraints: BoxConstraints(maxWidth: 800),
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: ListView(
@@ -127,45 +128,41 @@ class _SeekerHomePageState extends State<SeekerHomePage>
 
   Widget _buildHero(BuildContext context, bool isLargeScreen) {
     return SolidContainer(
-      padding: const EdgeInsets.all(28),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Color(0xFF8E44AD), // Deep purple
-          Color(0xFF3498DB), // Bright blue
-        ],
-      ),
+      padding: EdgeInsets.all(28),
+      backgroundColor: context.appColors.primaryColor,
+      gradient: context.appColors.primaryGradient,
+      borderRadius: BorderRadius.circular(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.auto_awesome_rounded,
-                color: Colors.yellow,
+                color: context.appColors.primaryColor,
                 size: 22,
               ),
               const SizedBox(width: 8),
               Text(
                 "SMART SEARCH",
                 style: TextStyle(
-                  color: Colors.white.withAlpha(200),
+                  color: context.appColors.primaryTextColor,
                   fontSize: 12,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   letterSpacing: 2,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          const Text(
-            "Find the Best Help\nin Seconds",
+           Text(
+            "FIND THE BEST HELP IN SECONDS",
             style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: context.appColors.primaryTextColor,
               height: 1.2,
+              letterSpacing: 1.0,
             ),
           ),
           const SizedBox(height: 24),
@@ -176,7 +173,6 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   }
 
   Widget _buildHeroSearchBar(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
         context.read<SeekerBloc>().add(
@@ -188,26 +184,28 @@ class _SeekerHomePageState extends State<SeekerHomePage>
       },
       child: Container(
         height: 56,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white : const Color(0xFFF5F5F5),
+          color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(40),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          border: Border.all(
+            color: context.appColors.glassBorder,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
-            Icon(Icons.search_rounded, color: Colors.grey[600]),
+            Icon(Icons.search_rounded, color: context.appColors.hintTextColor),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                "Search services...",
-                style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                "SEARCH SERVICES...",
+                style: TextStyle(
+                  color: context.appColors.hintTextColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.0,
+                ),
               ),
             ),
             const VerticalDivider(width: 20, indent: 15, endIndent: 15),
@@ -217,7 +215,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                   NavigateSeekerEvent(page: 1, widget: const AISearchPage()),
                 );
               },
-              child: const Icon(Icons.auto_awesome, color: Colors.purple),
+              child:  Icon(Icons.auto_awesome, color: context.appColors.primaryColor),
             ),
           ],
         ),
@@ -230,28 +228,30 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     String title, {
     VoidCallback? onViewAll,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    final textColor = context.appColors.primaryTextColor;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          title,
+          title.toUpperCase(),
           style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
             color: textColor,
+            letterSpacing: 1.2,
           ),
         ),
         if (onViewAll != null)
           TextButton(
             onPressed: onViewAll,
             child: Text(
-              "View All",
+              "VIEW ALL",
               style: TextStyle(
                 color: textColor.withAlpha(180),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w900,
+                fontSize: 12,
+                letterSpacing: 1.0,
               ),
             ),
           ),
@@ -262,7 +262,6 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   Widget _buildServicesGrid(BuildContext context) {
     final services = SuccessGetServicesState.services;
     final displayServices = services.take(2).toList();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final icons = [
       Icons.build_rounded,
@@ -273,18 +272,9 @@ class _SeekerHomePageState extends State<SeekerHomePage>
       Icons.home_repair_service_rounded,
     ];
 
-    final cardColor = isDark ? Colors.white.withAlpha(15) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(25)
-        : Colors.black.withAlpha(10);
-    final shadowColor = isDark
-        ? Colors.transparent
-        : Colors.black.withAlpha(10);
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final iconBgColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.blue.withAlpha(10);
-    final iconColor = isDark ? Colors.white : Colors.blue;
+    final cardColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
 
     return GridView.builder(
       shrinkWrap: true,
@@ -316,49 +306,36 @@ class _SeekerHomePageState extends State<SeekerHomePage>
             decoration: BoxDecoration(
               color: cardColor,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: borderColor),
-              boxShadow: [
-                BoxShadow(
-                  color: shadowColor,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              border: Border.all(
+                color: borderColor,
+                width: 1.5,
+              ),
             ),
             child: Stack(
               children: [
-                Positioned(
-                  right: -15,
-                  bottom: -15,
-                  child: Icon(
-                    icon,
-                    size: 90,
-                    color: isDark
-                        ? Colors.white.withAlpha(10)
-                        : Colors.black.withAlpha(5),
-                  ),
-                ),
+                
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: iconBgColor,
+                          color: context.appColors.primaryColor.withAlpha(40),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(icon, color: iconColor, size: 24),
+                        child: Icon(icon, color: context.appColors.primaryColor, size: 24),
                       ),
                       Text(
-                        service.name ?? "Service",
+                        (service.name ?? "SERVICE").toUpperCase(),
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
                           color: textColor,
                           height: 1.2,
+                          letterSpacing: 0.8,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -375,8 +352,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   }
 
   Widget _buildActiveRequestSection(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    final textColor = context.appColors.primaryTextColor;
 
     return BlocBuilder<SeekerBloc, SeekerState>(
       builder: (context, state) {
@@ -415,18 +391,18 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                     );
                   },
                   child: SolidContainer(
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.all(20),
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.blue.withAlpha(40),
+                            color: context.appColors.primaryColor.withAlpha(40),
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.pending_actions_rounded,
-                            color: Colors.blue,
+                            color: context.appColors.primaryColor,
                             size: 24,
                           ),
                         ),
@@ -436,21 +412,26 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                activeRequest.request?.title ?? "Project",
+                                (activeRequest.request?.title ?? "PROJECT")
+                                    .toUpperCase(),
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w900,
                                   color: textColor,
+                                  letterSpacing: 0.5,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 6),
                               Text(
-                                "Status: ${activeRequest.request?.status ?? 'Processing'}",
+                                "STATUS: ${activeRequest.request?.status ?? 'PROCESSING'}"
+                                    .toUpperCase(),
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
                                   color: textColor.withAlpha(150),
+                                  letterSpacing: 0.8,
                                 ),
                               ),
                             ],

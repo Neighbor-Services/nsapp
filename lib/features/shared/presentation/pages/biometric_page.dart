@@ -9,6 +9,7 @@ import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class BiometricPage extends StatefulWidget {
   const BiometricPage({super.key});
@@ -62,13 +63,12 @@ class _BiometricPageState extends State<BiometricPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final contentColor = isDark ? Colors.white : Colors.black87;
+    final contentColor = context.appColors.primaryTextColor;
     final secondaryColor =
-        isDark ? Colors.white.withAlpha(180) : Colors.black54;
-    final glassColor = isDark ? Colors.white.withAlpha(20) : Colors.black12;
+        context.appColors.secondaryTextColor;
+    final glassColor = context.appColors.glassBorder;
     final glassBorderColor =
-        isDark ? Colors.white.withAlpha(30) : Colors.black26;
+        context.appColors.glassBorder;
 
     return Scaffold(
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
@@ -115,9 +115,9 @@ class _BiometricPageState extends State<BiometricPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(30),
+                          padding: EdgeInsets.all(30),
                           decoration: BoxDecoration(
-                            color: glassColor,
+                            color: context.appColors.cardBackground,
                             shape: BoxShape.circle,
                             border: Border.all(color: glassBorderColor),
                           ),
@@ -126,11 +126,13 @@ class _BiometricPageState extends State<BiometricPage> {
                         ),
                         const SizedBox(height: 30),
                         Text(
-                          "Neighbor Service Locked",
+                          "NEIGHBOR SERVICE LOCKED",
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
                             color: contentColor,
+                            letterSpacing: 1.0,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -144,11 +146,16 @@ class _BiometricPageState extends State<BiometricPage> {
                             onPressed: auth,
                             icon: Icon(Icons.lock_open, color: contentColor),
                             label: Text(
-                              "Unlock",
-                              style: TextStyle(color: contentColor, fontSize: 16),
+                              "UNLOCK",
+                              style: TextStyle(
+                                color: contentColor, 
+                                fontSize: 16,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.0,
+                              ),
                             ),
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                 horizontal: 30,
                                 vertical: 15,
                               ),

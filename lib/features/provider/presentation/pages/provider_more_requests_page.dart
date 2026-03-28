@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProviderMoreRequestsPage extends StatefulWidget {
   const ProviderMoreRequestsPage({super.key});
@@ -71,31 +71,10 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: isDark ? Colors.white : Colors.black87,
-          ),
-          onPressed: () =>
-              context.read<ProviderBloc>().add(ProviderBackPressedEvent()),
-        ),
-        title: Text(
-          "Browse Requests",
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
+     
       body: BlocConsumer<ProviderBloc, ProviderState>(
         listener: (context, state) {
           if (state is SuccessGetRequestsState ||
@@ -117,26 +96,69 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
         builder: (context, state) {
           return GradientBackground(
             child: SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 700),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
                       children: [
-                        // Requests List
-                        Expanded(
-                          child: _buildRequestsList(
-                            context,
-                            isLargeScreen,
-                            isDark,
+                        GestureDetector(
+                          onTap: () => context.read<ProviderBloc>().add(
+                            ProviderBackPressedEvent(),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: context.appColors.cardBackground,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: context.appColors.glassBorder,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: context.appColors.primaryTextColor,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Text(
+                          "BROWSE REQUESTS",
+                          style: TextStyle(
+                            color: context.appColors.primaryTextColor,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 20,
+                            letterSpacing: 1.2,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 700),
+                          child: FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Requests List
+                                Expanded(
+                                  child: _buildRequestsList(context, isLargeScreen),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -145,11 +167,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
     );
   }
 
-  Widget _buildRequestsList(
-    BuildContext context,
-    bool isLargeScreen,
-    bool isDark,
-  ) {
+  Widget _buildRequestsList(BuildContext context, bool isLargeScreen) {
     return FutureBuilder<List<RequestData>>(
       future: SuccessGetRequestsState.requests,
       builder: (context, snapshot) {
@@ -157,16 +175,16 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
           if (snapshot.data!.isEmpty) {
             return Center(
               child: SolidContainer(
-                padding: const EdgeInsets.all(40),
+                padding: EdgeInsets.all(40),
+                borderColor: context.appColors.glassBorder,
+                borderWidth: 1.5,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.work_off_rounded,
                       size: 60,
-                      color: isDark
-                          ? Colors.white.withAlpha(150)
-                          : Colors.black26,
+                      color: context.appColors.glassBorder,
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -174,9 +192,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: isDark
-                            ? Colors.white.withAlpha(200)
-                            : Colors.black87,
+                        color: context.appColors.glassBorder,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -184,9 +200,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                       "Check back later for new projects",
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark
-                            ? Colors.white.withAlpha(150)
-                            : Colors.black54,
+                        color: context.appColors.glassBorder,
                       ),
                     ),
                   ],
@@ -206,12 +220,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
             itemCount: snapshot.data!.length + (isLoadingMore ? 1 : 0),
             itemBuilder: (context, index) {
               if (index < snapshot.data!.length) {
-                return _buildRequestCard(
-                  context,
-                  snapshot.data![index],
-                  index,
-                  isDark,
-                );
+                return _buildRequestCard(context, snapshot.data![index], index);
               } else {
                 return const Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
@@ -227,12 +236,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
     );
   }
 
-  Widget _buildRequestCard(
-    BuildContext context,
-    RequestData data,
-    int index,
-    bool isDark,
-  ) {
+  Widget _buildRequestCard(BuildContext context, RequestData data, int index) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
       duration: Duration(milliseconds: 300 + (index * 80)),
@@ -257,10 +261,12 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
           );
         },
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: EdgeInsets.only(bottom: 16),
           child: SolidContainer(
             padding: EdgeInsets.zero,
             borderRadius: BorderRadius.circular(20),
+            borderColor: context.appColors.glassBorder,
+            borderWidth: 1.5,
             child: Row(
               children: [
                 // Image
@@ -271,10 +277,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                     fit: StackFit.expand,
                     children: [
                       ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          bottomLeft: Radius.circular(20),
-                        ),
+                        borderRadius: BorderRadius.circular(20),
                         child:
                             (data.user?.profilePictureUrl != null &&
                                 data.user!.profilePictureUrl!.isNotEmpty)
@@ -293,18 +296,11 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                       // Overlay on image
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
+                          borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20),
                             bottomLeft: Radius.circular(20),
                           ),
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withAlpha(50),
-                            ],
-                          ),
+                          
                         ),
                       ),
                     ],
@@ -314,51 +310,49 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                 // Content
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                data.user?.firstName ?? "User",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Colors.black87,
+                        SizedBox(
+                          width: size(context).width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  (data.user?.firstName ?? "User").toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 0.5,
+                                    color: context.appColors.primaryTextColor,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                            _buildStatusBadge(data.request?.status ?? "OPEN"),
-                          ],
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 8,
-                            vertical: 4,
+                            vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.white.withAlpha(15)
-                                : Colors.black.withAlpha(5),
+                            color: context.appColors.primaryColor.withAlpha(50),
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: isDark
-                                  ? Colors.white.withAlpha(20)
-                                  : Colors.black.withAlpha(10),
+                              color: context.appColors.primaryColor,
+                              width: 1.5,
                             ),
                           ),
                           child: Text(
                             data.request?.service?.name ?? "Service",
                             style: TextStyle(
                               fontSize: 11,
-                              color: isDark
-                                  ? Colors.white.withAlpha(200)
-                                  : Colors.black54,
+                              color: context.appColors.primaryColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -368,9 +362,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                           data.request?.title ?? "",
                           style: TextStyle(
                             fontSize: 14,
-                            color: isDark
-                                ? Colors.white.withAlpha(180)
-                                : Colors.black45,
+                            color: context.appColors.secondaryTextColor,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -381,9 +373,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                             Icon(
                               Icons.calendar_today_rounded,
                               size: 12,
-                              color: isDark
-                                  ? Colors.white.withAlpha(100)
-                                  : Colors.black26,
+                              color: context.appColors.secondaryTextColor,
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -392,9 +382,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                               ),
                               style: TextStyle(
                                 fontSize: 12,
-                                color: isDark
-                                    ? Colors.white.withAlpha(100)
-                                    : Colors.black38,
+                                color: context.appColors.secondaryTextColor,
                               ),
                             ),
                           ],
@@ -406,12 +394,19 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
 
                 // Arrow
                 Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    color: isDark
-                        ? Colors.white.withAlpha(100)
-                        : Colors.black12,
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                     
+                      Padding(
+                        padding: EdgeInsets.only(right: 16),
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: context.appColors.secondaryTextColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -422,37 +417,38 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
     );
   }
 
-  Widget _buildStatusBadge(String status) {
-    Color color;
-    switch (status.toUpperCase()) {
-      case 'DONE':
-        color = const Color(0xFF4CAF50); // Green
-        break;
-      case 'IN_PROGRESS':
-        color = const Color(0xFF2196F3); // Blue
-        break;
-      case 'CANCELLED':
-        color = const Color(0xFFF44336); // Red
-        break;
-      default:
-        color = const Color(0xFFFF9800); // Orange
-    }
+  // Widget _buildStatusBadge(String status) {
+  //   Color color;
+  //   switch (status.toUpperCase()) {
+  //     case 'DONE':
+  //       color = Color(0xFF4CAF50); // Green
+  //       break;
+  //     case 'IN_PROGRESS':
+  //       color = Color(0xFF2196F3); // Blue
+  //       break;
+  //     case 'CANCELLED':
+  //       color = Color(0xFFF44336); // Red
+  //       break;
+  //     default:
+  //       color = Color(0xFFFF9800); // Orange
+  //   }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withAlpha(25),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withAlpha(100)),
-      ),
-      child: Text(
-        status,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          color: color,
-        ),
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+  //     decoration: BoxDecoration(
+  //       color: color.withAlpha(25),
+  //       borderRadius: BorderRadius.circular(20),
+  //       border: Border.all(color: color.withAlpha(100), width: 1.5),
+  //     ),
+  //     child: Text(
+  //       status.toUpperCase(),
+  //       style: TextStyle(
+  //         fontSize: 8,
+  //         fontWeight: FontWeight.w900,
+  //         color: color,
+  //         letterSpacing: 0.5,
+  //       ),
+  //     ),
+  //   );
+  // }
 }

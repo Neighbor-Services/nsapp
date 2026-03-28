@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:nsapp/core/models/failure.dart';
+import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/core/models/map_places.dart';
 import 'package:nsapp/core/models/notification.dart';
 import 'package:nsapp/core/models/place.dart';
@@ -258,6 +259,21 @@ class SharedRepositoryImpl extends SharedRepository {
       return Right(url);
     } catch (e) {
       return Left(Failure(massege: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<LegalDocument>>> getLegalDocument(
+    String docType,
+  ) async {
+    try {
+      final result = await datasource.getLegalDocument(docType);
+      if (result != null) {
+        return Right(result);
+      }
+      return Left(Failure(massege: "Document not found"));
+    } catch (e) {
+      return Left(Failure(massege: "An error occurred"));
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_data.dart';
@@ -14,6 +13,7 @@ import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
 import '../bloc/provider_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProviderSearchRequestPage extends StatefulWidget {
   const ProviderSearchRequestPage({super.key});
@@ -48,14 +48,15 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
             child: SafeArea(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(20.0),
                 child: Column(
                   children: [
                     // Glassmorphic Search Bar
                     SolidTextField(
                       controller: searchController,
-                      hintText: "Search Request",
+                      hintText: "SEARCH REQUEST",
                       label: "SEARCH",
+                      allCapsLabel: true,
                       prefixIcon: Icons.search,
                       onChanged: (value) {
                         setState(() {
@@ -106,7 +107,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                   SearchingState.isSearching) {
                                 return Center(
                                   child: SolidContainer(
-                                    padding: const EdgeInsets.all(24),
+                                    padding: EdgeInsets.all(24),
                                     child: EmptyWidget(
                                       message: "No request matches your search",
                                       height: 200,
@@ -155,7 +156,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             } else {
                               return Center(
                                 child: SolidContainer(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(20),
                                   child: EmptyWidget(
                                     message:
                                         "No request available at the moment",
@@ -192,14 +193,9 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
       future: Helpers.getSeekerProfile(requestData.request!.userId!),
       builder: (context, profileSnapshot) {
         final profile = profileSnapshot.data ?? Profile();
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-        final secondaryTextColor = isDark
-            ? Colors.white.withAlpha(150)
-            : const Color(0xFF1E1E2E).withAlpha(150);
-        final iconColor = isDark
-            ? Colors.white.withAlpha(180)
-            : const Color(0xFF1E1E2E).withAlpha(150);
+        final textColor = context.appColors.primaryTextColor;
+        final secondaryTextColor = context.appColors.secondaryTextColor;
+        final iconColor = context.appColors.glassBorder;
 
         return GestureDetector(
           onTap: () {
@@ -219,41 +215,39 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
           child: SolidContainer(
             padding: EdgeInsets.zero,
             borderRadius: BorderRadius.circular(20),
+            borderColor: context.appColors.glassBorder,
+            borderWidth: 1.5,
             child: Stack(
               fit: StackFit.expand,
               children: [
                 // Content
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Service Tag
                       Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).primaryColor.withAlpha(isDark ? 80 : 20),
+                          color: context.appColors.primaryColor.withAlpha(30),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isDark
-                                ? Colors.white.withAlpha(50)
-                                : Theme.of(context).primaryColor.withAlpha(50),
+                            color: context.appColors.primaryColor.withAlpha(50),
                           ),
                         ),
                         child: Text(
-                          requestData.request?.service?.name ?? "Service",
+                          (requestData.request?.service?.name ?? "Service")
+                              .toUpperCase(),
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: isDark
-                                ? Colors.white
-                                : Theme.of(context).primaryColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: context.appColors.primaryColor,
+                            letterSpacing: 0.5,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -268,8 +262,9 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             requestData.request?.title ?? "",
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               color: textColor,
+                              letterSpacing: 0.5,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -279,9 +274,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             children: [
                               CircleAvatar(
                                 radius: 12,
-                                backgroundColor: isDark
-                                    ? Colors.white.withAlpha(50)
-                                    : Colors.black.withAlpha(10),
+                                backgroundColor: context.appColors.glassBorder,
                                 backgroundImage:
                                     (profile.profilePictureUrl != null &&
                                         profile.profilePictureUrl!.isNotEmpty)
@@ -299,39 +292,47 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(
-                                  profile.firstName ?? "User",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: textColor,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      (profile.firstName ?? "User")
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w900,
+                                        color: textColor,
+                                        letterSpacing: 0.5,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          size: 12,
+                                          color: secondaryTextColor,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          requestData.request?.distance != null
+                                              ? "${requestData.request!.distance!.toStringAsFixed(1)} km"
+                                              : "N/A",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: secondaryTextColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on,
-                                size: 12,
-                                color: secondaryTextColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                requestData.request?.distance != null
-                                    ? "${requestData.request!.distance!.toStringAsFixed(1)} km"
-                                    : "N/A",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: secondaryTextColor,
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ],
@@ -343,15 +344,14 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                   top: 8,
                   right: 8,
                   child: PopupMenuButton(
-                    icon: Icon(Icons.more_horiz_rounded, color: iconColor),
-                    color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+                    icon: Icon(Icons.more_horiz_rounded, color: context.appColors.primaryTextColor),
+                    color: context.appColors.primaryBackground,
                     surfaceTintColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                       side: BorderSide(
-                        color: isDark
-                            ? Colors.white.withAlpha(30)
-                            : Colors.black.withAlpha(10),
+                        color: context.appColors.glassBorder,
+                        width: 1.5,
                       ),
                     ),
                     onSelected: (val) {
@@ -386,9 +386,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                       }
                     },
                     itemBuilder: (context) {
-                      final popupTextColor = isDark
-                          ? Colors.white
-                          : const Color(0xFF1E1E2E);
+                      final popupTextColor = context.appColors.primaryTextColor;
                       return [
                         PopupMenuItem(
                           value: 1,
@@ -401,8 +399,13 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                "Details",
-                                style: TextStyle(color: popupTextColor),
+                                "DETAILS",
+                                style: TextStyle(
+                                  color: popupTextColor,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 12,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ],
                           ),
@@ -418,8 +421,13 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                "Chat",
-                                style: TextStyle(color: popupTextColor),
+                                "CHAT",
+                                style: TextStyle(
+                                  color: popupTextColor,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 12,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ],
                           ),

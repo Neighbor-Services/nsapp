@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/report.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -14,6 +13,7 @@ import '../../../provider/presentation/pages/provider_home_page.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart';
 import '../../../seeker/presentation/pages/seeker_home_page.dart';
 import '../bloc/shared_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
@@ -72,7 +72,7 @@ class _ReportPageState extends State<ReportPage> {
                 child: SafeArea(
                   bottom: false,
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: EdgeInsets.all(20.0),
                     child: Center(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
@@ -97,16 +97,12 @@ class _ReportPageState extends State<ReportPage> {
                                   }
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.white.withAlpha(20)
-                                        : Colors.white,
+                                    color: context.appColors.glassBorder,
                                     borderRadius: BorderRadius.circular(14),
                                     border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(40)
-                                          : Colors.black.withAlpha(10),
+                                      color: context.appColors.glassBorder,
                                     ),
                                     boxShadow: isDark
                                         ? null
@@ -120,9 +116,7 @@ class _ReportPageState extends State<ReportPage> {
                                   ),
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.black87,
+                                    color: context.appColors.primaryTextColor,
                                     size: 20,
                                   ),
                                 ),
@@ -131,13 +125,12 @@ class _ReportPageState extends State<ReportPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Text(
-                                  "Report An Issue",
+                                  "REPORT AN ISSUE",
                                   style: TextStyle(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.black87,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: context.appColors.primaryTextColor,
+                                    letterSpacing: 1.2,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -146,26 +139,26 @@ class _ReportPageState extends State<ReportPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Text(
-                                  "Help us improve by reporting any issues",
+                                  "HELP US IMPROVE BY REPORTING ANY ISSUES",
                                   style: TextStyle(
-                                    fontSize: 16,
-                                    color: isDark
-                                        ? Colors.white.withAlpha(200)
-                                        : Colors.black54,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: context.appColors.secondaryTextColor,
+                                    letterSpacing: 1.0,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                               const SizedBox(height: 30),
                               SolidContainer(
-                                padding: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildLabel("Issue Type", isDark),
+                                    _buildLabel("Issue Type"),
                                     const SizedBox(height: 10),
                                     SolidContainer(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                         horizontal: 16,
                                       ),
                                       borderRadius: BorderRadius.circular(15),
@@ -173,19 +166,13 @@ class _ReportPageState extends State<ReportPage> {
                                         child: DropdownButton<String>(
                                           value: title,
                                           isExpanded: true,
-                                          dropdownColor: isDark
-                                              ? const Color(0xFF1E1E2E)
-                                              : Colors.white,
+                                          dropdownColor: context.appColors.cardBackground,
                                           icon: Icon(
                                             Icons.keyboard_arrow_down,
-                                            color: isDark
-                                                ? Colors.white
-                                                : Colors.black54,
+                                            color: context.appColors.primaryTextColor,
                                           ),
                                           style: TextStyle(
-                                            color: isDark
-                                                ? Colors.white
-                                                : Colors.black87,
+                                            color: context.appColors.primaryTextColor,
                                           ),
                                           items: reportIssues.map((
                                             String value,
@@ -210,7 +197,6 @@ class _ReportPageState extends State<ReportPage> {
                                           "Describe your issue in detail...",
                                       label: "Description",
                                       isMultiLine: true,
-                                      prefixIcon: Icons.description_outlined,
                                       validator: (val) {
                                         if (val == null || val.isEmpty) {
                                           return "Description is required";
@@ -223,20 +209,15 @@ class _ReportPageState extends State<ReportPage> {
                                       width: double.infinity,
                                       height: 55,
                                       decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            appOrangeColor1,
-                                            appOrangeColor2,
-                                          ],
-                                        ),
+                                       
                                         borderRadius: BorderRadius.circular(16),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: appOrangeColor1.withAlpha(
+                                            color: context.appColors.secondaryColor.withAlpha(
                                               100,
                                             ),
                                             blurRadius: 15,
-                                            offset: const Offset(0, 5),
+                                            offset: Offset(0, 5),
                                           ),
                                         ],
                                       ),
@@ -264,8 +245,7 @@ class _ReportPageState extends State<ReportPage> {
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.transparent,
-                                          shadowColor: Colors.transparent,
+                                          backgroundColor: context.appColors.primaryColor,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               16,
@@ -276,8 +256,9 @@ class _ReportPageState extends State<ReportPage> {
                                           "SUBMIT REPORT",
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w900,
                                             color: Colors.white,
+                                            letterSpacing: 1.1,
                                           ),
                                         ),
                                       ),
@@ -301,13 +282,14 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  Widget _buildLabel(String text, bool isDark) {
+  Widget _buildLabel(String text) {
     return Text(
-      text,
+      text.toUpperCase(),
       style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: isDark ? Colors.white.withAlpha(200) : Colors.black87,
+        fontSize: 10,
+        fontWeight: FontWeight.w900,
+        color: context.appColors.primaryTextColor,
+        letterSpacing: 1.2,
       ),
     );
   }

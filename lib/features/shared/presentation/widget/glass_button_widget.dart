@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
+import 'package:nsapp/core/core.dart';
 
 class GlassButton extends StatefulWidget {
   final String label;
@@ -71,7 +71,7 @@ class _GlassButtonState extends State<GlassButton>
   Widget build(BuildContext context) {
     // final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = widget.isPrimary
-        ? appOrangeColor1
+        ? context.appColors.secondaryColor
         : Colors.white.withAlpha(25);
 
     return AnimatedBuilder(
@@ -103,7 +103,7 @@ class _GlassButtonState extends State<GlassButton>
                 ),
                 blurRadius: _isPressed ? 10 : 15,
                 spreadRadius: 1,
-                offset: const Offset(0, 4),
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -152,7 +152,7 @@ class _GlassButtonState extends State<GlassButton>
                           ],
                           Text(
                             widget.label,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -276,7 +276,6 @@ class _GlassSocialButtonState extends State<GlassSocialButton>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
@@ -292,12 +291,10 @@ class _GlassSocialButtonState extends State<GlassSocialButton>
           width: widget.width ?? double.infinity,
           height: widget.height,
           decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withAlpha(15)
-                : Colors.white.withAlpha(30),
+            color: context.appColors.glassBorder,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? glassBorderDark : glassBorder,
+              color: context.appColors.primaryTextColor,
               width: 1.5,
             ),
           ),
@@ -308,7 +305,7 @@ class _GlassSocialButtonState extends State<GlassSocialButton>
               const SizedBox(width: 12),
               Text(
                 widget.label,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
                   fontWeight: FontWeight.w500,

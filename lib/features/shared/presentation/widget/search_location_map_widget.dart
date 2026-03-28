@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
+import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 
@@ -27,7 +27,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
               width: 50,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: context.appColors.glassBorder,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -54,13 +54,13 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                           Icon(
                             Icons.map_rounded,
                             size: 60,
-                            color: Colors.white24,
+                            color: context.appColors.glassBorder,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             "Find your perfect location",
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: context.appColors.secondaryTextColor,
                               fontSize: 16,
                             ),
                           ),
@@ -84,21 +84,21 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                             );
                           },
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
+                            padding: EdgeInsets.only(bottom: 12.0),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               decoration: BoxDecoration(
-                                color: Colors.white.withAlpha(15),
+                                color: context.appColors.cardBackground,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Colors.white.withAlpha(40),
+                                  color: context.appColors.glassBorder,
                                   width: 1,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withAlpha(20),
+                                    color: context.appColors.glassBorder,
                                     blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                                    offset: Offset(0, 4),
                                   ),
                                 ],
                               ),
@@ -116,37 +116,22 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                     Get.back();
                                   },
                                   leading: Container(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          appDeepBlueColor1.withAlpha(100),
-                                          appDeepBlueColor1.withAlpha(50),
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                      ),
+                                      color: context.appColors.primaryColor.withAlpha(40),
                                       shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: appDeepBlueColor1.withAlpha(
-                                            50,
-                                          ),
-                                          blurRadius: 10,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
+                                      
                                     ),
-                                    child: const Icon(
+                                    child:  Icon(
                                       Icons.location_on_rounded,
-                                      color: Colors.white,
+                                      color: context.appColors.primaryColor,
                                       size: 20,
                                     ),
                                   ),
                                   title: Text(
                                     SuccessPlacesState.places[index].name,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color: context.appColors.primaryTextColor,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 16,
                                     ),
@@ -157,14 +142,14 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                             .description ??
                                         "",
                                     style: TextStyle(
-                                      color: Colors.white.withAlpha(180),
+                                      color: context.appColors.secondaryTextColor,
                                       fontSize: 13,
                                       letterSpacing: 0.3,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  contentPadding: const EdgeInsets.symmetric(
+                                  contentPadding: EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 8,
                                   ),

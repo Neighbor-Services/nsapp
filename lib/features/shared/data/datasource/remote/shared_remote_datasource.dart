@@ -1,3 +1,4 @@
+import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/core/models/report.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/core/models/dispute.dart';
@@ -29,4 +30,5 @@ abstract class SharedRemoteDatasource {
   Future<List<SubscriptionPlan>?> getSubscriptionPlans();
   Future<List<Dispute>?> getMyDisputes();
   Future<String> getStripeDashboardLink();
+  Future<List<LegalDocument>?> getLegalDocument(String docType);
 }

@@ -25,6 +25,7 @@ import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_
 import 'package:nsapp/features/provider/presentation/pages/provider_appointment_list_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/dispute_details_page.dart';
+import 'package:nsapp/features/shared/presentation/pages/legal_document_page.dart';
 
 List<GetPage<dynamic>> pages = [
   GetPage(name: '/', page: () => SplashScreenPage()),
@@ -66,4 +67,5 @@ List<GetPage<dynamic>> pages = [
     name: '/app/appointments',
     page: () => const ProviderAppointmentListPage(),
   ),
+  GetPage(name: '/legal', page: () => const LegalDocumentPage()),
 ];

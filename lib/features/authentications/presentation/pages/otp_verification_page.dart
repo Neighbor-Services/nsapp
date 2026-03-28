@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   const OtpVerificationPage({super.key});
@@ -45,11 +45,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : Colors.black54;
+    
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
 
     // Calculate dynamic width for OTP fields to prevent overflow
     // Screen width - horizontal padding (24*2) - container padding (28*2) - spacing
@@ -94,9 +92,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                       child: Center(
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(horizontal: 24),
                           child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 450),
+                            constraints: BoxConstraints(maxWidth: 450),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -106,45 +104,32 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                   height: 100,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: isDark
-                                          ? [
-                                              Colors.white.withAlpha(50),
-                                              Colors.white.withAlpha(20),
-                                            ]
-                                          : [
-                                              Colors.black.withAlpha(10),
-                                              Colors.black.withAlpha(5),
-                                            ],
-                                    ),
+                                    color: context.appColors.primaryColor.withAlpha(20),
                                     border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(40)
-                                          : Colors.black.withAlpha(20),
+                                      color: context.appColors.glassBorder,
                                       width: 2,
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.mark_email_read_rounded,
                                     size: 50,
-                                    color: textColor,
+                                    color: context.appColors.primaryColor,
                                   ),
                                 ),
                                 const SizedBox(height: 32),
 
                                 // Glass Container
                                 SolidContainer(
-                                  padding: const EdgeInsets.all(28),
+                                  padding: EdgeInsets.all(28),
                                   child: Column(
                                     children: [
                                       Text(
-                                        "Verify Email",
+                                        "VERIFY EMAIL",
                                         style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w900,
                                           color: textColor,
+                                          letterSpacing: 1.2,
                                         ),
                                       ),
                                       const SizedBox(height: 12),
@@ -169,24 +154,18 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                         showFieldAsBox: true,
                                         borderWidth: 1.5,
                                         borderRadius: BorderRadius.circular(12),
-                                        fillColor: isDark
-                                            ? Colors.white.withAlpha(20)
-                                            : Colors.black.withAlpha(10),
+                                        fillColor: context.appColors.cardBackground,
                                         filled: true,
-                                        borderColor: isDark
-                                            ? Colors.white.withAlpha(40)
-                                            : Colors.black.withAlpha(30),
-                                        focusedBorderColor: appOrangeColor1,
-                                        enabledBorderColor: isDark
-                                            ? Colors.white.withAlpha(20)
-                                            : Colors.black.withAlpha(15),
+                                        borderColor: context.appColors.glassBorder,
+                                        focusedBorderColor: context.appColors.cardBackground,
+                                        enabledBorderColor: context.appColors.glassBorder,
                                         cursorColor: textColor,
                                         textStyle: TextStyle(
                                           fontSize: fieldWidth > 40 ? 24 : 18,
                                           fontWeight: FontWeight.bold,
                                           color: textColor,
                                         ),
-                                        margin: const EdgeInsets.only(
+                                        margin: EdgeInsets.only(
                                           right: 10.0,
                                         ),
                                         onSubmit: (code) {
@@ -213,21 +192,17 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                               );
                                         },
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(
+                                          padding: EdgeInsets.symmetric(
                                             horizontal: 16,
                                             vertical: 10,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: isDark
-                                                ? Colors.white.withAlpha(15)
-                                                : Colors.black.withAlpha(5),
+                                            color: context.appColors.cardBackground,
                                             borderRadius: BorderRadius.circular(
                                               12,
                                             ),
                                             border: Border.all(
-                                              color: isDark
-                                                  ? Colors.white.withAlpha(30)
-                                                  : Colors.black.withAlpha(20),
+                                              color: context.appColors.glassBorder,
                                             ),
                                           ),
                                           child: Row(
@@ -239,12 +214,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                                 color: secondaryTextColor,
                                               ),
                                               const SizedBox(width: 8),
-                                              Text(
-                                                "Resend Code",
+                                               Text(
+                                                "RESEND CODE",
                                                 style: TextStyle(
                                                   color: secondaryTextColor,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w900,
+                                                  letterSpacing: 1.0,
                                                 ),
                                               ),
                                             ],

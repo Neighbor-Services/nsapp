@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -10,6 +8,7 @@ import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProvidersByServicePage extends StatefulWidget {
   final String serviceId;
@@ -49,14 +48,8 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
-    final backBtnColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
 
     return Scaffold(
       body: GradientBackground(
@@ -65,7 +58,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -75,14 +68,13 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: backBtnColor,
+                          color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isDark
-                                ? Colors.white.withAlpha(40)
-                                : Colors.black.withAlpha(20),
+                            color: context.appColors.glassBorder,
+                            width: 1.5,
                           ),
                         ),
                         child: Icon(
@@ -98,19 +90,22 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.serviceName,
+                            widget.serviceName.toUpperCase(),
                             style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
                               color: textColor,
+                              letterSpacing: 1.2,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "Available Providers",
+                            "AVAILABLE PROFESSIONALS",
                             style: TextStyle(
-                              fontSize: 14,
-                              color: secondaryTextColor,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: textColor.withAlpha(150),
+                              letterSpacing: 1.0,
                             ),
                           ),
                         ],
@@ -171,7 +166,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           }
 
                           return ListView.separated(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: 20,
                               vertical: 16,
                             ),
@@ -208,11 +203,8 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
   }
 
   Widget _buildProviderCard(BuildContext context, Profile profile) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : const Color(0xFF1E1E2E).withAlpha(150);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
 
     return GestureDetector(
       onTap: () {
@@ -230,7 +222,8 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
         );
       },
       child: SolidContainer(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
+        borderWidth: 1.5,
         child: Row(
           children: [
             // Profile Picture
@@ -270,20 +263,21 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                     children: [
                       Flexible(
                         child: Text(
-                          profile.firstName ?? "Provider",
+                          (profile.firstName ?? "Provider").toUpperCase(),
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
                             color: textColor,
+                            letterSpacing: 0.5,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (profile.isIdentityVerified == true) ...[
                         const SizedBox(width: 4),
-                        const Icon(
+                         Icon(
                           Icons.verified_rounded,
-                          color: Colors.blue,
+                          color: context.appColors.infoColor,
                           size: 16,
                         ),
                       ],
@@ -291,13 +285,18 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    getServiceName(profile.service ?? ""),
-                    style: TextStyle(color: secondaryTextColor, fontSize: 12),
+                    getServiceName(profile.service ?? "").toUpperCase(),
+                    style: TextStyle(
+                      color: secondaryTextColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.star, color: appOrangeColor1, size: 16),
+                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16),
                       const SizedBox(width: 4),
                       Text(
                         double.parse(
@@ -306,7 +305,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -335,7 +334,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
             // Arrow Icon
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: isDark ? Colors.white.withAlpha(100) : Colors.black12,
+              color: context.appColors.glassBorder,
               size: 18,
             ),
           ],

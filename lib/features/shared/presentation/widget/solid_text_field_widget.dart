@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
+import 'package:nsapp/core/core.dart';
 
 class SolidTextField extends StatefulWidget {
   final TextEditingController controller;
@@ -15,6 +15,7 @@ class SolidTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final bool readOnly;
   final VoidCallback? onTap;
+  final bool allCapsLabel;
 
   const SolidTextField({
     super.key,
@@ -31,6 +32,7 @@ class SolidTextField extends StatefulWidget {
     this.onChanged,
     this.readOnly = false,
     this.onTap,
+    this.allCapsLabel = true,
   });
 
   @override
@@ -68,50 +70,42 @@ class _SolidTextFieldState extends State<SolidTextField>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme-aware colors
-    final labelColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final backgroundColor = isDark
-        ? const Color(0xFF2E2E3E)
-        : const Color(0xFFF5F5F5);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(20);
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final hintColor = isDark
-        ? Colors.white.withAlpha(80)
-        : Colors.black.withAlpha(100);
-    final iconColor = isDark
-        ? Colors.white.withAlpha(120)
-        : Colors.black.withAlpha(120);
+    final labelColor = context.appColors.primaryTextColor;
+    final backgroundColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+    final hintColor = context.appColors.hintTextColor;
+    final iconColor = context.appColors.hintTextColor;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label != null) ...[
           Text(
-            widget.label!,
+            widget.allCapsLabel ? widget.label!.toUpperCase() : widget.label!,
             style: TextStyle(
               color: labelColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontSize: 13,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
         ],
         Container(
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _isFocused ? appOrangeColor1 : borderColor,
+              color: _isFocused ? context.appColors.secondaryColor : borderColor,
               width: _isFocused ? 1.5 : 1,
             ),
             boxShadow: _isFocused
                 ? [
                     BoxShadow(
-                      color: appOrangeColor1.withAlpha(20),
+                      color: context.appColors.secondaryColor.withAlpha(20),
                       blurRadius: 10,
                       spreadRadius: 1,
                     ),
@@ -136,7 +130,7 @@ class _SolidTextFieldState extends State<SolidTextField>
               prefixIcon: widget.prefixIcon != null
                   ? Icon(
                       widget.prefixIcon,
-                      color: _isFocused ? appOrangeColor1 : iconColor,
+                      color: _isFocused ? context.appColors.secondaryColor : iconColor,
                       size: 20,
                     )
                   : null,
@@ -157,12 +151,12 @@ class _SolidTextFieldState extends State<SolidTextField>
                     )
                   : widget.suffixIcon,
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
+              contentPadding: EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 18,
               ),
-              errorStyle: const TextStyle(
-                color: Colors.redAccent,
+              errorStyle:  TextStyle(
+                color: context.appColors.errorColor,
                 fontSize: 12,
               ),
             ),

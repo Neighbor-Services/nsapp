@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class DeactivatedUserPage extends StatefulWidget {
   const DeactivatedUserPage({super.key});
@@ -18,7 +19,7 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
       body: GradientBackground(
         child: SafeArea(
           child: Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20),
             width: size(context).width,
             height: size(context).height,
             child: Column(
@@ -26,49 +27,53 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
               children: [
                 const SizedBox(height: 20),
                 Text(
-                  "Hi, ${SuccessGetProfileState.profile.firstName}",
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  "HI, ${SuccessGetProfileState.profile.firstName?.toUpperCase() ?? ''}",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
                     color: Colors.white,
+                    letterSpacing: 1.2,
                   ),
                 ),
                 const Spacer(),
                 Center(
                   child: SolidContainer(
-                    padding: const EdgeInsets.all(30),
+                    padding: EdgeInsets.all(30),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.redAccent.withAlpha(50),
+                            color: context.appColors.errorColor.withAlpha(50),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child:  Icon(
                             Icons.block,
-                            color: Colors.redAccent,
+                            color: context.appColors.errorColor,
                             size: 80,
                           ),
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          "Account Deactivated",
+                          "ACCOUNT DEACTIVATED",
                           style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
                             color: Colors.white,
+                            letterSpacing: 1.2,
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          "Your account has been deactivated by the administrator.",
+                          "YOUR ACCOUNT HAS BEEN DEACTIVATED BY THE ADMINISTRATOR.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
                             color: Colors.white.withAlpha(200),
+                            letterSpacing: 0.8,
                           ),
                         ),
                       ],

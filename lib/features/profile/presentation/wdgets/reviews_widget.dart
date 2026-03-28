@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/rating_review_form_widget.dart';
@@ -14,8 +12,8 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/core/core.dart';
 
-import '../../../../core/constants/dimension.dart';
 
 class ReviewsWidget extends StatefulWidget {
   const ReviewsWidget({super.key});
@@ -69,13 +67,13 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                 child: Stack(
                   children: [
                     SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Column(
                         children: [
                           const SizedBox(height: 20),
                           Container(
                             height: size(context).height - 180,
-                            padding: const EdgeInsets.only(bottom: 80),
+                            padding: EdgeInsets.only(bottom: 80),
                             child: FutureBuilder<List<ReviewData>>(
                               future: SuccessGetReviewStreamState.reviews,
                               builder: (context, snapshot) {
@@ -89,12 +87,12 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                         ReviewData reviewData =
                                             snapshot.data![index];
                                         return Padding(
-                                          padding: const EdgeInsets.symmetric(
+                                          padding: EdgeInsets.symmetric(
                                             vertical: 6,
                                             horizontal: 4,
                                           ),
                                           child: SolidContainer(
-                                            padding: const EdgeInsets.all(16),
+                                            padding: EdgeInsets.all(16),
                                             borderRadius: BorderRadius.circular(
                                               20,
                                             ),
@@ -182,7 +180,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                             .review!
                                                             .rating!
                                                             .toDouble(),
-                                                        color: appOrangeColor1,
+                                                        color: context.appColors.secondaryColor,
                                                         borderColor:
                                                             Colors.white54,
                                                         size: 14,
@@ -193,7 +191,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                 const SizedBox(height: 12),
                                                 Container(
                                                   width: double.infinity,
-                                                  padding: const EdgeInsets.all(
+                                                  padding: EdgeInsets.all(
                                                     12,
                                                   ),
                                                   decoration: BoxDecoration(
@@ -248,7 +246,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                               barrierColor: Colors.black.withValues(alpha: 80),
                             );
                           },
-                          backgroundColor: appOrangeColor1,
+                          backgroundColor: context.appColors.secondaryColor,
                           icon: const Icon(
                             Icons.rate_review,
                             color: Colors.white,

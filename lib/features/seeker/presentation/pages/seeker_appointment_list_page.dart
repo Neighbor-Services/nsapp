@@ -10,8 +10,8 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/features/shared/presentation/widget/appointment_detail_bottom_sheet.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerAppointmentListPage extends StatefulWidget {
   const SeekerAppointmentListPage({super.key});
@@ -30,34 +30,21 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
-    final buttonColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final dividerColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(10);
-    final iconBgColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.orange.withAlpha(10);
+    final textColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
+    final buttonColor = context.appColors.glassBorder;
+    final dividerColor = context.appColors.glassBorder;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
-          "My Appointments",
+          "MY APPOINTMENTS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-            letterSpacing: -0.5,
+            fontWeight: FontWeight.w900,
+            fontSize: 18,
+            letterSpacing: 1.2,
           ),
         ),
         centerTitle: true,
@@ -68,11 +55,14 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
             context.read<SeekerBloc>().add(SeekerBackPressedEvent());
           },
           child: Container(
-            margin: const EdgeInsets.all(10),
+            margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: buttonColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              border: Border.all(
+                color: borderColor,
+                width: 1.5,
+              ),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -89,7 +79,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
             child: GradientBackground(
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: FutureBuilder<List<AppointmentData>>(
                     future: SuccessGetAppointmentsState.appointments,
                     builder: (context, snapshot) {
@@ -117,7 +107,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                           if (appt == null) return const SizedBox.shrink();
 
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 16),
+                            margin: EdgeInsets.only(bottom: 16),
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
@@ -128,7 +118,8 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                 );
                               },
                               child: SolidContainer(
-                                padding: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(20),
+                                borderWidth: 1.5,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -142,10 +133,11 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               CustomTextWidget(
-                                                text: appt.title ?? "No Title",
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                                text: (appt.title ?? "No Title").toLowerCase(),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w900,
                                                 color: textColor,
+                                                letterSpacing: 0.5,
                                               ),
                                               const SizedBox(height: 4),
                                               Row(
@@ -154,7 +146,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                     Icons
                                                         .person_outline_rounded,
                                                     size: 14,
-                                                    color: secondaryTextColor,
+                                                    color: context.appColors.hintTextColor,
                                                   ),
                                                   const SizedBox(width: 6),
                                                   CustomTextWidget(
@@ -163,7 +155,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                                 '')
                                                             .trim(),
                                                     fontSize: 12,
-                                                    color: secondaryTextColor,
+                                                    color: context.appColors.hintTextColor,
                                                   ),
                                                 ],
                                               ),
@@ -179,17 +171,17 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                     Row(
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.all(8),
+                                          padding: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: iconBgColor,
+                                            color: context.appColors.primaryColor.withAlpha(40),
                                             borderRadius: BorderRadius.circular(
                                               10,
                                             ),
                                           ),
-                                          child: const Icon(
+                                          child:  Icon(
                                             Icons.calendar_today_rounded,
                                             size: 16,
-                                            color: appOrangeColor1,
+                                            color: context.appColors.primaryColor,
                                           ),
                                         ),
                                         const SizedBox(width: 12),
@@ -198,69 +190,32 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Scheduled For",
+                                              "SCHEDULED FOR",
                                               style: TextStyle(
                                                 fontSize: 10,
-                                                color: secondaryTextColor,
-                                                fontWeight: FontWeight.bold,
+                                                color: context.appColors.hintTextColor,
+                                                fontWeight: FontWeight.w900,
                                                 letterSpacing: 0.5,
                                               ),
                                             ),
                                             const SizedBox(height: 2),
-                                            CustomTextWidget(
-                                              text: appt.effectiveDate != null
-                                                  ? DateFormat(
-                                                      "MMM dd, yyyy • h:mm a",
-                                                    ).format(
-                                                      appt.effectiveDate!
-                                                          .toLocal(),
-                                                    )
-                                                  : "Date TBD",
-                                              fontSize: 14,
-                                              color: textColor.withAlpha(220),
-                                            ),
+                                              CustomTextWidget(
+                                                text: appt.effectiveDate != null
+                                                    ? DateFormat(
+                                                        "MMM dd, yyyy • h:mm a",
+                                                      ).format(
+                                                        appt.effectiveDate!
+                                                            .toLocal(),
+                                                      )
+                                                    : "DATE TBD",
+                                                fontSize: 14,
+                                                color: textColor.withAlpha(220),
+                                              ),
                                           ],
                                         ),
                                       ],
                                     ),
-                                    if (appt.isFunded == false) ...[
-                                      const SizedBox(height: 16),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 10,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.amber.withAlpha(30),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          border: Border.all(
-                                            color: Colors.amber.withAlpha(60),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.warning_amber_rounded,
-                                              color: Colors.amber,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Expanded(
-                                              child: CustomTextWidget(
-                                                text: "Awaiting Funding",
-                                                color: isDark
-                                                    ? Colors.amber.shade100
-                                                    : Colors.amber.shade900,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                    
                                   ],
                                 ),
                               ),
@@ -280,33 +235,34 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
   }
 
   Widget _buildStatusBadge(Appointment appt, BuildContext context) {
-    Color color = Colors.blue;
     String text = appt.status ?? "Scheduled";
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (appt.status == 'COMPLETED') {
-      color = Colors.green;
+     
       text = "Completed";
     } else if (appt.status == 'CANCELLED') {
-      color = Colors.red;
+      
       text = "Cancelled";
     } else if (appt.isFunded == false) {
-      color = Colors.amber;
+      
       text = "Action Needed";
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withAlpha(40),
+        color: context.appColors.primaryColor.withAlpha(40),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withAlpha(80)),
+        border: Border.all(
+          color: context.appColors.primaryColor,
+          width: 1.5,
+        ),
       ),
       child: CustomTextWidget(
         text: text.toUpperCase(),
-        color: isDark ? color.withAlpha(200) : color,
+        color: context.appColors.primaryColor,
         fontSize: 10,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w900,
         letterSpacing: 0.5,
       ),
     );

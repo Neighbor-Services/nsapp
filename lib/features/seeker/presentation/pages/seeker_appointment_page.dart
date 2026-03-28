@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/appointment.dart';
 import '../../../shared/presentation/widget/loading_widget.dart';
 import '../../../../features/shared/presentation/pages/create_dispute_page.dart';
 import '../../../../features/shared/presentation/pages/live_tracking_page.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerAppointmentPage extends StatefulWidget {
   const SeekerAppointmentPage({super.key});
@@ -51,14 +52,11 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
-    // final iconBg = isDark ? Colors.white12 : Colors.black.withAlpha(10);
-    // final iconColor = isDark ? Colors.white : Colors.black87;
+    final textColor = context.appColors.primaryTextColor;
+
+    // final iconBg = context.appColors.glassBorder;
+    // final iconColor = context.appColors.primaryTextColor;
 
     return Scaffold(
       body: BlocConsumer<SeekerBloc, SeekerState>(
@@ -89,7 +87,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 700),
+                    constraints: BoxConstraints(maxWidth: 700),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: Column(
@@ -105,19 +103,22 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Appointments",
+                                  "APPOINTMENTS",
                                   style: TextStyle(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w900,
                                     color: textColor,
+                                    letterSpacing: 1.5,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 4),
                                 Text(
-                                  "Manage your scheduled meetings",
+                                  "MANAGE YOUR SCHEDULED MEETINGS",
                                   style: TextStyle(
-                                    fontSize: 15,
-                                    color: secondaryTextColor,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: textColor.withAlpha(150),
+                                    letterSpacing: 1.0,
                                   ),
                                 ),
                               ],
@@ -128,8 +129,8 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           Expanded(
                             child: _buildCalendarView(
                               context,
-                              isLargeScreen,
-                              isDark,
+                              isLargeScreen
+                              
                             ),
                           ),
                         ],
@@ -148,10 +149,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
   Widget _buildCalendarView(
     BuildContext context,
     bool isLargeScreen,
-    bool isDark,
   ) {
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final borderColor = isDark ? Colors.white12 : Colors.black.withAlpha(10);
+    final textColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
 
     return FutureBuilder<List<AppointmentData>>(
       future: SuccessGetAppointmentsState.appointments,
@@ -170,7 +170,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 description: appointmentData.appointment!.description ?? "",
                 startTime: appointmentData.appointment?.startDate,
                 endTime: appointmentData.appointment?.endDate,
-                color: appOrangeColor1,
+                color: context.appColors.secondaryColor,
               ),
             );
           }
@@ -180,28 +180,66 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
             child: CalendarControllerProvider(
               controller: EventController()..addAll(events),
               child: SolidContainer(
+                backgroundColor: context.appColors.cardBackground,
                 child: MonthView(
                   borderColor: borderColor,
+                  cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+                    return FilledCell(
+                      date: date,
+                      shouldHighlight: isToday,
+                      backgroundColor: isInMonth
+                          ? context.appColors.cardBackground
+                          : context.appColors.primaryBackground,
+                      events: events,
+                      isInMonth: isInMonth,
+                      hideDaysNotInMonth: hideDaysNotInMonth,
+                      titleColor: isInMonth
+                          ? context.appColors.primaryTextColor
+                          : context.appColors.secondaryTextColor,
+                      highlightColor: context.appColors.secondaryColor,
+                      tileColor: context.appColors.secondaryColor,
+                      onTileTap: (event, date) {
+                        _showAppointmentDetails(context, [event]);
+                      },
+                    );
+                  },
+                  weekDayBuilder: (day) {
+                    return Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: context.appColors.cardBackground,
+                        border: Border.all(color: borderColor, width: 0.5),
+                      ),
+                      child: Text(
+                        ["S", "M", "T", "W", "T", "F", "S"][day],
+                        style: TextStyle(
+                          color: context.appColors.primaryTextColor,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 12,
+                        ),
+                      ),
+                    );
+                  },
                   onCellTap: (events, date) {
                     if (events.isNotEmpty) {
-                      _showAppointmentDetails(context, events, isDark);
+                      _showAppointmentDetails(context, events);
                     }
                   },
                   onEventTap: (event, date) {
-                    _showAppointmentDetails(context, [event], isDark);
+                    _showAppointmentDetails(context, [event]);
                   },
                   headerStyle: HeaderStyle(
                     headerTextStyle: TextStyle(
                       color: textColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      letterSpacing: 0.5,
                     ),
-                    decoration: const BoxDecoration(color: Colors.transparent),
+                    decoration: BoxDecoration(color: context.appColors.cardBackground),
                     leftIconConfig: IconDataConfig(color: textColor),
                     rightIconConfig: IconDataConfig(color: textColor),
                   ),
-                  weekDayStringBuilder: (day) =>
-                      ["S", "M", "T", "W", "T", "F", "S"][day],
                 ),
               ),
             ),
@@ -230,26 +268,27 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
   void _showAppointmentDetails(
     BuildContext context,
     List<CalendarEventData> data,
-    bool isDark,
+    
   ) {
-    final sheetColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final borderColor = isDark ? Colors.white12 : Colors.black.withAlpha(5);
-    final handleColor = isDark ? Colors.white24 : Colors.grey.withAlpha(50);
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : Colors.black.withAlpha(150);
+    final sheetColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final handleColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
 
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: sheetColor,
-          borderRadius: const BorderRadius.only(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(24),
             topRight: Radius.circular(24),
           ),
-          border: Border(top: BorderSide(color: borderColor)),
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -279,69 +318,36 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       final appt = appointmentData.appointment!;
                       return Column(
                         children: [
-                          if (appt.isFunded == false)
-                            Container(
-                              width: double.infinity,
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.withAlpha(20),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: Colors.amber.withAlpha(50),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.warning_amber_rounded,
-                                    color: Colors.amber,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      "This project is not yet funded. Fund it now to secure the provider.",
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? Colors.amber[100]
-                                            : Colors.amber[900],
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          
                           if (appt.isFunded == true &&
                               appt.status == 'COMPLETED')
                             Container(
                               width: double.infinity,
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(12),
+                              margin: EdgeInsets.only(bottom: 12),
+                              padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.green.withAlpha(20),
+                                color: context.appColors.successColor.withAlpha(20),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.green.withAlpha(50),
+                                  color: context.appColors.successColor.withAlpha(50),
                                 ),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(
+                                   Icon(
                                     Icons.check_circle_outline_rounded,
-                                    color: Colors.green,
+                                    color: context.appColors.successColor,
                                     size: 20,
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      "Project completed and funds released.",
+                                      "Project completed and funds released.".toUpperCase(),
                                       style: TextStyle(
-                                        color: isDark
-                                            ? Colors.green[100]
-                                            : Colors.green[900],
-                                        fontSize: 13,
+                                        color: context.appColors.successColor,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.5,
                                       ),
                                     ),
                                   ),
@@ -361,13 +367,13 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: appBlueCardColor.withAlpha(40),
+                      color: context.appColors.cardBackground,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: appBlueCardColor.withAlpha(60)),
+                      border: Border.all(color: context.appColors.glassBorder),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.calendar_month_rounded,
-                      color: Colors.lightBlueAccent,
+                      color: context.appColors.primaryColor,
                       size: 24,
                     ),
                   ),
@@ -377,11 +383,12 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Scheduled Appointment",
+                          "SCHEDULED APPOINTMENT",
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
                             color: textColor,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -403,22 +410,22 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               _buildDetailRow(
                 Icons.title_rounded,
                 "Title",
-                data[0].title,
-                isDark,
+                data[0].title
+               
               ),
               _buildDetailRow(
                 Icons.schedule_rounded,
                 "Time",
-                "${data[0].startTime != null ? DateFormat.jm().format(data[0].startTime!.toLocal()) : ''} - ${data[0].endTime != null ? DateFormat.jm().format(data[0].endTime!.toLocal()) : ''}",
-                isDark,
+                "${data[0].startTime != null ? DateFormat.jm().format(data[0].startTime!.toLocal()) : ''} - ${data[0].endTime != null ? DateFormat.jm().format(data[0].endTime!.toLocal()) : ''}"
+               
               ),
               if (data[0].description != null &&
                   data[0].description!.isNotEmpty)
                 _buildDetailRow(
                   Icons.notes_rounded,
                   "Description",
-                  data[0].description!,
-                  isDark,
+                  data[0].description!
+                 
                 ),
               const SizedBox(height: 24),
 
@@ -429,84 +436,8 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) return const SizedBox();
                     try {
-                      final appointmentData = snapshot.data!.firstWhere(
-                        (element) => element.appointment?.id == data[0].event,
-                      );
-                      final appt = appointmentData.appointment!;
-
-                      if (appt.isFunded == false) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton.icon(
-                              onPressed: () async {
-                                Get.back();
-                                await PaymentService.fundAppointment(
-                                  appointmentId: appt.id!,
-                                  amount: (appt.totalPrice ?? 0).toString(),
-                                  context: context,
-                                );
-                                if (context.mounted) {
-                                  context.read<SeekerBloc>().add(
-                                    GetAppointmentsEvent(),
-                                  );
-                                }
-                              },
-                              icon: const Icon(
-                                Icons.account_balance_wallet_rounded,
-                              ),
-                              label: Text(
-                                "Fund Project Now (\$${appt.totalPrice})",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: appOrangeColor1,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                elevation: 4,
-                              ),
-                            ),
-                          ),
-                        );
-                      } else if (appt.status != 'COMPLETED') {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                context.read<SeekerBloc>().add(
-                                  CompleteAppointmentEvent(
-                                    id: appt.id!,
-                                    amount: appt.totalPrice ?? 0,
-                                  ),
-                                );
-                                Get.back();
-                              },
-                              icon: const Icon(Icons.verified_rounded),
-                              label: const Text(
-                                "Mark as Completed & Release Funds",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green[600],
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                elevation: 4,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
+                    
+                       
                       return const SizedBox();
                     } catch (e) {
                       return const SizedBox();
@@ -514,149 +445,105 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   },
                 ),
 
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    if (SuccessGetAppointmentsState.appointments != null) {
-                      try {
-                        final list =
-                            await SuccessGetAppointmentsState.appointments!;
-                        final appointmentData = list.firstWhere(
-                          (element) =>
-                              element.appointment?.id ==
-                              data[0].event.toString(),
+              SolidButton(
+                onPressed: () async {
+                  if (SuccessGetAppointmentsState.appointments != null) {
+                    try {
+                      final list =
+                          await SuccessGetAppointmentsState.appointments!;
+                      final appointmentData = list.firstWhere(
+                        (element) =>
+                            element.appointment?.id ==
+                            data[0].event.toString(),
+                      );
+                      if (appointmentData.appointment != null) {
+                        Get.back();
+                        Get.to(
+                          () => LiveTrackingPage(
+                            appointmentId: appointmentData.appointment!.id!,
+                            providerName:
+                                "${appointmentData.user?.firstName ?? ''} ${appointmentData.user?.lastName ?? ''}"
+                                    .trim(),
+                          ),
                         );
-                        if (appointmentData.appointment != null) {
-                          Get.back();
-                          Get.to(
-                            () => LiveTrackingPage(
-                              appointmentId: appointmentData.appointment!.id!,
-                              providerName:
-                                  "${appointmentData.user?.firstName ?? ''} ${appointmentData.user?.lastName ?? ''}"
-                                      .trim(),
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        debugPrint("Appointment not found: $e");
                       }
+                    } catch (e) {
+                      debugPrint("Appointment not found: $e");
                     }
-                  },
-                  icon: const Icon(Icons.location_on_rounded),
-                  label: const Text(
-                    "Track Provider",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal.withAlpha(40),
-                    foregroundColor: Colors.teal[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      side: BorderSide(color: Colors.teal.withAlpha(100)),
-                    ),
-                    elevation: 0,
-                  ),
-                ),
+                  }
+                },
+                icon: Icons.location_on_rounded,
+                label: "TRACK PROVIDER",
+                isPrimary: true,
+                color: context.appColors.successColor.withAlpha(40),
+                textColor: context.appColors.successColor,
+                borderColor: context.appColors.successColor.withAlpha(100),
+                height: 50,
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
+              SolidButton(
+                onPressed: () {
+                  Get.back();
+                  _handleAddToCalendar(data[0].event.toString());
+                },
+                icon: Icons.event_available,
+                label: "ADD TO CALENDAR",
+                isPrimary: true,
+                color: context.appColors.primaryColor.withAlpha(40),
+                textColor: context.appColors.primaryColor,
+                borderColor: context.appColors.primaryColor.withAlpha(100),
                 height: 50,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Get.back();
-                    _handleAddToCalendar(data[0].event.toString());
-                  },
-                  icon: const Icon(Icons.event_available),
-                  label: const Text(
-                    "Add to Calendar",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.withAlpha(40),
-                    foregroundColor: Colors.blue[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      side: BorderSide(color: Colors.blue.withAlpha(100)),
-                    ),
-                    elevation: 0,
-                  ),
-                ),
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (SuccessGetAppointmentsState.appointments != null) {
-                      try {
-                        final list =
-                            await SuccessGetAppointmentsState.appointments!;
-                        final dataApp = list.firstWhere(
-                          (element) => element.appointment?.id == data[0].event,
+              SolidButton(
+                onPressed: () async {
+                  if (SuccessGetAppointmentsState.appointments != null) {
+                    try {
+                      final list =
+                          await SuccessGetAppointmentsState.appointments!;
+                      final dataApp = list.firstWhere(
+                        (element) => element.appointment?.id == data[0].event,
+                      );
+                      if (dataApp.appointment != null) {
+                        final providerName =
+                            "${dataApp.user?.firstName ?? ''} ${dataApp.user?.lastName ?? ''}"
+                                .trim();
+                        Get.to(
+                          () => CreateDisputePage(
+                            appointmentId: dataApp.appointment!.id!,
+                            providerName: providerName.isNotEmpty
+                                ? providerName
+                                : "Provider",
+                            defendantId: dataApp.user?.id,
+                          ),
                         );
-                        if (dataApp.appointment != null) {
-                          final providerName =
-                              "${dataApp.user?.firstName ?? ''} ${dataApp.user?.lastName ?? ''}"
-                                  .trim();
-                          Get.to(
-                            () => CreateDisputePage(
-                              appointmentId: dataApp.appointment!.id!,
-                              providerName: providerName.isNotEmpty
-                                  ? providerName
-                                  : "Provider",
-                              defendantId: dataApp.user?.id,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        debugPrint("Appointment not found: $e");
                       }
+                    } catch (e) {
+                      debugPrint("Appointment not found: $e");
                     }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange.withAlpha(40),
-                    foregroundColor: Colors.orange[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      side: BorderSide(color: Colors.orange.withAlpha(100)),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    "Raise Dispute",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
+                  }
+                },
+                label: "RAISE DISPUTE",
+                isPrimary: true,
+                color: context.appColors.warningColor.withAlpha(40),
+                textColor: context.appColors.warningColor,
+                borderColor: context.appColors.warningColor.withAlpha(100),
+                height: 50,
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
+              SolidButton(
+                onPressed: () {
+                  context.read<SeekerBloc>().add(
+                    CancelAppointmentEvent(id: data[0].event.toString()),
+                  );
+                  Get.back();
+                },
+                label: "CANCEL APPOINTMENT",
+                isPrimary: true,
+                color: context.appColors.errorColor.withAlpha(40),
+                textColor: context.appColors.errorColor,
+                borderColor: context.appColors.errorColor.withAlpha(100),
                 height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.read<SeekerBloc>().add(
-                      CancelAppointmentEvent(id: data[0].event.toString()),
-                    );
-                    Get.back();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.withAlpha(40),
-                    foregroundColor: Colors.red[300],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      side: BorderSide(color: Colors.red.withAlpha(100)),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    "Cancel Appointment",
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
               ),
               const SizedBox(height: 16),
             ],
@@ -671,15 +558,15 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     IconData icon,
     String label,
     String value,
-    bool isDark,
+   
   ) {
-    final iconBg = isDark ? Colors.white12 : Colors.black.withAlpha(5);
-    final iconColor = isDark ? Colors.white.withAlpha(150) : Colors.black54;
-    final labelColor = isDark ? Colors.white.withAlpha(100) : Colors.black38;
-    final valueColor = isDark ? Colors.white : Colors.black87;
+    final iconBg = context.appColors.glassBorder;
+    final iconColor = context.appColors.secondaryTextColor;
+    final labelColor = context.appColors.glassBorder;
+    final valueColor = context.appColors.primaryTextColor;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -697,7 +584,15 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: TextStyle(fontSize: 12, color: labelColor)),
+                Text(
+                  label.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: labelColor,
+                    letterSpacing: 0.5,
+                  ),
+                ),
                 const SizedBox(height: 2),
                 Text(value, style: TextStyle(fontSize: 15, color: valueColor)),
               ],

@@ -6,6 +6,7 @@ import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
@@ -55,7 +56,6 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: BlocConsumer<SeekerBloc, SeekerState>(
         listener: (context, state) {
@@ -83,11 +83,11 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 800),
+                    constraints: BoxConstraints(maxWidth: 800),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 20,
                           vertical: 24,
                         ),
@@ -95,25 +95,26 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "My Requests",
+                              "MY REQUESTS",
                               style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? Colors.white : Colors.black87,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w900,
+                                color: context.appColors.primaryTextColor,
+                                letterSpacing: 1.2,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "Manage your service requests",
+                              "MANAGE YOUR SERVICE REQUESTS",
                               style: TextStyle(
-                                fontSize: 15,
-                                color: isDark
-                                    ? Colors.white.withAlpha(150)
-                                    : Colors.black54,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                color: context.appColors.secondaryTextColor,
+                                letterSpacing: 1.0,
                               ),
                             ),
                             const SizedBox(height: 24),
-                            Expanded(child: _buildRequestList(context, isDark)),
+                            Expanded(child: _buildRequestList(context)),
                           ],
                         ),
                       ),
@@ -128,52 +129,31 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 
-  Widget _buildRequestList(BuildContext context, bool isDark) {
+  Widget _buildRequestList(BuildContext context) {
     return FutureBuilder<List<RequestData>>(
       future: SuccessGetMyRequestState.myRequests,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
             return Center(
-              child: Container(
-                padding: const EdgeInsets.all(40),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2E2E3E) : Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: isDark
-                        ? Colors.white.withAlpha(20)
-                        : Colors.black.withAlpha(10),
-                  ),
-                  boxShadow: isDark
-                      ? null
-                      : [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(5),
-                            blurRadius: 15,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                ),
+              child: SolidContainer(
+                padding: EdgeInsets.all(40),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.assignment_outlined,
                       size: 60,
-                      color: isDark
-                          ? Colors.white.withAlpha(150)
-                          : Colors.black26,
+                      color: context.appColors.glassBorder,
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      "No requests found",
+                      "NO REQUESTS FOUND",
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: isDark
-                            ? Colors.white.withAlpha(200)
-                            : Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: context.appColors.glassBorder,
+                        letterSpacing: 1.0,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -181,9 +161,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                       "Create a new request to get started",
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark
-                            ? Colors.white.withAlpha(150)
-                            : Colors.black54,
+                        color: context.appColors.glassBorder,
                       ),
                     ),
                   ],
@@ -198,8 +176,8 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
               return _buildRequestCard(
                 context,
                 snapshot.data![index],
-                index,
-                isDark,
+                index
+               
               );
             },
           );
@@ -214,7 +192,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     BuildContext context,
     RequestData requestData,
     int index,
-    bool isDark,
+    
   ) {
     return GestureDetector(
       onTap: () {
@@ -239,26 +217,10 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
             child: Opacity(opacity: value, child: child),
           );
         },
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2E2E3E) : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withAlpha(30)
-                  : Colors.black.withAlpha(10),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withAlpha(30)
-                    : Colors.black.withAlpha(5),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+        child: SolidContainer(
+          padding: EdgeInsets.zero,
+          margin: EdgeInsets.only(bottom: 16),
+          borderRadius: BorderRadius.circular(20),
           child: Column(
             children: [
               Stack(
@@ -266,14 +228,14 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                   Container(
                     height: 140,
                     width: double.infinity,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
                       color: Colors.black26,
                     ),
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
+                      borderRadius: BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
                       child: (requestData.request?.withImage ?? false)
@@ -294,24 +256,17 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                   Container(
                     height: 140,
                     decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(
+                      borderRadius: BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withAlpha(150),
-                        ],
-                      ),
+                      
                     ),
                   ),
                   Positioned(
                     top: 10,
                     left: 10,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 6,
                       ),
@@ -319,14 +274,14 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                         color:
                             (requestData.request?.status == 'DONE' ||
                                 requestData.request?.done == true)
-                            ? Colors.green
+                            ? context.appColors.successColor
                             : (requestData.request?.status == 'IN_PROGRESS')
-                            ? Colors.blue
+                            ? context.appColors.infoColor
                             : (requestData.request?.status == 'CANCELLED')
-                            ? Colors.red
+                            ? context.appColors.errorColor
                             : (requestData.request?.approved ?? false)
-                            ? Colors.blue
-                            : appOrangeColor1,
+                            ? context.appColors.infoColor
+                            : context.appColors.secondaryColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -335,10 +290,8 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                 ? "DONE"
                                 : "OPEN")),
                         style: TextStyle(
-                          color: isDark
-                              ? Colors.white
-                              : Colors.white, // Keep white on orange badge
-                          fontWeight: FontWeight.bold,
+                          color: context.appColors.primaryTextColor, // Keep white on orange badge
+                          fontWeight: FontWeight.w900,
                           fontSize: 12,
                         ),
                       ),
@@ -349,15 +302,30 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                     right: 5,
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        cardColor: isDark
-                            ? const Color(0xFF1E1E2E)
-                            : Colors.white,
+                        cardColor: context.appColors.cardBackground,
                         iconTheme: IconThemeData(
-                          color: isDark ? Colors.white : Colors.black87,
+                          color: context.appColors.primaryTextColor,
                         ),
                       ),
                       child: PopupMenuButton(
-                        icon: const Icon(Icons.more_vert, color: Colors.white),
+                        icon:  Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: context.appColors.cardBackground,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: context.appColors.glassBorder,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Icon(Icons.more_horiz, color: context.appColors.primaryTextColor)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          side: BorderSide(
+                            color: context.appColors.glassBorder,
+                            width: 1.5,
+                          ),
+                        ),
                         onSelected: (val) async {
                           if (val == 'view') {
                             context.read<SeekerBloc>().add(
@@ -445,20 +413,17 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                   color: Colors.transparent,
                                   child: Center(
                                     child: Container(
-                                      padding: const EdgeInsets.all(24),
+                                      padding: EdgeInsets.all(24),
                                       width: size(context).width * 0.85,
-                                      constraints: const BoxConstraints(
+                                      constraints: BoxConstraints(
                                         maxWidth: 400,
                                       ),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: isDark
-                                            ? const Color(0xFF1E1E2E)
-                                            : Colors.white,
+                                        borderRadius: BorderRadius.circular(24),
+                                        color: context.appColors.cardBackground,
                                         border: Border.all(
-                                          color: isDark
-                                              ? Colors.white12
-                                              : Colors.black.withAlpha(10),
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5,
                                         ),
                                       ),
                                       child: Column(
@@ -469,9 +434,10 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                             child: Column(
                                               children: [
                                                 CustomTextWidget(
-                                                  text: "Fund Project",
+                                                  text: "FUND PROJECT",
                                                   fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w900,
+                                                  letterSpacing: 1.2,
                                                 ),
                                                 const SizedBox(height: 12),
                                                 CustomTextWidget(
@@ -534,7 +500,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                   },
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        appOrangeColor1,
+                                                        context.appColors.secondaryColor,
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -559,42 +525,47 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                         itemBuilder: (context) => [
                           _buildPopupMenuItem(
                             'view',
-                            'View details',
-                            Icons.visibility,
-                            isDark,
+                            'VIEW DETAILS',
+                            Icons.visibility
+                            
                           ),
                           _buildPopupMenuItem(
                             'edit',
-                            'Edit',
-                            Icons.edit,
-                            isDark,
+                            'EDIT',
+                            Icons.edit
+                           
                           ),
                           _buildPopupMenuItem(
                             'delete',
-                            'Delete',
-                            Icons.delete,
-                            isDark,
+                            'DELETE',
+                            Icons.delete
+                            
                           ),
                           _buildPopupMenuItem(
                             'done',
-                            'Mark as Done',
-                            Icons.check_circle,
-                            isDark,
+                            'MARK AS DONE',
+                            Icons.check_circle
+                            
                           ),
                           _buildPopupMenuItem(
                             'pay',
-                            'Pay Provider',
-                            Icons.payment_outlined,
-                            isDark,
+                            'PAY PROVIDER',
+                            Icons.payment_outlined
+                           
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Positioned(
-                    bottom: 12,
-                    left: 16,
-                    child: Column(
+                 
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -602,42 +573,33 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "",
                           style: TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: isDark
-                                ? Colors.white
-                                : Colors.white, // Keep white on image overlay
+                            fontWeight: FontWeight.w900,
+                            color: context.appColors.primaryTextColor, // Keep white on image overlay
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          DateFormat("EEEE yyyy-MMM-dd").format(
+                          DateFormat("EEEE, MMM dd, yyyy").format(
                             DateTime.parse(
                               requestData.request!.createdAt.toString(),
                             ),
-                          ),
+                          ).toUpperCase(),
                           style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.white.withAlpha(200),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: context.appColors.hintTextColor,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                    const SizedBox(height: 12),
                     Text(
                       requestData.request!.title!,
                       style: TextStyle(
                         fontSize: 15,
-                        color: isDark
-                            ? Colors.white.withAlpha(220)
-                            : Colors.black87,
-                        fontWeight: FontWeight.w500,
+                        color: context.appColors.primaryTextColor,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -646,7 +608,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                         _buildInfoChip(
                           Icons.people_outline_rounded,
                           "${requestData.request?.proposalsCount ?? 0} Proposals",
-                          isDark,
+                         
                         ),
                       ],
                     ),
@@ -664,45 +626,51 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     String value,
     String text,
     IconData icon,
-    bool isDark,
+  
   ) {
     return PopupMenuItem(
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: isDark ? Colors.white70 : Colors.black54),
+          Icon(icon, size: 20, color: context.appColors.primaryTextColor),
           const SizedBox(width: 12),
           Text(
-            text,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+            text.toUpperCase(),
+            style: TextStyle(
+              color: context.appColors.primaryTextColor,
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              letterSpacing: 0.5,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String label, bool isDark) {
+  Widget _buildInfoChip(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withAlpha(15) : Colors.black.withAlpha(5),
-        borderRadius: BorderRadius.circular(20),
+        color: context.appColors.primaryColor.withAlpha(40),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withAlpha(20)
-              : Colors.black.withAlpha(10),
+          color: context.appColors.primaryColor.withAlpha(40),
+          width: 1.5,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: isDark ? Colors.white70 : Colors.black54),
+          Icon(icon, size: 14, color: context.appColors.primaryColor),
           const SizedBox(width: 6),
           Text(
-            label,
+            label.toUpperCase(),
             style: TextStyle(
-              fontSize: 12,
-              color: isDark ? Colors.white.withAlpha(200) : Colors.black87,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: context.appColors.primaryColor,
+              letterSpacing: 0.5,
             ),
           ),
         ],

@@ -21,12 +21,11 @@ import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widge
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/string_constants.dart';
 import '../../../shared/presentation/bloc/shared_bloc.dart';
 import '../../../shared/presentation/widget/custom_text_widget.dart';
 import '../../../shared/presentation/widget/loading_view.dart';
 import '../bloc/seeker_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerRequestDetailsPage extends StatefulWidget {
   const SeekerRequestDetailsPage({super.key});
@@ -54,20 +53,11 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final buttonColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(160)
-        : const Color(0xFF1E1E2E).withAlpha(160);
+    final textColor = context.appColors.primaryTextColor;
+    final buttonColor = context.appColors.glassBorder;
+    final borderColor = context.appColors.glassBorder;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: GradientBackground(
         child: SafeArea(
@@ -141,14 +131,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(20),
+                              padding: EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                color: Colors.redAccent.withAlpha(20),
+                                color: context.appColors.errorColor.withAlpha(20),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child:  Icon(
                                 Icons.error_outline_rounded,
-                                color: Colors.redAccent,
+                                color: context.appColors.errorColor,
                                 size: 60,
                               ),
                             ),
@@ -187,10 +177,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     if (snapshot.hasData) {
                       return Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 800),
+                          constraints: BoxConstraints(maxWidth: 800),
                           child: ListView(
                             physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 20,
                             ),
@@ -205,13 +195,13 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       );
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.all(12),
+                                      padding: EdgeInsets.all(12),
                                       decoration: BoxDecoration(
                                         color: buttonColor,
                                         borderRadius: BorderRadius.circular(14),
                                         border: Border.all(
                                           color: borderColor,
-                                          width: 1,
+                                          width: 1.5,
                                         ),
                                       ),
                                       child: Icon(
@@ -223,12 +213,12 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                   ),
                                   const SizedBox(width: 16),
                                   Text(
-                                    "Request Details",
+                                    "REQUEST DETAILS",
                                     style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
                                       color: textColor,
-                                      letterSpacing: -0.5,
+                                      letterSpacing: 1.2,
                                     ),
                                   ),
                                   const Spacer(),
@@ -239,49 +229,46 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
 
                               // Request Info Card
                               SolidContainer(
-                                padding: const EdgeInsets.all(24),
+                                padding: EdgeInsets.all(24),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.all(12),
+                                          padding: EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                             color:
-                                                (isDark
-                                                        ? Colors.white
-                                                        : appDeepBlueColor1)
+                                                context.appColors.primaryColor
                                                     .withAlpha(40),
                                             borderRadius: BorderRadius.circular(
-                                              16,
+                                              8,
                                             ),
                                           ),
                                           child: Icon(
                                             Icons.assignment_rounded,
-                                            color: isDark
-                                                ? Colors.white
-                                                : appDeepBlueColor1,
+                                            color: context.appColors.primaryColor,
                                             size: 24,
                                           ),
                                         ),
-                                        const SizedBox(width: 16),
+                                        const SizedBox(width: 8),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                snapshot
+                                                (snapshot
                                                         .data
                                                         ?.request
                                                         ?.service
                                                         ?.name ??
-                                                    "Service Request",
+                                                    "Service Request").toUpperCase(),
                                                 style: TextStyle(
                                                   color: textColor,
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w900,
+                                                  letterSpacing: 0.5,
                                                 ),
                                               ),
                                               const SizedBox(height: 4),
@@ -303,15 +290,15 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w500,
-                                                  color: secondaryTextColor,
+                                                  color: context.appColors.hintTextColor,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
                                         _getStatusBadge(
-                                          snapshot.data!.request!,
-                                          isDark,
+                                          snapshot.data!.request!
+                                         
                                         ),
                                       ],
                                     ),
@@ -322,12 +309,12 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                     ),
                                     const SizedBox(height: 20),
                                     Text(
-                                      snapshot.data?.request?.title ?? "",
+                                      (snapshot.data?.request?.title ?? "").toUpperCase(),
                                       style: TextStyle(
                                         color: textColor,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: -0.3,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.5,
                                       ),
                                     ),
                                     const SizedBox(height: 12),
@@ -336,7 +323,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                           snapshot.data?.request?.title ??
                                           "",
                                       style: TextStyle(
-                                        color: textColor.withAlpha(180),
+                                        color: textColor,
                                         fontSize: 15,
                                         height: 1.6,
                                       ),
@@ -353,15 +340,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                     borderRadius: BorderRadius.circular(24),
                                     border: Border.all(
                                       color: borderColor,
-                                      width: 1,
+                                      width: 1.5,
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withAlpha(50),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 10),
-                                      ),
-                                    ],
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(24),
@@ -425,12 +405,12 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                               const SizedBox(height: 32),
 
                               Text(
-                                "Interested Providers",
+                                "INTERESTED PROVIDERS",
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
                                   color: textColor,
-                                  letterSpacing: -0.5,
+                                  letterSpacing: 1.0,
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -460,7 +440,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       );
                                     } else {
                                       return SolidContainer(
-                                        padding: const EdgeInsets.all(40),
+                                        padding: EdgeInsets.all(40),
                                         child: const EmptyWidget(
                                           message:
                                               "No acceptance for your request yet!",
@@ -489,77 +469,67 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     );
   }
 
-  Widget _getStatusBadge(Request request, bool isDark) {
-    Color color = Colors.orangeAccent;
+  Widget _getStatusBadge(Request request) {
+    Color color = context.appColors.warningColor;
     String text = "Pending";
 
     if (request.done == true || request.status == 'DONE') {
-      color = isDark ? Colors.blueAccent : Colors.blue;
+      color = context.appColors.warningColor;
       text = "Completed";
     } else if (request.status == 'IN_PROGRESS') {
-      color = isDark ? Colors.greenAccent : Colors.green;
+      color = context.appColors.warningColor;
       text = "Active";
     } else if (request.approved == true) {
       if (request.isFunded == true) {
-        color = isDark ? Colors.greenAccent : Colors.green;
+        color = context.appColors.warningColor;
         text = "Active";
       } else {
-        color = isDark ? Colors.amber : Colors.orange;
+        color = context.appColors.warningColor;
         text = "Approved, Pending Funding";
       }
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withAlpha(30),
+        color: context.appColors.warningColor.withAlpha(40),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withAlpha(60), width: 1),
+        border: Border.all(color: color.withAlpha(150), width: 1.5),
       ),
       child: Text(
         text,
         style: TextStyle(
           color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.5,
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.0,
         ),
       ),
     );
   }
 
   void _showDeleteConfirmation(BuildContext context, String requestId) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
+    final textColor = context.appColors.primaryTextColor;
 
     showDialog(
       context: context,
       builder: (context) => Center(
-        child: Container(
-          padding: const EdgeInsets.all(24),
+        child: SolidContainer(
+          padding: EdgeInsets.all(24),
           width: MediaQuery.of(context).size.width * 0.8,
-          constraints: const BoxConstraints(maxWidth: 400),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: borderColor),
-          ),
+          borderRadius: BorderRadius.circular(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.redAccent.withAlpha(30),
+                  color: context.appColors.errorColor.withAlpha(30),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child:  Icon(
                   Icons.delete_forever_rounded,
-                  color: Colors.redAccent,
+                  color: context.appColors.errorColor,
                   size: 32,
                 ),
               ),
@@ -618,15 +588,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
   }
 
   Widget _buildActionMenu(RequestData requestData, BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final iconColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
-    final menuIconBg = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
+    final cardColor = context.appColors.cardBackground;
+    final iconColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
+    final menuIconBg = context.appColors.hintTextColor;
 
     return Theme(
       data: Theme.of(context).copyWith(
@@ -643,7 +608,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
       ),
       child: PopupMenuButton(
         icon: Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: menuIconBg,
             borderRadius: BorderRadius.circular(10),
@@ -711,9 +676,17 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 1,
               child: Row(
                 children: [
-                  Icon(Icons.edit_document, color: appBlueCardColor),
-                  SizedBox(width: 6),
-                  CustomTextWidget(text: "Edit", color: iconColor),
+                  Icon(Icons.edit_document, color: appBlueCardColor, size: 20),
+                  SizedBox(width: 12),
+                  Text(
+                    "EDIT",
+                    style: TextStyle(
+                      color: iconColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -721,9 +694,17 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 2,
               child: Row(
                 children: [
-                  Icon(Icons.delete, color: Colors.red),
-                  SizedBox(width: 6),
-                  CustomTextWidget(text: "Delete", color: iconColor),
+                  Icon(Icons.delete, color: context.appColors.errorColor, size: 20),
+                  SizedBox(width: 12),
+                  Text(
+                    "DELETE",
+                    style: TextStyle(
+                      color: iconColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -731,9 +712,17 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 3,
               child: Row(
                 children: [
-                  Icon(Icons.check_circle, color: Colors.green),
-                  SizedBox(width: 6),
-                  CustomTextWidget(text: "Mark as Done", color: iconColor),
+                  Icon(Icons.check_circle, color: context.appColors.successColor, size: 20),
+                  SizedBox(width: 12),
+                  Text(
+                    "MARK AS DONE",
+                    style: TextStyle(
+                      color: iconColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -741,9 +730,17 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 4,
               child: Row(
                 children: [
-                  Icon(Icons.payment, color: appOrangeColor1),
-                  SizedBox(width: 6),
-                  CustomTextWidget(text: "Fund Provider", color: iconColor),
+                  Icon(Icons.payment, color: context.appColors.secondaryColor, size: 20),
+                  SizedBox(width: 12),
+                  Text(
+                    "FUND PROVIDER",
+                    style: TextStyle(
+                      color: iconColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -759,17 +756,12 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     int index,
   ) {
     final provider = acceptedProvider.provider;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
-    final avatarBg = isDark
-        ? Colors.white.withAlpha(10)
-        : Colors.black.withAlpha(5);
+    final textColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
+    final avatarBg = context.appColors.glassBorder;
 
     return SolidContainer(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Row(
         children: [
           Container(
@@ -794,19 +786,20 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  provider?.firstName ?? "Unknown",
+                  (provider?.firstName ?? "Unknown").toUpperCase(),
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     color: textColor,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(
+                     Icon(
                       Icons.star_rounded,
-                      color: Colors.orange,
+                      color: context.appColors.warningColor,
                       size: 16,
                     ),
                     const SizedBox(width: 4),
@@ -839,7 +832,6 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     RequestAcceptance acceptedProvider,
     BuildContext context,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     var request = acceptedProvider.acceptance?.request;
     var provider = acceptedProvider.provider;
     var user = provider?.user;
@@ -858,9 +850,16 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             );
           }
         },
-        icon: Icon(
-          Icons.cancel_rounded,
-          color: isDark ? Colors.redAccent : Colors.red,
+        icon: Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: context.appColors.primaryColor.withAlpha(40),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            Icons.cancel_outlined,
+            color: context.appColors.errorColor,
+          ),
         ),
         tooltip: "Cancel Approval",
       );
@@ -888,9 +887,16 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             );
           }
         },
-        icon: Icon(
-          Icons.check_circle_rounded,
-          color: isDark ? Colors.greenAccent : Colors.green,
+        icon: Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: context.appColors.primaryColor.withAlpha(40),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            Icons.check_circle_outline,
+            color: context.appColors.primaryColor,
+          ),
         ),
         tooltip: "Approve Provider",
       );
@@ -901,12 +907,9 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     RequestAcceptance acceptedProvider,
     BuildContext context,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final iconColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
+    final cardColor = context.appColors.primaryBackground;
+    final iconColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
 
     return Theme(
       data: Theme.of(context).copyWith(
@@ -921,71 +924,90 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           ),
         ),
       ),
-      child: PopupMenuButton(
-        icon: Icon(Icons.more_vert_rounded, color: iconColor.withAlpha(160)),
-        onSelected: (val) {
-          final provider = acceptedProvider.provider;
-          final userId = provider?.user?.id;
-
-          if (val == 1) {
-            if (userId != null) {
-              context.read<ProfileBloc>().add(AboutUserEvent(userID: userId));
-              context.read<SeekerBloc>().add(
-                NavigateSeekerEvent(page: 1, widget: const AboutPage()),
-              );
+      child: Container(
+        padding: EdgeInsets.all(1),
+        decoration: BoxDecoration(
+          color: context.appColors.primaryColor.withAlpha(40),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: PopupMenuButton(
+          icon: Icon(Icons.more_vert_rounded, color: iconColor.withAlpha(160)),
+          onSelected: (val) {
+            final provider = acceptedProvider.provider;
+            final userId = provider?.user?.id;
+        
+            if (val == 1) {
+              if (userId != null) {
+                context.read<ProfileBloc>().add(AboutUserEvent(userID: userId));
+                context.read<SeekerBloc>().add(
+                  NavigateSeekerEvent(page: 1, widget: const AboutPage()),
+                );
+              }
+            } else if (val == 2) {
+              if (provider != null) {
+                context.read<MessageBloc>().add(
+                  SetMessageReceiverEvent(profile: provider),
+                );
+                context.read<SeekerBloc>().add(
+                  NavigateSeekerEvent(page: 4, widget: const ChatPage()),
+                );
+              }
             }
-          } else if (val == 2) {
-            if (provider != null) {
-              context.read<MessageBloc>().add(
-                SetMessageReceiverEvent(profile: provider),
-              );
-              context.read<SeekerBloc>().add(
-                NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-              );
-            }
-          }
-        },
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: 1,
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.remove_red_eye_rounded,
-                  color: Colors.blueAccent,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text("About", style: TextStyle(color: iconColor)),
-              ],
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 1,
+              child: Row(
+                children: [
+                   Icon(
+                    Icons.remove_red_eye_rounded,
+                    color: context.appColors.infoColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    "ABOUT",
+                    style: TextStyle(
+                      color: iconColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          PopupMenuItem(
-            value: 2,
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.chat_bubble_rounded,
-                  color: Colors.greenAccent,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text("Chat", style: TextStyle(color: iconColor)),
-              ],
+            PopupMenuItem(
+              value: 2,
+              child: Row(
+                children: [
+                   Icon(
+                    Icons.chat_bubble_rounded,
+                    color: context.appColors.successColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    "CHAT",
+                    style: TextStyle(
+                      color: iconColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   void _showFundingDialog(BuildContext context, RequestData requestData) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(50)
-        : Colors.black.withAlpha(20);
+    final textColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
 
     if (!(requestData.request?.approved ?? false)) {
       customAlert(
@@ -1024,15 +1046,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
         return Material(
           color: Colors.transparent,
           child: Center(
-            child: Container(
-              padding: const EdgeInsets.all(24),
+            child: SolidContainer(
+              padding: EdgeInsets.all(24),
               width: MediaQuery.of(context).size.width * 0.85,
-              constraints: const BoxConstraints(maxWidth: 400),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: backgroundColor,
-                border: Border.all(color: borderColor),
-              ),
+              borderRadius: BorderRadius.circular(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1041,10 +1058,11 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     child: Column(
                       children: [
                         CustomTextWidget(
-                          text: "Fund Project & Secure Provider",
+                          text: "FUND PROJECT & SECURE PROVIDER",
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           color: textColor,
+                          letterSpacing: 0.5,
                         ),
                         const SizedBox(height: 12),
                         CustomTextWidget(
@@ -1079,7 +1097,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                         child: TextButton(
                           onPressed: () => Navigator.pop(dialogContext),
                           style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                               side: BorderSide(color: borderColor),

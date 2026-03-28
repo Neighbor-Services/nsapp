@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_more_requests_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_search_request_page.dart';
@@ -10,12 +9,13 @@ import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/wallet/presentation/pages/wallet_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_all_services_page.dart';
+// import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
+// import 'package:nsapp/features/provider/presentation/pages/provider_all_services_page.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import '../bloc/provider_bloc.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProviderHomePage extends StatefulWidget {
   const ProviderHomePage({super.key});
@@ -66,7 +66,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 800),
+                  constraints: BoxConstraints(maxWidth: 800),
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: ListView(
@@ -95,22 +95,22 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         ),
                         const SizedBox(height: 32),
 
-                        // Service Categories Section
-                        _buildSectionHeader(
-                          context,
-                          "Your Services",
-                          onViewAll: () {
-                            context.read<ProviderBloc>().add(
-                              NavigateProviderEvent(
-                                page: 1,
-                                widget: const ProviderAllServicesPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        _buildServicesGrid(context),
-                        const SizedBox(height: 32),
+                        // // Service Categories Section
+                        // _buildSectionHeader(
+                        //   context,
+                        //   "Your Services",
+                        //   onViewAll: () {
+                        //     context.read<ProviderBloc>().add(
+                        //       NavigateProviderEvent(
+                        //         page: 1,
+                        //         widget: const ProviderAllServicesPage(),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
+                        // const SizedBox(height: 16),
+                        // _buildServicesGrid(context),
+                        // const SizedBox(height: 32),
 
                         _buildSectionHeader(context, "Explore More"),
                         const SizedBox(height: 16),
@@ -155,12 +155,10 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         : 0;
 
                     return SolidContainer(
-                      padding: const EdgeInsets.all(24),
-                      gradient: const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                      ),
+                      padding: EdgeInsets.all(24),
+                      backgroundColor: context.appColors.primaryColor,
+                      borderRadius: BorderRadius.circular(28),
+                      gradient: context.appColors.primaryGradient,
                       child: Column(
                         children: [
                           if (profile.preferredPaymentMode != 'ON_SITE') ...[
@@ -171,20 +169,21 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Total Balance",
+                                      "TOTAL BALANCE",
                                       style: TextStyle(
-                                        color: Colors.white.withAlpha(180),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                                        color: context.appColors.primaryTextColor,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1.2,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: context.appColors.primaryTextColor,
                                         fontSize: 32,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w900,
                                       ),
                                     ),
                                   ],
@@ -199,32 +198,34 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                     );
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 10,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withAlpha(40),
+                                      color: context.appColors.cardBackground,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: Colors.white.withAlpha(60),
+                                        color: context.appColors.glassBorder,
+                                        width: 1.5,
                                       ),
                                     ),
-                                    child: const Row(
+                                    child:  Row(
                                       children: [
                                         Text(
-                                          "Wallet",
+                                          "WALLET",
                                           style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                            color: context.appColors.primaryColor,
+                                            fontWeight: FontWeight.w900,
                                             fontSize: 12,
+                                            letterSpacing: 1.0,
                                           ),
                                         ),
                                         SizedBox(width: 8),
                                         Icon(
                                           Icons.arrow_forward_ios_rounded,
                                           size: 10,
-                                          color: Colors.white,
+                                          color: context.appColors.primaryColor,
                                         ),
                                       ],
                                     ),
@@ -240,7 +241,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                 "Active Bids",
                                 bidsCount.toString(),
                                 Icons.gavel_rounded,
-                                Colors.orange,
+                                context.appColors.warningColor,
                               ),
                               const SizedBox(width: 16),
                               _buildDashboardStat(
@@ -273,21 +274,24 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   ) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withAlpha(30),
+          color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withAlpha(30)),
+          border: Border.all(
+            color: context.appColors.glassBorder,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: iconColor.withAlpha(40),
+                color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: context.appColors.primaryColor, size: 20),
             ),
             const SizedBox(width: 12),
             Column(
@@ -295,17 +299,19 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               children: [
                 Text(
                   value,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: context.appColors.primaryTextColor,
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
                 Text(
-                  label,
+                  label.toUpperCase(),
                   style: TextStyle(
-                    color: Colors.white.withAlpha(150),
-                    fontSize: 11,
+                    color: context.appColors.hintTextColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.8,
                   ),
                 ),
               ],
@@ -317,13 +323,10 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   }
 
   Widget _buildSearchBar(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? Colors.white.withAlpha(20) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(10);
-    final hintColor = isDark ? Colors.white.withAlpha(150) : Colors.grey[400];
-    final iconColor = isDark ? Colors.white.withAlpha(180) : Colors.grey[600];
+    final bgColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final hintColor = context.appColors.hintTextColor;
+    final iconColor = context.appColors.hintTextColor;
 
     return GestureDetector(
       onTap: () {
@@ -343,39 +346,38 @@ class _ProviderHomePageState extends State<ProviderHomePage>
       },
       child: Container(
         height: 60,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor),
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(10),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
             Icon(Icons.search_rounded, color: iconColor),
             const SizedBox(width: 16),
             Text(
-              "Find your next project...",
-              style: TextStyle(color: hintColor, fontSize: 16),
+              "FIND YOUR NEXT PROJECT...",
+              style: TextStyle(
+                color: hintColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.1,
+              ),
             ),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: appOrangeColor1.withAlpha(40),
+                color: context.appColors.secondaryColor.withAlpha(40),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child:  Icon(
                 Icons.arrow_forward_rounded,
-                color: appOrangeColor1,
+                color: context.appColors.secondaryColor,
                 size: 20,
               ),
             ),
@@ -390,28 +392,30 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     String title, {
     VoidCallback? onViewAll,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    final textColor = context.appColors.primaryTextColor;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          title,
+          title.toUpperCase(),
           style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
             color: textColor,
+            letterSpacing: 1.2,
           ),
         ),
         if (onViewAll != null)
           TextButton(
             onPressed: onViewAll,
             child: Text(
-              "View All",
+              "VIEW ALL",
               style: TextStyle(
                 color: textColor.withAlpha(180),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w900,
+                fontSize: 12,
+                letterSpacing: 1.0,
               ),
             ),
           ),
@@ -419,138 +423,109 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     );
   }
 
-  Widget _buildServicesGrid(BuildContext context) {
-    final services = SuccessGetServicesState.services;
-    final displayServices = services.take(2).toList();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  // Widget _buildServicesGrid(BuildContext context) {
+  //   final services = SuccessGetServicesState.services;
+  //   final displayServices = services.take(2).toList();
 
-    final icons = [
-      Icons.build_rounded,
-      Icons.cleaning_services_rounded,
-      Icons.electrical_services_rounded,
-      Icons.plumbing_rounded,
-      Icons.local_shipping_rounded,
-      Icons.home_repair_service_rounded,
-    ];
+  //   final icons = [
+  //     Icons.build_rounded,
+  //     Icons.cleaning_services_rounded,
+  //     Icons.electrical_services_rounded,
+  //     Icons.plumbing_rounded,
+  //     Icons.local_shipping_rounded,
+  //     Icons.home_repair_service_rounded,
+  //   ];
 
-    final cardColor = isDark ? Colors.white.withAlpha(15) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(25)
-        : Colors.black.withAlpha(10);
-    final shadowColor = isDark
-        ? Colors.transparent
-        : Colors.black.withAlpha(10);
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final iconBgColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.blue.withAlpha(10);
-    final iconColor = isDark ? Colors.white : Colors.blue;
+  //   final cardColor = context.appColors.cardBackground;
+  //   final borderColor = context.appColors.glassBorder;
+  //   final textColor = context.appColors.primaryTextColor;
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 1.3,
-      ),
-      itemCount: displayServices.length,
-      itemBuilder: (context, index) {
-        final service = displayServices[index];
-        final icon = icons[index % icons.length];
+  //   return GridView.builder(
+  //     shrinkWrap: true,
+  //     physics: const NeverScrollableScrollPhysics(),
+  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: 2,
+  //       crossAxisSpacing: 16,
+  //       mainAxisSpacing: 16,
+  //       childAspectRatio: 1.3,
+  //     ),
+  //     itemCount: displayServices.length,
+  //     itemBuilder: (context, index) {
+  //       final service = displayServices[index];
+  //       final icon = icons[index % icons.length];
 
-        return GestureDetector(
-          onTap: () {
-            if (ValidUserSubscriptionState.isValid) {
-              context.read<ProviderBloc>().add(
-                NavigateProviderEvent(
-                  page: 1,
-                  widget: RequestsByServicePage(
-                    serviceId: service.id ?? '',
-                    serviceName: service.name ?? 'Service',
-                  ),
-                ),
-              );
-            } else {
-              showDialog(
-                context: context,
-                builder: (context) => const SubscribeDialogWidget(),
-              );
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: borderColor),
-              boxShadow: [
-                BoxShadow(
-                  color: shadowColor,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -15,
-                  bottom: -15,
-                  child: Icon(
-                    icon,
-                    size: 90,
-                    color: isDark
-                        ? Colors.white.withAlpha(10)
-                        : Colors.black.withAlpha(5),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: iconBgColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(icon, color: iconColor, size: 24),
-                      ),
-                      Text(
-                        service.name ?? "Service",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                          height: 1.2,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //       return GestureDetector(
+  //         onTap: () {
+  //           if (ValidUserSubscriptionState.isValid) {
+  //             context.read<ProviderBloc>().add(
+  //               NavigateProviderEvent(
+  //                 page: 1,
+  //                 widget: RequestsByServicePage(
+  //                   serviceId: service.id ?? '',
+  //                   serviceName: service.name ?? 'Service',
+  //                 ),
+  //               ),
+  //             );
+  //           } else {
+  //             showDialog(
+  //               context: context,
+  //               builder: (context) => const SubscribeDialogWidget(),
+  //             );
+  //           }
+  //         },
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             color: cardColor,
+  //             borderRadius: BorderRadius.circular(24),
+  //             border: Border.all(
+  //               color: borderColor,
+  //               width: 1.5,
+  //             ),
+  //           ),
+  //           child: Stack(
+  //             children: [
+              
+  //               Padding(
+  //                 padding: EdgeInsets.all(20),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     Container(
+  //                       padding: EdgeInsets.all(10),
+  //                       decoration: BoxDecoration(
+  //                         color: context.appColors.primaryColor.withAlpha(40),
+  //                         borderRadius: BorderRadius.circular(12),
+  //                       ),
+  //                       child: Icon(icon, color: context.appColors.primaryColor, size: 24),
+  //                     ),
+  //                     Text(
+  //                       (service.name ?? "SERVICE").toUpperCase(),
+  //                       style: TextStyle(
+  //                         fontSize: 14,
+  //                         fontWeight: FontWeight.w900,
+  //                         color: textColor,
+  //                         height: 1.2,
+  //                         letterSpacing: 0.8,
+  //                       ),
+  //                       maxLines: 2,
+  //                       overflow: TextOverflow.ellipsis,
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildDirectRequestsCard(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? Colors.white.withAlpha(15) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(25)
-        : Colors.black.withAlpha(10);
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final shadowColor = isDark
-        ? Colors.transparent
-        : Colors.black.withAlpha(10);
+    final cardColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
 
     return GestureDetector(
       onTap: () {
@@ -562,18 +537,14 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
@@ -581,14 +552,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF6C63FF), Color(0xFF5A52E0)],
-                ),
+                color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.handshake_rounded,
-                color: Colors.white,
+                color: context.appColors.primaryColor,
                 size: 26,
               ),
             ),
@@ -598,11 +567,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Direct Requests",
+                    "DIRECT REQUESTS",
                     style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
                       color: textColor,
+                      letterSpacing: 1.0,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -623,15 +593,10 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   }
 
   Widget _buildExploreCard(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? Colors.white.withAlpha(15) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(25)
-        : Colors.black.withAlpha(10);
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final shadowColor = isDark
-        ? Colors.transparent
-        : Colors.black.withAlpha(10);
+    final cardColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+
 
     return GestureDetector(
       onTap: () {
@@ -650,18 +615,14 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
@@ -669,14 +630,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [appBlueCardColor, Color(0xFF4299E1)],
-                ),
+                color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.location_searching_rounded,
-                color: Colors.white,
+                color: context.appColors.primaryColor,
                 size: 26,
               ),
             ),
@@ -686,11 +645,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Nearby Opportunities",
+                    "NEARBY OPPORTUNITIES",
                     style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
                       color: textColor,
+                      letterSpacing: 1.0,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -711,15 +671,10 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   }
 
   Widget _buildWalletCard(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? Colors.white.withAlpha(15) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(25)
-        : Colors.black.withAlpha(10);
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final shadowColor = isDark
-        ? Colors.transparent
-        : Colors.black.withAlpha(10);
+    final cardColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+
 
     return GestureDetector(
       onTap: () {
@@ -728,18 +683,14 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
@@ -747,14 +698,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Colors.orange, Color(0xFFFFA500)],
-                ),
+                color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.account_balance_wallet_rounded,
-                color: Colors.white,
+                color: context.appColors.primaryColor,
                 size: 26,
               ),
             ),
@@ -764,11 +713,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Financial Wallet",
+                    "FINANCIAL WALLET",
                     style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
                       color: textColor,
+                      letterSpacing: 1.0,
                     ),
                   ),
                   const SizedBox(height: 4),

@@ -6,6 +6,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class CreateDisputePage extends StatefulWidget {
   final String appointmentId;
@@ -50,18 +51,20 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
-          'Raise Dispute',
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+          'RAISE DISPUTE',
+          style: TextStyle(
+            color: textColor, 
+            fontWeight: FontWeight.w900,
+            fontSize: 18,
+            letterSpacing: 1.2,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -69,12 +72,11 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
-            margin: const EdgeInsets.all(8),
+            margin: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withAlpha(50)
-                  : Colors.black.withAlpha(10),
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: context.appColors.glassBorder),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -89,24 +91,24 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
           listener: (context, state) {
             if (state is SuccessCreateDisputeState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                 SnackBar(
                   content: Text('Dispute raised successfully.'),
-                  backgroundColor: Colors.green,
+                  backgroundColor: context.appColors.successColor,
                 ),
               );
               Navigator.pop(context);
             } else if (state is FailureCreateDisputeState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                 SnackBar(
                   content: Text('Failed to raise dispute.'),
-                  backgroundColor: Colors.red,
+                  backgroundColor: context.appColors.errorColor,
                 ),
               );
             }
           },
           builder: (context, state) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 100, 20, 20),
+              padding: EdgeInsets.fromLTRB(20, 100, 20, 20),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -114,22 +116,22 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                   children: [
                     // Header Section
                     SolidContainer(
-                      padding: const EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
                       child: Row(
                         children: [
                           Container(
                             width: 56,
                             height: 56,
                             decoration: BoxDecoration(
-                              color: Colors.orange.withAlpha(30),
+                              color: context.appColors.warningColor.withAlpha(30),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: Colors.orange.withAlpha(50),
+                                color: context.appColors.warningColor.withAlpha(50),
                               ),
                             ),
-                            child: const Icon(
+                            child:  Icon(
                               Icons.gavel_rounded,
-                              color: Colors.orange,
+                              color: context.appColors.warningColor,
                               size: 28,
                             ),
                           ),
@@ -139,11 +141,12 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Raise a Dispute',
+                                  'RAISE A DISPUTE',
                                   style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
                                     color: textColor,
+                                    letterSpacing: 0.5,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -166,22 +169,25 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
 
                     // Form Section
                     SolidContainer(
-                      padding: const EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Dispute Details',
+                            'DISPUTE DETAILS',
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: textColor.withAlpha(200),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              color: textColor,
+                              letterSpacing: 1.0,
                             ),
                           ),
                           const SizedBox(height: 20),
                           SolidTextField(
                             controller: _reasonController,
-                            hintText: 'Reason for dispute',
+                            label: 'REASON FOR DISPUTE',
+                            hintText: 'Enter reason',
+                            allCapsLabel: true,
                             prefixIcon: Icons.warning_amber_rounded,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -193,7 +199,9 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                           const SizedBox(height: 16),
                           SolidTextField(
                             controller: _descriptionController,
+                            label: 'DESCRIPTION',
                             hintText: 'Describe the issue in detail',
+                            allCapsLabel: true,
                             prefixIcon: Icons.description_outlined,
                             isMultiLine: true,
                             validator: (value) {
@@ -210,12 +218,12 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
 
                     // Info Card
                     SolidContainer(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16),
                       child: Row(
                         children: [
                           Icon(
                             Icons.info_outline_rounded,
-                            color: Colors.blue.withAlpha(200),
+                            color: context.appColors.infoColor.withAlpha(200),
                             size: 24,
                           ),
                           const SizedBox(width: 12),
@@ -235,7 +243,8 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
 
                     // Submit Button
                     SolidButton(
-                      label: 'Submit Dispute',
+                      label: 'SUBMIT DISPUTE',
+                      allCaps: true,
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _submitDispute();

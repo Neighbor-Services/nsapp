@@ -115,6 +115,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_disputes_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_use_case.dart';
+import 'package:nsapp/features/shared/domain/usecase/get_legal_document_use_case.dart';
 
 final sl = GetIt.instance;
 
@@ -280,6 +281,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetSubscriptionPlansUseCase(sl()));
   sl.registerLazySingleton(() => GetMyDisputesUseCase(sl()));
   sl.registerLazySingleton(() => GetStripeDashboardLinkUseCase(sl()));
+  sl.registerLazySingleton(() => GetLegalDocumentUseCase(sl()));
 
   // ! Blocs
   sl.registerFactory(
@@ -369,6 +371,7 @@ Future<void> init() async {
       sl(),
       sl(),
       sl(),
+      sl(), // GetLegalDocumentUseCase
     ),
   );
 }

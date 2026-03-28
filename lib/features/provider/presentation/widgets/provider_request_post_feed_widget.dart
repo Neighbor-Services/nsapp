@@ -42,12 +42,12 @@ class _ProviderRequestPostFeedWidgetState
                     itemBuilder: (context, index) {
                       RequestData requestData = snapshot.data![index];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
                         ),
                         child: SolidContainer(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12),
                           child: Row(
                             children: [
                               Container(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -8,6 +8,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widge
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class RegisterAuthPage extends StatefulWidget {
   const RegisterAuthPage({super.key});
@@ -49,7 +50,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
       duration: const Duration(milliseconds: 600),
     );
     _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+        Tween<Offset>(begin: Offset(0, 0.3), end: Offset.zero).animate(
           CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
         );
 
@@ -73,12 +74,6 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : Colors.black54;
-
     return Scaffold(
       body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
@@ -105,9 +100,9 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
           }
           if (state is SuccessGoogleRegisterAuthenticationState) {
             customAlert(context, AlertType.success, "Registration successful!");
-            Future.delayed(const Duration(seconds: 3), () {
+            Future.delayed(const Duration(seconds: 1), () {
               if (mounted) {
-                Get.toNamed("/login");
+                Get.offAllNamed("/add-profile");
               }
             });
           }
@@ -125,7 +120,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                     vertical: isLargeScreen ? 40 : 0,
                   ),
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 450),
+                    constraints: BoxConstraints(maxWidth: 450),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: SlideTransition(
@@ -137,36 +132,19 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                             const SizedBox(height: 32),
 
                             SolidContainer(
-                              padding: const EdgeInsets.all(28),
+                              padding: EdgeInsets.all(28),
                               child: Form(
                                 key: key,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "Create Account",
-                                      style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "Sign up to get started with Neighbor Service",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: secondaryTextColor,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 28),
-
                                     // Email Field
                                     SolidTextField(
                                       controller: emailTextController,
-                                      label: "Email",
+                                      label: "EMAIL",
+                                      allCapsLabel: true,
                                       hintText: "Enter your email",
-                                      prefixIcon: Icons.email_outlined,
+                                      prefixIcon: Icons.email_rounded,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -177,14 +155,14 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 18),
-
+                                    const SizedBox(height: 24),
                                     // Password Field
                                     SolidTextField(
                                       controller: passwordTextController,
-                                      label: "Password",
+                                      label: "PASSWORD",
+                                      allCapsLabel: true,
                                       hintText: "Create a password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: Icons.lock_rounded,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -195,14 +173,14 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 18),
-
+                                    const SizedBox(height: 24),
                                     // Confirm Password Field
                                     SolidTextField(
                                       controller: confirmPasswordTextController,
-                                      label: "Confirm Password",
+                                      label: "CONFIRM PASSWORD",
+                                      allCapsLabel: true,
                                       hintText: "Confirm your password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: Icons.lock_rounded,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -214,11 +192,11 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 28),
-
+                                    const SizedBox(height: 32),
                                     // Sign Up Button
                                     SolidButton(
                                       label: "SIGN UP",
+                                      allCaps: true,
                                       isLoading: _isLoading,
                                       onPressed: () {
                                         if (key.currentState!.validate()) {
@@ -239,46 +217,41 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                       },
                                     ),
                                     const SizedBox(height: 24),
-
                                     // Divider
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: Container(
-                                            height: 1,
-                                            color: isDark
-                                                ? Colors.white.withAlpha(50)
-                                                : Colors.black.withAlpha(20),
+                                          child: Divider(
+                                            color: context.appColors.glassBorder.withAlpha(80),
+                                            thickness: 1,
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
+                                          padding: EdgeInsets.symmetric(
                                             horizontal: 16,
                                           ),
                                           child: Text(
-                                            "OR",
+                                            "or",
                                             style: TextStyle(
-                                              color: secondaryTextColor,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
+                                              color: context.appColors.secondaryTextColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
                                             ),
                                           ),
                                         ),
                                         Expanded(
-                                          child: Container(
-                                            height: 1,
-                                            color: isDark
-                                                ? Colors.white.withAlpha(50)
-                                                : Colors.black.withAlpha(20),
+                                          child: Divider(
+                                            color: context.appColors.glassBorder.withAlpha(80),
+                                            thickness: 1,
                                           ),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 24),
-
                                     // Google Sign Up
                                     SolidButton(
-                                      label: "Sign up with Google",
+                                      label: "SIGN IN WITH GOOGLE",
+                                      allCaps: true,
                                       imagePath: googleLogo,
                                       isPrimary: false,
                                       onPressed: () {
@@ -287,6 +260,8 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         );
                                       },
                                     ),
+                                    const SizedBox(height: 24),
+                                    _buildLegalText("By signing up, you agree to our\n"),
                                   ],
                                 ),
                               ),
@@ -300,8 +275,9 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                 Text(
                                   "Already have an account? ",
                                   style: TextStyle(
-                                    color: secondaryTextColor,
+                                    color: context.appColors.secondaryTextColor,
                                     fontSize: 14,
+                                    letterSpacing: 0.3,
                                   ),
                                 ),
                                 GestureDetector(
@@ -309,9 +285,10 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                   child: Text(
                                     "Login",
                                     style: TextStyle(
-                                      color: textColor,
+                                      color: context.appColors.primaryTextColor,
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.3,
                                     ),
                                   ),
                                 ),
@@ -333,47 +310,76 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
   }
 
   Widget _buildHeader() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-
     return Column(
       children: [
+        // App Logo
         Container(
-          width: 80,
-          height: 80,
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [Colors.white.withAlpha(50), Colors.white.withAlpha(20)]
-                  : [Colors.black.withAlpha(10), Colors.black.withAlpha(5)],
-            ),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withAlpha(40)
-                  : Colors.black.withAlpha(20),
-              width: 2,
-            ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
           ),
-          child: Icon(
-            Icons.person_add_alt_1_rounded,
-            size: 40,
-            color: textColor,
+          child: Image.asset(
+            logo2Assets,
+            height: 60,
+            fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 32),
         Text(
-          "Neighbor Service",
+          "CREATE ACCOUNT",
           style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-            letterSpacing: 1,
+            fontSize: 28,
+            fontWeight: FontWeight.w900,
+            color: context.appColors.primaryTextColor,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "Sign up to get started with Neighbor Service",
+          style: TextStyle(
+            fontSize: 14,
+            color: context.appColors.secondaryTextColor,
+            letterSpacing: 0.5,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLegalText(String prefix) {
+    return Center(
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: TextStyle(
+            color: context.appColors.secondaryTextColor,
+            fontSize: 12,
+            height: 1.5,
+          ),
+          children: [
+            TextSpan(text: prefix),
+            TextSpan(
+              text: "Terms and Conditions",
+              style: TextStyle(
+                color: context.appColors.primaryTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+              recognizer: TapGestureRecognizer()..onTap = () => Get.toNamed('/legal', arguments: 'TERMS'),
+            ),
+            const TextSpan(text: " and "),
+            TextSpan(
+              text: "Privacy Policy",
+              style: TextStyle(
+                color: context.appColors.primaryTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+              recognizer: TapGestureRecognizer()..onTap = () => Get.toNamed('/legal', arguments: 'PRIVACY'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

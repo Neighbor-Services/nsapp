@@ -48,7 +48,6 @@ class _MyMessagesPageState extends State<MyMessagesPage>
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -60,7 +59,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 800),
+                  constraints: BoxConstraints(maxWidth: 800),
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Column(
@@ -72,27 +71,21 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                             vertical: 16,
                           ),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: 24,
                               vertical: 24,
                             ),
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? const Color(0xFF2E2E3E)
-                                  : Colors.white,
+                              color: context.appColors.cardBackground,
                               borderRadius: BorderRadius.circular(24),
                               border: Border.all(
-                                color: isDark
-                                    ? Colors.white.withAlpha(20)
-                                    : Colors.black.withAlpha(10),
+                                color: context.appColors.glassBorder,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withAlpha(
-                                    isDark ? 30 : 5,
-                                  ),
+                                  color: Colors.black.withAlpha(20),
                                   blurRadius: 10,
-                                  offset: const Offset(0, 4),
+                                  offset: Offset(0, 4),
                                 ),
                               ],
                             ),
@@ -102,14 +95,12 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Messages",
+                                      "MESSAGES",
                                       style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black87,
-                                        letterSpacing: -0.5,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900,
+                                        color: context.appColors.primaryTextColor,
+                                        letterSpacing: 1.2,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -117,9 +108,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                       "Connect with your partners",
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: isDark
-                                            ? Colors.white.withAlpha(160)
-                                            : Colors.black54,
+                                        color: context.appColors.hintTextColor,
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
@@ -127,17 +116,17 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                 ),
                                 const Spacer(),
                                 Container(
-                                  padding: const EdgeInsets.all(10),
+                                  padding: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: appOrangeColor1.withAlpha(40),
+                                    color: context.appColors.secondaryColor.withAlpha(40),
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: appOrangeColor1.withAlpha(60),
+                                      color: context.appColors.secondaryColor.withAlpha(60),
                                     ),
                                   ),
-                                  child: const Icon(
+                                  child:  Icon(
                                     Icons.chat_bubble_rounded,
-                                    color: appOrangeColor1,
+                                    color: context.appColors.secondaryColor,
                                     size: 22,
                                   ),
                                 ),
@@ -146,7 +135,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 24,
                             vertical: 8,
                           ),
@@ -155,9 +144,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
-                              color: isDark
-                                  ? Colors.white.withAlpha(100)
-                                  : Colors.black.withAlpha(120),
+                              color: context.appColors.primaryTextColor,
                               letterSpacing: 2,
                             ),
                           ),
@@ -191,14 +178,12 @@ class _MyMessagesPageState extends State<MyMessagesPage>
       if (state is FailureGetMyMessagesState) {
         return Center(
           child: Container(
-            padding: const EdgeInsets.all(40),
+            padding: EdgeInsets.all(40),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2E2E3E) : Colors.white,
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: isDark
-                    ? Colors.white.withAlpha(20)
-                    : Colors.black.withAlpha(10),
+                color: context.appColors.glassBorder,
               ),
               boxShadow: isDark
                   ? null
@@ -216,15 +201,16 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                 Icon(
                   Icons.chat_bubble_outline_rounded,
                   size: 64,
-                  color: appOrangeColor1.withAlpha(150),
+                  color: context.appColors.secondaryColor.withAlpha(150),
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  "No conversations yet",
+                  "NO CONVERSATIONS YET",
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    color: context.appColors.primaryTextColor,
+                    letterSpacing: 1.0,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -233,9 +219,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDark
-                        ? Colors.white.withAlpha(140)
-                        : Colors.black54,
+                    color: context.appColors.glassBorder,
                     height: 1.5,
                   ),
                 ),
@@ -273,7 +257,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
           }
           return ListView.builder(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 24),
             itemCount: chats.length,
             itemBuilder: (context, index) =>
                 _buildMessageCard(context, chats[index], index),
@@ -287,14 +271,13 @@ class _MyMessagesPageState extends State<MyMessagesPage>
   }
 
   Widget _buildMessageCard(BuildContext context, Chat chat, int index) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (chat.other == null) return const SizedBox.shrink();
     final lastMessage =
         chat.chat?.lastMessage?.message ?? "Start a conversation";
     final unreadCount = chat.chat?.unreadCount ?? 0;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: () {
           context.read<MessageBloc>().add(
@@ -315,24 +298,15 @@ class _MyMessagesPageState extends State<MyMessagesPage>
         },
         borderRadius: BorderRadius.circular(20),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2E2E3E) : Colors.white,
+            color: context.appColors.cardBackground,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: unreadCount > 0
-                  ? appOrangeColor1.withAlpha(80)
-                  : (isDark
-                        ? Colors.white.withAlpha(20)
-                        : Colors.black.withAlpha(10)),
+                  ? context.appColors.secondaryColor.withAlpha(80)
+                  : context.appColors.glassBorder,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(isDark ? 20 : 5),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
           child: Row(
             children: [
@@ -350,24 +324,23 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      chat.other!.firstName ?? "User",
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
+                      Text(
+                        (chat.other!.firstName ?? "User").toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          color: context.appColors.primaryTextColor,
+                          letterSpacing: 0.5,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 6),
                     Text(
                       lastMessage,
                       style: TextStyle(
                         fontSize: 14,
                         color: unreadCount > 0
-                            ? (isDark ? Colors.white : Colors.black)
-                            : (isDark
-                                  ? Colors.white.withAlpha(140)
-                                  : Colors.black54),
+                            ? context.appColors.primaryTextColor
+                            : context.appColors.hintTextColor,
                         fontWeight: unreadCount > 0
                             ? FontWeight.w600
                             : FontWeight.w400,
@@ -380,17 +353,17 @@ class _MyMessagesPageState extends State<MyMessagesPage>
               ),
               if (unreadCount > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: appOrangeColor1,
+                    color: context.appColors.secondaryColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     "$unreadCount",
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -400,9 +373,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
               else
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: isDark
-                      ? Colors.white.withAlpha(80)
-                      : Colors.black.withAlpha(40),
+                  color: context.appColors.glassBorder,
                   size: 24,
                 ),
             ],

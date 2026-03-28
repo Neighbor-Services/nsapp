@@ -5,8 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/message.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
@@ -28,6 +26,7 @@ import 'package:nsapp/features/shared/presentation/pages/call_page.dart';
 import 'package:nsapp/core/services/consultation_service.dart';
 import 'package:nsapp/core/models/chat.dart';
 import '../widgets/chat_input_field.dart';
+import 'package:nsapp/core/core.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -119,34 +118,21 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   Widget _buildHeader(BuildContext context, dynamic receiver) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final subtitleColor = isDark ? Colors.white.withAlpha(150) : Colors.black54;
-    final iconColor = isDark ? Colors.white : Colors.black87;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(10);
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(30)
-        : Colors.grey.withAlpha(20);
+    final bgColor = context.appColors.cardBackground;
+    final textColor = context.appColors.primaryTextColor;
+    final subtitleColor = context.appColors.secondaryTextColor;
+    final iconColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
 
     return ScaleTransition(
       scale: _headerAnimation,
       child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        margin: EdgeInsets.fromLTRB(16, 8, 16, 12),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: shadowColor,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -170,7 +156,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "${receiver.firstName} ${receiver.lastName}",
+                    "${receiver.firstName}",
                     style: TextStyle(
                       color: textColor,
                       fontSize: 16,
@@ -185,7 +171,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                         height: 8,
                         decoration: BoxDecoration(
                           color: ChatStatusState.isOnline
-                              ? Colors.greenAccent
+                              ? context.appColors.successColor
                               : Colors.grey,
                           shape: BoxShape.circle,
                         ),
@@ -211,10 +197,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   Widget _buildAvatar(dynamic receiver) {
     return Container(
-      padding: const EdgeInsets.all(2),
+      padding: EdgeInsets.all(2),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: appOrangeColor1.withAlpha(100), width: 2),
+        border: Border.all(color: context.appColors.secondaryColor.withAlpha(100), width: 2),
       ),
       child: CircleAvatar(
         radius: 20,
@@ -230,8 +216,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   Widget _buildHeaderActions(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = isDark ? Colors.white.withAlpha(200) : Colors.black87;
+    final iconColor = context.appColors.secondaryTextColor;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -253,18 +238,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   Widget _buildIconButton(IconData icon, VoidCallback onTap, Color color) {
     return IconButton(
       onPressed: onTap,
-      icon: Icon(icon),
-      color: color,
+      icon: Icon(icon, color: context.appColors.primaryColor),
       iconSize: 22,
     );
   }
 
   Widget _buildChatArea(BuildContext context, MessageState state) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final emptyTextColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black54;
-    final iconColor = isDark ? Colors.white.withAlpha(30) : Colors.black12;
+    final emptyTextColor = context.appColors.glassBorder;
+    final iconColor = context.appColors.glassBorder;
 
     if (state is LoadingMessageState) {
       return const LoadingWidget();
@@ -306,7 +287,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
         return ListView.builder(
           controller: _scrollController,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           itemCount: messages.length,
           itemBuilder: (context, index) {
             final chatMessage = messages[index];
@@ -321,20 +302,15 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   Widget _buildInputArea(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(10);
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(30)
-        : Colors.grey.withAlpha(20);
+    final bgColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final shadowColor = context.appColors.glassBorder;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 20),
       color: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(28),
@@ -343,7 +319,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             BoxShadow(
               color: shadowColor,
               blurRadius: 10,
-              offset: const Offset(0, -4),
+              offset: Offset(0, -4),
             ),
           ],
         ),
@@ -422,9 +398,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   Future<void> _handleCall({required bool isVideo}) async {
     final senderId = SuccessGetProfileState.profile.user?.id;
     final receiverId = MessageReceiverState.profile.user?.id;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final snackBarBg = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final snackBarText = isDark ? Colors.white : Colors.black87;
+    final snackBarBg = context.appColors.cardBackground;
+    final snackBarText = context.appColors.primaryTextColor;
 
     if (senderId == null || receiverId == null) {
       customAlert(context, AlertType.error, "User information missing");
@@ -443,7 +418,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       backgroundColor: snackBarBg,
       colorText: snackBarText,
       duration: const Duration(seconds: 4),
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.all(16),
       borderRadius: 16,
       mainButton: TextButton(
         onPressed: () => Get.back(),
@@ -495,15 +470,15 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   void _handleImagePick() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sheetColor = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black87;
+    final sheetColor = context.appColors.cardBackground;
+    final textColor = context.appColors.primaryTextColor;
 
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: sheetColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -579,15 +554,15 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     VoidCallback onTap,
     bool isDark,
   ) {
-    final bgColor = isDark ? Colors.white10 : Colors.black.withAlpha(5);
-    final iconColor = isDark ? Colors.white : Colors.black87;
+    final bgColor = context.appColors.glassBorder;
+    final iconColor = context.appColors.primaryTextColor;
 
     return GestureDetector(
       onTap: onTap,
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
             child: Icon(icon, color: iconColor, size: 30),
           ),
@@ -603,8 +578,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   void _handleScheduleAppointment() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sheetColor = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black87;
+    final sheetColor = context.appColors.cardBackground;
+    final textColor = context.appColors.primaryTextColor;
 
     DateTime selectedDate = DateTime.now();
     TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
@@ -614,10 +589,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       StatefulBuilder(
         builder: (context, setSheetState) {
           return Container(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: sheetColor,
-              borderRadius: const BorderRadius.vertical(
+              borderRadius: BorderRadius.vertical(
                 top: Radius.circular(24),
               ),
             ),
@@ -692,8 +667,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                       Get.back();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: appOrangeColor1,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: context.appColors.secondaryColor,
+                      padding: EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -725,20 +700,20 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     VoidCallback onTap,
     bool isDark,
   ) {
-    final bgColor = isDark ? Colors.white10 : Colors.black.withAlpha(5);
-    final textColor = isDark ? Colors.white : Colors.black87;
+    final bgColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           children: [
-            Icon(icon, color: appOrangeColor1, size: 24),
+            Icon(icon, color: context.appColors.secondaryColor, size: 24),
             const SizedBox(width: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/appointment.dart';
+import 'package:nsapp/core/core.dart';
 
 enum AlertType { success, error, warning }
 
@@ -16,10 +17,10 @@ class DialogUtils {
       context: context,
       builder: (context) {
         Color alertColor = (type == AlertType.success)
-            ? Colors.green
+            ? context.appColors.successColor
             : (type == AlertType.warning)
-            ? Colors.orange
-            : Colors.red;
+            ? context.appColors.warningColor
+            : context.appColors.errorColor;
 
         IconData alertIcon = (type == AlertType.success)
             ? Icons.check_circle_rounded
@@ -33,23 +34,18 @@ class DialogUtils {
             ? "WARNING"
             : "ERROR";
 
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final bgColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-        final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-        final secondaryTextColor = isDark
-            ? Colors.white.withAlpha(220)
-            : const Color(0xFF1E1E2E).withAlpha(200);
-        final borderColor = isDark
-            ? Colors.white.withAlpha(50)
-            : Colors.black.withAlpha(20);
+        final bgColor = context.appColors.cardBackground;
+        final textColor = context.appColors.primaryTextColor;
+        final secondaryTextColor = context.appColors.secondaryTextColor;
+        final borderColor = context.appColors.glassBorder;
 
         return Material(
           color: Colors.transparent,
           child: Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.85,
-              constraints: const BoxConstraints(maxWidth: 400),
-              padding: const EdgeInsets.all(24),
+              constraints: BoxConstraints(maxWidth: 400),
+              padding: EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: bgColor,
                 borderRadius: BorderRadius.circular(24),
@@ -66,7 +62,7 @@ class DialogUtils {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: alertColor.withAlpha(20),
@@ -104,10 +100,8 @@ class DialogUtils {
                       child: TextButton(
                         onPressed: () => Navigator.pop(context),
                         style: TextButton.styleFrom(
-                          backgroundColor: isDark
-                              ? Colors.white.withAlpha(15)
-                              : Colors.black.withAlpha(10),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: context.appColors.glassBorder,
+                          padding: EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

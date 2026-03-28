@@ -10,6 +10,7 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/dispute.dart';
+import 'package:nsapp/core/core.dart';
 
 class DisputesListPage extends StatefulWidget {
   const DisputesListPage({super.key});
@@ -27,113 +28,127 @@ class _DisputesListPageState extends State<DisputesListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.hintTextColor;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(
-          'My Disputes',
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () {
-            if (DashboardState.isProvider) {
-              context.read<ProviderBloc>().add(ProviderBackPressedEvent());
-            } else {
-              context.read<SeekerBloc>().add(SeekerBackPressedEvent());
-            }
-          },
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withAlpha(50)
-                  : Colors.black.withAlpha(10),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: textColor,
-              size: 18,
-            ),
-          ),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Get.toNamed('/create-dispute');
-            },
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.orange.withAlpha(50),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.orange.withAlpha(100)),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.add_rounded, color: Colors.orange, size: 18),
-                  SizedBox(width: 4),
-                  Text(
-                    'New',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
       body: GradientBackground(
-        child: BlocBuilder<SharedBloc, SharedState>(
-          builder: (context, state) {
-            if (state is SharedLoadingState) {
-              return const Center(child: LoadingWidget());
-            }
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SizedBox(
+                height: 60,
+                width: size(context).width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (DashboardState.isProvider) {
+                          context.read<ProviderBloc>().add(
+                            ProviderBackPressedEvent(),
+                          );
+                        } else {
+                          context.read<SeekerBloc>().add(
+                            SeekerBackPressedEvent(),
+                          );
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: context.appColors.cardBackground,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: context.appColors.glassBorder,
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: textColor,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      'MY DISPUTES',
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Get.toNamed('/create-dispute');
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(8),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.appColors.primaryColor,
+                          borderRadius: BorderRadius.circular(12),
+                         
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.add_rounded, color: Colors.white, size: 18),
+                            SizedBox(width: 4),
+                            Text(
+                              'NEW',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<SharedBloc, SharedState>(
+                builder: (context, state) {
+                  if (state is SharedLoadingState) {
+                    return const Center(child: LoadingWidget());
+                  }
 
-            if (state is SuccessGetMyDisputesState) {
-              final disputes = SuccessGetMyDisputesState.disputes;
-              return disputes.isEmpty
-                  ? _buildEmptyState(textColor, secondaryTextColor)
-                  : _buildDisputesList(
-                      disputes,
-                      isDark,
+                  if (state is SuccessGetMyDisputesState) {
+                    final disputes = SuccessGetMyDisputesState.disputes;
+                    return disputes.isEmpty
+                        ? _buildEmptyState(textColor, secondaryTextColor)
+                        : _buildDisputesList(
+                            disputes,
+
+                            textColor,
+                            secondaryTextColor,
+                          );
+                  }
+
+                  if (SuccessGetMyDisputesState.disputes.isNotEmpty) {
+                    return _buildDisputesList(
+                      SuccessGetMyDisputesState.disputes,
+
                       textColor,
                       secondaryTextColor,
                     );
-            }
+                  }
 
-            if (SuccessGetMyDisputesState.disputes.isNotEmpty) {
-              return Column(
-                children: [
-                  _buildDisputesList(
-                    SuccessGetMyDisputesState.disputes,
-                    isDark,
-                    textColor,
-                    secondaryTextColor,
-                  ),
-                ],
-              );
-            }
-
-            return _buildEmptyState(textColor, secondaryTextColor);
-          },
+                  return _buildEmptyState(textColor, secondaryTextColor);
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -142,9 +157,9 @@ class _DisputesListPageState extends State<DisputesListPage> {
   Widget _buildEmptyState(Color textColor, Color secondaryTextColor) {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: SolidContainer(
-          padding: const EdgeInsets.all(40),
+          padding: EdgeInsets.all(40),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -152,34 +167,43 @@ class _DisputesListPageState extends State<DisputesListPage> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withAlpha(30),
+                  color: context.appColors.warningColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.orange.withAlpha(50)),
+                  border: Border.all(
+                    color: context.appColors.warningColor.withAlpha(50),
+                  ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.gavel_rounded,
-                  color: Colors.orange,
+                  color: context.appColors.warningColor,
                   size: 40,
                 ),
               ),
               const SizedBox(height: 20),
               Text(
-                'No Disputes',
+                'NO DISPUTES',
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.0,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'You haven\'t raised any disputes yet',
+                'YOU HAVEN\'T RAISED ANY DISPUTES YET',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: secondaryTextColor, fontSize: 14),
+                style: TextStyle(
+                  color: secondaryTextColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                ),
               ),
               const SizedBox(height: 24),
               SolidButton(
-                label: 'Raise a Dispute',
+                label: 'RAISE A DISPUTE',
+                allCaps: true,
                 onPressed: () {
                   Get.toNamed('/create-dispute');
                 },
@@ -193,83 +217,84 @@ class _DisputesListPageState extends State<DisputesListPage> {
 
   Widget _buildDisputesList(
     List<Dispute> disputes,
-    bool isDark,
+
     Color textColor,
     Color secondaryTextColor,
   ) {
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 100, 20, 20),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
       itemCount: disputes.length,
       physics: const BouncingScrollPhysics(),
       itemBuilder: (context, index) {
         final dispute = disputes[index];
-        final statusColor = _getStatusColor(dispute.status);
 
         return Container(
-          margin: EdgeInsets.only(bottom: 16, top: (index == 0) ? 70 : 0),
+          margin: EdgeInsets.only(bottom: 16),
           child: GestureDetector(
             onTap: () => Get.toNamed('/dispute-details', arguments: dispute),
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: SolidContainer(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: statusColor.withAlpha(20),
+                            color: context.appColors.primaryColor.withAlpha(20),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: statusColor.withAlpha(40),
+                              color: context.appColors.primaryColor.withAlpha(40),
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
                                 width: 6,
                                 height: 6,
                                 decoration: BoxDecoration(
-                                  color: statusColor,
+                                  color: context.appColors.primaryColor,
                                   shape: BoxShape.circle,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                dispute.status ?? 'OPEN',
+                                (dispute.status ?? 'OPEN').toUpperCase(),
                                 style: TextStyle(
-                                  color: statusColor,
+                                  color: context.appColors.primaryColor,
                                   fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.8,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const Spacer(),
+                       
                         Icon(
                           Icons.arrow_forward_ios_rounded,
-                          color: secondaryTextColor.withAlpha(80),
+                          color: secondaryTextColor,
                           size: 14,
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      dispute.reason,
+                      dispute.reason.toUpperCase(),
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.3,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -288,7 +313,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                       children: [
                         Icon(
                           Icons.access_time_rounded,
-                          color: secondaryTextColor.withAlpha(120),
+                          color: secondaryTextColor,
                           size: 14,
                         ),
                         const SizedBox(width: 6),
@@ -299,17 +324,18 @@ class _DisputesListPageState extends State<DisputesListPage> {
                                 )
                               : 'Recent',
                           style: TextStyle(
-                            color: secondaryTextColor.withAlpha(120),
+                            color: context.appColors.hintTextColor,
                             fontSize: 12,
                           ),
                         ),
                         const Spacer(),
                         Text(
-                          'View Details',
+                          'VIEW DETAILS',
                           style: TextStyle(
-                            color: Colors.orange.withAlpha(200),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            color: context.appColors.warningColor,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ],
@@ -324,18 +350,4 @@ class _DisputesListPageState extends State<DisputesListPage> {
     );
   }
 
-  Color _getStatusColor(String? status) {
-    switch (status?.toUpperCase()) {
-      case 'OPEN':
-        return Colors.orange;
-      case 'UNDER_REVIEW':
-        return Colors.blue;
-      case 'RESOLVED':
-        return Colors.green;
-      case 'REJECTED':
-        return Colors.red;
-      default:
-        return Colors.orange;
-    }
-  }
 }

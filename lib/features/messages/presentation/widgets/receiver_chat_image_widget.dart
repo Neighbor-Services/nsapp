@@ -31,31 +31,17 @@ class ReceiverChatImageWidget extends StatelessWidget {
       finalUrl = finalUrl.replaceFirst('http://', 'https://');
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bubbleColor = isDark
-        ? const Color(0xFF2E2E3E)
-        : const Color(0xFFEFEFEF);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(30)
-        : Colors.grey.withAlpha(20);
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final timestampColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black54;
-    final placeholderColor = isDark
-        ? Colors.white.withAlpha(5)
-        : Colors.black.withAlpha(5);
-    final errorWidgetColor = isDark
-        ? Colors.white.withAlpha(10)
-        : Colors.black.withAlpha(5);
-    final iconColor = isDark ? Colors.white : Colors.black54;
-    final progressColor = isDark ? Colors.white : Colors.black54;
+    final bubbleColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+    final timestampColor = context.appColors.secondaryTextColor;
+    final placeholderColor = context.appColors.hintTextColor;
+    final errorWidgetColor = context.appColors.hintTextColor;
+    final iconColor = context.appColors.primaryTextColor;
+    final progressColor = context.appColors.primaryTextColor;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
+      padding: EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Column(
@@ -65,23 +51,17 @@ class ReceiverChatImageWidget extends StatelessWidget {
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75,
               ),
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: bubbleColor,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
                   bottomRight: Radius.circular(24),
                   bottomLeft: Radius.circular(6),
                 ),
                 border: Border.all(color: borderColor, width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: shadowColor,
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+               
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +113,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
                   ),
                   if (withText)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
+                      padding: EdgeInsets.fromLTRB(8, 12, 8, 4),
                       child: SelectableText(
                         message,
                         style: TextStyle(
@@ -147,7 +127,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 4, left: 4),
+              padding: EdgeInsets.only(top: 4, left: 4),
               child: Text(
                 DateFormat("HH:mm").format(dateTime.toLocal()),
                 style: TextStyle(

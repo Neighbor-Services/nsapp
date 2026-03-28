@@ -15,6 +15,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import '../../../shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerNewRequestPage extends StatefulWidget {
   final String? targetProviderId;
@@ -87,7 +88,6 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: BlocConsumer<SeekerBloc, SeekerState>(
@@ -124,7 +124,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 550),
+                    constraints: BoxConstraints(maxWidth: 550),
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.symmetric(
@@ -136,22 +136,23 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildHeader(isDark),
+                            _buildHeader(),
                             const SizedBox(height: 32),
                             SolidContainer(
-                              padding: const EdgeInsets.all(24),
+                              padding: EdgeInsets.all(24),
                               child: Form(
                                 key: key,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildServiceDropdown(isDark),
+                                    _buildServiceDropdown(),
                                     if (OtherServiceSelectState.others) ...[
                                       const SizedBox(height: 20),
                                       SolidTextField(
                                         controller: serviceTextController,
                                         hintText: "Enter service name",
                                         label: "Specify Service",
+                                        allCapsLabel: true,
                                         prefixIcon: Icons.category_rounded,
                                         validator: (val) => val!.isEmpty
                                             ? "Service is required"
@@ -173,9 +174,9 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                                 : null),
                                     ),
                                     const SizedBox(height: 20),
-                                    _buildLocationRow(context, isDark),
+                                    _buildLocationRow(context),
                                     const SizedBox(height: 20),
-                                    _buildScheduledTimePicker(context, isDark),
+                                    _buildScheduledTimePicker(context),
                                     const SizedBox(height: 20),
                                     SolidTextField(
                                       controller: descriptionTextController,
@@ -189,10 +190,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                           : null,
                                     ),
                                     const SizedBox(height: 24),
-                                    _buildImagePicker(context, isDark),
+                                    _buildImagePicker(context),
                                     const SizedBox(height: 28),
                                     SolidButton(
-                                      label: "Create Request",
+                                      label: "CREATE REQUEST",
                                       icon: Icons.send_rounded,
                                       onPressed: () => _submitRequest(context),
                                     ),
@@ -215,42 +216,44 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-  Widget _buildHeader(bool isDark) {
+  Widget _buildHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "New Request",
+          "NEW REQUEST",
           style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black87,
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+            color: context.appColors.primaryTextColor,
+            letterSpacing: 1.2,
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          "Tell us what service you need",
+          "TELL US WHAT SERVICE YOU NEED",
           style: TextStyle(
-            fontSize: 16,
-            color: isDark ? Colors.white.withAlpha(180) : Colors.black54,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            color: context.appColors.secondaryTextColor,
+            letterSpacing: 1.0,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildServiceDropdown(bool isDark) {
+  Widget _buildServiceDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Service Type",
           style: TextStyle(
-            color: isDark
-                ? Colors.white.withAlpha(200)
-                : Colors.black.withAlpha(160),
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+            color: context.appColors.hintTextColor,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.5,
           ),
         ),
         const SizedBox(height: 8),
@@ -278,30 +281,20 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             );
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withAlpha(20) : Colors.white,
+              color: context.appColors.surfaceBackground,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isDark
-                    ? Colors.white.withAlpha(30)
-                    : Colors.black.withAlpha(10),
+                color: context.appColors.glassBorder,
+                width: 1.5,
               ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(5),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.category_rounded,
-                  color: isDark ? Colors.white.withAlpha(150) : Colors.black38,
+                  color: context.appColors.glassBorder,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
@@ -310,15 +303,15 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                     selectedService ?? "Select a service",
                     style: TextStyle(
                       color: selectedService == null
-                          ? (isDark ? Colors.white54 : Colors.black38)
-                          : (isDark ? Colors.white : Colors.black87),
+                          ? context.appColors.secondaryTextColor
+                          : context.appColors.primaryTextColor,
                       fontSize: 16,
                     ),
                   ),
                 ),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  color: isDark ? Colors.white54 : Colors.black38,
+                  color: context.appColors.primaryColor,
                 ),
               ],
             ),
@@ -328,7 +321,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-  Widget _buildLocationRow(BuildContext context, bool isDark) {
+  Widget _buildLocationRow(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -337,6 +330,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             controller: locController,
             hintText: "Set your location",
             label: "Location",
+            allCapsLabel: true,
             prefixIcon: Icons.location_on_rounded,
             validator: (val) => val!.isEmpty ? "Location is required" : null,
           ),
@@ -348,30 +342,22 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF5C6BC0), Color(0xFF7E57C2)],
-              ),
+              color: context.appColors.primaryColor,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
-            child: const Icon(Icons.my_location_rounded, color: Colors.white),
+            child: Icon(Icons.my_location_rounded, color: context.appColors.cardBackground),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildScheduledTimePicker(BuildContext context, bool isDark) {
+  Widget _buildScheduledTimePicker(BuildContext context) {
     return SolidTextField(
       controller: scheduledTimeController,
       hintText: "When do you need this?",
       label: "Schedule",
+      allCapsLabel: true,
       prefixIcon: Icons.calendar_today_rounded,
       readOnly: true,
       onTap: () async {
@@ -381,13 +367,13 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           firstDate: DateTime.now(),
           lastDate: DateTime(2100),
           builder: (context, child) => Theme(
-            data: (isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
+            data: ThemeData(
               colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF5C6BC0),
-                primary: const Color(0xFF5C6BC0),
-                onPrimary: Colors.white,
-                surface: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-                brightness: isDark ? Brightness.dark : Brightness.light,
+                seedColor: context.appColors.primaryColor,
+                primary: context.appColors.primaryColor,
+                onPrimary: context.appColors.cardBackground,
+                surface: context.appColors.primaryBackground,
+                brightness: Theme.of(context).brightness,
               ),
             ),
             child: child!,
@@ -419,15 +405,15 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   }
 
   void _showLocationPicker(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          color: context.appColors.primaryBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           border: Border.all(
-            color: isDark ? Colors.white12 : Colors.black.withAlpha(10),
+            color: context.appColors.glassBorder,
+            width: 1.5,
           ),
         ),
         child: Column(
@@ -437,7 +423,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: context.appColors.glassBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -459,24 +445,24 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 }
               },
               leading: Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withAlpha(20),
+                  color: context.appColors.infoColor.withAlpha(20),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.location_on_rounded,
-                  color: Colors.blue,
+                  color: context.appColors.primaryColor,
                 ),
               ),
               title: Text(
                 "Use Current Location",
-                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                style: TextStyle(color: context.appColors.primaryTextColor),
               ),
               subtitle: Text(
                 "Auto-detect your location",
                 style: TextStyle(
-                  color: isDark ? Colors.white54 : Colors.black54,
+                  color: context.appColors.hintTextColor,
                 ),
               ),
             ),
@@ -489,21 +475,21 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 Get.toNamed("map-location");
               },
               leading: Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.green.withAlpha(20),
+                  color: context.appColors.successColor.withAlpha(20),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.map_rounded, color: Colors.green),
+                child: Icon(Icons.map_rounded, color: context.appColors.successColor),
               ),
               title: Text(
                 "Choose From Map",
-                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                style: TextStyle(color: context.appColors.primaryTextColor),
               ),
               subtitle: Text(
                 "Pick a specific location",
                 style: TextStyle(
-                  color: isDark ? Colors.white54 : Colors.black54,
+                  color: context.appColors.hintTextColor,
                 ),
               ),
             ),
@@ -514,28 +500,19 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-  Widget _buildImagePicker(BuildContext context, bool isDark) {
+  Widget _buildImagePicker(BuildContext context) {
     return GestureDetector(
       onTap: () => _showImagePicker(context),
       child: Container(
         width: double.infinity,
         height: 140,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withAlpha(20) : Colors.white,
+          color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? Colors.white12 : Colors.black.withAlpha(10),
-            style: BorderStyle.solid,
+            color: context.appColors.glassBorder,
+            width: 1.5,
           ),
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(5),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
         ),
         child: ImageSeekerState.picture == null
             ? Column(
@@ -544,13 +521,13 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                   Icon(
                     Icons.add_photo_alternate_rounded,
                     size: 40,
-                    color: isDark ? Colors.white54 : Colors.black26,
+                    color: context.appColors.hintTextColor,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     "Add Image (Optional)",
                     style: TextStyle(
-                      color: isDark ? Colors.white54 : Colors.black38,
+                      color: context.appColors.hintTextColor,
                       fontSize: 14,
                     ),
                   ),
@@ -574,14 +551,14 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                       onTap: () =>
                           context.read<SeekerBloc>().add(ClearImageEvent()),
                       child: Container(
-                        padding: const EdgeInsets.all(6),
+                        padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.red.withAlpha(200),
+                          color: context.appColors.errorColor.withAlpha(200),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.close,
-                          color: Colors.white,
+                          color: context.appColors.primaryColor,
                           size: 18,
                         ),
                       ),
@@ -594,15 +571,15 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   }
 
   void _showImagePicker(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          color: context.appColors.primaryBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           border: Border.all(
-            color: isDark ? Colors.white12 : Colors.black.withAlpha(10),
+            color: context.appColors.glassBorder,
+            width: 1.5,
           ),
         ),
         child: Column(
@@ -612,7 +589,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -620,22 +597,22 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             ListTile(
               onTap: () =>
                   context.read<SeekerBloc>().add(SelectImageFromGalleryEvent()),
-              leading: const Icon(
+              leading: Icon(
                 Icons.photo_library_rounded,
-                color: Colors.purple,
+                color: context.appColors.primaryColor,
               ),
               title: Text(
                 "Choose from Gallery",
-                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                style: TextStyle(color: context.appColors.primaryTextColor),
               ),
             ),
             ListTile(
               onTap: () =>
                   context.read<SeekerBloc>().add(SelectImageFromCameraEvent()),
-              leading: const Icon(Icons.camera_alt_rounded, color: Colors.blue),
+              leading: Icon(Icons.camera_alt_rounded, color: context.appColors.primaryColor),
               title: Text(
                 "Take a Photo",
-                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                style: TextStyle(color: context.appColors.primaryTextColor),
               ),
             ),
           ],

@@ -31,14 +31,19 @@ class Acceptance {
   });
 
   Acceptance.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id']?.toString();
     providerId = json['provider']?.toString();
     isApproved = json['is_approved'];
-    request = json['request'] != null && json['request'] is Map<String, dynamic>
-        ? Request.fromJson(json['request'])
-        : (json['request'] != null
-              ? Request(id: json['request'].toString())
+    
+    // Check multiple potential keys for the request object
+    final requestJson = json['request'] ?? json['service_request'] ?? json['service_request_id'];
+    
+    request = requestJson != null && requestJson is Map<String, dynamic>
+        ? Request.fromJson(requestJson)
+        : (requestJson != null
+              ? Request(id: requestJson.toString())
               : null);
+              
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     version = json['version'];

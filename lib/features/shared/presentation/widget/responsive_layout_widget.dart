@@ -30,8 +30,8 @@ class ResponsiveAuthLayout extends StatelessWidget {
             padding:
                 padding ??
                 (isLargeScreen
-                    ? const EdgeInsets.symmetric(horizontal: 24, vertical: 40)
-                    : const EdgeInsets.symmetric(horizontal: 24)),
+                    ? EdgeInsets.symmetric(horizontal: 24, vertical: 40)
+                    : EdgeInsets.symmetric(horizontal: 24)),
             child: child,
           ),
         );

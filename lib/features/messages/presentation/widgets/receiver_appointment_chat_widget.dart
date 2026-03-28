@@ -6,6 +6,7 @@ import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 
 import '../../../provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class ReceiverAppointmentChatWidget extends StatelessWidget {
   final DateTime startTime;
@@ -27,32 +28,19 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bubbleColor = isDark
-        ? const Color(0xFF2E2E3E)
-        : const Color(0xFFEFEFEF);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(30)
-        : Colors.grey.withAlpha(20);
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(200)
-        : Colors.black54;
-    final iconBgColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(10);
-    final iconColor = isDark ? Colors.white : Colors.black87;
-    final timestampColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black54;
-    final dividerColor = isDark ? Colors.white12 : Colors.black12;
-    final popupColor = isDark ? const Color(0xFF2E2E3E) : Colors.white;
+    final bubbleColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final shadowColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
+    final iconBgColor = context.appColors.glassBorder;
+    final iconColor = context.appColors.primaryTextColor;
+    final timestampColor = context.appColors.glassBorder;
+    final dividerColor = context.appColors.glassBorder;
+    final popupColor = context.appColors.cardBackground;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
+      padding: EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Column(
@@ -62,10 +50,10 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.8,
               ),
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: bubbleColor,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(24),
                   topRight: Radius.circular(24),
                   bottomRight: Radius.circular(24),
@@ -76,7 +64,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                   BoxShadow(
                     color: shadowColor,
                     blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
@@ -89,7 +77,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
                               color: iconBgColor,
                               shape: BoxShape.circle,
@@ -179,7 +167,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     child: Divider(color: dividerColor, height: 1),
                   ),
                   _buildInfoRow(
@@ -188,6 +176,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                     textColor,
                     secondaryTextColor,
                     iconBgColor,
+                    context,
                   ),
                   const SizedBox(height: 10),
                   _buildInfoRow(
@@ -196,16 +185,17 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                     textColor,
                     secondaryTextColor,
                     iconBgColor,
+                    context,
                   ),
                   if (message.isNotEmpty) ...[
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       child: Divider(color: dividerColor, height: 1),
                     ),
                     Text(
                       message,
                       style: TextStyle(
-                        color: secondaryTextColor,
+                        color: context.appColors.primaryTextColor,
                         fontSize: 14,
                         height: 1.5,
                       ),
@@ -215,7 +205,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 4, left: 4),
+              padding: EdgeInsets.only(top: 4, left: 4),
               child: Text(
                 DateFormat("HH:mm").format(appointmentDate.toLocal()),
                 style: TextStyle(
@@ -237,16 +227,17 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
     Color textColor,
     Color iconColor,
     Color iconBgColor,
+    BuildContext context,
   ) {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(6),
+          padding: EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: iconBgColor,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: iconColor, size: 14),
+          child: Icon(icon, color: context.appColors.primaryTextColor, size: 14),
         ),
         const SizedBox(width: 12),
         Expanded(

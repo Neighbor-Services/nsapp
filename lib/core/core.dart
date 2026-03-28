@@ -5,3 +5,4 @@ export 'constants/app_dark_theme.dart';
 export 'constants/light_text_theme.dart';
 export 'constants/dark_text_theme.dart';
 export 'constants/dimension.dart';
+export 'constants/app_theme_extension.dart';

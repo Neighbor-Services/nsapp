@@ -7,6 +7,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({super.key});
@@ -55,10 +56,8 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : Colors.black54;
+    // final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
 
     return Scaffold(
       body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
@@ -94,7 +93,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                   children: [
                     // App Bar
                     Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 16,
                       ),
@@ -103,21 +102,17 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                           IconButton(
                             onPressed: () => Get.back(),
                             icon: Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withAlpha(20)
-                                    : Colors.black.withAlpha(10),
-                                borderRadius: BorderRadius.circular(12),
+                                color: context.appColors.glassBorder.withAlpha(20),
+                                shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(30)
-                                      : Colors.black.withAlpha(20),
+                                  color: context.appColors.glassBorder,
                                 ),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.arrow_back_ios_new_rounded,
-                                color: Colors.white,
+                                color: isDark ? Colors.white : Colors.black,
                                 size: 18,
                               ),
                             ),
@@ -129,7 +124,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: EdgeInsets.symmetric(horizontal: 24),
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
@@ -140,46 +135,34 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                               height: 100,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    isDark
-                                        ? Colors.white.withAlpha(50)
-                                        : Colors.black.withAlpha(10),
-                                    isDark
-                                        ? Colors.white.withAlpha(20)
-                                        : Colors.black.withAlpha(10),
-                                  ],
-                                ),
+                                color: context.appColors.primaryColor.withAlpha(20),
                                 border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(40)
-                                      : Colors.black.withAlpha(30),
+                                  color: context.appColors.primaryColor.withAlpha(50),
                                   width: 2,
                                 ),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.key_rounded,
                                 size: 50,
-                                color: Colors.white,
+                                color: context.appColors.primaryColor,
                               ),
                             ),
                             const SizedBox(height: 32),
 
                             // Glass Container
                             SolidContainer(
-                              padding: const EdgeInsets.all(28),
+                              padding: EdgeInsets.all(28),
                               child: Form(
                                 key: key,
                                 child: Column(
                                   children: [
-                                    const Text(
-                                      "Create New Password",
+                                    Text(
+                                      "CREATE NEW PASSWORD",
                                       style: TextStyle(
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w900,
+                                        color: isDark ? Colors.white : Colors.black,
+                                        letterSpacing: 1.0,
                                       ),
                                     ),
                                     const SizedBox(height: 12),
@@ -197,6 +180,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                     SolidTextField(
                                       controller: otpTextController,
                                       label: "Verification Code",
+                                      allCapsLabel: true,
                                       hintText: "Enter 4-digit OTP",
                                       prefixIcon: Icons.pin_rounded,
                                       keyboardType: TextInputType.number,
@@ -214,6 +198,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                     SolidTextField(
                                       controller: passwordTextController,
                                       label: "New Password",
+                                      allCapsLabel: true,
                                       hintText: "Enter new password",
                                       prefixIcon: Icons.lock_outline_rounded,
                                       obscureText: true,
@@ -231,6 +216,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                     SolidTextField(
                                       controller: confirmPasswordTextController,
                                       label: "Confirm Password",
+                                      allCapsLabel: true,
                                       hintText: "Confirm new password",
                                       prefixIcon: Icons.lock_outline_rounded,
                                       obscureText: true,
@@ -248,6 +234,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
 
                                     SolidButton(
                                       label: "RESET PASSWORD",
+                                      allCaps: true,
                                       isLoading: _isLoading,
                                       onPressed: () {
                                         if (key.currentState!.validate()) {

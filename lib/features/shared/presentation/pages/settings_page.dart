@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -20,6 +18,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:nsapp/core/core.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -58,21 +57,19 @@ class _SettingsPageState extends State<SettingsPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    final textColor = context.appColors.primaryTextColor;
 
     return Scaffold(
       key: scaffold,
       body: BlocConsumer<SharedBloc, SharedState>(
         listener: (context, state) {
           if (state is SuccessConnectAccountState) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
             FlutterWebBrowser.openWebPage(
               url: SuccessConnectAccountState.accountLink!.url,
               customTabsOptions: CustomTabsOptions(
-                colorScheme: isDark
-                    ? CustomTabsColorScheme.dark
-                    : CustomTabsColorScheme.light,
+                colorScheme: isDark ? CustomTabsColorScheme.dark : CustomTabsColorScheme.light,
                 shareState: CustomTabsShareState.on,
                 instantAppsEnabled: true,
                 showTitle: true,
@@ -80,10 +77,8 @@ class _SettingsPageState extends State<SettingsPage>
               ),
               safariVCOptions: SafariViewControllerOptions(
                 barCollapsingEnabled: true,
-                preferredBarTintColor: isDark
-                    ? const Color(0xFF1E1E2E)
-                    : Colors.white,
-                preferredControlTintColor: appOrangeColor1,
+                preferredBarTintColor: context.appColors.cardBackground,
+                preferredControlTintColor: context.appColors.secondaryColor,
                 dismissButtonStyle:
                     SafariViewControllerDismissButtonStyle.close,
                 modalPresentationCapturesStatusBarAppearance: true,
@@ -116,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 600),
+                    constraints: BoxConstraints(maxWidth: 600),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: ListView(
@@ -141,16 +136,12 @@ class _SettingsPageState extends State<SettingsPage>
                                   }
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.white.withAlpha(20)
-                                        : Colors.black.withAlpha(5),
-                                    borderRadius: BorderRadius.circular(14),
+                                    color: context.appColors.cardBackground,
+                                    borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(40)
-                                          : Colors.black.withAlpha(10),
+                                      color: context.appColors.glassBorder,
                                     ),
                                   ),
                                   child: Icon(
@@ -162,17 +153,18 @@ class _SettingsPageState extends State<SettingsPage>
                               ),
                               const SizedBox(width: 16),
                               Text(
-                                "Settings",
+                                "SETTINGS",
                                 style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w900,
                                   color: textColor,
+                                  letterSpacing: 1.2,
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 32),
-                          _buildSectionHeader("Appearance", isDark),
+                          _buildSectionHeader("Appearance"),
                           const SizedBox(height: 12),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
@@ -184,7 +176,7 @@ class _SettingsPageState extends State<SettingsPage>
                               trailing: Switch.adaptive(
                                 value:
                                     ThemeModeState.themeMode == ThemeMode.dark,
-                                activeThumbColor: appOrangeColor1,
+                                activeThumbColor: context.appColors.secondaryColor,
                                 onChanged: (val) {
                                   context.read<SharedBloc>().add(
                                     ToggleThemeModeEvent(
@@ -198,7 +190,7 @@ class _SettingsPageState extends State<SettingsPage>
                             ),
                           ]),
                           const SizedBox(height: 24),
-                          _buildSectionHeader("Account", isDark),
+                          _buildSectionHeader("Account"),
                           const SizedBox(height: 12),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
@@ -209,7 +201,7 @@ class _SettingsPageState extends State<SettingsPage>
                               subtitle: "Unlock with fingerprint or face",
                               trailing: Switch.adaptive(
                                 value: UseBiometricState.usebiometric,
-                                activeThumbColor: appOrangeColor1,
+                                activeThumbColor: context.appColors.secondaryColor,
                                 onChanged: (val) async {
                                   try {
                                     final bool hasBiometric =
@@ -269,20 +261,20 @@ class _SettingsPageState extends State<SettingsPage>
                             _buildSettingsTile(
                               context: context,
                               icon: Icons.lock_outline_rounded,
-                              iconColor: Colors.blue,
+                              iconColor: context.appColors.infoColor,
                               title: "Change Password",
                               subtitle: "Update your account password",
                               onTap: () => Get.toNamed("/change-password"),
                             ),
                           ]),
                           const SizedBox(height: 24),
-                          _buildSectionHeader("Payments", isDark),
+                          _buildSectionHeader("Payments"),
                           const SizedBox(height: 12),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
                               icon: Icons.payment_rounded,
-                              iconColor: Colors.green,
+                              iconColor: context.appColors.successColor,
                               title: "Setup Payment",
                               subtitle: "Configure payment methods",
                               onTap: () => Payment.setupStripeCustomer(context),
@@ -294,7 +286,7 @@ class _SettingsPageState extends State<SettingsPage>
                               _buildSettingsTile(
                                 context: context,
                                 icon: Icons.payments_outlined,
-                                iconColor: Colors.orange,
+                                iconColor: context.appColors.warningColor,
                                 title: "Preferred Payment Method",
                                 subtitle: SuccessGetProfileState.profile
                                             .preferredPaymentMode ==
@@ -322,13 +314,11 @@ class _SettingsPageState extends State<SettingsPage>
                                     Container(
                                       width: size(context).width,
                                       height: 350,
-                                      padding: const EdgeInsets.all(24),
+                                      padding: EdgeInsets.all(24),
                                       decoration: BoxDecoration(
-                                        color: isDark
-                                            ? const Color(0xFF1E1E2E)
-                                            : Colors.white,
+                                        color: context.appColors.cardBackground,
                                         borderRadius:
-                                            const BorderRadius.vertical(
+                                            BorderRadius.vertical(
                                               top: Radius.circular(25),
                                             ),
                                       ),
@@ -340,7 +330,29 @@ class _SettingsPageState extends State<SettingsPage>
                             ],
                           ]),
                           const SizedBox(height: 24),
-                          _buildSectionHeader("Other", isDark),
+                          _buildSectionHeader("Other"),
+                          const SizedBox(height: 12),
+                          _buildSettingsCard(context, [
+                            _buildSettingsTile(
+                              context: context,
+                              icon: Icons.gavel_rounded,
+                              iconColor: Colors.deepOrange,
+                              title: "Terms of Service",
+                              subtitle: "Read our terms and conditions",
+                              onTap: () => Get.toNamed('/legal', arguments: 'TERMS'),
+                            ),
+                            _buildDivider(context),
+                            _buildSettingsTile(
+                              context: context,
+                              icon: Icons.privacy_tip_rounded,
+                              iconColor: Colors.teal,
+                              title: "Privacy Policy",
+                              subtitle: "Learn how we handle your data",
+                              onTap: () => Get.toNamed('/legal', arguments: 'PRIVACY'),
+                            ),
+                          ]),
+                          const SizedBox(height: 24),
+                          _buildSectionHeader("Other"),
                           const SizedBox(height: 12),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
@@ -353,12 +365,10 @@ class _SettingsPageState extends State<SettingsPage>
                                 Get.bottomSheet(
                                   Container(
                                     width: size(context).width,
-                                    padding: const EdgeInsets.all(24),
+                                    padding: EdgeInsets.all(24),
                                     decoration: BoxDecoration(
-                                      color: isDark
-                                          ? const Color(0xFF1E1E2E)
-                                          : Colors.white,
-                                      borderRadius: const BorderRadius.vertical(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.vertical(
                                         top: Radius.circular(25),
                                       ),
                                     ),
@@ -371,7 +381,7 @@ class _SettingsPageState extends State<SettingsPage>
                             _buildSettingsTile(
                               context: context,
                               icon: Icons.logout_rounded,
-                              iconColor: Colors.red,
+                              iconColor: context.appColors.errorColor,
                               title: "Logout",
                               subtitle: "Sign out of your account",
                               onTap: () => _showLogoutDialog(context),
@@ -391,41 +401,30 @@ class _SettingsPageState extends State<SettingsPage>
     );
   }
 
-  Widget _buildSectionHeader(String title, bool isDark) {
+  Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: 4),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
           letterSpacing: 1.2,
-          color: isDark
-              ? Colors.white.withAlpha(150)
-              : const Color(0xFF1E1E2E).withAlpha(150),
+          color: context.appColors.secondaryTextColor,
         ),
       ),
     );
   }
 
   Widget _buildSettingsCard(BuildContext context, List<Widget> children) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2E2E3E) : Colors.white,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withAlpha(30)
-              : Colors.black.withAlpha(10),
+          color: context.appColors.glassBorder,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 30 : 10),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+       
       ),
       child: Column(children: children),
     );
@@ -440,27 +439,24 @@ class _SettingsPageState extends State<SettingsPage>
     Widget? trailing,
     VoidCallback? onTap,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final subtitleColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
+    final textColor = context.appColors.primaryTextColor;
+    final subtitleColor = context.appColors.secondaryTextColor;
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
             Container(
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: iconColor.withAlpha(40),
+                color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: iconColor, size: 22),
+              child: Icon(icon, color: context.appColors.primaryColor, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -471,7 +467,7 @@ class _SettingsPageState extends State<SettingsPage>
                     title,
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w900,
                       color: textColor,
                     ),
                   ),
@@ -497,37 +493,34 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   Widget _buildDivider(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Divider(
       height: 1,
       indent: 74,
-      color: isDark ? Colors.white.withAlpha(20) : Colors.black.withAlpha(10),
+      color: context.appColors.glassBorder,
     );
   }
 
   void _showLogoutDialog(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+          backgroundColor: context.appColors.cardBackground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            "Logout",
+            "LOGOUT",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w900,
+              color: context.appColors.primaryTextColor,
+              letterSpacing: 0.5,
             ),
           ),
           content: Text(
             "Are you sure you want to logout?",
             style: TextStyle(
-              color: isDark
-                  ? Colors.white.withAlpha(180)
-                  : Colors.black.withAlpha(180),
+              color: context.appColors.secondaryTextColor,
             ),
           ),
           actions: [
@@ -536,9 +529,7 @@ class _SettingsPageState extends State<SettingsPage>
               child: Text(
                 "Cancel",
                 style: TextStyle(
-                  color: isDark
-                      ? Colors.white.withAlpha(150)
-                      : Colors.black.withAlpha(150),
+                  color: context.appColors.secondaryTextColor,
                 ),
               ),
             ),
@@ -554,7 +545,7 @@ class _SettingsPageState extends State<SettingsPage>
                 NavigatorProviderState.page = 1;
                 Get.offAllNamed("/login");
               },
-              label: "Logout",
+              label: "LOGOUT",
               isPrimary: true,
             ),
           ],
@@ -564,26 +555,26 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   void _showPaymentModeSheet(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final profile = SuccessGetProfileState.profile;
 
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(28),
+        padding: EdgeInsets.all(28),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Preferred Payment Method",
+              "PREFERRED PAYMENT METHOD",
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: context.appColors.primaryTextColor,
+                letterSpacing: 1.2,
               ),
             ),
             const SizedBox(height: 12),
@@ -591,7 +582,7 @@ class _SettingsPageState extends State<SettingsPage>
               "Choose how you'd like to receive payments from seekers.",
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? Colors.white60 : Colors.black54,
+                color: context.appColors.secondaryTextColor,
               ),
             ),
             const SizedBox(height: 24),
@@ -630,39 +621,38 @@ class _SettingsPageState extends State<SettingsPage>
     required String currentValue,
     required Function(String) onChanged,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = value == currentValue;
 
     return InkWell(
       onTap: () => onChanged(value),
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected
-              ? Colors.blueAccent.withAlpha(20)
-              : (isDark ? Colors.white.withAlpha(10) : Colors.black.withAlpha(5)),
+              ? context.appColors.primaryColor.withAlpha(20)
+              : context.appColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? Colors.blueAccent.withAlpha(100)
-                : (isDark ? Colors.white.withAlpha(20) : Colors.black.withAlpha(10)),
+                ? context.appColors.primaryColor.withAlpha(100)
+                : context.appColors.glassBorder,
             width: 1.5,
           ),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? Colors.blueAccent.withAlpha(40)
-                    : (isDark ? Colors.white.withAlpha(15) : Colors.white),
+                    ? context.appColors.primaryColor.withAlpha(40)
+                    : context.appColors.surfaceBackground,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
-                color: isSelected ? Colors.blueAccent : (isDark ? Colors.white70 : Colors.black45),
+                color: isSelected ? context.appColors.primaryColor : context.appColors.secondaryTextColor,
                 size: 24,
               ),
             ),
@@ -675,8 +665,9 @@ class _SettingsPageState extends State<SettingsPage>
                     title,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.w900,
+                      color: context.appColors.primaryTextColor,
+                      letterSpacing: 0.3,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -684,14 +675,14 @@ class _SettingsPageState extends State<SettingsPage>
                     description,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? Colors.white60 : Colors.black54,
+                      color: context.appColors.secondaryTextColor,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle_rounded, color: Colors.blueAccent, size: 24),
+              Icon(Icons.check_circle_rounded, color: context.appColors.primaryColor, size: 24),
           ],
         ),
       ),

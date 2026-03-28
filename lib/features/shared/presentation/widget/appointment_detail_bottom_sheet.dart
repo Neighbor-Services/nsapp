@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/models/appointment.dart';
+import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
+import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class AppointmentDetailBottomSheet extends StatefulWidget {
   final AppointmentData data;
@@ -94,11 +98,10 @@ class _AppointmentDetailBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final contentColor = isDark ? Colors.white : Colors.black87;
-    final secondaryTextColor = isDark ? Colors.white70 : Colors.black54;
-    final dividerColor = isDark ? Colors.white24 : Colors.black12;
+    final backgroundColor = context.appColors.surfaceBackground;
+    final contentColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.hintTextColor;
+    final dividerColor = context.appColors.glassBorder;
 
     final appt = widget.data.appointment;
     final user = widget.data.user;
@@ -106,17 +109,11 @@ class _AppointmentDetailBottomSheetState
     if (appt == null) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 100 : 20),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        border: Border.all(color: dividerColor, width: 1.5),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -134,66 +131,43 @@ class _AppointmentDetailBottomSheetState
               ),
             ),
             const SizedBox(height: 24),
-            Row(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (_isEditing)
-                        TextField(
-                          controller: _titleController,
-                          style: TextStyle(
-                            color: contentColor,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "Enter title",
-                            hintStyle: TextStyle(color: dividerColor),
-                            enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: appOrangeColor1),
-                            ),
-                          ),
-                        )
-                      else
-                        CustomTextWidget(
-                          text: appt.title ?? "Appointment Details",
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: contentColor,
-                        ),
-                      const SizedBox(height: 8),
-                      _buildStatusBadge(appt, isDark),
-                    ],
-                  ),
-                ),
-                if (!_isEditing && appt.totalPrice != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: appOrangeColor1.withAlpha(30),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: appOrangeColor1.withAlpha(50)),
-                    ),
-                    child: CustomTextWidget(
-                      text:
-                          "\$${appt.totalPrice?.toStringAsFixed(2) ?? "0.00"}",
-                      fontSize: 20,
+                if (_isEditing)
+                  TextField(
+                    controller: _titleController,
+                    style: TextStyle(
+                      color: contentColor,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: appOrangeColor1,
                     ),
+                    decoration: InputDecoration(
+                      hintText: "Enter title",
+                      hintStyle: TextStyle(color: dividerColor),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: context.appColors.secondaryColor,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  CustomTextWidget(
+                    text: (appt.title ?? "Appointment Details").toUpperCase(),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: contentColor,
+                    letterSpacing: 1.0,
                   ),
+                const SizedBox(height: 8),
               ],
             ),
+
             const SizedBox(height: 32),
             _buildInfoSection(
               context,
-              isDark: isDark,
+
               icon: Icons.calendar_today_rounded,
               title: "Schedule",
               subtitle: _isEditing ? null : (_scheduleController.text),
@@ -205,8 +179,10 @@ class _AppointmentDetailBottomSheetState
                       decoration: InputDecoration(
                         hintText: "Select Date & Time",
                         hintStyle: TextStyle(color: dividerColor),
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: appOrangeColor1),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: context.appColors.secondaryColor,
+                          ),
                         ),
                       ),
                       onTap: () async {
@@ -243,32 +219,44 @@ class _AppointmentDetailBottomSheetState
                   : null,
             ),
             const SizedBox(height: 20),
-            _buildInfoSection(
-              context,
-              isDark: isDark,
-              icon: Icons.person_outline_rounded,
-              title: "Participant",
-              subtitle: user != null
-                  ? "${user.firstName ?? ''} ${user.lastName ?? ''}".trim()
-                  : "Unknown User",
-              trailing: user?.userType?.toUpperCase() ?? "",
+            GestureDetector(
+              onTap: () {
+                Get.back();
+                context.read<MessageBloc>().add(
+                  SetMessageReceiverEvent(profile: user!),
+                );
+                context.read<ProviderBloc>().add(
+                  NavigateProviderEvent(page: 4, widget: const ChatPage()),
+                );
+              },
+              child: _buildInfoSection(
+                context,
+
+                icon: Icons.person_outline_rounded,
+                title: "Participant",
+                subtitle: user != null
+                    ? "${user.firstName ?? ''} ${user.lastName ?? ''}".trim()
+                    : "Unknown User",
+                trailing: user?.userType?.toUpperCase() ?? "",
+              ),
             ),
             const SizedBox(height: 32),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomTextWidget(
-                  text: "Description",
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  text: "DESCRIPTION",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
                   color: contentColor,
+                  letterSpacing: 0.5,
                 ),
                 if (!_isEditing)
                   IconButton(
                     onPressed: () => setState(() => _isEditing = true),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.edit_note_rounded,
-                      color: appOrangeColor1,
+                      color: context.appColors.hintTextColor,
                     ),
                   ),
               ],
@@ -283,9 +271,7 @@ class _AppointmentDetailBottomSheetState
                   hintText: "Enter description",
                   hintStyle: TextStyle(color: dividerColor),
                   filled: true,
-                  fillColor: isDark
-                      ? Colors.white10
-                      : Colors.black.withAlpha(10),
+                  fillColor: context.appColors.glassBorder,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -306,59 +292,36 @@ class _AppointmentDetailBottomSheetState
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
+                    child: SolidButton(
+                      label: "CANCEL",
                       onPressed: () => setState(() => _isEditing = false),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: secondaryTextColor,
-                        side: BorderSide(color: dividerColor),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text("Cancel"),
+                      isPrimary: false,
+                      color: Colors.transparent,
+                      textColor: Colors.white,
+                      borderColor: dividerColor,
+                      height: 50,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: ElevatedButton(
+                    child: SolidButton(
+                      label: "SAVE CHANGES",
                       onPressed: _onSave,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: appOrangeColor1,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: const Text(
-                        "Save Changes",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      color: context.appColors.secondaryColor,
+                      height: 50,
                     ),
                   ),
                 ],
               )
             else
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark
-                        ? Colors.white10
-                        : Colors.black.withAlpha(20),
-                    foregroundColor: contentColor,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: const Text(
-                    "Close",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              SolidButton(
+                label: "CLOSE",
+                onPressed: () => Navigator.pop(context),
+                isPrimary: false,
+                color: context.appColors.hintTextColor,
+                textColor: Colors.white,
+                borderColor: dividerColor,
+                height: 50,
               ),
             const SizedBox(height: 12),
           ],
@@ -369,35 +332,31 @@ class _AppointmentDetailBottomSheetState
 
   Widget _buildInfoSection(
     BuildContext context, {
-    required bool isDark,
     required IconData icon,
     required String title,
     String? subtitle,
     String? trailing,
     Widget? content,
   }) {
-    final contentColor = isDark ? Colors.white : Colors.black87;
-    final glassColor = isDark
-        ? Colors.white.withAlpha(10)
-        : Colors.black.withAlpha(10);
-    final glassBorderColor = isDark ? Colors.white12 : Colors.black12;
+    final contentColor = context.appColors.primaryTextColor;
+    final glassBorderColor = context.appColors.glassBorder;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: glassColor,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: glassBorderColor),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: appOrangeColor1.withAlpha(20),
+              color: context.appColors.secondaryColor.withAlpha(20),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: appOrangeColor1, size: 20),
+            child: Icon(icon, color: context.appColors.hintTextColor, size: 20),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -405,10 +364,12 @@ class _AppointmentDetailBottomSheetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  title.toUpperCase(),
                   style: TextStyle(
-                    color: isDark ? Colors.white38 : Colors.black38,
-                    fontSize: 12,
+                    color: context.appColors.hintTextColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -426,9 +387,9 @@ class _AppointmentDetailBottomSheetState
           ),
           if (content == null && trailing != null && trailing.isNotEmpty)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white10 : Colors.black.withAlpha(10),
+                color: context.appColors.glassBorder,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: CustomTextWidget(
@@ -439,34 +400,6 @@ class _AppointmentDetailBottomSheetState
               ),
             ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildStatusBadge(Appointment appt, bool isDark) {
-    Color color = Colors.blue;
-    String text = appt.status ?? "Scheduled";
-    if (appt.status == 'COMPLETED') {
-      color = Colors.green;
-    } else if (appt.status == 'CANCELLED') {
-      color = Colors.red;
-    } else if (appt.isFunded == false) {
-      color = Colors.amber;
-      text = "Awaiting Funding";
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withAlpha(30),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withAlpha(50)),
-      ),
-      child: CustomTextWidget(
-        text: text.toUpperCase(),
-        color: isDark ? Colors.white : color.withAlpha(200),
-        fontSize: 10,
-        fontWeight: FontWeight.bold,
       ),
     );
   }

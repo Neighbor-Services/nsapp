@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:nsapp/core/models/failure.dart';
+import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/core/models/report.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/core/models/dispute.dart';
@@ -33,4 +34,5 @@ abstract class SharedRepository {
   Future<Either<Failure, List<SubscriptionPlan>>> getSubscriptionPlans();
   Future<Either<Failure, List<Dispute>>> getMyDisputes();
   Future<Either<Failure, String>> getStripeDashboardLink();
+  Future<Either<Failure, List<LegalDocument>>> getLegalDocument(String docType);
 }

@@ -6,6 +6,7 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import '../../../../core/helpers/helpers.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProviderVerificationPage extends StatefulWidget {
   const ProviderVerificationPage({super.key});
@@ -40,40 +41,60 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: Container(
+            margin: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: context.appColors.cardBackground,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+                width: 1.5,
+              ),
+            ),
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: context.appColors.primaryTextColor,
+              size: 18,
+            ),
           ),
-          onPressed: () => Get.back(),
         ),
-        title: const Text(
-          "Identity Verification",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          "IDENTITY VERIFICATION",
+          style: TextStyle(
+            color: context.appColors.primaryTextColor,
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+            letterSpacing: 1.2,
+          ),
         ),
       ),
       body: GradientBackground(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Verify Your Account",
+                Text(
+                  "VERIFY YOUR ACCOUNT",
                   style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: context.appColors.primaryTextColor,
+                    letterSpacing: 1.0,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "Upload a government-issued ID or business license to receive your verification badge and build trust with seekers.",
+                  "UPLOAD A GOVERNMENT-ISSUED ID OR BUSINESS LICENSE TO RECEIVE YOUR VERIFICATION BADGE AND BUILD TRUST WITH SEEKERS.",
                   style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.white.withAlpha(150),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: context.appColors.secondaryTextColor,
                     height: 1.5,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -119,17 +140,19 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
+          title.toUpperCase(),
+          style: TextStyle(
+            color: context.appColors.primaryTextColor,
+            fontWeight: FontWeight.w900,
+            fontSize: 14,
+            letterSpacing: 0.8,
           ),
         ),
         const SizedBox(height: 12),
         GestureDetector(
           onTap: onTap,
           child: SolidContainer(
+            width: size(context).width,
             height: 180,
             padding: EdgeInsets.zero,
             child: image != null
@@ -142,14 +165,14 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                     children: [
                       Icon(
                         Icons.add_a_photo_rounded,
-                        color: Colors.white.withAlpha(150),
+                        color: context.appColors.primaryTextColor,
                         size: 40,
                       ),
                       const SizedBox(height: 12),
                       Text(
                         "Tap to upload",
                         style: TextStyle(
-                          color: Colors.white.withAlpha(120),
+                          color: context.appColors.primaryTextColor,
                           fontSize: 14,
                         ),
                       ),

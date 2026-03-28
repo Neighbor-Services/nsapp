@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
+import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
@@ -14,6 +14,7 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:get/get.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
 import '../../../shared/presentation/widget/loading_widget.dart';
+import '../../../shared/presentation/widget/solid_container_widget.dart';
 import '../../../seeker/presentation/widgets/rating_review_form_widget.dart';
 import '../../../seeker/presentation/pages/seeker_new_request_page.dart';
 
@@ -56,7 +57,6 @@ class _AboutPageState extends State<AboutPage>
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is PortfolioUserState) {
@@ -66,9 +66,7 @@ class _AboutPageState extends State<AboutPage>
         }
       },
       child: Scaffold(
-        backgroundColor: isDark
-            ? appDeepBlueColor2
-            : Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: context.appColors.surfaceBackground,
         body: FutureBuilder<Profile?>(
           future: _profileFuture,
           builder: (context, snapshot) {
@@ -84,372 +82,258 @@ class _AboutPageState extends State<AboutPage>
             return NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
-                  SliverAppBar(
-                    expandedHeight: 380,
-                    floating: false,
-                    pinned: true,
-                    backgroundColor: isDark ? appDeepBlueColor2 : Colors.white,
-                    leading: GestureDetector(
-                      onTap: () {
-                        if (DashboardState.isProvider) {
-                          context.read<ProviderBloc>().add(
-                            ProviderBackPressedEvent(),
-                          );
-                        } else {
-                          context.read<SeekerBloc>().add(
-                            SeekerBackPressedEvent(),
-                          );
-                        }
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.black.withValues(alpha: 30)
-                              : Colors.white.withValues(alpha: 60),
-                          borderRadius: BorderRadius.circular(12),
-                          border: isDark
-                              ? null
-                              : Border.all(color: Colors.black.withAlpha(20)),
-                        ),
-                        child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          color: isDark ? Colors.white : Colors.black87,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        fit: StackFit.expand,
+                 
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Background Image
-                          if (profile.profilePictureUrl != null &&
-                              profile.profilePictureUrl!.isNotEmpty)
-                            Image.network(
-                              profile.profilePictureUrl!,
-                              fit: BoxFit.cover,
-                            )
-                          else
-                            Container(color: appDeepBlueColor1),
-
-                          // Solid Overlay for readability (replacing blur)
-                          Container(
-                            color: Colors.black.withAlpha(isDark ? 80 : 40),
-                          ),
-
-                          // Gradient Overlay for readability
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: isDark
-                                    ? [
-                                        Colors.transparent,
-                                        const Color.fromARGB(
-                                          255,
-                                          14,
-                                          32,
-                                          59,
-                                        ).withAlpha(80),
-                                        const Color.fromARGB(188, 18, 33, 56),
-                                      ]
-                                    : [
-                                        Colors.white.withAlpha(10),
-                                        Colors.white.withAlpha(200),
-                                        Colors.white,
-                                      ],
+                          GestureDetector(
+                            onTap: () {
+                              if (DashboardState.isProvider) {
+                                context.read<ProviderBloc>().add(
+                                  ProviderBackPressedEvent(),
+                                );
+                              } else {
+                                context.read<SeekerBloc>().add(
+                                  SeekerBackPressedEvent(),
+                                );
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: context.appColors.glassBorder,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                color: context.appColors.primaryTextColor,
+                                size: 16,
                               ),
                             ),
                           ),
-
-                          // Profile Content
-                          Positioned(
-                            bottom: 70, // Leave space for TabBar
-                            left: 0,
-                            right: 0,
+                          const SizedBox(height: 20),
+                          SolidContainer(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
                             child: Column(
-                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                // Avatar
                                 Container(
-                                  padding: const EdgeInsets.all(3),
+                                  height: 180,
+                                  width: double.infinity,
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Color.fromARGB(255, 10, 24, 49),
-                                        Colors.purpleAccent,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color.fromARGB(
-                                          255,
-                                          10,
-                                          24,
-                                          49,
-                                        ).withValues(alpha: 30),
-                                        blurRadius: 20,
-                                        spreadRadius: 2,
-                                      ),
-                                    ],
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 50,
-                                    backgroundColor: Colors.grey[900],
-                                    backgroundImage:
-                                        (profile.profilePictureUrl != null &&
-                                            profile
-                                                .profilePictureUrl!
-                                                .isNotEmpty)
-                                        ? NetworkImage(
-                                            profile.profilePictureUrl!,
-                                          )
-                                        : null,
-                                    child:
-                                        (profile.profilePictureUrl == null ||
-                                            profile.profilePictureUrl!.isEmpty)
-                                        ? const Icon(
-                                            Icons.person,
-                                            size: 50,
-                                            color: Colors.white,
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-
-                                // Name & Badge
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      profile.firstName ?? "User",
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black87,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                    if (profile.isIdentityVerified == true) ...[
-                                      const SizedBox(width: 8),
-                                      const Icon(
-                                        Icons.verified,
-                                        color: Colors.blueAccent,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-
-                                // Service Title
-                                Text(
-                                  getServiceName(
-                                    profile.service ?? "",
-                                  ).toUpperCase(),
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? Colors.white.withAlpha(100)
-                                        : Colors.black.withAlpha(100),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.2,
-                                  ),
-                                ),
-
-                                // Payment Mode
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.white.withAlpha(10)
-                                        : Colors.black.withAlpha(5),
+                                    color: context.appColors.primaryColor
+                                        .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(15)
-                                          : Colors.black.withAlpha(10),
-                                    ),
                                   ),
-                                  child: Text(
-                                    "PAYMENT MODE: ${profile.preferredPaymentMode}",
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(200)
-                                          : Colors.black87,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.5,
-                                    ),
+                                  child: Icon(
+                                    Icons.photo_library_outlined,
+                                    size: 60,
+                                    color: context.appColors.primaryColor,
                                   ),
                                 ),
-
-                                const SizedBox(height: 12),
-
-                                // Rating
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    RatingBarIndicator(
-                                      rating:
-                                          double.tryParse(
-                                            profile.rating ?? "0",
-                                          ) ??
-                                          0.0,
-                                      itemBuilder: (context, index) =>
-                                          const Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                          ),
-                                      itemCount: 5,
-                                      itemSize: 16,
-                                      direction: Axis.horizontal,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      "${double.tryParse(profile.rating ?? "0")?.toStringAsFixed(1)} (${profile.totalReviews ?? 0} reviews)",
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black87,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                // Action Buttons
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                Transform.translate(
+                                  offset: const Offset(0, -40),
+                                  child: Column(
                                     children: [
-                                      // Chat Button
-                                      _buildActionButton(
-                                        icon: Icons.chat_bubble_outline_rounded,
-                                        label: "Chat",
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF2196F3),
-                                            Color(0xFF1976D2),
-                                          ],
-                                        ),
-                                        onTap: () {
-                                          if (profile.user != null) {
-                                            context.read<MessageBloc>().add(
-                                              SetMessageReceiverEvent(
-                                                profile: profile,
-                                              ),
-                                            );
-                                            context.read<MessageBloc>().add(
-                                              SetSeenMessageEvent(
-                                                reciever: profile.user!.id!,
-                                              ),
-                                            );
-                                            if (DashboardState.isProvider) {
-                                              context.read<ProviderBloc>().add(
-                                                NavigateProviderEvent(
-                                                  page: 4,
-                                                  widget: const ChatPage(),
-                                                ),
-                                              );
-                                            } else {
-                                              context.read<SeekerBloc>().add(
-                                                NavigateSeekerEvent(
-                                                  page: 4,
-                                                  widget: const ChatPage(),
-                                                ),
-                                              );
-                                            }
-                                          }
-                                        },
-                                      ),
-                                      const SizedBox(width: 8),
-
-                                      // Request Service Button - More prominent
-                                      Expanded(
-                                        flex: 2,
-                                        child: _buildActionButton(
-                                          icon: Icons.handshake_rounded,
-                                          label: "Request Service",
-                                          gradient: const LinearGradient(
+                                      Container(
+                                        padding: const EdgeInsets.all(3),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: LinearGradient(
                                             colors: [
-                                              Color(0xFF6C63FF),
-                                              Color(0xFF5A52D5),
+                                              context.appColors.primaryColor,
+                                              Colors.purpleAccent,
                                             ],
                                           ),
-                                          onTap: () {
-                                            if (profile.user != null) {
-                                              if (DashboardState.isProvider) {
-                                                customAlert(
-                                                  context,
-                                                  AlertType.error,
-                                                  "Switch to Seeker mode to request service",
-                                                );
-                                                return;
-                                              }
-                                              context.read<SeekerBloc>().add(
-                                                NavigateSeekerEvent(
-                                                  page: 4,
-                                                  widget: SeekerNewRequestPage(
-                                                    targetProviderId:
-                                                        profile.user!.id,
-                                                    initialServiceId:
-                                                        profile.catalogServiceId,
-                                                    initialServiceName: profile
-                                                        .catalogServiceName,
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          },
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: 40,
+                                          backgroundImage: (profile
+                                                          .profilePictureUrl !=
+                                                      null &&
+                                                  profile.profilePictureUrl!
+                                                      .isNotEmpty)
+                                              ? NetworkImage(
+                                                profile.profilePictureUrl!,
+                                              )
+                                              : null,
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
-
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        (profile.firstName ?? "User")
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                          color: context
+                                              .appColors.primaryTextColor,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
+                                      Text(
+                                        getServiceName(profile.service ?? "")
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                          color: context
+                                              .appColors.secondaryTextColor,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        "Payment Mode : On Site",
+                                        style: TextStyle(
+                                          color: context.appColors.successColor,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          RatingBarIndicator(
+                                            rating: double.tryParse(
+                                                  profile.rating ?? "0",
+                                                ) ??
+                                                0.0,
+                                            itemBuilder: (context, index) =>
+                                                const Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
+                                                ),
+                                            itemCount: 5,
+                                            itemSize: 14,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            "${profile.rating ?? "0.0"} (${profile.totalReviews ?? 0} reviews)",
+                                            style: TextStyle(
+                                              color: context
+                                                  .appColors.secondaryTextColor,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildActionBtn(
+                                  label: "CHAT",
+                                  icon: Icons.chat_bubble_outline_rounded,
+                                  color: context.appColors.primaryColor,
+                                  onTap: () {
+                                    if (profile.user != null) {
+                                      context.read<MessageBloc>().add(
+                                        SetMessageReceiverEvent(
+                                          profile: profile,
+                                        ),
+                                      );
+                                      context.read<MessageBloc>().add(
+                                        SetSeenMessageEvent(
+                                          reciever: profile.user!.id!,
+                                        ),
+                                      );
+                                      final chatPage = const ChatPage();
+                                      if (DashboardState.isProvider) {
+                                        context.read<ProviderBloc>().add(
+                                          NavigateProviderEvent(
+                                            page: 4,
+                                            widget: chatPage,
+                                          ),
+                                        );
+                                      } else {
+                                        context.read<SeekerBloc>().add(
+                                          NavigateSeekerEvent(
+                                            page: 4,
+                                            widget: chatPage,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              (!DashboardState.isProvider) ? Expanded(
+                                child: _buildActionBtn(
+                                  label: "REQUEST SERVICE",
+                                  icon: Icons.assignment_outlined,
+                                  color: Colors.transparent,
+                                  isBorder: true,
+                                  onTap: () {
+                                    if (profile.user != null) {
+                                      if (DashboardState.isProvider) {
+                                        customAlert(
+                                          context,
+                                          AlertType.error,
+                                          "Switch to Seeker mode to request service",
+                                        );
+                                        return;
+                                      }
+                                      context.read<SeekerBloc>().add(
+                                        NavigateSeekerEvent(
+                                          page: 4,
+                                          widget: SeekerNewRequestPage(
+                                            targetProviderId: profile.user!.id,
+                                            initialServiceId:
+                                                profile.catalogServiceId,
+                                            initialServiceName:
+                                                profile.catalogServiceName,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ): SizedBox.shrink(),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
                   ),
                   SliverPersistentHeader(
+                    pinned: true,
                     delegate: _SliverAppBarDelegate(
                       TabBar(
                         controller: controller,
-                        labelColor: isDark ? Colors.white : Colors.black87,
-                        unselectedLabelColor: isDark
-                            ? Colors.white.withValues(alpha: 50)
-                            : Colors.black45,
-                        indicatorColor: Colors.blueAccent,
-                        indicatorWeight: 3,
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        labelColor: context.appColors.primaryTextColor,
+                        unselectedLabelColor:
+                            context.appColors.secondaryTextColor,
+                        indicatorColor: context.appColors.primaryColor,
+                        indicatorWeight: 4,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        dividerColor: Colors.transparent,
+                        labelStyle: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
+                          letterSpacing: 0.5,
+                        ),
                         tabs: const [
-                          Tab(text: "Portfolio"),
-                          Tab(text: "Reviews"),
+                          Tab(text: "PORTFOLIO"),
+                          Tab(text: "REVIEWS"),
                         ],
                       ),
                     ),
-                    pinned: true,
                   ),
                 ];
               },
@@ -473,19 +357,27 @@ class _AboutPageState extends State<AboutPage>
                       barrierColor: Colors.black.withAlpha(180),
                     );
                   },
-                  label: const Text(
-                    "Write a Review",
+                  label: Text(
+                    "WRITE A REVIEW",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                      color: context.appColors.primaryColor,
+                      letterSpacing: 1.0,
                     ),
                   ),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.rate_review_rounded,
-                    color: Colors.white,
+                    color: context.appColors.primaryColor,
                   ),
-                  backgroundColor: appOrangeColor1,
-                  elevation: 4,
+                  backgroundColor: context.appColors.primaryColor.withAlpha(40),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: context.appColors.glassBorder,
+                      width: 1.5,
+                    ),
+                  ),
                 ),
               )
             : null,
@@ -493,51 +385,48 @@ class _AboutPageState extends State<AboutPage>
     );
   }
 
-  Widget _buildActionButton({
-    required IconData icon,
+  Widget _buildActionBtn({
     required String label,
-    required Gradient gradient,
-    Color textColor = Colors.white,
+    required IconData icon,
+    required Color color,
     required VoidCallback onTap,
+    bool isBorder = false,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 48,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        height: 50,
         decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: (gradient as LinearGradient).colors.first.withAlpha(60),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          color: color,
+          borderRadius: BorderRadius.circular(15),
+          border: isBorder
+              ? Border.all(color: context.appColors.primaryColor)
+              : null,
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: textColor),
-            const SizedBox(width: 6),
+            Icon(
+              icon,
+              color: isBorder ? context.appColors.primaryColor : Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: textColor,
-                fontWeight: FontWeight.bold,
+                color: isBorder ? context.appColors.primaryColor : Colors.white,
+                fontWeight: FontWeight.w900,
                 fontSize: 13,
-                letterSpacing: 0.2,
+                letterSpacing: 1.0,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
       ),
     );
   }
+
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
@@ -557,9 +446,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Container(
-      color: (Theme.of(context).brightness == Brightness.dark)
-          ? appDeepBlueColor2
-          : Colors.white,
+      color: context.appColors.appBarBackground,
       child: _tabBar,
     );
   }

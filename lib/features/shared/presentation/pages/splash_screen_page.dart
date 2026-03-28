@@ -117,37 +117,32 @@ class _SplashScreenPageState extends State<SplashScreenPage>
               context: context,
               barrierDismissible: false,
               builder: (context) {
-                final isDark = Theme.of(context).brightness == Brightness.dark;
                 return Material(
                   color: Colors.transparent,
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: EdgeInsets.all(20.0),
                       child: Container(
-                        padding: const EdgeInsets.all(24),
+                        padding: EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF1E1E2E)
-                              : Colors.white,
+                          color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                            color: isDark
-                                ? Colors.white12
-                                : Colors.black.withAlpha(20),
+                            color: context.appColors.glassBorder,
                           ),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.red.withAlpha(30),
+                                color: context.appColors.errorColor.withAlpha(30),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.wifi_off_rounded,
-                                color: Colors.redAccent,
+                                color: context.appColors.errorColor,
                                 size: 40,
                               ),
                             ),
@@ -156,7 +151,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                               text: "Connection Lost",
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black87,
+                              color: context.appColors.primaryTextColor,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 12),
@@ -164,9 +159,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                               text:
                                   "Please check your internet connection and try again.",
                               fontSize: 16,
-                              color: isDark
-                                  ? Colors.white.withAlpha(180)
-                                  : Colors.black54,
+                              color: context.appColors.secondaryTextColor,
                               textAlign: TextAlign.center,
                               maxLines: 3,
                             ),
@@ -175,17 +168,9 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                               width: double.infinity,
                               height: 55,
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [appOrangeColor1, appOrangeColor2],
-                                ),
+                                gradient: context.appColors.primaryGradient,
                                 borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: appOrangeColor1.withAlpha(100),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ],
+                                
                               ),
                               child: ElevatedButton(
                                 onPressed: () {
@@ -258,7 +243,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     );
 
     _textSlideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+        Tween<Offset>(begin: Offset(0, 0.2), end: Offset.zero).animate(
           CurvedAnimation(
             parent: _controller,
             curve: const Interval(0.3, 0.7, curve: Curves.easeOut),
@@ -273,7 +258,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     );
 
     _subtitleSlideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+        Tween<Offset>(begin: Offset(0, 0.2), end: Offset.zero).animate(
           CurvedAnimation(
             parent: _controller,
             curve: const Interval(0.5, 0.9, curve: Curves.easeOut),
@@ -302,11 +287,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           child: AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
-              final isDark = Theme.of(context).brightness == Brightness.dark;
-              final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-              final subtitleColor = isDark
-                  ? Colors.white.withAlpha(220)
-                  : Colors.black87;
+              final textColor = context.appColors.primaryTextColor;
 
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -317,25 +298,15 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                     child: Opacity(
                       opacity: _logoFadeAnimation.value,
                       child: Container(
-                        padding: const EdgeInsets.all(24),
+                        padding: EdgeInsets.all(24),
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withAlpha(20)
-                              : Colors.white,
+                          color: context.appColors.cardBackground,
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isDark
-                                ? Colors.white.withAlpha(40)
-                                : Colors.black.withAlpha(10),
+                            color: context.appColors.glassBorder,
                             width: 1.5,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(40),
-                              blurRadius: 30,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
+                         
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(100),
@@ -363,15 +334,6 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                               fontWeight: FontWeight.w800,
                               color: textColor,
                               letterSpacing: 1.2,
-                              shadows: isDark
-                                  ? [
-                                      const Shadow(
-                                        color: Colors.black26,
-                                        blurRadius: 8,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ]
-                                  : null,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -380,7 +342,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                             child: FadeTransition(
                               opacity: _subtitleFadeAnimation,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   horizontal: 30,
                                 ),
                                 child: Text(
@@ -388,7 +350,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: subtitleColor,
+                                    color: context.appColors.secondaryTextColor,
                                     height: 1.6,
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 0.5,
@@ -411,7 +373,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                           height: 40,
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              isDark ? Colors.white70 : appOrangeColor1,
+                              context.appColors.secondaryTextColor,
                             ),
                             strokeWidth: 3,
                           ),

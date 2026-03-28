@@ -17,9 +17,11 @@ class RequestAcceptance {
   RequestAcceptance({this.acceptance, this.provider, this.user});
 
   RequestAcceptance.fromJson(Map<String, dynamic> json) {
+    // If the backend returns a flat structure where the top level is the acceptance
     acceptance = json['acceptance'] != null
         ? Acceptance.fromJson(json['acceptance'])
-        : null;
+        : Acceptance.fromJson(json);
+        
     provider = json['provider'] != null
         ? Profile.fromJson(json['provider'])
         : null;

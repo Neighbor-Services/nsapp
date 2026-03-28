@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/dimension.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class EmptyWidget extends StatelessWidget {
   final String message;
@@ -11,18 +10,11 @@ class EmptyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isSmall = height < 250;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final backgroundColor = isDark
-        ? const Color(0xFF2E2E3E)
-        : const Color(0xFFF8F9FA);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final textColor = isDark
-        ? Colors.white.withAlpha(200)
-        : const Color(0xFF1E1E2E).withAlpha(180);
-    final iconOpacity = isDark ? 0.8 : 0.6;
+    final backgroundColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.secondaryTextColor;
+    final iconOpacity = 0.8;
 
     return Container(
       width: size(context).width,

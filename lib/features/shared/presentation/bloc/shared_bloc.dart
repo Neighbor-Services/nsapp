@@ -26,11 +26,13 @@ import 'package:nsapp/features/shared/domain/usecase/get_my_wallet_use_case.dart
 import 'package:nsapp/features/shared/domain/usecase/request_payout_use_case.dart';
 import 'package:nsapp/core/services/notification_socket_service.dart';
 import 'package:nsapp/core/models/dispute.dart';
+import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/core/models/wallet.dart';
 import 'package:nsapp/core/models/subscription_plan.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_subscription_plans_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_disputes_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_use_case.dart';
+import 'package:nsapp/features/shared/domain/usecase/get_legal_document_use_case.dart';
 
 part 'shared_event.dart';
 part 'shared_state.dart';
@@ -53,6 +55,7 @@ class SharedBloc extends Bloc<SharedEvent, SharedState> {
   final GetSubscriptionPlansUseCase getSubscriptionPlansUseCase;
   final GetMyDisputesUseCase getMyDisputesUseCase;
   final GetStripeDashboardLinkUseCase getStripeDashboardLinkUseCase;
+  final GetLegalDocumentUseCase getLegalDocumentUseCase;
 
   SharedBloc(
     this.addNotificationUseCase,
@@ -72,6 +75,7 @@ class SharedBloc extends Bloc<SharedEvent, SharedState> {
     this.getSubscriptionPlansUseCase,
     this.getMyDisputesUseCase,
     this.getStripeDashboardLinkUseCase,
+    this.getLegalDocumentUseCase,
   ) : super(SharedInitialState()) {
     on<ToggleDashboardEvent>((event, emit) {
       DashboardState.isProvider = event.isProvider;
@@ -311,6 +315,15 @@ class SharedBloc extends Bloc<SharedEvent, SharedState> {
       results.fold((l) => emit(FailureGetStripeDashboardLinkState()), (r) {
         SuccessGetStripeDashboardLinkState.dashboardUrl = r;
         emit(SuccessGetStripeDashboardLinkState());
+      });
+    });
+
+    on<GetLegalDocumentEvent>((event, emit) async {
+      emit(SharedLoadingState());
+      final results = await getLegalDocumentUseCase(event.docType);
+      results.fold((l) => emit(FailureGetLegalDocumentState()), (r) {
+        SuccessGetLegalDocumentState.documents = r;
+        emit(SuccessGetLegalDocumentState());
       });
     });
   }

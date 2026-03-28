@@ -29,7 +29,7 @@ class MediaChatWidget extends StatelessWidget {
             child: ListView(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 10,
                   ),
@@ -49,7 +49,7 @@ class MediaChatWidget extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: SolidTextField(
                     controller: messageController,
                     hintText: 'Type a message...',

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
@@ -12,6 +11,7 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/appointment_detail_bottom_sheet.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProviderAppointmentListPage extends StatefulWidget {
   const ProviderAppointmentListPage({super.key});
@@ -31,34 +31,21 @@ class _ProviderAppointmentListPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(150)
-        : const Color(0xFF1E1E2E).withAlpha(150);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
-    final buttonColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final dividerColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(10);
-    final iconBgColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(5);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
+    final dividerColor = context.appColors.glassBorder;
+    final iconBgColor = context.appColors.glassBorder;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
-          "My Appointments",
+          "MY APPOINTMENTS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-            letterSpacing: -0.5,
+            fontWeight: FontWeight.w900,
+            fontSize: 18,
+            letterSpacing: 1.2,
           ),
         ),
         centerTitle: true,
@@ -69,11 +56,14 @@ class _ProviderAppointmentListPageState
             context.read<ProviderBloc>().add(ProviderBackPressedEvent());
           },
           child: Container(
-            margin: const EdgeInsets.all(10),
+            margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: buttonColor,
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+                width: 1.5,
+              ),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -90,7 +80,7 @@ class _ProviderAppointmentListPageState
             child: GradientBackground(
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: FutureBuilder<List<AppointmentData>>(
                     future: SuccessGetAppointmentsState.appointments,
                     builder: (context, snapshot) {
@@ -118,7 +108,7 @@ class _ProviderAppointmentListPageState
                           if (appt == null) return const SizedBox.shrink();
 
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 0),
+                            margin: EdgeInsets.only(bottom: 0),
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
@@ -129,7 +119,9 @@ class _ProviderAppointmentListPageState
                                 );
                               },
                               child: SolidContainer(
-                                padding: const EdgeInsets.all(20),
+                                padding: EdgeInsets.all(20),
+                                borderColor: context.appColors.glassBorder,
+                                borderWidth: 1.5,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -143,10 +135,11 @@ class _ProviderAppointmentListPageState
                                                 CrossAxisAlignment.start,
                                             children: [
                                               CustomTextWidget(
-                                                text: appt.title ?? "No Title",
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                                text: (appt.title ?? "No Title").toUpperCase(),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w900,
                                                 color: textColor,
+                                                letterSpacing: 0.5,
                                               ),
                                               const SizedBox(height: 4),
                                               Row(
@@ -179,17 +172,17 @@ class _ProviderAppointmentListPageState
                                     Row(
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.all(8),
+                                          padding: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
                                             color: iconBgColor,
                                             borderRadius: BorderRadius.circular(
                                               10,
                                             ),
                                           ),
-                                          child: const Icon(
+                                          child: Icon(
                                             Icons.calendar_today_rounded,
                                             size: 16,
-                                            color: appOrangeColor1,
+                                            color: context.appColors.secondaryColor,
                                           ),
                                         ),
                                         const SizedBox(width: 12),
@@ -198,12 +191,12 @@ class _ProviderAppointmentListPageState
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Scheduled For",
+                                              "SCHEDULED FOR",
                                               style: TextStyle(
                                                 fontSize: 10,
                                                 color: secondaryTextColor
                                                     .withAlpha(180),
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w900,
                                                 letterSpacing: 0.5,
                                               ),
                                             ),
@@ -224,44 +217,7 @@ class _ProviderAppointmentListPageState
                                         ),
                                       ],
                                     ),
-                                    if (appt.isFunded == false) ...[
-                                      const SizedBox(height: 16),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 10,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.amber.withAlpha(30),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          border: Border.all(
-                                            color: Colors.amber.withAlpha(60),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.warning_amber_rounded,
-                                              color: Colors.amber,
-                                              size: 18,
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Expanded(
-                                              child: CustomTextWidget(
-                                                text: "Waiting for funding",
-                                                color: isDark
-                                                    ? Colors.amber.shade100
-                                                    : Colors.amber.shade900,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                    
                                   ],
                                 ),
                               ),
@@ -281,36 +237,31 @@ class _ProviderAppointmentListPageState
   }
 
   Widget _buildStatusBadge(Appointment appt, BuildContext context) {
-    Color color = Colors.blue;
     String text = appt.status ?? "Scheduled";
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (appt.status == 'COMPLETED') {
-      color = Colors.green;
       text = "Completed";
     } else if (appt.status == 'CANCELLED') {
-      color = Colors.red;
       text = "Cancelled";
     } else if (appt.isFunded == true && appt.status != 'COMPLETED') {
-      color = Colors.teal;
       text = "Funded & Active";
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withAlpha(40),
+        color: context.appColors.primaryColor.withAlpha(40),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withAlpha(80)),
-        boxShadow: [
-          BoxShadow(color: color.withAlpha(20), blurRadius: 8, spreadRadius: 0),
-        ],
+        border: Border.all(
+          color: context.appColors.primaryColor.withAlpha(100),
+          width: 1.5,
+        ),
       ),
       child: CustomTextWidget(
         text: text.toUpperCase(),
-        color: isDark ? Colors.white : color,
+        color: context.appColors.primaryColor,
         fontSize: 10,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w900,
         letterSpacing: 0.5,
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nsapp/core/core.dart';
 
 class CustomSegmentedControl<T> extends StatefulWidget {
   final List<T> buttonValues;
@@ -57,21 +58,20 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final double widgetWidth = widget.width ?? MediaQuery.of(context).size.width;
     final int itemCount = widget.buttonValues.length;
     final int selectedIndex = widget.buttonValues.indexOf(selectedValue);
 
     return Container(
       height: widget.height,
-      width: widgetWidth,
+      width: size(context).width,
       decoration: BoxDecoration(
         color: widget.unSelectedColor ??
-            (isDark ? Colors.white.withAlpha(15) : Colors.grey.withAlpha(20)),
+            context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(widget.radius),
         border: Border.all(
           color: widget.unSelectedBorderColor ??
-              (isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(10)),
+              context.appColors.glassBorder,
         ),
       ),
       child: Stack(
@@ -87,16 +87,16 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
             child: Container(
               width: widgetWidth / itemCount,
               height: widget.height,
-              margin: const EdgeInsets.all(4),
+              margin: EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: widget.selectedColor ?? Theme.of(context).primaryColor,
+                color: widget.selectedColor ?? context.appColors.primaryColor,
                 borderRadius: BorderRadius.circular(widget.radius - 4),
                 boxShadow: [
                   BoxShadow(
-                    color: (widget.selectedColor ?? Theme.of(context).primaryColor)
+                    color: (widget.selectedColor ?? context.appColors.primaryColor)
                         .withAlpha(60),
                     blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
@@ -122,11 +122,9 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
                       duration: const Duration(milliseconds: 200),
                       style: TextStyle(
                         color: isSelected
-                            ? (widget.textColor ?? Colors.white)
+                            ? (widget.textColor ?? context.appColors.primaryTextColor)
                             : (widget.unselectedTextColor ??
-                                (isDark
-                                    ? Colors.white.withAlpha(150)
-                                    : Colors.black54)),
+                                context.appColors.secondaryTextColor),
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.w500,
                         fontSize: 14,

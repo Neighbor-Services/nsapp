@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/di/injection_container.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -9,6 +8,8 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class AISearchPage extends StatefulWidget {
   const AISearchPage({super.key});
@@ -40,12 +41,12 @@ class _AISearchPageState extends State<AISearchPage> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text(
-          "AI Magic Match",
+          "AI MAGIC MATCH",
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
             fontSize: 22,
-            letterSpacing: -0.5,
+            letterSpacing: 1.0,
           ),
         ),
         centerTitle: true,
@@ -54,15 +55,18 @@ class _AISearchPageState extends State<AISearchPage> {
         leading: GestureDetector(
           onTap: () => context.read<SeekerBloc>().add(SeekerBackPressedEvent()),
           child: Container(
-            margin: const EdgeInsets.all(10),
+            margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white12,
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white12),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+                width: 1.5,
+              ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Colors.white,
+              color: context.appColors.primaryTextColor,
               size: 16,
             ),
           ),
@@ -72,31 +76,32 @@ class _AISearchPageState extends State<AISearchPage> {
         child: BlocProvider.value(
           value: _bloc,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 120, 16, 0),
+            padding: EdgeInsets.fromLTRB(16, 120, 16, 0),
             child: Column(
               children: [
                 SolidContainer(
-                  padding: const EdgeInsets.all(20),
-                  backgroundColor: const Color(0xFF1E1E2E),
+                  padding: EdgeInsets.all(24),
+                  borderColor: context.appColors.glassBorder,
+                  borderWidth: 1.5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 35),
                       Row(
                         children: [
-                          const Icon(
+                           Icon(
                             Icons.auto_awesome,
-                            color: appOrangeColor1,
+                            color: context.appColors.secondaryColor,
                             size: 24,
                           ),
                           const SizedBox(width: 12),
                           const Text(
-                            "AI Assistant",
+                            "AI ASSISTANT",
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
                               color: Colors.white,
-                              letterSpacing: 0.5,
+                              letterSpacing: 1.5,
                             ),
                           ),
                         ],
@@ -105,7 +110,9 @@ class _AISearchPageState extends State<AISearchPage> {
                       SolidTextField(
                         controller: _controller,
                         hintText:
-                            "Describe what you need help with (e.g. I need a plumber for a leaking pipe)",
+                            "DESCRIBE WHAT YOU NEED...",
+                        label: "REQUIREMENTS",
+                        allCapsLabel: true,
                         prefixIcon: Icons.chat_bubble_outline_rounded,
                         isMultiLine: true,
                       ),
@@ -123,9 +130,9 @@ class _AISearchPageState extends State<AISearchPage> {
                   child: BlocBuilder<SeekerBloc, SeekerState>(
                     builder: (context, state) {
                       if (state is LoadingSeekerState) {
-                        return const Center(
+                        return  Center(
                           child: CircularProgressIndicator(
-                            color: appOrangeColor1,
+                            color: context.appColors.secondaryColor,
                           ),
                         );
                       } else if (state is SuccessMatchProvidersState) {
@@ -134,9 +141,9 @@ class _AISearchPageState extends State<AISearchPage> {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const Center(
+                              return  Center(
                                 child: CircularProgressIndicator(
-                                  color: appOrangeColor1,
+                                  color: context.appColors.secondaryColor,
                                 ),
                               );
                             }
@@ -152,10 +159,12 @@ class _AISearchPageState extends State<AISearchPage> {
                                     ),
                                     const SizedBox(height: 16),
                                     Text(
-                                      "No matching providers found.",
+                                      "NO MATCHING PROVIDERS FOUND",
                                       style: TextStyle(
                                         color: Colors.white.withAlpha(150),
-                                        fontSize: 16,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1.0,
                                       ),
                                     ),
                                   ],
@@ -165,7 +174,7 @@ class _AISearchPageState extends State<AISearchPage> {
 
                             return ListView.builder(
                               physics: const BouncingScrollPhysics(),
-                              padding: const EdgeInsets.only(
+                              padding: EdgeInsets.only(
                                 top: 0,
                                 bottom: 40,
                               ),
@@ -173,7 +182,7 @@ class _AISearchPageState extends State<AISearchPage> {
                               itemBuilder: (context, index) {
                                 final provider = snapshot.data![index];
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
+                                  padding: EdgeInsets.only(bottom: 12),
                                   child: ProviderListItem(
                                     profile: provider,
                                     onTap: () {
@@ -186,13 +195,13 @@ class _AISearchPageState extends State<AISearchPage> {
                           },
                         );
                       } else if (state is FailureMatchProvidersState) {
-                        return const Center(
+                        return  Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
                                 Icons.error_outline_rounded,
-                                color: Colors.redAccent,
+                                color: context.appColors.errorColor,
                                 size: 48,
                               ),
                                SizedBox(height: 16),
@@ -219,19 +228,20 @@ class _AISearchPageState extends State<AISearchPage> {
                                   child: Icon(
                                     Icons.auto_awesome,
                                     size: 80,
-                                    color: appOrangeColor1.withAlpha(100),
+                                    color: context.appColors.secondaryColor.withAlpha(100),
                                   ),
                                 );
                               },
                             ),
                             const SizedBox(height: 24),
                             Text(
-                              "Describe your task above\nand let AI do the magic",
+                              "DESCRIBE YOUR TASK ABOVE\nAND LET AI DO THE MAGIC",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white.withAlpha(150),
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.2,
                                 height: 1.5,
                               ),
                             ),

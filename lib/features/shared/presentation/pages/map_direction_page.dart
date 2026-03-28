@@ -118,7 +118,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                 Polyline(
                   polylineId: const PolylineId("route"),
                   points: polylinePoints,
-                  color: appDeepBlueColor1,
+                  color: context.appColors.primaryColor,
                   width: 5,
                 ),
               },
@@ -130,21 +130,21 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
             right: 20,
             bottom: 40,
             child: SolidContainer(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: appDeepBlueColor1.withAlpha(50),
+                          color: context.appColors.primaryColor.withAlpha(50),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child:  Icon(
                           Icons.navigation_rounded,
-                          color: Colors.white,
+                          color: context.appColors.primaryColor,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -152,10 +152,10 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                             Text(
                               "Heading to Request Location",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: context.appColors.primaryTextColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                               ),
@@ -163,7 +163,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                             Text(
                               "Following the fastest route",
                               style: TextStyle(
-                                color: Colors.white.withAlpha(150),
+                                color: context.appColors.secondaryTextColor,
                                 fontSize: 12,
                               ),
                             ),
@@ -172,9 +172,9 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                       ),
                     ],
                   ),
-                  const Padding(
+                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Divider(color: Colors.white12),
+                    child: Divider(color: context.appColors.secondaryTextColor),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -197,11 +197,11 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
             left: 20,
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              child: const SolidContainer(
+              child:  SolidContainer(
                 padding: EdgeInsets.all(12),
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white,
+                  color: context.appColors.primaryTextColor,
                   size: 20,
                 ),
               ),
@@ -215,7 +215,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
   Widget _buildInfoItem(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, color: appDeepBlueColor1, size: 20),
+        Icon(icon, color: context.appColors.primaryColor, size: 20),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,14 +223,14 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
             Text(
               label,
               style: TextStyle(
-                color: Colors.white.withAlpha(100),
+                color: context.appColors.secondaryTextColor,
                 fontSize: 10,
               ),
             ),
             Text(
               value,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.appColors.primaryTextColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
               ),

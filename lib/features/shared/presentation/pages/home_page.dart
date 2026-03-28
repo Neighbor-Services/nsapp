@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -34,42 +33,20 @@ class _HomePageState extends State<HomePage> {
       context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
     }
     super.initState();
-    InternetConnection().onStatusChange.listen((status) {
-      switch (status) {
-        case InternetStatus.connected:
-          Helpers.getLocation();
-
-          break;
-        case InternetStatus.disconnected:
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: CustomTextWidget(
-                text: "Please check your internet connection",
-              ),
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            ),
-          );
-
-          break;
-      }
-    });
+    
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return BlocConsumer<SharedBloc, SharedState>(
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
           extendBodyBehindAppBar: true,
-          backgroundColor: Colors.transparent,
           key: scaffold,
           appBar: homeAppBar(
             context: context,
-            color: DashboardState.isProvider
-                ? appBlueCardColor
-                : appOrangeColor1,
+            color: context.appColors.surfaceBackground,
             title: DashboardState.isProvider ? 'PROVIDER' : 'SEEKER',
             actions: [
               PopupMenuItem(
@@ -95,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(width: 10),
                     CustomTextWidget(
                       text: SuccessGetProfileState.profile.firstName ?? "",
-                      color: isDark ? Colors.white : Colors.black,
+                      color: context.appColors.primaryTextColor,
                     ),
                   ],
                 ),
@@ -104,9 +81,13 @@ class _HomePageState extends State<HomePage> {
                 value: 2,
                 child: Row(
                   children: [
-                    Icon(Icons.logout, size: 30, color: Colors.redAccent),
+                    Icon(Icons.logout, size: 30, color: context.appColors.errorColor),
                     const SizedBox(width: 10),
-                    CustomTextWidget(text: "Logout", color: Colors.redAccent),
+                    CustomTextWidget(
+                      text: "LOGOUT",
+                      color: context.appColors.errorColor,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ],
                 ),
               ),
@@ -121,10 +102,12 @@ class _HomePageState extends State<HomePage> {
           drawer: (DashboardState.isProvider)
               ? ProviderDrawerWidget()
               : SeekerDrawerWidget(),
-          body: Center(
-            child: (DashboardState.isProvider)
-                ? ProviderDashboardPage()
-                : SeekerDashboardPage(),
+          body: SafeArea(
+            child: Center(
+              child: (DashboardState.isProvider)
+                  ? ProviderDashboardPage()
+                  : SeekerDashboardPage(),
+            ),
           ),
         );
       },

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
@@ -13,6 +12,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/core.dart';
 
 class AddAboutPage extends StatefulWidget {
   const AddAboutPage({super.key});
@@ -100,16 +100,10 @@ class _AddAboutPageState extends State<AddAboutPage> {
         },
         builder: (context, state) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-          final secondaryTextColor = isDark
-              ? Colors.white.withAlpha(160)
-              : const Color(0xFF1E1E2E).withAlpha(160);
-          final buttonColor = isDark
-              ? Colors.white.withAlpha(20)
-              : Colors.black.withAlpha(10);
-          final borderColor = isDark
-              ? Colors.white.withAlpha(40)
-              : Colors.black.withAlpha(20);
+          final textColor = context.appColors.primaryTextColor;
+          final secondaryTextColor = context.appColors.glassBorder;
+          final buttonColor = context.appColors.glassBorder;
+          final borderColor = context.appColors.glassBorder;
 
           return LoadingView(
             isLoading: (state is LoadingProfileState),
@@ -118,13 +112,13 @@ class _AddAboutPageState extends State<AddAboutPage> {
                 child: SafeArea(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                       horizontal: 24,
                       vertical: 10,
                     ),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 600),
+                        constraints: BoxConstraints(maxWidth: 600),
                         child: Form(
                           key: key,
                           child: Column(
@@ -177,7 +171,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           onTap: () =>
               context.read<ProviderBloc>().add(ProviderBackPressedEvent()),
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: buttonColor,
               borderRadius: BorderRadius.circular(14),
@@ -192,19 +186,20 @@ class _AddAboutPageState extends State<AddAboutPage> {
         ),
         const SizedBox(height: 32),
         CustomTextWidget(
-          text: "Professional Portfolio",
-          fontWeight: FontWeight.bold,
-          fontSize: 32,
+          text: "PROFESSIONAL PORTFOLIO",
+          fontWeight: FontWeight.w900,
+          fontSize: 22,
           color: textColor,
-          letterSpacing: -1,
+          letterSpacing: 1.5,
         ),
         const SizedBox(height: 8),
         CustomTextWidget(
           text:
-              "Tell the world about your business and showcase your best work.",
-          fontSize: 15,
+              "TELL THE WORLD ABOUT YOUR BUSINESS AND SHOWCASE YOUR BEST WORK.",
+          fontSize: 10,
+          fontWeight: FontWeight.w900,
           color: secondaryTextColor,
-          height: 1.5,
+          letterSpacing: 1.0,
         ),
       ],
     );
@@ -212,15 +207,15 @@ class _AddAboutPageState extends State<AddAboutPage> {
 
   Widget _buildFormSection() {
     return SolidContainer(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CustomTextWidget(
+           CustomTextWidget(
             text: "BUSINESS DETAILS",
             fontSize: 12,
             fontWeight: FontWeight.w900,
-            color: appOrangeColor1,
+            color: context.appColors.secondaryColor,
             letterSpacing: 1.5,
           ),
           const SizedBox(height: 24),
@@ -288,7 +283,6 @@ class _AddAboutPageState extends State<AddAboutPage> {
             label: "Detailed Description",
             prefixIcon: Icons.notes_rounded,
             isMultiLine: true,
-
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Description is required" : null,
           ),
@@ -303,18 +297,18 @@ class _AddAboutPageState extends State<AddAboutPage> {
     Color textColor,
   ) {
     return SolidContainer(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const CustomTextWidget(
+               CustomTextWidget(
                 text: "SHOWCASE IMAGES",
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
-                color: appOrangeColor1,
+                color: context.appColors.secondaryColor,
                 letterSpacing: 1.5,
               ),
               IconButton(
@@ -343,14 +337,10 @@ class _AddAboutPageState extends State<AddAboutPage> {
                     width: double.infinity,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withAlpha(10)
-                          : Colors.black.withAlpha(5),
+                      color: context.appColors.cardBackground,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isDark
-                            ? Colors.white.withAlpha(20)
-                            : Colors.black.withAlpha(10),
+                        color: context.appColors.glassBorder,
                         style: BorderStyle.solid,
                       ),
                     ),
@@ -359,18 +349,14 @@ class _AddAboutPageState extends State<AddAboutPage> {
                       children: [
                         Icon(
                           Icons.cloud_upload_outlined,
-                          color: isDark
-                              ? Colors.white.withAlpha(60)
-                              : Colors.black.withAlpha(40),
+                          color: context.appColors.secondaryTextColor,
                           size: 32,
                         ),
                         const SizedBox(height: 8),
                         Text(
                           "Tap to upload work samples",
                           style: TextStyle(
-                            color: isDark
-                                ? Colors.white.withAlpha(100)
-                                : Colors.black.withAlpha(60),
+                            color: context.appColors.secondaryTextColor,
                             fontSize: 13,
                           ),
                         ),
@@ -409,8 +395,8 @@ class _AddAboutPageState extends State<AddAboutPage> {
                               });
                             },
                             child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
                                 color: Colors.black54,
                                 shape: BoxShape.circle,
                               ),
@@ -442,9 +428,9 @@ class _AddAboutPageState extends State<AddAboutPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: appOrangeColor1.withAlpha(60),
+            color: context.appColors.secondaryColor.withAlpha(60),
             blurRadius: 20,
-            offset: const Offset(0, 5),
+            offset: Offset(0, 5),
           ),
         ],
       ),
@@ -480,7 +466,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: appOrangeColor1,
+          backgroundColor: context.appColors.secondaryColor,
           foregroundColor: Colors.white,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
@@ -489,11 +475,11 @@ class _AddAboutPageState extends State<AddAboutPage> {
           elevation: 0,
         ),
         child: const Text(
-          "Publish Portfolio",
+          "PUBLISH PORTFOLIO",
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.1,
           ),
         ),
       ),

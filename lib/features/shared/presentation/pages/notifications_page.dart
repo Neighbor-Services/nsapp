@@ -13,6 +13,7 @@ import '../../../messages/presentation/pages/chat_page.dart';
 import '../../../provider/presentation/bloc/provider_bloc.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart';
 import '../bloc/shared_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -51,7 +52,6 @@ class _NotificationsPageState extends State<NotificationsPage>
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -62,7 +62,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 700),
+                  constraints: BoxConstraints(maxWidth: 700),
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Column(
@@ -88,45 +88,29 @@ class _NotificationsPageState extends State<NotificationsPage>
                                   }
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.white.withAlpha(25)
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(14),
+                                    color: context.appColors.cardBackground,
+                                    borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(40)
-                                          : Colors.black.withAlpha(10),
-                                      width: 1,
+                                      color: context.appColors.glassBorder,
                                     ),
-                                    boxShadow: isDark
-                                        ? null
-                                        : [
-                                            BoxShadow(
-                                              color: Colors.black.withAlpha(10),
-                                              blurRadius: 10,
-                                              spreadRadius: 2,
-                                            ),
-                                          ],
                                   ),
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.black87,
+                                    color: context.appColors.primaryTextColor,
                                     size: 20,
                                   ),
                                 ),
                               ),
                               const SizedBox(width: 16),
                               Text(
-                                "Notifications",
+                                "NOTIFICATIONS",
                                 style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark ? Colors.white : Colors.black87,
-                                  letterSpacing: -0.5,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w900,
+                                  color: context.appColors.primaryTextColor,
+                                  letterSpacing: 1.2,
                                 ),
                               ),
                             ],
@@ -159,57 +143,37 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 } else {
                                   return Center(
                                     child: Container(
-                                      padding: const EdgeInsets.all(40),
+                                      padding: EdgeInsets.all(40),
                                       decoration: BoxDecoration(
-                                        color: isDark
-                                            ? const Color(0xFF1E1E2E)
-                                            : Colors.white,
+                                        color: context.appColors.cardBackground,
                                         borderRadius: BorderRadius.circular(24),
                                         border: Border.all(
-                                          color: isDark
-                                              ? Colors.white.withAlpha(30)
-                                              : Colors.black.withAlpha(10),
+                                          color: context.appColors.glassBorder,
                                         ),
-                                        boxShadow: isDark
-                                            ? null
-                                            : [
-                                                BoxShadow(
-                                                  color: Colors.black.withAlpha(
-                                                    5,
-                                                  ),
-                                                  blurRadius: 20,
-                                                  spreadRadius: 2,
-                                                ),
-                                              ],
                                       ),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Container(
-                                            padding: const EdgeInsets.all(20),
+                                            padding: EdgeInsets.all(20),
                                             decoration: BoxDecoration(
-                                              color: isDark
-                                                  ? Colors.white.withAlpha(10)
-                                                  : Colors.black.withAlpha(5),
+                                              color: context.appColors.glassBorder,
                                               shape: BoxShape.circle,
                                             ),
                                             child: Icon(
                                               Icons.notifications_off_rounded,
                                               size: 50,
-                                              color: isDark
-                                                  ? Colors.white.withAlpha(150)
-                                                  : Colors.black.withAlpha(100),
+                                              color: context.appColors.glassBorder,
                                             ),
                                           ),
                                           const SizedBox(height: 24),
                                           Text(
-                                            "No notifications yet",
+                                            "NO NOTIFICATIONS YET",
                                             style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: isDark
-                                                  ? Colors.white.withAlpha(220)
-                                                  : Colors.black87,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w900,
+                                              color: context.appColors.glassBorder,
+                                              letterSpacing: 1.0,
                                             ),
                                           ),
                                           const SizedBox(height: 12),
@@ -218,9 +182,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               fontSize: 14,
-                                              color: isDark
-                                                  ? Colors.white.withAlpha(140)
-                                                  : Colors.black54,
+                                              color: context.appColors.glassBorder,
                                               height: 1.5,
                                             ),
                                           ),
@@ -269,42 +231,21 @@ class _NotificationsPageState extends State<NotificationsPage>
         onTap: () => _showNotificationDetails(context, notificationData),
         child: Builder(
           builder: (context) {
-            final isDark = Theme.of(context).brightness == Brightness.dark;
             return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(18),
+              margin: EdgeInsets.only(bottom: 16),
+              padding: EdgeInsets.all(18),
               decoration: BoxDecoration(
                 color: isUnread
-                    ? (isDark ? const Color(0xFF2E2E3E) : Colors.white)
-                    : (isDark
-                          ? const Color(0xFF1E1E2E)
-                          : Colors.white.withAlpha(200)),
+                    ? context.appColors.cardBackground
+                    : context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isUnread
-                      ? (isDark
-                            ? Colors.white.withAlpha(60)
-                            : Colors.blue.withAlpha(60))
-                      : (isDark
-                            ? Colors.white.withAlpha(25)
-                            : Colors.black.withAlpha(10)),
+                      ? context.appColors.glassBorder
+                      : context.appColors.glassBorder,
                   width: isUnread ? 1.2 : 0.8,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? Colors.black.withAlpha(20)
-                        : Colors.black.withAlpha(5),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                  if (isUnread)
-                    BoxShadow(
-                      color: Colors.blue.withAlpha(isDark ? 20 : 10),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                ],
+            
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,14 +276,12 @@ class _NotificationsPageState extends State<NotificationsPage>
                           children: [
                             Expanded(
                               child: Text(
-                                notification.title ?? "",
+                                (notification.title ?? "").toUpperCase(),
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: isUnread
-                                      ? FontWeight.bold
-                                      : FontWeight.w600,
-                                  color: isDark ? Colors.white : Colors.black87,
-                                  letterSpacing: -0.2,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                  color: context.appColors.primaryTextColor,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
                             ),
@@ -350,9 +289,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                               Container(
                                 width: 10,
                                 height: 10,
-                                margin: const EdgeInsets.only(left: 8),
-                                decoration: const BoxDecoration(
-                                  color: Colors.blueAccent,
+                                margin: EdgeInsets.only(left: 8),
+                                decoration: BoxDecoration(
+                                  color: context.appColors.primaryColor,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -363,9 +302,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                           notification.message ?? "",
                           style: TextStyle(
                             fontSize: 14,
-                            color: isDark
-                                ? Colors.white.withAlpha(160)
-                                : Colors.black.withAlpha(140),
+                            color: context.appColors.hintTextColor,
                             height: 1.4,
                           ),
                           maxLines: 2,
@@ -377,9 +314,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                             Icon(
                               Icons.access_time_filled_rounded,
                               size: 12,
-                              color: isDark
-                                  ? Colors.white.withAlpha(100)
-                                  : Colors.black.withAlpha(80),
+                              color: context.appColors.hintTextColor,
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -387,9 +322,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: isDark
-                                    ? Colors.white.withAlpha(120)
-                                    : Colors.black.withAlpha(100),
+                                color: context.appColors.hintTextColor,
                               ),
                             ),
                           ],
@@ -425,16 +358,16 @@ class _NotificationsPageState extends State<NotificationsPage>
   Color _getNotificationColor(String? notificationType) {
     switch (notificationType?.toLowerCase()) {
       case "message":
-        return const Color(0xFF4FACFE);
+        return context.appColors.primaryColor;
       case "proposal":
       case "request":
-        return const Color(0xFFF093FB);
+        return context.appColors.primaryColor;
       case "appointment":
-        return const Color(0xFF43E97B);
+        return context.appColors.primaryColor;
       case "system":
-        return const Color(0xFFFAD961);
+        return context.appColors.primaryColor;
       default:
-        return Colors.white70;
+        return context.appColors.primaryColor;
     }
   }
 
@@ -457,18 +390,14 @@ class _NotificationsPageState extends State<NotificationsPage>
         notificationID: notificationData.notification!.id!,
       ),
     );
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
+        padding: EdgeInsets.fromLTRB(24, 12, 24, 40),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0F0F1E) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(
-            color: isDark
-                ? Colors.white.withAlpha(20)
-                : Colors.black.withAlpha(10),
+            color: context.appColors.glassBorder,
             width: 1,
           ),
         ),
@@ -479,9 +408,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               width: 45,
               height: 5,
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withAlpha(40)
-                    : Colors.black.withAlpha(20),
+                color: context.appColors.glassBorder,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -507,12 +434,12 @@ class _NotificationsPageState extends State<NotificationsPage>
             ),
             const SizedBox(height: 24),
             Text(
-              notificationData.notification!.title ?? "Notification",
+              (notificationData.notification!.title ?? "NOTIFICATION").toUpperCase(),
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
-                letterSpacing: -0.5,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                color: context.appColors.primaryTextColor,
+                letterSpacing: 1.0,
               ),
               textAlign: TextAlign.center,
             ),
@@ -521,9 +448,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               notificationData.notification!.message ?? "",
               style: TextStyle(
                 fontSize: 16,
-                color: isDark
-                    ? Colors.white.withAlpha(180)
-                    : Colors.black.withAlpha(160),
+                color: context.appColors.hintTextColor,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -549,8 +474,13 @@ class _NotificationsPageState extends State<NotificationsPage>
                     ),
                   ),
                   child: const Text(
-                    "View Details",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    "VIEW DETAILS",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.0,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -563,20 +493,20 @@ class _NotificationsPageState extends State<NotificationsPage>
                   onPressed: () => Get.back(),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: isDark
-                          ? Colors.white.withAlpha(40)
-                          : Colors.black.withAlpha(20),
+                      color: context.appColors.glassBorder,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
                     ),
                   ),
                   child: Text(
-                    "Dismiss",
+                    "DISMISS",
                     style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      color: context.appColors.primaryTextColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.0,
+                    
                     ),
                   ),
                 ),

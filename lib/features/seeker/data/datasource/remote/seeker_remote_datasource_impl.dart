@@ -52,12 +52,6 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       }
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.response != null) {
-          debugPrint("CREATE REQUEST ERROR BODY: ${e.response?.data}");
-        }
-      }
-      debugPrint("CREATE REQUEST ERROR: $e");
       return false;
     }
   }
@@ -247,10 +241,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
     try {
       final token = await Helpers.getString("token");
       final updateData = request.toUpdateJson();
-      debugPrint(
-        "UPDATE REQUEST ATTEMPT - URL: $baseRequestUrl/services/requests/${request.id}/",
-      );
-      debugPrint("UPDATE REQUEST ATTEMPT - DATA: ${json.encode(updateData)}");
+     
 
       final response = await dio.patch(
         "$baseRequestUrl/services/requests/${request.id}/",
@@ -277,12 +268,6 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       }
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.response != null) {
-          debugPrint("UPDATE REQUEST ERROR BODY: ${e.response?.data}");
-        }
-      }
-      debugPrint("UPDATE REQUEST ERROR: $e");
       return false;
     }
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -11,11 +10,10 @@ import 'package:nsapp/features/provider/presentation/pages/provider_home_page.da
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
-import '../../../../core/constants/string_constants.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 
-import '../../../../core/constants/dimension.dart';
 import '../bloc/shared_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 AppBar homeAppBar({
   String? title,
@@ -25,24 +23,13 @@ AppBar homeAppBar({
   List<PopupMenuEntry<int>>? actions,
   required BuildContext context,
 }) {
-  final isDark = Theme.of(context).brightness == Brightness.dark;
-  final appBarColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-  final borderColor = isDark ? Colors.white12 : Colors.black.withAlpha(20);
-  final titleBg = isDark
-      ? Colors.white.withAlpha(15)
-      : Colors.black.withAlpha(5);
-  final titleColor = isDark ? Colors.white : Colors.black87;
-  final borderDecorColor = isDark
-      ? Colors.white.withAlpha(20)
-      : Colors.black.withAlpha(10);
-  final switchInactiveThumb = isDark ? Colors.white70 : Colors.grey;
-  final switchInactiveTrack = isDark
-      ? Colors.white.withAlpha(20)
-      : Colors.black.withAlpha(10);
-  final iconColor = isDark ? Colors.white : Colors.black87;
-  final actionIconBg = isDark
-      ? Colors.white.withAlpha(15)
-      : Colors.black.withAlpha(5);
+  final appBarColor = context.appColors.appBarBackground;
+  final borderColor = context.appColors.glassBorder;
+  final titleColor = context.appColors.primaryTextColor;
+  final borderDecorColor = context.appColors.glassBorder;
+  final switchInactiveThumb = context.appColors.secondaryTextColor;
+  final switchInactiveTrack = context.appColors.iconContainerBackground;
+  final iconColor = context.appColors.primaryTextColor;
 
   return AppBar(
     elevation: 0,
@@ -60,29 +47,20 @@ AppBar homeAppBar({
     leading: Builder(
       builder: (context) {
         return Padding(
-          padding: const EdgeInsets.only(left: 16.0),
+          padding: EdgeInsets.only(left: 16.0),
           child: Center(
             child: GestureDetector(
               onTap: () {
                 Scaffold.of(context).openDrawer();
               },
               child: Container(
-                padding: const EdgeInsets.all(2),
+                padding: EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      appOrangeColor1.withAlpha(200),
-                      appOrangeColor2.withAlpha(200),
-                    ],
+                  border: Border.all(
+                    color: context.appColors.secondaryColor,
+                    width: 1.5,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: appOrangeColor1.withAlpha(80),
-                      blurRadius: 12,
-                      spreadRadius: 2,
-                    ),
-                  ],
                 ),
                 child: CircleAvatar(
                   radius: 18,
@@ -108,9 +86,9 @@ AppBar homeAppBar({
       },
     ),
     title: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: titleBg,
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: borderDecorColor),
       ),
@@ -118,12 +96,13 @@ AppBar homeAppBar({
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            title ?? (DashboardState.isProvider ? 'Provider' : 'Seeker'),
+            (title ?? (DashboardState.isProvider ? 'PROVIDER' : 'SEEKER'))
+                .toUpperCase(),
             style: TextStyle(
               color: titleColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-              letterSpacing: 0.5,
+              fontWeight: FontWeight.w900,
+              fontSize: 13,
+              letterSpacing: 1.0,
             ),
           ),
         ],
@@ -131,7 +110,7 @@ AppBar homeAppBar({
     ),
     actions: [
       Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        padding: EdgeInsets.symmetric(vertical: 20.0),
         child: BlocBuilder<SharedBloc, SharedState>(
           builder: (context, state) {
             return Helpers.isProvider(ReloadState.type)
@@ -140,8 +119,9 @@ AppBar homeAppBar({
                     child: Switch(
                       value: value,
                       onChanged: onToggle,
-                      activeThumbColor: appOrangeColor1,
-                      activeTrackColor: appOrangeColor1.withAlpha(50),
+                      activeThumbColor: context.appColors.secondaryColor,
+                      activeTrackColor:
+                          context.appColors.secondaryColor.withAlpha(50),
                       inactiveThumbColor: switchInactiveThumb,
                       inactiveTrackColor: switchInactiveTrack,
                     ),
@@ -151,12 +131,12 @@ AppBar homeAppBar({
         ),
       ),
       Padding(
-        padding: const EdgeInsets.only(right: 12.0),
+        padding: EdgeInsets.only(right: 12.0),
         child: PlatformPopupMenu(
           icon: Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: actionIconBg,
+              color: context.appColors.cardBackground,
               shape: BoxShape.circle,
               border: Border.all(color: borderDecorColor),
             ),
@@ -181,17 +161,12 @@ class PlatformPopupMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final popupBg = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final dialogBg = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final subTextColor = isDark ? Colors.white.withAlpha(200) : Colors.black54;
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(40)
-        : Colors.grey.withAlpha(30);
+    final popupBg = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final dialogBg = context.appColors.cardBackground;
+    final textColor = context.appColors.primaryTextColor;
+    final subTextColor = context.appColors.secondaryTextColor;
+    final shadowColor = context.appColors.glassBorder;
 
     return PopupMenuButton<int>(
       key: const ValueKey('home_app_bar_popup_menu'),
@@ -219,9 +194,9 @@ class PlatformPopupMenu extends StatelessWidget {
                   color: Colors.transparent,
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(24),
                       width: size(context).width * 0.85,
-                      constraints: const BoxConstraints(maxWidth: 400),
+                      constraints: BoxConstraints(maxWidth: 400),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: dialogBg,
@@ -230,7 +205,7 @@ class PlatformPopupMenu extends StatelessWidget {
                           BoxShadow(
                             color: shadowColor,
                             blurRadius: 20,
-                            offset: const Offset(0, 10),
+                            offset: Offset(0, 10),
                           ),
                         ],
                       ),
@@ -238,24 +213,25 @@ class PlatformPopupMenu extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.red.withAlpha(30),
+                              color: context.appColors.errorColor.withAlpha(30),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.logout_rounded,
                               size: 32,
-                              color: Colors.red,
+                              color: context.appColors.errorColor,
                             ),
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            "Logout",
+                            "LOGOUT",
                             style: TextStyle(
                               fontSize: 22,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               color: textColor,
+                              letterSpacing: 1.2,
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -271,20 +247,21 @@ class PlatformPopupMenu extends StatelessWidget {
                                 child: TextButton(
                                   onPressed: () => Get.back(),
                                   style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 14,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(16),
                                       side: BorderSide(color: borderColor),
                                     ),
                                   ),
                                   child: Text(
-                                    "Cancel",
+                                    "CANCEL",
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       color: subTextColor,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.0,
                                     ),
                                   ),
                                 ),
@@ -309,21 +286,22 @@ class PlatformPopupMenu extends StatelessWidget {
                                     Get.offAllNamed("/login");
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
+                                    backgroundColor: context.appColors.errorColor,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 14,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
                                     elevation: 0,
                                   ),
                                   child: const Text(
-                                    "Logout",
+                                    "LOGOUT",
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.0,
                                     ),
                                   ),
                                 ),

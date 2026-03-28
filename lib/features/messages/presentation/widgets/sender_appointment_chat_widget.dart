@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/appointment.dart';
 
 import '../../../provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class SenderAppointmentChatWidget extends StatelessWidget {
   final DateTime startTime;
@@ -31,20 +31,17 @@ class SenderAppointmentChatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final timestampColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black54;
+    final timestampColor = context.appColors.glassBorder;
 
     // Use brand color for sender bubble consistently, or adaptive colors if preferred.
     // For now, keeping brand color but making other elements adaptive.
-    final bubbleColor = appDeepBlueColor1;
-    final popupColor = isDark ? const Color(0xFF2E2E3E) : Colors.white;
-    final popupIconColor = isDark ? Colors.white70 : Colors.black54;
-    final popupTextColor = isDark ? Colors.white : Colors.black87;
+    final bubbleColor = context.appColors.primaryColor;
+    final popupColor = context.appColors.cardBackground;
+    final popupIconColor = context.appColors.secondaryTextColor;
+    final popupTextColor = context.appColors.primaryTextColor;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),
+      padding: EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),
       child: Align(
         alignment: Alignment.centerRight,
         child: GestureDetector(
@@ -56,24 +53,24 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.8,
                 ),
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: bubbleColor,
-                  borderRadius: const BorderRadius.only(
+                  color: bubbleColor.withAlpha(10),
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                     bottomLeft: Radius.circular(24),
                     bottomRight: Radius.circular(6),
                   ),
                   border: Border.all(
-                    color: Colors.white.withAlpha(30),
+                    color: context.appColors.primaryColor,
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: bubbleColor.withAlpha(40),
                       blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
@@ -86,22 +83,22 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withAlpha(30),
+                                color: context.appColors.primaryColor,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.calendar_today_rounded,
                                 color: Colors.white,
                                 size: 18,
                               ),
                             ),
                             const SizedBox(width: 12),
-                            const Text(
+                            Text(
                               "Appointment",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: context.appColors.primaryTextColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                                 letterSpacing: -0.2,
@@ -110,9 +107,9 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                           ],
                         ),
                         PopupMenuButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.more_horiz_rounded,
-                            color: Colors.white,
+                            color: context.appColors.primaryTextColor,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
@@ -176,28 +173,30 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Divider(color: Colors.white12, height: 1),
+                      child: Divider(color: context.appColors.primaryColor, height: 1),
                     ),
                     _buildInfoRow(
                       Icons.event_available_rounded,
                       DateFormat("EEEE, MMM dd, yyyy").format(appointmentDate),
+                      context,
                     ),
                     const SizedBox(height: 10),
                     _buildInfoRow(
                       Icons.access_time_rounded,
                       "${DateFormat.jm().format(startTime)} - ${DateFormat.jm().format(endTime)}",
+                      context,
                     ),
                     if (message.isNotEmpty) ...[
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(color: Colors.white12, height: 1),
+                        child: Divider(color: context.appColors.primaryColor, height: 1),
                       ),
                       Text(
                         message,
                         style: TextStyle(
-                          color: Colors.white.withAlpha(200),
+                          color: context.appColors.primaryTextColor,
                           fontSize: 14,
                           height: 1.5,
                         ),
@@ -207,7 +206,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 4, right: 4),
+                padding: EdgeInsets.only(top: 4, right: 4),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -235,23 +234,23 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text) {
+  Widget _buildInfoRow(IconData icon, String text, BuildContext context) {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(6),
+          padding: EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: Colors.white.withAlpha(15),
+            color: context.appColors.primaryColor,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: Colors.white.withAlpha(200), size: 14),
+          child: Icon(icon, color: Colors.white, size: 14),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: context.appColors.primaryTextColor,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),

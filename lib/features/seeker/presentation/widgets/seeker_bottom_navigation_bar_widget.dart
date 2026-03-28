@@ -15,14 +15,9 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(30)
-        : Colors.black.withAlpha(20);
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(60)
-        : Colors.black.withAlpha(20);
+    final backgroundColor = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final shadowColor = context.appColors.glassBorder;
 
     return BlocBuilder<MessageBloc, MessageState>(
       builder: (context, messageState) {
@@ -32,8 +27,8 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
               listener: (context, state) {},
               builder: (context, snapshot) {
                 return Container(
-                  height: 72,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  height: 70,
+                  padding: EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: backgroundColor,
                     border: Border.all(color: borderColor, width: 1),
@@ -41,7 +36,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                       BoxShadow(
                         color: shadowColor,
                         blurRadius: 15,
-                        offset: const Offset(0, 8),
+                        offset: Offset(0, 8),
                       ),
                     ],
                   ),
@@ -52,6 +47,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                         context: context,
                         icon: Icons.home_rounded,
                         isActive: NavigatorSeekerState.page == 1,
+                        label: "Home",
                         onTap: () {
                           context.read<SeekerBloc>().add(
                             NavigateSeekerEvent(
@@ -66,6 +62,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                         icon: Icons.notifications_rounded,
                         isActive: NavigatorSeekerState.page == 2,
                         badgeCount: SuccessGetMyNotificationsState.unreadCount,
+                        label: "Notifications",
                         onTap: () {
                           context.read<SeekerBloc>().add(
                             NavigateSeekerEvent(
@@ -80,6 +77,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                         context: context,
                         icon: Icons.chat_bubble_rounded,
                         isActive: NavigatorSeekerState.page == 4,
+                        label: "Chat",
                         badgeCount:
                             SuccessGetMyMessagesState.unreadMessageCount,
                         onTap: () {
@@ -94,6 +92,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                       _buildNavIcon(
                         context: context,
                         icon: Icons.favorite_rounded,
+                        label: "Favorites",
                         isActive: NavigatorSeekerState.page == 5,
                         onTap: () {
                           context.read<SeekerBloc>().add(
@@ -119,52 +118,36 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
     required BuildContext context,
     required IconData icon,
     required bool isActive,
+    required String label,
     required VoidCallback onTap,
     int badgeCount = 0,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final inactiveColor = isDark
-        ? Colors.white.withAlpha(160)
-        : Colors.black.withAlpha(100);
+    final inactiveColor = context.appColors.hintTextColor;
 
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Badge(
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: context.appColors.errorColor,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 icon,
                 size: 26,
-                color: isActive ? appOrangeColor1 : inactiveColor,
+                color: isActive ? context.appColors.primaryColor : inactiveColor,
               ),
-              if (isActive) ...[
+              
                 const SizedBox(height: 4),
-                Container(
-                  width: 4,
-                  height: 4,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: appOrangeColor1,
-                    boxShadow: [
-                      BoxShadow(
-                        color: appOrangeColor1,
-                        blurRadius: 6,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9)),
+              
             ],
           ),
         ),
@@ -180,20 +163,20 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
         );
       },
       child: Container(
-        width: 48,
-        height: 48,
+        width: 50,
+        height: 50,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [appOrangeColor1, appOrangeColor2],
+            colors: [context.appColors.primaryColor, context.appColors.primaryColor],
           ),
           boxShadow: [
             BoxShadow(
-              color: appOrangeColor1.withAlpha(100),
+              color: context.appColors.primaryColor.withAlpha(100),
               blurRadius: 12,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             ),
           ],
         ),

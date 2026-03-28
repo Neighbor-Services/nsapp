@@ -22,14 +22,26 @@ class ProviderRepositoryImpl extends ProviderRepository {
     RequestSearchParams? params,
   }) async {
     try {
-      final results = await datasource.getRecentRequest(
+      var results = await datasource.getRecentRequest(
         lat: params?.lat,
         lng: params?.lng,
         radius: params?.radius,
         page: params?.page,
         targeted: params?.targeted,
+        catalogServiceId: params?.catalogServiceId,
       );
+
       if (results != null) {
+        // Local filtering fallback
+        if (params?.catalogServiceId != null &&
+            params!.catalogServiceId!.isNotEmpty) {
+          final filterId = params.catalogServiceId!;
+          results = results.where((item) {
+            final itemServiceId = item.request?.serviceID;
+            return itemServiceId == filterId;
+          }).toList();
+        }
+
         if (params == null || params.page == null || params.page == 1) {
           await hiveService
               .getBox(HiveService.serviceRequestBox)
@@ -106,6 +118,20 @@ class ProviderRepositoryImpl extends ProviderRepository {
     try {
       final results = await datasource.getAcceptedRequest();
       if (results != null) {
+        // Parallel fetch for full request details if they are missing titles
+        await Future.wait(results.map((ra) async {
+          if (ra.acceptance?.request != null &&
+              (ra.acceptance!.request!.title == null ||
+                  ra.acceptance!.request!.title!.isEmpty)) {
+            final fullRequest = await datasource.getRequestById(
+              id: ra.acceptance!.request!.id!,
+            );
+            if (fullRequest != null && fullRequest.request != null) {
+              ra.acceptance!.request = fullRequest.request;
+            }
+          }
+        }));
+
         await hiveService
             .getBox(HiveService.serviceRequestBox)
             .put('accepted_requests', results);
@@ -166,14 +192,24 @@ class ProviderRepositoryImpl extends ProviderRepository {
     RequestSearchParams? params,
   }) async {
     try {
-      final results = await datasource.getRequests(
+      var results = await datasource.getRequests(
         lat: params?.lat,
         lng: params?.lng,
         radius: params?.radius,
         page: params?.page,
         targeted: params?.targeted,
+        catalogServiceId: params?.catalogServiceId,
       );
       if (results != null) {
+        // Local filtering fallback
+        if (params?.catalogServiceId != null &&
+            params!.catalogServiceId!.isNotEmpty) {
+          final filterId = params.catalogServiceId!;
+          results = results.where((item) {
+            return item.request?.serviceID == filterId;
+          }).toList();
+        }
+
         if (params == null || params.page == null || params.page == 1) {
           await hiveService
               .getBox(HiveService.serviceRequestBox)

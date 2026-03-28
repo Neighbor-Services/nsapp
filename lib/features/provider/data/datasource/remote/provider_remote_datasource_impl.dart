@@ -23,6 +23,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     double? radius,
     int? page,
     bool? targeted,
+    String? catalogServiceId,
   }) async {
     final token = await Helpers.getString("token");
     try {
@@ -33,6 +34,13 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       if (radius != null) params['radius'] = radius;
       if (page != null) params['page'] = page;
       if (targeted != null) params['targeted'] = targeted.toString();
+      if (catalogServiceId != null && catalogServiceId.isNotEmpty) {
+        params['catalog_service'] = catalogServiceId;
+        params['service'] = catalogServiceId;
+      }
+
+      debugPrint("GET RECENT REQUEST - URL: $url");
+      debugPrint("GET RECENT REQUEST - PARAMS: $params");
 
       final response = await dio.get(
         url,
@@ -151,7 +159,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     final token = await Helpers.getString("token");
     try {
       final response = await dio.get(
-        "$baseRequestUrl/services/proposals/?provider_me=true",
+        "$baseRequestUrl/services/proposals/?provider_me=true&expand=request",
         options: Options(headers: dioHeaders(token)),
       );
 
@@ -169,6 +177,23 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
           }
         }
         return requests;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<RequestData?> getRequestById({required String id}) async {
+    final token = await Helpers.getString("token");
+    try {
+      final response = await dio.get(
+        "$baseRequestUrl/services/requests/$id/",
+        options: Options(headers: dioHeaders(token)),
+      );
+      if (response.statusCode == 200) {
+        return RequestData.fromJson(response.data);
       }
       return null;
     } catch (e) {
@@ -254,6 +279,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     double? radius,
     int? page,
     bool? targeted,
+    String? catalogServiceId,
   }) async {
     return getRecentRequest(
       lat: lat,
@@ -261,6 +287,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       radius: radius,
       page: page,
       targeted: targeted,
+      catalogServiceId: catalogServiceId,
     );
   }
 

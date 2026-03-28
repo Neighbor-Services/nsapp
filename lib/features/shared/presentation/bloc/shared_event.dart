@@ -134,3 +134,8 @@ class GetSubscriptionPlansEvent extends SharedEvent {}
 class GetMyDisputesEvent extends SharedEvent {}
 
 class GetStripeDashboardLinkEvent extends SharedEvent {}
+
+class GetLegalDocumentEvent extends SharedEvent {
+  final String docType;
+  GetLegalDocumentEvent({required this.docType});
+}

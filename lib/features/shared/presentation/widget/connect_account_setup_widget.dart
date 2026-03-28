@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ConnectAccountSetupWidget extends StatelessWidget {
   const ConnectAccountSetupWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final subtitleColor = isDark ? Colors.white.withAlpha(200) : Colors.black54;
-    final infoBgColor = isDark
-        ? Colors.blue.withAlpha(20)
-        : Colors.blue.withAlpha(10);
-    final infoBorderColor = isDark
-        ? Colors.blue.withAlpha(50)
-        : Colors.blue.withAlpha(30);
+    final textColor = context.appColors.primaryTextColor;
+    final subtitleColor = context.appColors.secondaryTextColor;
+    final infoBgColor = context.appColors.glassBorder;
+    final infoBorderColor = context.appColors.glassBorder;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +33,7 @@ class ConnectAccountSetupWidget extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: infoBgColor,
             borderRadius: BorderRadius.circular(12),
@@ -45,16 +41,14 @@ class ConnectAccountSetupWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.info_outline, color: Colors.blueAccent),
+               Icon(Icons.info_outline, color: context.appColors.infoColor),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   "You'll be redirected to a secure page to complete setup.",
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark
-                        ? Colors.white.withAlpha(180)
-                        : Colors.black.withAlpha(150),
+                    color: context.appColors.glassBorder,
                   ),
                 ),
               ),

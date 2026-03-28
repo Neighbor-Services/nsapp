@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class SearchableServiceSelector extends StatefulWidget {
   final List<Service> services;
@@ -94,23 +94,23 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        color: context.appColors.cardBackground,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         border: Border.all(
-          color: isDark ? Colors.white12 : Colors.black.withAlpha(10),
+          color: context.appColors.glassBorder,
         ),
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(24),
             child: Column(
               children: [
                 Container(
                   width: 50,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white24 : Colors.black.withAlpha(30),
+                    color: context.appColors.glassBorder,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -118,7 +118,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                 Text(
                   'Select Service',
                   style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: context.appColors.primaryTextColor,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -143,15 +143,13 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                         Icon(
                           Icons.search_off_rounded,
                           size: 60,
-                          color: isDark
-                              ? Colors.white24
-                              : Colors.black.withAlpha(30),
+                          color: context.appColors.glassBorder,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           'No services found',
                           style: TextStyle(
-                            color: isDark ? Colors.white38 : Colors.black38,
+                            color: context.appColors.glassBorder,
                             fontSize: 16,
                           ),
                         ),
@@ -159,7 +157,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                     ),
                   )
                 : ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 24),
                     children: [
                       ...groupedServices.entries.map((entry) {
                         final categoryId = entry.key;
@@ -178,16 +176,16 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                 });
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.symmetric(
+                                margin: EdgeInsets.only(bottom: 12),
+                                padding: EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 12,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: appDeepBlueColor1.withAlpha(50),
+                                  color: context.appColors.primaryColor.withAlpha(50),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: appDeepBlueColor1.withAlpha(100),
+                                    color: context.appColors.primaryColor.withAlpha(100),
                                   ),
                                 ),
                                 child: Row(
@@ -196,38 +194,32 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                       isExpanded
                                           ? Icons.expand_more_rounded
                                           : Icons.chevron_right_rounded,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Colors.black54,
+                                      color: context.appColors.primaryTextColor,
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
                                         categoryName,
                                         style: TextStyle(
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black87,
+                                          color: context.appColors.primaryTextColor,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                         horizontal: 12,
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: appOrangeColor1.withAlpha(150),
+                                        color: context.appColors.secondaryColor.withAlpha(150),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
                                         '${services.length}',
                                         style: TextStyle(
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black87,
+                                          color: context.appColors.primaryTextColor,
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -243,7 +235,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                     service.id == widget.selectedServiceId;
 
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
+                                  padding: EdgeInsets.only(bottom: 12),
                                   child: GestureDetector(
                                     onTap: () {
                                       widget.onServiceSelected(
@@ -256,24 +248,16 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                       duration: const Duration(
                                         milliseconds: 200,
                                       ),
-                                      padding: const EdgeInsets.all(16),
+                                      padding: EdgeInsets.all(16),
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? appDeepBlueColor1.withAlpha(
-                                                isDark ? 100 : 30,
-                                              )
-                                            : (isDark
-                                                  ? Colors.white.withAlpha(15)
-                                                  : Colors.white),
+                                            ? context.appColors.primaryColor.withAlpha(50)
+                                            : context.appColors.glassBorder,
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(
                                           color: isSelected
-                                              ? appDeepBlueColor1
-                                              : (isDark
-                                                    ? Colors.white.withAlpha(40)
-                                                    : Colors.black.withAlpha(
-                                                        10,
-                                                      )),
+                                              ? context.appColors.primaryColor
+                                              : context.appColors.glassBorder,
                                           width: isSelected ? 2 : 1,
                                         ),
                                         boxShadow: (isSelected || isDark)
@@ -284,24 +268,24 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                                     5,
                                                   ),
                                                   blurRadius: 10,
-                                                  offset: const Offset(0, 4),
+                                                  offset: Offset(0, 4),
                                                 ),
                                               ],
                                       ),
                                       child: Row(
                                         children: [
                                           Container(
-                                            padding: const EdgeInsets.all(12),
+                                            padding: EdgeInsets.all(12),
                                             decoration: BoxDecoration(
-                                              color: appOrangeColor1.withAlpha(
+                                              color: context.appColors.secondaryColor.withAlpha(
                                                 30,
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(12),
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.work_outline_rounded,
-                                              color: appOrangeColor1,
+                                              color: context.appColors.secondaryColor,
                                               size: 24,
                                             ),
                                           ),
@@ -314,9 +298,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                                 Text(
                                                   service.name!,
                                                   style: TextStyle(
-                                                    color: isDark
-                                                        ? Colors.white
-                                                        : Colors.black87,
+                                                    color: context.appColors.primaryTextColor,
                                                     fontSize: 16,
                                                     fontWeight: isSelected
                                                         ? FontWeight.bold
@@ -332,9 +314,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                                   Text(
                                                     service.description!,
                                                     style: TextStyle(
-                                                      color: isDark
-                                                          ? Colors.white70
-                                                          : Colors.black54,
+                                                      color: context.appColors.secondaryTextColor,
                                                       fontSize: 13,
                                                     ),
                                                     maxLines: 2,
@@ -346,9 +326,9 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                             ),
                                           ),
                                           if (isSelected)
-                                            const Icon(
+                                             Icon(
                                               Icons.check_circle_rounded,
-                                              color: appOrangeColor1,
+                                              color: context.appColors.secondaryColor,
                                               size: 24,
                                             ),
                                         ],
@@ -363,23 +343,19 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                       }),
                       if (widget.onOthersSelected != null)
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 24),
+                          padding: EdgeInsets.only(bottom: 24),
                           child: GestureDetector(
                             onTap: () {
                               widget.onOthersSelected!();
                               Navigator.pop(context);
                             },
                             child: Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withAlpha(15)
-                                    : Colors.white,
+                                color: context.appColors.glassBorder,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(40)
-                                      : Colors.black.withAlpha(10),
+                                  color: context.appColors.glassBorder,
                                 ),
                                 boxShadow: isDark
                                     ? null
@@ -387,25 +363,21 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                         BoxShadow(
                                           color: Colors.black.withAlpha(5),
                                           blurRadius: 10,
-                                          offset: const Offset(0, 4),
+                                          offset: Offset(0, 4),
                                         ),
                                       ],
                               ),
                               child: Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(30)
-                                          : Colors.black.withAlpha(5),
+                                      color: context.appColors.glassBorder,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Icon(
                                       Icons.add_circle_outline_rounded,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Colors.black54,
+                                      color: context.appColors.primaryTextColor,
                                       size: 24,
                                     ),
                                   ),
@@ -414,9 +386,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                     child: Text(
                                       'Others (Specify your service)',
                                       style: TextStyle(
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black87,
+                                        color: context.appColors.primaryTextColor,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),

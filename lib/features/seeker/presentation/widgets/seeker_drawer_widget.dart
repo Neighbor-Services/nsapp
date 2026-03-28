@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -18,7 +16,7 @@ import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/disputes_list_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
-import '../../../../core/constants/string_constants.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerDrawerWidget extends StatelessWidget {
   const SeekerDrawerWidget({super.key});
@@ -26,14 +24,10 @@ class SeekerDrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(120)
-        : const Color(0xFF1E1E2E).withAlpha(120);
+    final bgColor = context.appColors.primaryBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
 
     return Drawer(
       backgroundColor: Colors.transparent,
@@ -51,7 +45,7 @@ class SeekerDrawerWidget extends StatelessWidget {
               const SizedBox(height: 20),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   children: [
                     _buildDrawerItem(
                       context,
@@ -135,11 +129,9 @@ class SeekerDrawerWidget extends StatelessWidget {
                       textColor: textColor,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
                       child: Divider(
-                        color: isDark
-                            ? Colors.white10
-                            : Colors.black.withAlpha(10),
+                        color: context.appColors.glassBorder,
                       ),
                     ),
                     _buildDrawerItem(
@@ -193,30 +185,30 @@ class SeekerDrawerWidget extends StatelessWidget {
   ) {
     final profile = SuccessGetProfileState.profile;
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(3),
+                padding: EdgeInsets.all(3),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [appOrangeColor1, appOrangeColor2],
+                  gradient: LinearGradient(
+                    colors: [context.appColors.secondaryColor, context.appColors.secondaryColor],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: appOrangeColor1.withAlpha(50),
+                      color: context.appColors.secondaryColor.withAlpha(50),
                       blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     ),
                   ],
                 ),
                 child: CircleAvatar(
                   radius: 32,
-                  backgroundColor: isDark ? appBlueCardColor : Colors.black12,
+                  backgroundColor: context.appColors.primaryTextColor,
                   backgroundImage:
                       (profile.profilePictureUrl != null &&
                           profile.profilePictureUrl!.isNotEmpty &&
@@ -226,7 +218,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              _buildIconButton(Icons.edit_note_rounded, () {
+              _buildIconButton(context, Icons.edit_note_rounded, () {
                 Navigator.pop(context);
                 Get.toNamed("/edit-profile");
               }, isDark),
@@ -249,25 +241,25 @@ class SeekerDrawerWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: appOrangeColor1.withAlpha(30),
+              color: context.appColors.secondaryColor.withAlpha(30),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: appOrangeColor1.withAlpha(50)),
+              border: Border.all(color: context.appColors.secondaryColor.withAlpha(50)),
             ),
-            child: const Row(
+            child:  Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.verified_user_rounded,
                   size: 12,
-                  color: appOrangeColor1,
+                  color: context.appColors.secondaryColor,
                 ),
                 SizedBox(width: 4),
                 Text(
                   "SEEKER",
                   style: TextStyle(
-                    color: appOrangeColor1,
+                    color: context.appColors.secondaryColor,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1,
@@ -291,26 +283,22 @@ class SeekerDrawerWidget extends StatelessWidget {
     required Color textColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.only(bottom: 8.0),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: isSelected
-                  ? (isDark
-                        ? Colors.white.withAlpha(15)
-                        : Colors.black.withAlpha(10))
+                  ? context.appColors.glassBorder
                   : Colors.transparent,
               border: isSelected
                   ? Border.all(
-                      color: isDark
-                          ? Colors.white.withAlpha(20)
-                          : Colors.black.withAlpha(10),
+                      color: context.appColors.glassBorder,
                     )
                   : null,
             ),
@@ -319,8 +307,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                 Icon(
                   icon,
                   color: isSelected
-                      ? appOrangeColor1
-                      : (isDark ? Colors.white70 : Colors.black54),
+                      ? context.appColors.primaryColor
+                      : context.appColors.primaryTextColor,
                   size: 22,
                 ),
                 const SizedBox(width: 16),
@@ -328,8 +316,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                   title,
                   style: TextStyle(
                     color: isSelected
-                        ? textColor
-                        : (isDark ? Colors.white70 : Colors.black54),
+                        ? context.appColors.primaryColor
+                        : context.appColors.primaryTextColor,
                     fontSize: 15,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   ),
@@ -342,25 +330,21 @@ class SeekerDrawerWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(IconData icon, VoidCallback onTap, bool isDark) {
+  Widget _buildIconButton(BuildContext context, IconData icon, VoidCallback onTap, bool isDark) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withAlpha(15)
-              : Colors.black.withAlpha(5),
+          color: context.appColors.primaryColor.withAlpha(30),
           shape: BoxShape.circle,
           border: Border.all(
-            color: isDark
-                ? Colors.white.withAlpha(20)
-                : Colors.black.withAlpha(10),
+            color: context.appColors.glassBorder,
           ),
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : const Color(0xFF1E1E2E),
+          color: context.appColors.primaryColor,
           size: 20,
         ),
       ),
@@ -368,15 +352,11 @@ class SeekerDrawerWidget extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context, bool isDark, Color textColor) {
-    final subTextColor = isDark ? Colors.white.withAlpha(200) : Colors.black54;
-    final borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final shadowColor = isDark
-        ? Colors.black.withAlpha(40)
-        : Colors.grey.withAlpha(30);
+    final subTextColor = context.appColors.secondaryTextColor;
+    final borderColor = context.appColors.glassBorder;
+    final shadowColor = context.appColors.glassBorder;
 
-    final dialogBg = isDark ? const Color(0xFF1E1E2E) : Colors.white;
+    final dialogBg = context.appColors.primaryBackground;
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -386,9 +366,9 @@ class SeekerDrawerWidget extends StatelessWidget {
               color: Colors.transparent,
               child: Center(
                 child: Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24),
                   width: size(context).width * 0.85,
-                  constraints: const BoxConstraints(maxWidth: 400),
+                  constraints: BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: dialogBg,
@@ -397,7 +377,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                       BoxShadow(
                         color: shadowColor,
                         blurRadius: 20,
-                        offset: const Offset(0, 10),
+                        offset: Offset(0, 10),
                       ),
                     ],
                   ),
@@ -405,15 +385,15 @@ class SeekerDrawerWidget extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.red.withAlpha(30),
+                          color: context.appColors.errorColor.withAlpha(30),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child:  Icon(
                           Icons.logout_rounded,
                           size: 32,
-                          color: Colors.red,
+                          color: context.appColors.errorColor,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -438,7 +418,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                             child: TextButton(
                               onPressed: () => Get.back(),
                               style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   vertical: 12,
                                 ),
                                 shape: RoundedRectangleBorder(
@@ -476,8 +456,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 Get.offAllNamed("/login");
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                padding: const EdgeInsets.symmetric(
+                                backgroundColor: context.appColors.errorColor,
+                                padding: EdgeInsets.symmetric(
                                   vertical: 12,
                                 ),
                                 shape: RoundedRectangleBorder(
@@ -485,11 +465,11 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 ),
                                 elevation: 0,
                               ),
-                              child: const Text(
+                              child: Text(
                                 "Logout",
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.white,
+                                  color: context.appColors.errorColor,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -506,24 +486,22 @@ class SeekerDrawerWidget extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: isDark
-                  ? Colors.white.withAlpha(10)
-                  : Colors.black.withAlpha(10),
+              color: context.appColors.glassBorder,
             ),
           ),
         ),
         child: Row(
           children: [
-            const Icon(Icons.logout_rounded, color: Colors.redAccent, size: 20),
+            Icon(Icons.logout_rounded, color: context.appColors.errorColor, size: 20),
             const SizedBox(width: 12),
             Text(
               "Logout",
               style: TextStyle(
-                color: Colors.redAccent.withAlpha(isDark ? 200 : 180),
+                color: context.appColors.primaryTextColor,
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),

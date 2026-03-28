@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/message.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
@@ -10,6 +8,7 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/appointment_input_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class AppointmentChatWidget extends StatefulWidget {
   const AppointmentChatWidget({super.key});
@@ -31,16 +30,15 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
   DateTime? appointmentEndTime;
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    final bgColor = context.appColors.primaryBackground;
+    final textColor = context.appColors.primaryTextColor;
 
     return Container(
       width: size(context).width,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -51,9 +49,9 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
               child: Container(
                 width: 40,
                 height: 4,
-                margin: const EdgeInsets.only(bottom: 24),
+                margin: EdgeInsets.only(bottom: 24),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white24 : Colors.black12,
+                  color: context.appColors.glassBorder,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -76,19 +74,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
                   builder: (context, child) {
                     return Theme(
                       data: Theme.of(context).copyWith(
-                        colorScheme: isDark
-                            ? ColorScheme.dark(
-                                primary: appOrangeColor1,
-                                onPrimary: Colors.white,
-                                surface: const Color(0xFF1E1E2E),
-                                onSurface: Colors.white,
-                              )
-                            : ColorScheme.light(
-                                primary: appOrangeColor1,
-                                onPrimary: Colors.white,
-                                surface: Colors.white,
-                                onSurface: const Color(0xFF1E1E2E),
-                              ),
+                        colorScheme: ColorScheme.fromSeed(seedColor: context.appColors.cardBackground),
                       ),
                       child: child!,
                     );
@@ -117,19 +103,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
                         builder: (context, child) {
                           return Theme(
                             data: Theme.of(context).copyWith(
-                              colorScheme: isDark
-                                  ? ColorScheme.dark(
-                                      primary: appOrangeColor1,
-                                      onPrimary: Colors.white,
-                                      surface: const Color(0xFF1E1E2E),
-                                      onSurface: Colors.white,
-                                    )
-                                  : ColorScheme.light(
-                                      primary: appOrangeColor1,
-                                      onPrimary: Colors.white,
-                                      surface: Colors.white,
-                                      onSurface: const Color(0xFF1E1E2E),
-                                    ),
+                              colorScheme: ColorScheme.fromSeed(seedColor: context.appColors.cardBackground),
                             ),
                             child: child!,
                           );
@@ -162,19 +136,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
                         builder: (context, child) {
                           return Theme(
                             data: Theme.of(context).copyWith(
-                              colorScheme: isDark
-                                  ? ColorScheme.dark(
-                                      primary: appOrangeColor1,
-                                      onPrimary: Colors.white,
-                                      surface: const Color(0xFF1E1E2E),
-                                      onSurface: Colors.white,
-                                    )
-                                  : ColorScheme.light(
-                                      primary: appOrangeColor1,
-                                      onPrimary: Colors.white,
-                                      surface: Colors.white,
-                                      onSurface: const Color(0xFF1E1E2E),
-                                    ),
+                              colorScheme: ColorScheme.fromSeed(seedColor: context.appColors.cardBackground),
                             ),
                             child: child!,
                           );
@@ -203,7 +165,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
               controller: messageController,
               hintText: 'Add a message (optional)',
               suffixIcon: IconButton(
-                icon: const Icon(Icons.send_rounded, color: appOrangeColor1),
+                icon: Icon(Icons.send_rounded, color: context.appColors.secondaryColor),
                 onPressed: () async {
                   if (appointmentEndTime == null ||
                       appointmentStartTime == null ||

@@ -4,6 +4,7 @@ import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerAllServicesPage extends StatelessWidget {
   const SeekerAllServicesPage({super.key});
@@ -11,14 +12,7 @@ class SeekerAllServicesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final buttonColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(40)
-        : Colors.black.withAlpha(20);
+    final textColor = context.appColors.primaryTextColor;
 
     return Scaffold(
       body: GradientBackground(
@@ -27,7 +21,7 @@ class SeekerAllServicesPage extends StatelessWidget {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -37,11 +31,14 @@ class SeekerAllServicesPage extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: buttonColor,
+                          color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: borderColor),
+                          border: Border.all(
+                            color: context.appColors.glassBorder,
+                            width: 1.5,
+                          ),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
@@ -56,19 +53,22 @@ class SeekerAllServicesPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Service Selection",
+                            "SERVICE SELECTION",
                             style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
                               color: textColor,
+                              letterSpacing: 1.2,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "Find the right professional for your needs",
+                            "FIND THE BEST PROFESSIONALS",
                             style: TextStyle(
-                              fontSize: 14,
-                              color: textColor.withAlpha(180),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: textColor.withAlpha(150),
+                              letterSpacing: 1.0,
                             ),
                           ),
                         ],
@@ -105,7 +105,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                     }
 
                     return GridView.builder(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 10,
                       ),
@@ -132,14 +132,7 @@ class SeekerAllServicesPage extends StatelessWidget {
   }
 
   Widget _buildServiceCard(BuildContext context, dynamic service, int index) {
-    final gradients = [
-      [const Color(0xFF667eea), const Color(0xFF764ba2)],
-      [const Color(0xFFf093fb), const Color(0xFFf5576c)],
-      [const Color(0xFF4facfe), const Color(0xFF00f2fe)],
-      [const Color(0xFF43e97b), const Color(0xFF38f9d7)],
-      [const Color(0xFFfa709a), const Color(0xFFfee140)],
-      [const Color(0xFF30cfd0), const Color(0xFF330867)],
-    ];
+    
 
     final icons = [
       Icons.build_rounded,
@@ -150,7 +143,6 @@ class SeekerAllServicesPage extends StatelessWidget {
       Icons.home_repair_service_rounded,
     ];
 
-    final gradient = gradients[index % gradients.length];
     final icon = icons[index % icons.length];
 
     return GestureDetector(
@@ -167,40 +159,45 @@ class SeekerAllServicesPage extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: gradient,
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: context.appColors.glassBorder,
+            width: 1.5,
           ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: gradient[0].withAlpha(80),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Stack(
           children: [
             Positioned(
-              right: -10,
-              bottom: -10,
-              child: Icon(icon, size: 70, color: Colors.white.withAlpha(20)),
+              right: -5,
+              bottom: -5,
+              child: Icon(
+                icon,
+                size: 60,
+                color: context.appColors.primaryColor.withAlpha(20),
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(icon, color: Colors.white, size: 24),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: context.appColors.primaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 20),
+                  ),
                   Text(
-                    service.name ?? "Service",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    (service.name ?? "Service").toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: context.appColors.primaryTextColor,
+                      letterSpacing: 0.5,
                       height: 1.2,
                     ),
                     maxLines: 2,

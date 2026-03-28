@@ -1,7 +1,7 @@
 // ignore_for_file: unused_field
 
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
+import 'package:nsapp/core/core.dart';
 
 class SolidButton extends StatefulWidget {
   final String label;
@@ -13,6 +13,10 @@ class SolidButton extends StatefulWidget {
   final String? imagePath;
   final bool isPrimary;
   final List<Color>? gradientColors;
+  final bool allCaps;
+  final Color? color;
+  final Color? textColor;
+  final Color? borderColor;
 
   const SolidButton({
     super.key,
@@ -25,6 +29,10 @@ class SolidButton extends StatefulWidget {
     this.imagePath,
     this.isPrimary = true,
     this.gradientColors,
+    this.allCaps = true,
+    this.color,
+    this.textColor,
+    this.borderColor,
   });
 
   @override
@@ -73,24 +81,18 @@ class _SolidButtonState extends State<SolidButton>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme-aware colors
-    final Color backgroundColor = widget.isPrimary
-        ? appOrangeColor1
-        : (isDark
-              ? const Color(0xFF2D2D3F) // Dark mode: dark blue-gray
-              : const Color(0xFFE0E0E0)); // Light mode: light gray
+    final Color backgroundColor = (widget.isPrimary
+            ? widget.color ?? context.appColors.primaryColor
+            : context.appColors.primaryColor);
 
-    final Color textColor = widget.isPrimary
-        ? Colors.white
-        : (isDark
-              ? Colors.white
-              : const Color(0xFF1E1E2E)); // Light mode: dark text
+    final Color textColor = widget.textColor ??
+        (widget.isPrimary
+            ? Colors.white
+            : context.appColors.primaryTextColor);
 
-    final Color borderColor = isDark
-        ? Colors.white.withAlpha(20)
-        : Colors.black.withAlpha(10);
+    final Color borderColor = widget.borderColor ?? context.appColors.glassBorder;
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
@@ -109,15 +111,6 @@ class _SolidButtonState extends State<SolidButton>
             color: backgroundColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: borderColor, width: 1.2),
-            boxShadow: [
-              if (widget.isPrimary)
-                BoxShadow(
-                  color: backgroundColor.withAlpha(60),
-                  blurRadius: 10,
-                  spreadRadius: 0,
-                  offset: const Offset(0, 4),
-                ),
-            ],
           ),
           child: Center(
             child: widget.isLoading
@@ -141,12 +134,12 @@ class _SolidButtonState extends State<SolidButton>
                         const SizedBox(width: 10),
                       ],
                       Text(
-                        widget.label,
+                        widget.allCaps ? widget.label.toUpperCase() : widget.label,
                         style: TextStyle(
                           color: textColor,
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.1,
                         ),
                       ),
                     ],

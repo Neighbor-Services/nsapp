@@ -92,38 +92,44 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     });
     on<GetRecentRequestEvent>((event, emit) async {
       emit(LoadingProviderState());
-      final results = await getRecentRequestUseCase(
-        RequestSearchParams(
-          lat:
-              event.lat ??
-              double.parse(SuccessGetProfileState.profile.latitude!),
-          lng:
-              event.lng ??
-              double.parse(SuccessGetProfileState.profile.longitude!),
-          radius: event.radius,
-          page: event.page,
-        ),
-      );
-      results.fold(
-        (l) {
-          if (event.page == null || event.page == 1) {
-            SuccessGetRecentRequestState.myRequests = Future.value([]);
-          }
-          emit(FailureGetRecentRequestState());
-        },
-        (r) {
-          if (event.page != null && event.page! > 1) {
-            SuccessGetRecentRequestState.myRequests =
-                SuccessGetRecentRequestState.myRequests?.then(
-                  (value) => [...value, ...r],
-                ) ??
-                Future.value(r);
-          } else {
-            SuccessGetRecentRequestState.myRequests = Future.value(r);
-          }
-          emit(SuccessGetRecentRequestState());
-        },
-      );
+      try {
+        final profile = SuccessGetProfileState.profile;
+        final catalogId = profile.catalogServiceId;
+        
+        final results = await getRecentRequestUseCase(
+          RequestSearchParams(
+            lat: event.lat ?? double.tryParse(profile.latitude ?? "0.0"),
+            lng: event.lng ?? double.tryParse(profile.longitude ?? "0.0"),
+            radius: event.radius,
+            page: event.page,
+            catalogServiceId: catalogId,
+          ),
+        );
+        results.fold(
+          (l) {
+            if (event.page == null || event.page == 1) {
+              SuccessGetRecentRequestState.myRequests = Future.value([]);
+            }
+            emit(FailureGetRecentRequestState());
+          },
+          (r) {
+            if (event.page != null && event.page! > 1) {
+              SuccessGetRecentRequestState.myRequests =
+                  SuccessGetRecentRequestState.myRequests?.then(
+                    (value) => [...value, ...r],
+                  ) ??
+                  Future.value(r);
+            } else {
+              SuccessGetRecentRequestState.myRequests = Future.value(r);
+            }
+            emit(SuccessGetRecentRequestState());
+          },
+        );
+      } catch (e, stack) {
+        debugPrint("BLOC ERROR in GetRecentRequestEvent: $e");
+        debugPrint("Stack Trace: $stack");
+        emit(FailureGetRecentRequestState());
+      }
     }, transformer: sequential());
     on<GetAcceptedRequestEvent>((event, emit) async {
       emit(LoadingProviderState());
@@ -195,38 +201,41 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     }, transformer: sequential());
 
     on<GetRequestsEvent>((event, emit) async {
-      final results = await requestsUseCase(
-        RequestSearchParams(
-          lat:
-              event.lat ??
-              double.parse(SuccessGetProfileState.profile.latitude!),
-          lng:
-              event.lng ??
-              double.parse(SuccessGetProfileState.profile.longitude!),
-          radius: event.radius,
-          page: event.page,
-        ),
-      );
-      results.fold(
-        (l) {
-          if (event.page == null || event.page == 1) {
-            SuccessGetRequestsState.requests = Future.value([]);
-          }
-          emit(FailureGetRequestsState());
-        },
-        (r) {
-          if (event.page != null && event.page! > 1) {
-            SuccessGetRequestsState.requests =
-                SuccessGetRequestsState.requests?.then(
-                  (value) => [...value, ...r],
-                ) ??
-                Future.value(r);
-          } else {
-            SuccessGetRequestsState.requests = Future.value(r);
-          }
-          emit(SuccessGetRequestsState());
-        },
-      );
+      try {
+        final profile = SuccessGetProfileState.profile;
+        final results = await requestsUseCase(
+          RequestSearchParams(
+            lat: event.lat ?? double.tryParse(profile.latitude ?? "0.0"),
+            lng: event.lng ?? double.tryParse(profile.longitude ?? "0.0"),
+            radius: event.radius,
+            page: event.page,
+            catalogServiceId: profile.catalogServiceId,
+          ),
+        );
+        results.fold(
+          (l) {
+            if (event.page == null || event.page == 1) {
+              SuccessGetRequestsState.requests = Future.value([]);
+            }
+            emit(FailureGetRequestsState());
+          },
+          (r) {
+            if (event.page != null && event.page! > 1) {
+              SuccessGetRequestsState.requests =
+                  SuccessGetRequestsState.requests?.then(
+                    (value) => [...value, ...r],
+                  ) ??
+                  Future.value(r);
+            } else {
+              SuccessGetRequestsState.requests = Future.value(r);
+            }
+            emit(SuccessGetRequestsState());
+          },
+        );
+      } catch (e) {
+        debugPrint("BLOC ERROR in GetRequestsEvent: $e");
+        emit(FailureGetRequestsState());
+      }
     }, transformer: sequential());
 
     on<GetTargetedRequestsEvent>((event, emit) async {
@@ -241,6 +250,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
           radius: event.radius,
           page: event.page,
           targeted: true, // Specific filter
+          catalogServiceId: SuccessGetProfileState.profile.catalogServiceId,
         ),
       );
       results.fold(

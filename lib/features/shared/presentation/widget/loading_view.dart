@@ -42,24 +42,20 @@ class _LoadingViewState extends State<LoadingView>
               Container(
                 width: size(context).width,
                 height: size(context).height,
-                color: Colors.black.withAlpha(150),
+                color: Colors.black.withAlpha(40),
               ),
               Center(
                 child: Container(
                   height: 140,
                   width: 140,
-                  padding: const EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E2E),
+                    color: context.appColors.cardBackground,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(50),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
+                    border: Border.all(
+                      color: context.appColors.glassBorder,
+                      width: 1.5,
+                    ),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -69,11 +65,11 @@ class _LoadingViewState extends State<LoadingView>
                         child: Image.asset(logo2Assets, width: 60),
                       ),
                       const SizedBox(height: 12),
-                      const CustomTextWidget(
+                      CustomTextWidget(
                         text: "Processing",
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: context.appColors.primaryTextColor,
                       ),
                     ],
                   ),

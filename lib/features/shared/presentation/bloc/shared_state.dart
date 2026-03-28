@@ -142,3 +142,10 @@ class SuccessGetStripeDashboardLinkState extends SharedState {
 }
 
 class FailureGetStripeDashboardLinkState extends SharedState {}
+
+class SuccessGetLegalDocumentState extends SharedState {
+  static List<LegalDocument> documents = [];
+}
+
+class FailureGetLegalDocumentState extends SharedState {}
+

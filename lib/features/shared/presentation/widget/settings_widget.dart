@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 
-import '../../../../core/constants/app_colors.dart';
 
 class SettingsWidget extends StatelessWidget {
   final Widget action;
@@ -16,9 +15,7 @@ class SettingsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(color: appGreyColor, blurRadius: 2, offset: Offset(0, 1)),
-        ],
+        
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

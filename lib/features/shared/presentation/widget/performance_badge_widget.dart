@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/performance_badge.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class PerformanceBadgeWidget extends StatelessWidget {
   final PerformanceBadge badge;
@@ -23,18 +25,18 @@ class PerformanceBadgeWidget extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(4),
+        padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: _getBadgeColor(badge.iconType).withAlpha(30),
+          color: _getBadgeColor(context, badge.iconType).withAlpha(30),
           shape: BoxShape.circle,
           border: Border.all(
-            color: _getBadgeColor(badge.iconType).withAlpha(80),
+            color: _getBadgeColor(context, badge.iconType).withAlpha(80),
             width: 1,
           ),
         ),
         child: Icon(
           _getBadgeIcon(badge.iconType),
-          color: _getBadgeColor(badge.iconType),
+          color: _getBadgeColor(context, badge.iconType),
           size: size,
         ),
       ),
@@ -56,14 +58,14 @@ class PerformanceBadgeWidget extends StatelessWidget {
     }
   }
 
-  Color _getBadgeColor(String? type) {
+  Color _getBadgeColor(BuildContext context, String? type) {
     switch (type) {
       case 'bolt':
         return Colors.yellowAccent;
       case 'star':
         return Colors.amber;
       case 'shield':
-        return Colors.greenAccent;
+        return context.appColors.successColor;
       case 'workspace_premium':
         return Colors.cyanAccent;
       default:

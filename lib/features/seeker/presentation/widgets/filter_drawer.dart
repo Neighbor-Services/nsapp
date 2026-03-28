@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class FilterDrawer extends StatefulWidget {
   const FilterDrawer({super.key});
@@ -24,14 +25,14 @@ class _FilterDrawerState extends State<FilterDrawer> {
       width: 300,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E2E),
+          color: Color(0xFF1E1E2E),
           border: Border(
             left: BorderSide(color: Colors.white.withAlpha(20), width: 0.5),
           ),
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -50,7 +51,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withAlpha(15),
                           shape: BoxShape.circle,
@@ -74,7 +75,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                   min: 0,
                   max: 1000,
                   divisions: 20,
-                  activeColor: appOrangeColor1,
+                  activeColor: context.appColors.secondaryColor,
                   inactiveColor: Colors.white10,
                   onChanged: (RangeValues values) {
                     setState(() {
@@ -93,7 +94,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                   min: 0,
                   max: 5,
                   divisions: 5,
-                  activeColor: appOrangeColor1,
+                  activeColor: context.appColors.secondaryColor,
                   inactiveColor: Colors.white10,
                   onChanged: (double value) {
                     setState(() {
@@ -108,13 +109,13 @@ class _FilterDrawerState extends State<FilterDrawer> {
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  style: TextStyle(color: Colors.white, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: "Enter city name...",
                     hintStyle: TextStyle(color: Colors.white.withAlpha(60)),
                     filled: true,
                     fillColor: Colors.white.withAlpha(10),
-                    contentPadding: const EdgeInsets.symmetric(
+                    contentPadding: EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 16,
                     ),
@@ -128,7 +129,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: appOrangeColor1),
+                      borderSide: BorderSide(color: context.appColors.secondaryColor),
                     ),
                     prefixIcon: Icon(
                       Icons.location_on_rounded,
@@ -144,7 +145,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                   height: 56,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: appOrangeColor1,
+                      backgroundColor: context.appColors.secondaryColor,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -194,8 +195,8 @@ class _FilterDrawerState extends State<FilterDrawer> {
         ),
         Text(
           value,
-          style: const TextStyle(
-            color: appOrangeColor1,
+          style: TextStyle(
+            color: context.appColors.secondaryColor,
             fontSize: 14,
             fontWeight: FontWeight.bold,
           ),

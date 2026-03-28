@@ -2,13 +2,13 @@ import 'package:nsapp/features/shared/presentation/widget/custom_segmented_contr
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
+
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class ChangeUserTypeWidget extends StatefulWidget {
   const ChangeUserTypeWidget({super.key});
@@ -35,12 +35,9 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final subtitleColor = isDark ? Colors.white.withAlpha(150) : Colors.black54;
-    final unselectedBorderColor = isDark
-        ? Colors.white.withAlpha(25)
-        : Colors.black.withAlpha(10);
+    final textColor = context.appColors.primaryTextColor;
+    final subtitleColor = context.appColors.secondaryTextColor;
+    final unselectedBorderColor = context.appColors.glassBorder;
 
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {},
@@ -78,7 +75,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     child: Container(
                       width: 40,
                       height: 4,
-                      margin: const EdgeInsets.only(bottom: 24),
+                      margin: EdgeInsets.only(bottom: 24),
                       decoration: BoxDecoration(
                         color: unselectedBorderColor,
                         borderRadius: BorderRadius.circular(2),
@@ -88,14 +85,14 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: appOrangeColor1.withAlpha(30),
+                          color: context.appColors.secondaryColor.withAlpha(30),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(
+                        child:  Icon(
                           Icons.swap_horiz_rounded,
-                          color: appOrangeColor1,
+                          color: context.appColors.secondaryColor,
                           size: 24,
                         ),
                       ),
@@ -150,7 +147,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     },
                     height: 50,
                     radius: 14,
-                    selectedColor: appOrangeColor1,
+                    selectedColor: context.appColors.secondaryColor,
                   ),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 300),
@@ -183,18 +180,16 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                               );
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
+                              padding: EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 18,
                               ),
                               decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withAlpha(10)
-                                    : Colors.black.withAlpha(5),
+                                color: context.appColors.glassBorder,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   color: serviceType != null && serviceType != ""
-                                      ? appOrangeColor1.withAlpha(100)
+                                      ? context.appColors.secondaryColor.withAlpha(100)
                                       : unselectedBorderColor,
                                 ),
                               ),
@@ -204,7 +199,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                     Icons.work_rounded,
                                     color: serviceType != null &&
                                             serviceType != ""
-                                        ? appOrangeColor1
+                                        ? context.appColors.secondaryColor
                                         : subtitleColor,
                                     size: 20,
                                   ),
@@ -315,7 +310,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
 
   Widget _buildSectionLabel(String label, Color color) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: 4),
       child: Text(
         label.toUpperCase(),
         style: TextStyle(

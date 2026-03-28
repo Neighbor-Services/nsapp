@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -12,6 +11,7 @@ import '../../../messages/presentation/bloc/message_bloc.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/pages/about_page.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerFavoritePage extends StatefulWidget {
   const SeekerFavoritePage({super.key});
@@ -50,15 +50,10 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(160)
-        : const Color(0xFF1E1E2E).withAlpha(160);
-    final buttonColor = isDark ? Colors.white12 : Colors.black.withAlpha(10);
-    final borderColor = isDark ? Colors.white12 : Colors.black.withAlpha(20);
-    final iconColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
+    final iconColor = context.appColors.primaryTextColor;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -80,7 +75,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 700),
+                  constraints: BoxConstraints(maxWidth: 700),
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Column(
@@ -102,13 +97,13 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                       SeekerBackPressedEvent(),
                                     ),
                                     child: Container(
-                                      padding: const EdgeInsets.all(12),
+                                      padding: EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: buttonColor,
+                                        color: context.appColors.cardBackground,
                                         borderRadius: BorderRadius.circular(14),
                                         border: Border.all(
-                                          color: borderColor,
-                                          width: 1,
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5,
                                         ),
                                       ),
                                       child: Icon(
@@ -120,25 +115,26 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   ),
                                   const SizedBox(width: 16),
                                   Text(
-                                    "Favorites",
+                                    "FAVORITES",
                                     style: TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w900,
                                       color: textColor,
-                                      letterSpacing: -0.8,
+                                      letterSpacing: 1.2,
                                     ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 12),
                               Padding(
-                                padding: const EdgeInsets.only(left: 52),
+                                padding: EdgeInsets.only(left: 52),
                                 child: Text(
-                                  "Your saved service providers",
+                                  "YOUR SAVED PROFESSIONALS",
                                   style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: secondaryTextColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    color: textColor.withAlpha(150),
+                                    letterSpacing: 1.0,
                                   ),
                                 ),
                               ),
@@ -173,23 +169,23 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   return Center(
                                     child: SolidContainer(
                                       // Use SolidContainer for consistency
-                                      margin: const EdgeInsets.all(24),
-                                      padding: const EdgeInsets.all(40),
+                                      margin: EdgeInsets.all(24),
+                                      padding: EdgeInsets.all(20),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Container(
-                                            padding: const EdgeInsets.all(20),
+                                            padding: EdgeInsets.all(20),
                                             decoration: BoxDecoration(
-                                              color: Colors.redAccent.withAlpha(
+                                              color: context.appColors.errorColor.withAlpha(
                                                 30,
                                               ),
                                               shape: BoxShape.circle,
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.favorite_rounded,
                                               size: 60,
-                                              color: Colors.redAccent,
+                                              color: context.appColors.errorColor,
                                             ),
                                           ),
                                           const SizedBox(height: 24),
@@ -197,8 +193,9 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                             "No favorites yet",
                                             style: TextStyle(
                                               fontSize: 20,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w900,
                                               color: textColor,
+                                              letterSpacing: 0.5,
                                             ),
                                           ),
                                           const SizedBox(height: 12),
@@ -243,12 +240,8 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
       return const SizedBox.shrink();
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final tagBg = isDark ? Colors.white12 : Colors.black.withAlpha(10);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(80)
-        : Colors.black.withAlpha(20);
+    final textColor = context.appColors.primaryTextColor;
+    final borderColor = context.appColors.glassBorder;
 
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
@@ -260,135 +253,124 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
           child: Opacity(opacity: value, child: child),
         );
       },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        child: SolidContainer(
-          padding: const EdgeInsets.all(18),
-          // backgroundColor handled by SolidContainer default (adaptive)
-          child: Row(
-            children: [
-              // Avatar
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: borderColor, width: 2.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(60),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: CircleAvatar(
-                  radius: 36,
-                  backgroundColor: Colors.white12,
-                  backgroundImage:
-                      (favorite.favoriteUser!.profilePictureUrl != null &&
-                          favorite
-                              .favoriteUser!
-                              .profilePictureUrl!
-                              .isNotEmpty &&
-                          favorite.favoriteUser!.profilePictureUrl!.startsWith(
-                            "http",
-                          ))
-                      ? NetworkImage(favorite.favoriteUser!.profilePictureUrl!)
-                      : const AssetImage(logoAssets) as ImageProvider,
-                ),
-              ),
-              const SizedBox(width: 18),
-
-              // Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      favorite.favoriteUser!.firstName ?? "Provider",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: tagBg,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: tagBg),
-                      ),
-                      child: Text(
-                        getServiceName(favorite.favoriteUser!.service!),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: textColor.withAlpha(220),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Actions
-              Column(
-                children: [
-                  _buildActionButton(
-                    icon: Icons.chat_bubble_rounded,
-                    color: const Color(0xFF4FACFE),
-                    onTap: () {
-                      context.read<MessageBloc>().add(
-                        SetMessageReceiverEvent(
-                          profile: favorite.favoriteUser!,
-                        ),
-                      );
-                      context.read<SeekerBloc>().add(
-                        NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-                      );
-                    },
+      child: GestureDetector(
+        onTap: (){
+          context.read<ProfileBloc>().add(
+            AboutUserEvent(
+              userID: favorite.favoriteUser!.user!.id!,
+            ),
+          );
+          context.read<SeekerBloc>().add(
+            NavigateSeekerEvent(
+              page: 1,
+              widget: const AboutPage(),
+            ),
+          );
+        },
+        child: Container(
+          margin: EdgeInsets.only(bottom: 16),
+          child: SolidContainer(
+            padding: EdgeInsets.all(18),
+            borderColor: context.appColors.glassBorder,
+            borderWidth: 1.5,
+            child: Row(
+              children: [
+                // Avatar
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: borderColor, width: 2.5),
+                   
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: CircleAvatar(
+                    radius: 36,
+                    backgroundColor: Colors.white12,
+                    backgroundImage:
+                        (favorite.favoriteUser!.profilePictureUrl != null &&
+                            favorite
+                                .favoriteUser!
+                                .profilePictureUrl!
+                                .isNotEmpty &&
+                            favorite.favoriteUser!.profilePictureUrl!.startsWith(
+                              "http",
+                            ))
+                        ? NetworkImage(favorite.favoriteUser!.profilePictureUrl!)
+                        : const AssetImage(logoAssets) as ImageProvider,
+                  ),
+                ),
+                const SizedBox(width: 18),
+        
+                // Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildActionButton(
-                        icon: Icons.person_rounded,
-                        color: const Color(0xFFF093FB),
-                        onTap: () {
-                          context.read<ProfileBloc>().add(
-                            AboutUserEvent(
-                              userID: favorite.favoriteUser!.user!.id!,
-                            ),
-                          );
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 1,
-                              widget: const AboutPage(),
-                            ),
-                          );
-                        },
+                      Text(
+                        (favorite.favoriteUser!.firstName ?? "Provider").toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: textColor,
+                          letterSpacing: 1.2,
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      _buildActionButton(
-                        icon: Icons.favorite_rounded,
-                        color: Colors.redAccent,
-                        onTap: () {
-                          context.read<SeekerBloc>().add(
-                            RemoveFromFavoriteEvent(userId: favorite.id!),
-                          );
-                        },
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.appColors.surfaceBackground,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          getServiceName(favorite.favoriteUser!.service!).toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: context.appColors.hintTextColor,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ],
+                ),
+        
+                // Actions
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                     _buildActionButton(
+                  icon: Icons.chat_bubble_rounded,
+                  color: context.appColors.primaryColor,
+                  onTap: () {
+                    context.read<MessageBloc>().add(
+                      SetMessageReceiverEvent(
+                        profile: favorite.favoriteUser!,
+                      ),
+                    );
+                    context.read<SeekerBloc>().add(
+                      NavigateSeekerEvent(page: 4, widget: const ChatPage()),
+                    );
+                  },
+                ),
+                 const SizedBox(width: 8),
+                   
+                    _buildActionButton(
+                      icon: Icons.favorite_rounded,
+                      color: context.appColors.errorColor,
+                      onTap: () {
+                        context.read<SeekerBloc>().add(
+                          RemoveFromFavoriteEvent(userId: favorite.id!),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -403,21 +385,16 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 44,
-        height: 44,
+        padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: color.withAlpha(30),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withAlpha(50), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: color.withAlpha(15),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(
+            color: color.withAlpha(50),
+            width: 1.5,
+          ),
         ),
-        child: Icon(icon, color: color, size: 22),
+        child: Icon(icon, color: color, size: 18),
       ),
     );
   }

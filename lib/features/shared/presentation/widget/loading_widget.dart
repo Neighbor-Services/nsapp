@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nsapp/core/constants/app_theme_extension.dart';
 import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/core/constants/string_constants.dart';
 
@@ -32,7 +33,14 @@ class _LoadingWidgetState extends State<LoadingWidget>
     return Container(
       width: size(context).width,
       height: size(context).height - 330,
-      decoration: BoxDecoration(),
+      decoration: BoxDecoration(
+        color: Colors.black.withAlpha(40),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: context.appColors.glassBorder,
+          width: 1.5,
+        ),
+      ),
       child: Center(
         child: SizedBox(
           width: 100,

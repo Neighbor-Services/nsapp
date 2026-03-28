@@ -6,6 +6,8 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class AddServicePackagePage extends StatefulWidget {
   const AddServicePackagePage({super.key});
@@ -60,21 +62,30 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
-            margin: const EdgeInsets.all(8),
+            margin: EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(50),
+              color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+                width: 1.5,
+              ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: Colors.white,
+              color: context.appColors.primaryTextColor,
               size: 18,
             ),
           ),
         ),
-        title: const Text(
-          "Add Service Package",
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          "ADD SERVICE PACKAGE",
+          style: TextStyle(
+            color: context.appColors.primaryTextColor,
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+            letterSpacing: 1.2,
+          ),
         ),
         centerTitle: true,
       ),
@@ -84,27 +95,27 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
             if (state is SuccessAddServicePackageState) {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                 SnackBar(
                   content: Text("Package added successfully"),
-                  backgroundColor: Colors.green,
+                  backgroundColor: context.appColors.successColor,
                 ),
               );
             } else if (state is FailureAddServicePackageState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text("state.failure.message"),
-                  backgroundColor: Colors.red,
+                  backgroundColor: context.appColors.errorColor,
                 ),
               );
             }
           },
           builder: (context, state) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 100, 16, 16),
+              padding: EdgeInsets.fromLTRB(16, 100, 16, 16),
               child: Form(
                 key: _formKey,
                 child: SolidContainer(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   child: Column(
                     children: [
                       SolidTextField(
@@ -146,7 +157,8 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                       ),
                       const SizedBox(height: 24),
                       SolidButton(
-                        label: "Add Package",
+                        label: "ADD PACKAGE",
+                        allCaps: true,
                         isLoading: state is LoadingProviderState,
                         onPressed: _submit,
                       ),

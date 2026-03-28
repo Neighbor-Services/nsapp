@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nsapp/core/core.dart';
 
 class SolidContainer extends StatelessWidget {
   final Widget child;
@@ -25,28 +26,21 @@ class SolidContainer extends StatelessWidget {
     this.blur = 20,
     this.backgroundColor,
     this.borderColor,
-    this.borderWidth = 1,
+    this.borderWidth = 1.5,
     this.boxShadow,
     this.gradient,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(24);
 
     // Theme-aware default colors
-    final defaultBackgroundColor = isDark
-        ? const Color(0xFF2E2E3E) // Dark mode: dark blue-gray
-        : const Color(0xFFFFFFFF); // Light mode: white
+    final defaultBackgroundColor = context.appColors.cardBackground; // Light mode: white
 
-    final defaultBorderColor = isDark
-        ? Colors.white.withAlpha(30) // Dark mode: subtle white border
-        : Colors.black.withAlpha(15); // Light mode: subtle black border
+    final defaultBorderColor = context.appColors.glassBorder; // Light mode: subtle black border
 
-    final defaultShadowColor = isDark
-        ? Colors.black.withAlpha(30) // Dark mode: black shadow
-        : Colors.black.withAlpha(10); // Light mode: lighter shadow
+
 
     return Container(
       width: width,
@@ -59,21 +53,13 @@ class SolidContainer extends StatelessWidget {
           color: borderColor ?? defaultBorderColor,
           width: borderWidth,
         ),
-        boxShadow:
-            boxShadow ??
-            [
-              BoxShadow(
-                color: defaultShadowColor,
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+       
         gradient: gradient,
       ),
       child: ClipRRect(
         borderRadius: effectiveBorderRadius,
         child: Padding(
-          padding: padding ?? const EdgeInsets.all(24),
+          padding: padding ?? EdgeInsets.all(24),
           child: child,
         ),
       ),

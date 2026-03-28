@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import '../../../../core/constants/dimension.dart';
+import 'package:nsapp/core/core.dart';
 import '../../../provider/presentation/bloc/provider_bloc.dart';
 import '../pages/subscription_page.dart';
 
@@ -15,17 +15,17 @@ class SubscribeDialogWidget extends StatelessWidget {
       child: Center(
         child: Container(
           width: size(context).width * 0.85,
-          constraints: const BoxConstraints(maxWidth: 400),
-          padding: const EdgeInsets.all(24),
+          constraints: BoxConstraints(maxWidth: 400),
+          padding: EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E1E2E),
+            color: Color(0xFF1E1E2E),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.white12),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withAlpha(50),
                 blurRadius: 15,
-                offset: const Offset(0, 5),
+                offset: Offset(0, 5),
               ),
             ],
           ),
@@ -33,15 +33,15 @@ class SubscribeDialogWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withAlpha(30),
+                  color: context.appColors.warningColor.withAlpha(30),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child:  Icon(
                   Icons.star_rounded,
                   size: 40,
-                  color: Colors.orange,
+                  color: context.appColors.warningColor,
                 ),
               ),
               const SizedBox(height: 20),
@@ -67,7 +67,7 @@ class SubscribeDialogWidget extends StatelessWidget {
                     child: TextButton(
                       onPressed: () => Get.back(),
                       style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 12),
                       ),
                       child: const Text(
                         "Cancel",
@@ -92,8 +92,8 @@ class SubscribeDialogWidget extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        backgroundColor: context.appColors.warningColor,
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

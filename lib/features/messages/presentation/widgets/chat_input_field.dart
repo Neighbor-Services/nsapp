@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nsapp/core/core.dart';
 
 class ChatInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -16,15 +17,26 @@ class ChatInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final hintColor = isDark
-        ? Colors.white.withValues(alpha: 0.5)
-        : Colors.black45;
-    final iconColor = isDark ? Colors.white70 : Colors.black54;
+    final textColor = context.appColors.primaryTextColor;
+    final hintColor = context.appColors.hintTextColor;
+    final iconColor = context.appColors.secondaryTextColor;
 
     return Row(
       children: [
+        
+        Expanded(
+          child: TextField(
+            controller: controller,
+            style: TextStyle(color: textColor, fontSize: 16),
+            decoration: InputDecoration(
+              hintText: "Type a message...",
+              hintStyle: TextStyle(color: hintColor),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 12),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
         IconButton(
           onPressed: onImagePick,
           icon: const Icon(Icons.add_photo_alternate_rounded),
@@ -37,37 +49,14 @@ class ChatInputField extends StatelessWidget {
           color: iconColor,
           tooltip: "Schedule Appointment",
         ),
-        Expanded(
-          child: TextField(
-            controller: controller,
-            style: TextStyle(color: textColor, fontSize: 16),
-            decoration: InputDecoration(
-              hintText: "Type a message...",
-              hintStyle: TextStyle(color: hintColor),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
         GestureDetector(
           onTap: onSend,
           child: Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFFE94E1B).withAlpha(200)
-                  : const Color(0xFFE94E1B),
+              color: context.appColors.primaryColor,
               shape: BoxShape.circle,
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: const Color(0xFFE94E1B).withAlpha(50),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+             
             ),
             child: const Icon(
               Icons.send_rounded,

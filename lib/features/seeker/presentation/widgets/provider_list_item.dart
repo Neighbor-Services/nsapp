@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class ProviderListItem extends StatelessWidget {
   final Profile profile;
@@ -24,8 +24,8 @@ class ProviderListItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
+        margin: EdgeInsets.only(bottom: 12),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white.withAlpha(
             200,
@@ -35,7 +35,7 @@ class ProviderListItem extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withAlpha(20),
               blurRadius: 10,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             ),
           ],
         ),
@@ -86,7 +86,7 @@ class ProviderListItem extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.star, color: appOrangeColor1, size: 16),
+                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16),
                       const SizedBox(width: 4),
                       CustomTextWidget(
                         text: (double.tryParse(profile.rating ?? "0") ?? 0.0)
@@ -110,7 +110,7 @@ class ProviderListItem extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   profile.address!,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 10,
                                     color: appGreyColor,
                                   ),

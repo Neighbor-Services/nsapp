@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/initialize/init.dart';
+import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/core/models/map_places.dart';
 import 'package:nsapp/core/models/place.dart';
 import 'package:nsapp/core/models/report.dart';
@@ -143,7 +144,6 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
       );
 
       if (response.statusCode == 200) {
-        debugPrint("Services API Response: ${response.data}");
         List<Service> services = [];
         var data = (response.data is List)
             ? response.data
@@ -358,4 +358,39 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<List<LegalDocument>?> getLegalDocument(String docType) async {
+    try {
+      final response = await dio.get(
+        "$baseUrl/accounts/legal/",
+        queryParameters: {"type": docType},
+      );
+      if (response.statusCode == 200) {
+        List<LegalDocument> documents = [];
+        var data = (response.data is List)
+            ? response.data
+            : (response.data is Map
+                  ? (response.data["results"] ?? response.data["documents"])
+                  : []);
+
+        if (data != null) {
+          for (var document in data) {
+            try {
+              if (document != null && document is Map<String, dynamic>) {
+                documents.add(LegalDocument.fromJson(document));
+              }
+            } catch (e) {
+              // Ignore parsing errors for individual items
+            }
+          }
+        }
+        return documents;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 }
+

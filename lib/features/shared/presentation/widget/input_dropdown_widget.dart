@@ -17,9 +17,8 @@ class InputDropdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: const BoxDecoration(),
+      decoration: BoxDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,39 +28,35 @@ class InputDropdownWidget extends StatelessWidget {
             items: items,
             onChanged: onChange,
             initialValue: value,
-            dropdownColor: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+            dropdownColor: context.appColors.cardBackground,
             style: TextStyle(
-              color: isDark ? Colors.white : Colors.black87,
+              color: context.appColors.primaryTextColor,
               fontSize: 16,
             ),
-            iconEnabledColor: isDark ? Colors.white70 : Colors.black54,
+            iconEnabledColor: context.appColors.secondaryTextColor,
             decoration: InputDecoration(
               filled: true,
-              fillColor: isDark ? Colors.white.withAlpha(10) : Colors.white,
+              fillColor: context.appColors.cardBackground,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: isDark
-                      ? Colors.white.withAlpha(20)
-                      : Colors.black.withAlpha(10),
+                  color: context.appColors.glassBorder,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(
-                  color: isDark
-                      ? Colors.white.withAlpha(20)
-                      : Colors.black.withAlpha(10),
+                  color: context.appColors.glassBorder,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(
-                  color: appOrangeColor1,
+                borderSide: BorderSide(
+                  color: context.appColors.secondaryColor,
                   width: 1.5,
                 ),
               ),
-              contentPadding: const EdgeInsets.symmetric(
+              contentPadding: EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
               ),

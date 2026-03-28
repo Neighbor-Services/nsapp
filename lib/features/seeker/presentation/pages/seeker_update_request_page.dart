@@ -14,8 +14,9 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
+
 import 'package:nsapp/core/initialize/init.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerUpdateRequestPage extends StatefulWidget {
   const SeekerUpdateRequestPage({super.key});
@@ -101,7 +102,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    // final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
+    // final textColor = context.appColors.primaryTextColor;
     final request = SeekerRequestDetailState.request.request;
 
     return Scaffold(
@@ -136,7 +137,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                   child: SafeArea(
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 550),
+                        constraints: BoxConstraints(maxWidth: 550),
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
                           padding: EdgeInsets.symmetric(
@@ -151,7 +152,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                 _buildHeader(context),
                                 const SizedBox(height: 32),
                                 SolidContainer(
-                                  padding: const EdgeInsets.all(24),
+                                  padding: EdgeInsets.all(24),
                                   child: Form(
                                     key: _formKey,
                                     child: Column(
@@ -169,6 +170,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                           hintText:
                                               "Give your request a clear title",
                                           label: "Request Title",
+                                          allCapsLabel: true,
                                           prefixIcon: Icons.title_rounded,
                                           validator: (val) {
                                             if (val!.isEmpty) {
@@ -189,6 +191,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                           hintText:
                                               "Describe your request in detail...",
                                           label: "Description",
+                                          allCapsLabel: true,
                                           prefixIcon: Icons.description_rounded,
                                           isMultiLine: true,
                                           validator: (val) {
@@ -205,7 +208,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                           _buildImagePicker(context, request),
                                         const SizedBox(height: 28),
                                         SolidButton(
-                                          label: "Update Request",
+                                          label: "UPDATE REQUEST",
                                           icon: Icons
                                               .check_circle_outline_rounded,
                                           onPressed: () =>
@@ -233,11 +236,10 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   }
 
   Widget _buildHeader(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconBg = isDark ? Colors.white12 : Colors.black.withAlpha(10);
-    final iconColor = isDark ? Colors.white : Colors.black87;
-    final titleColor = isDark ? Colors.white : Colors.black87;
-    final subTitleColor = isDark ? Colors.white.withAlpha(180) : Colors.black54;
+    final iconBg = context.appColors.glassBorder;
+    final iconColor = context.appColors.primaryTextColor;
+    final titleColor = context.appColors.primaryTextColor;
+    final subTitleColor = context.appColors.secondaryTextColor;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,11 +250,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               onTap: () =>
                   context.read<SeekerBloc>().add(SeekerBackPressedEvent()),
               child: Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: iconBg,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: iconBg),
+                  border: Border.all(
+                    color: context.appColors.glassBorder,
+                    width: 1.5,
+                  ),
                 ),
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
@@ -263,21 +268,27 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             ),
             const SizedBox(width: 16),
             Text(
-              "Update Request",
+              "UPDATE REQUEST",
               style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
                 color: titleColor,
+                letterSpacing: 1.5,
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Padding(
-          padding: const EdgeInsets.only(left: 52),
+          padding: EdgeInsets.only(left: 60),
           child: Text(
-            "Refine your project details",
-            style: TextStyle(fontSize: 15, color: subTitleColor),
+            "REFINE YOUR PROJECT DETAILS",
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: subTitleColor,
+              letterSpacing: 1.0,
+            ),
           ),
         ),
       ],
@@ -285,14 +296,11 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   }
 
   Widget _buildServiceDropdown() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final containerColor = isDark ? Colors.white12 : Colors.black.withAlpha(5);
-    final borderColor = isDark ? Colors.white12 : Colors.black.withAlpha(5);
-    final iconColor = isDark
-        ? Colors.white.withAlpha(150)
-        : Colors.black.withAlpha(150);
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final hintColor = isDark ? Colors.white54 : Colors.black54;
+    final containerColor = context.appColors.glassBorder;
+    final borderColor = context.appColors.glassBorder;
+    final iconColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
+    final hintColor = context.appColors.secondaryTextColor;
 
     return GestureDetector(
       onTap: () {
@@ -318,11 +326,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           color: containerColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor),
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: Row(
           children: [
@@ -332,10 +343,11 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               child: Text(
                 selectedServiceName.isEmpty
                     ? "Select a service"
-                    : selectedServiceName,
+                    : selectedServiceName.toUpperCase(),
                 style: TextStyle(
                   color: selectedServiceName.isEmpty ? hintColor : textColor,
                   fontSize: 16,
+                  fontWeight: selectedServiceName.isEmpty ? FontWeight.normal : FontWeight.w900,
                 ),
               ),
             ),
@@ -369,17 +381,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [Color(0xFF5C6BC0), Color(0xFF7E57C2)],
               ),
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              border: Border.all(
+                color: Colors.white.withAlpha(50),
+                width: 1.5,
+              ),
             ),
             child: const Icon(Icons.my_location_rounded, color: Colors.white),
           ),
@@ -389,16 +398,11 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   }
 
   Widget _buildImagePicker(BuildContext context, Request originalRequest) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final containerColor = isDark ? Colors.white12 : Colors.black.withAlpha(5);
-    final borderColor = isDark ? Colors.white24 : Colors.black.withAlpha(10);
-    final iconColor = isDark
-        ? Colors.white.withAlpha(150)
-        : Colors.black.withAlpha(150);
-    final textColor = isDark ? Colors.white.withAlpha(150) : Colors.black54;
-    final errorIconColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black38;
+    final containerColor = context.appColors.glassBorder;
+    final borderColor = context.appColors.glassBorder;
+    final iconColor = context.appColors.glassBorder;
+    final textColor = context.appColors.secondaryTextColor;
+    final errorIconColor = context.appColors.glassBorder;
 
     return GestureDetector(
       onTap: () => _showImagePicker(context),
@@ -408,7 +412,10 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         decoration: BoxDecoration(
           color: containerColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor, style: BorderStyle.solid),
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: ImageSeekerState.picture != null
             ? Stack(
@@ -429,9 +436,9 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                       onTap: () =>
                           context.read<SeekerBloc>().add(ClearImageEvent()),
                       child: Container(
-                        padding: const EdgeInsets.all(6),
+                        padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.red.withAlpha(200),
+                          color: context.appColors.errorColor.withAlpha(200),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -484,21 +491,23 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   }
 
   void _showImagePicker(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sheetColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final borderColor = isDark ? Colors.white12 : Colors.black.withAlpha(5);
-    final handleColor = isDark ? Colors.white24 : Colors.grey.withAlpha(50);
+    final sheetColor = context.appColors.primaryBackground;
+    final borderColor = context.appColors.glassBorder;
+    final handleColor = context.appColors.glassBorder;
 
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: sheetColor,
-          borderRadius: const BorderRadius.only(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(24),
             topRight: Radius.circular(24),
           ),
-          border: Border(top: BorderSide(color: borderColor)),
+          border: Border.all(
+            color: borderColor,
+            width: 1.5,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -519,7 +528,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                     context,
                     icon: Icons.photo_library_rounded,
                     label: "Gallery",
-                    color: const Color(0xFF5C6BC0),
+                    color: Color(0xFF5C6BC0),
                     onTap: () {
                       Get.back();
                       context.read<SeekerBloc>().add(
@@ -534,7 +543,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                     context,
                     icon: Icons.camera_alt_rounded,
                     label: "Camera",
-                    color: const Color(0xFF7E57C2),
+                    color: Color(0xFF7E57C2),
                     onTap: () {
                       Get.back();
                       context.read<SeekerBloc>().add(
@@ -559,13 +568,12 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     required Color color,
     required VoidCallback onTap,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black87;
+    final textColor = context.appColors.primaryTextColor;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           color: color.withAlpha(30),
           borderRadius: BorderRadius.circular(20),
@@ -590,20 +598,19 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   }
 
   void _showLocationPicker(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sheetColor = isDark ? const Color(0xFF1E1E2E) : Colors.white;
-    final borderColor = isDark ? Colors.white12 : Colors.black.withAlpha(5);
-    final handleColor = isDark ? Colors.white24 : Colors.grey.withAlpha(50);
-    final titleColor = isDark ? Colors.white : Colors.black87;
-    final subtitleColor = isDark ? Colors.white.withAlpha(150) : Colors.black54;
-    final arrowColor = isDark ? Colors.white24 : Colors.black26;
+    final sheetColor = context.appColors.primaryBackground;
+    final borderColor = context.appColors.glassBorder;
+    final handleColor = context.appColors.glassBorder;
+    final titleColor = context.appColors.primaryTextColor;
+    final subtitleColor = context.appColors.secondaryTextColor;
+    final arrowColor = context.appColors.glassBorder;
 
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: sheetColor,
-          borderRadius: const BorderRadius.only(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(24),
             topRight: Radius.circular(24),
           ),
@@ -638,9 +645,9 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 }
               },
               leading: Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF5C6BC0).withAlpha(30),
+                  color: Color(0xFF5C6BC0).withAlpha(30),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -674,12 +681,12 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 Get.toNamed("map-location");
               },
               leading: Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: appOrangeColor1.withAlpha(30),
+                  color: context.appColors.secondaryColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.map_rounded, color: appOrangeColor1),
+                child: Icon(Icons.map_rounded, color: context.appColors.secondaryColor),
               ),
               title: Text(
                 "Select on Map",
@@ -753,13 +760,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
 
   Widget _buildLabel(String label, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      padding: EdgeInsets.only(left: 4, bottom: 8),
       child: Text(
-        label,
+        label.toUpperCase(),
         style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: isDark ? Colors.white.withAlpha(200) : Colors.black87,
+          fontSize: 10,
+          fontWeight: FontWeight.w900,
+          color: context.appColors.secondaryTextColor,
+          letterSpacing: 1.2,
         ),
       ),
     );

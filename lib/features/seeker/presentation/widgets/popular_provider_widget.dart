@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/core/constants/dimension.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -10,6 +8,8 @@ import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/pages/about_page.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class PopularProviderWidget extends StatefulWidget {
   const PopularProviderWidget({super.key});
@@ -44,7 +44,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
         return Container(
           height: 200,
           width: size(context).width,
-          decoration: const BoxDecoration(),
+          decoration: BoxDecoration(),
           child: FutureBuilder<List<Profile>>(
             future: SuccessPopularProvidersState.providers,
             builder: (context, snapshot) {
@@ -80,41 +80,39 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                         },
                         child: Container(
                           width: 200,
-                          margin: const EdgeInsets.only(
+                          margin: EdgeInsets.only(
                             right: 20,
                             bottom: 10,
                             top: 4,
                           ),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(28),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withAlpha(40),
-                                blurRadius: 15,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
+                            color: context.appColors.cardBackground,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: context.appColors.glassBorder,
+                              
+                            ),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(28),
+                            borderRadius: BorderRadius.circular(12),
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                (profile.profilePictureUrl != "" &&
-                                        profile.profilePictureUrl != "picture")
-                                    ? Image.network(
-                                        profile.profilePictureUrl ?? "",
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, _, _) =>
-                                            Image.asset(
-                                              logo2Assets,
-                                              fit: BoxFit.cover,
-                                            ),
-                                      )
-                                    : Image.asset(
-                                        logo2Assets,
-                                        fit: BoxFit.cover,
-                                      ),
+                                // (profile.profilePictureUrl != "" &&
+                                //         profile.profilePictureUrl != "picture")
+                                //     ? Image.network(
+                                //         profile.profilePictureUrl ?? "",
+                                //         fit: BoxFit.cover,
+                                //         errorBuilder: (context, _, _) =>
+                                //             Image.asset(
+                                //               logo2Assets,
+                                //               fit: BoxFit.cover,
+                                //             ),
+                                //       )
+                                //     : Image.asset(
+                                //         logo2Assets,
+                                //         fit: BoxFit.cover,
+                                //       ),
 
                                 Positioned(
                                   top: 12,
@@ -136,14 +134,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                   child: Container(
                                     height: 100,
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.transparent,
-                                          Colors.black.withAlpha(200),
-                                        ],
-                                      ),
+                                      color: context.appColors.cardBackground,
                                     ),
                                   ),
                                 ),
@@ -153,7 +144,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                   left: 0,
                                   right: 0,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: EdgeInsets.all(16),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -164,30 +155,32 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                             Expanded(
                                               child: Text(
                                                 profile.firstName ?? "User",
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
+                                                style: TextStyle(
+                                                  color: context.appColors.primaryTextColor,
+                                                  fontWeight: FontWeight.w900,
                                                   fontSize: 16,
-                                                  letterSpacing: -0.5,
+                                                  letterSpacing: 0.5,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                             if (profile.isIdentityVerified ==
                                                 true)
-                                              const Icon(
+                                               Icon(
                                                 Icons.verified_rounded,
-                                                color: Colors.blue,
+                                                color: context.appColors.primaryColor,
                                                 size: 16,
                                               ),
                                           ],
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          getServiceName(profile.service!),
+                                          getServiceName(profile.service ?? "").toUpperCase(),
                                           style: TextStyle(
-                                            color: Colors.white.withAlpha(180),
-                                            fontSize: 12,
+                                            color: context.appColors.primaryTextColor,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: 0.5,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -221,11 +214,14 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
 
   Widget _buildFloatingRating(String rating) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E2E3E),
+        color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withAlpha(40)),
+        border: Border.all(
+          color: context.appColors.glassBorder,
+          width: 1.5,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -234,9 +230,9 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           const SizedBox(width: 4),
           Text(
             double.parse(rating).toStringAsFixed(1),
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              color: context.appColors.primaryTextColor,
+              fontWeight: FontWeight.w900,
               fontSize: 11,
             ),
           ),
@@ -267,13 +263,13 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
       child: Container(
         height: 32,
         width: 32,
-        decoration: const BoxDecoration(
-          color: Color(0xFF2E2E3E),
+        decoration: BoxDecoration(
+          color: context.appColors.cardBackground,
           shape: BoxShape.circle,
         ),
         child: Icon(
           isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
-          color: isFavorite ? Colors.red : Colors.white,
+          color: isFavorite ? context.appColors.errorColor : Colors.white,
           size: 18,
         ),
       ),

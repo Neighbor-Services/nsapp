@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/app_colors.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
@@ -45,11 +45,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : Colors.black54;
+    final secondaryTextColor = context.appColors.secondaryTextColor;
 
     // Calculate dynamic width for OTP fields
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -93,9 +89,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                       child: Center(
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(horizontal: 24),
                           child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 450),
+                            constraints: BoxConstraints(maxWidth: 450),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -105,36 +101,23 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                   height: 100,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        isDark
-                                            ? Colors.white.withAlpha(50)
-                                            : Colors.black.withAlpha(10),
-                                        isDark
-                                            ? Colors.white.withAlpha(20)
-                                            : Colors.black.withAlpha(10),
-                                      ],
-                                    ),
+                                    
                                     border: Border.all(
-                                      color: isDark
-                                          ? Colors.white.withAlpha(40)
-                                          : Colors.black.withAlpha(30),
+                                      color: context.appColors.glassBorder,
                                       width: 2,
                                     ),
                                   ),
-                                  child: const Icon(
+                                  child:  Icon(
                                     Icons.verified_user_rounded,
                                     size: 50,
-                                    color: Colors.white,
+                                    color: context.appColors.primaryColor,
                                   ),
                                 ),
                                 const SizedBox(height: 32),
 
                                 // Glass Container
                                 SolidContainer(
-                                  padding: const EdgeInsets.all(28),
+                                  padding: EdgeInsets.all(28),
                                   child: Column(
                                     children: [
                                       const Text(
@@ -169,14 +152,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                         showFieldAsBox: true,
                                         borderWidth: 1.5,
                                         borderRadius: BorderRadius.circular(12),
-                                        fillColor: isDark
-                                            ? Colors.white.withAlpha(20)
-                                            : Colors.black.withAlpha(10),
+                                        fillColor: context.appColors.glassBorder,
                                         filled: true,
-                                        borderColor: isDark
-                                            ? Colors.white.withAlpha(40)
-                                            : Colors.black.withAlpha(30),
-                                        focusedBorderColor: appOrangeColor1,
+                                        borderColor: context.appColors.glassBorder,
+                                        focusedBorderColor: context.appColors.secondaryColor,
                                         enabledBorderColor: Colors.white
                                             .withAlpha(20),
                                         cursorColor: Colors.white,
@@ -185,7 +164,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
-                                        margin: const EdgeInsets.only(
+                                        margin: EdgeInsets.only(
                                           right: 12.0,
                                         ),
                                         onSubmit: (code) {

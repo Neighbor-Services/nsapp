@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -7,7 +9,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/core/models/subscription_plan.dart';
-import 'package:get/get.dart';
+import 'package:nsapp/core/core.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
@@ -86,16 +88,10 @@ class _SubscriptionPageState extends State<SubscriptionPage>
         },
         builder: (context, state) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-          final secondaryTextColor = isDark
-              ? Colors.white.withAlpha(180)
-              : const Color(0xFF1E1E2E).withAlpha(180);
-          final buttonColor = isDark
-              ? Colors.white.withAlpha(20)
-              : Colors.black.withAlpha(5);
-          final borderColor = isDark
-              ? Colors.white.withAlpha(40)
-              : Colors.black.withAlpha(10);
+          final textColor = context.appColors.primaryTextColor;
+          final secondaryTextColor = context.appColors.secondaryTextColor;
+          final buttonColor = context.appColors.primaryColor.withAlpha(30);
+          final borderColor = context.appColors.glassBorder;
 
           return LoadingView(
             isLoading: (state is SharedLoadingState),
@@ -103,7 +99,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 800),
+                    constraints: BoxConstraints(maxWidth: 800),
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.symmetric(
@@ -128,9 +124,9 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                                   }
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: buttonColor,
+                                    color: context.appColors.cardBackground,
                                     borderRadius: BorderRadius.circular(14),
                                     border: Border.all(color: borderColor),
                                   ),
@@ -182,65 +178,71 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   ) {
     return Column(
       children: [
-        const SizedBox(height: 40),
+        const SizedBox(height: 60),
         Container(
-          width: 100,
-          height: 100,
+          width: 120,
+          height: 120,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.green[400]!, Colors.green[600]!],
-            ),
+            color: context.appColors.primaryColor,
             shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.green.withAlpha(100),
-                blurRadius: 30,
-                spreadRadius: 5,
-              ),
-            ],
+           
           ),
-          child: const Icon(Icons.check_rounded, color: Colors.white, size: 48),
+          child: const Icon(Icons.check_rounded, color: Colors.white, size: 60),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 40),
         Text(
-          "You're Subscribed!",
+          "YOU'RE SUBSCRIBED!",
           style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
             color: textColor,
+            letterSpacing: 1.2,
           ),
         ),
         const SizedBox(height: 12),
         Text(
           "Enjoy unlimited access to your premium benefits",
-          style: TextStyle(fontSize: 16, color: secondaryTextColor),
+          style: TextStyle(
+            fontSize: 14, 
+            color: context.appColors.secondaryTextColor,
+            letterSpacing: 0.3,
+          ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 48),
+        const SizedBox(height: 60),
 
         SolidContainer(
-          padding: const EdgeInsets.all(28),
+          padding: EdgeInsets.all(32),
           child: Column(
             children: [
-              Icon(Icons.settings_rounded, size: 40, color: secondaryTextColor),
-              const SizedBox(height: 16),
+              Icon(
+                Icons.settings_suggest_rounded, 
+                size: 40, 
+                color: context.appColors.primaryColor,
+              ),
+              const SizedBox(height: 20),
               Text(
-                "Manage Subscription",
+                "MANAGE SUBSCRIPTION",
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w900,
                   color: textColor,
+                  letterSpacing: 0.5,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 "Cancel anytime with no hidden fees",
-                style: TextStyle(fontSize: 13, color: secondaryTextColor),
+                style: TextStyle(
+                  fontSize: 13, 
+                  color: context.appColors.secondaryTextColor,
+                  letterSpacing: 0.2,
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 54,
                 child: OutlinedButton(
                   onPressed: () {
                     context.read<SharedBloc>().add(
@@ -248,15 +250,18 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red[300],
-                    side: BorderSide(color: Colors.red[300]!),
+                    foregroundColor: context.appColors.errorColor,
+                    side: BorderSide(color: context.appColors.errorColor),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: const Text(
-                    "Cancel Subscription",
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    "CANCEL SUBSCRIPTION",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.0,
+                    ),
                   ),
                 ),
               ),
@@ -302,20 +307,25 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               ),
               const SizedBox(height: 16),
               Text(
-                "Choose Your Plan",
+                "CHOOSE YOUR PLAN",
                 style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
                   color: textColor,
+                  letterSpacing: 1.2,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 "Unlock premium features and grow your business",
-                style: TextStyle(fontSize: 16, color: secondaryTextColor),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: secondaryTextColor,
+                  letterSpacing: 0.3,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 40),
 
               _buildIntervalToggle(
                 isDark,
@@ -337,7 +347,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                             .map(
                               (plan) => Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
+                                  padding: EdgeInsets.symmetric(
                                     horizontal: 10,
                                   ),
                                   child: _buildPlanCard(
@@ -357,7 +367,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                         children: plans
                             .map(
                               (plan) => Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
+                                padding: EdgeInsets.only(bottom: 20),
                                 child: _buildPlanCard(
                                   plan,
                                   context,
@@ -392,7 +402,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     Color borderColor,
   ) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: buttonColor,
         borderRadius: BorderRadius.circular(16),
@@ -432,29 +442,19 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       onTap: () => setState(() => selectedInterval = interval),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark ? Colors.white : const Color(0xFF1E1E2E))
-              : Colors.transparent,
+              ? context.appColors.primaryColor
+              : context.appColors.primaryColor.withAlpha(30),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(30),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [],
         ),
         child: Text(
-          label,
+          label.toUpperCase(),
           style: TextStyle(
-            color: isSelected
-                ? (isDark ? Colors.black : Colors.white)
-                : secondaryTextColor,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? Colors.white : secondaryTextColor,
+            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+            letterSpacing: 0.8,
           ),
         ),
       ),
@@ -494,23 +494,23 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
     switch (plan.tier) {
       case 'PLATINUM':
-        primaryColor = const Color(0xFF673AB7);
-        gradientColors = [const Color(0xFF673AB7), const Color(0xFF9575CD)];
+        primaryColor = Color(0xFF673AB7);
+        gradientColors = [Color(0xFF673AB7), Color(0xFF9575CD)];
         tierIcon = Icons.auto_awesome_rounded;
         break;
       case 'GOLD':
-        primaryColor = const Color(0xFFFFB300);
-        gradientColors = [const Color(0xFFFFB300), const Color(0xFFFFD54F)];
+        primaryColor = Color(0xFFFFB300);
+        gradientColors = [Color(0xFFFFB300), Color(0xFFFFD54F)];
         tierIcon = Icons.workspace_premium_rounded;
         break;
       case 'SILVER':
-        primaryColor = const Color(0xFF78909C);
-        gradientColors = [const Color(0xFF78909C), const Color(0xFFB0BEC5)];
+        primaryColor = Color(0xFF78909C);
+        gradientColors = [Color(0xFF78909C), Color(0xFFB0BEC5)];
         tierIcon = Icons.shield_rounded;
         break;
       default:
-        primaryColor = const Color(0xFFFF6B35);
-        gradientColors = [const Color(0xFFFF6B35), const Color(0xFFFF8E53)];
+        primaryColor = Color(0xFFFF6B35);
+        gradientColors = [Color(0xFFFF6B35), Color(0xFFFF8E53)];
         tierIcon = Icons.star_rounded;
     }
 
@@ -537,80 +537,38 @@ class _SubscriptionPageState extends State<SubscriptionPage>
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isPopular
-                ? gradientColors
-                : [
-                    isDark
-                        ? Colors.white.withAlpha(20)
-                        : Colors.black.withAlpha(5),
-                    isDark
-                        ? Colors.white.withAlpha(10)
-                        : Colors.black.withAlpha(0),
-                  ],
-          ),
+          color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(24),
-          border: isPopular
-              ? null
-              : Border.all(
-                  color: isDark
-                      ? Colors.white.withAlpha(40)
-                      : Colors.black.withAlpha(10),
-                ),
-          boxShadow: isPopular
-              ? [
-                  BoxShadow(
-                    color: primaryColor.withAlpha(80),
-                    blurRadius: 25,
-                    offset: const Offset(0, 12),
-                  ),
-                ]
-              : [],
+          border: Border.all(
+            color: context.appColors.glassBorder,
+          ),
+          
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(
-                  tierIcon,
-                  color: isPopular ? Colors.white : primaryColor,
-                  size: 28,
-                ),
-                if (isPopular)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(50),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                      "BEST VALUE",
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-              ],
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.appColors.primaryColor.withAlpha(20),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                tierIcon,
+                color: context.appColors.primaryColor,
+                size: 32,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
-              plan.name ?? "Plan",
+              (plan.name ?? "Plan").toUpperCase(),
               style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: isPopular ? Colors.white : textColor,
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: textColor,
+                letterSpacing: 1.1,
               ),
             ),
             const SizedBox(height: 12),
@@ -621,18 +579,17 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 Text(
                   "\$${plan.price?.toInt() ?? 0}",
                   style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: isPopular ? Colors.white : textColor,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    color: textColor,
                   ),
                 ),
                 Text(
-                  "/${plan.interval == 'year' ? 'year' : 'mo'}",
+                  "/${plan.interval == 'year' ? 'YR' : 'MO'}",
                   style: TextStyle(
                     fontSize: 14,
-                    color: isPopular
-                        ? Colors.white.withAlpha(180)
-                        : secondaryTextColor,
+                    fontWeight: FontWeight.bold,
+                    color: secondaryTextColor,
                   ),
                 ),
               ],
@@ -642,59 +599,50 @@ class _SubscriptionPageState extends State<SubscriptionPage>
             _buildBenefitItem(
               commissionText,
               Icons.account_balance_wallet_rounded,
-              isPopular,
-              isPopular ? Colors.white : textColor,
-              isPopular ? Colors.white.withAlpha(220) : secondaryTextColor,
+              false,
+              textColor,
+              secondaryTextColor,
             ),
             _buildBenefitItem(
               priorityText,
               Icons.trending_up_rounded,
-              isPopular,
-              isPopular ? Colors.white : textColor,
-              isPopular ? Colors.white.withAlpha(220) : secondaryTextColor,
+              false,
+              textColor,
+              secondaryTextColor,
             ),
 
             Divider(
-              color: isPopular
-                  ? Colors.white24
-                  : (isDark ? Colors.white24 : Colors.black12),
+              color: context.appColors.glassBorder,
               height: 32,
             ),
 
             ...features.map(
               (feature) => _buildFeatureItem(
                 feature,
-                isPopular,
-                isPopular ? Colors.white.withAlpha(220) : secondaryTextColor,
+                false,
+                secondaryTextColor,
               ),
             ),
 
             const SizedBox(height: 24),
             Container(
               width: double.infinity,
-              height: 50,
+              height: 54,
               decoration: BoxDecoration(
-                color: isPopular
-                    ? Colors.white
-                    : (isDark
-                          ? Colors.white.withAlpha(30)
-                          : Colors.black.withAlpha(5)),
-                borderRadius: BorderRadius.circular(14),
-                border: isPopular
-                    ? null
-                    : Border.all(
-                        color: isDark ? Colors.white38 : Colors.black12,
-                      ),
+                color: context.appColors.primaryColor.withAlpha(30),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: context.appColors.glassBorder,
+                ),
               ),
               child: Center(
                 child: Text(
-                  "Choose ${plan.tier?.capitalizeFirst ?? 'Plan'}",
+                  "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isPopular
-                        ? primaryColor
-                        : (isDark ? Colors.white : const Color(0xFF1E1E2E)),
+                    fontWeight: FontWeight.w900,
+                    color: context.appColors.primaryColor,
+                    letterSpacing: 1.0,
                   ),
                 ),
               ),
@@ -713,21 +661,22 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     Color secondaryTextColor,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Icon(
             icon,
             size: 16,
-            color: isHighlighted ? Colors.white : textColor.withAlpha(180),
+            color: secondaryTextColor,
           ),
           const SizedBox(width: 8),
           Text(
-            text,
+            text.toUpperCase(),
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: isHighlighted ? Colors.white : textColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              color: textColor,
+              letterSpacing: 0.5,
             ),
           ),
         ],
@@ -741,7 +690,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     Color secondaryTextColor,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Icon(
@@ -749,13 +698,18 @@ class _SubscriptionPageState extends State<SubscriptionPage>
             size: 16,
             color: isHighlighted
                 ? Colors.white70
-                : secondaryTextColor.withAlpha(120),
+                : secondaryTextColor,
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              text,
-              style: TextStyle(fontSize: 13, color: secondaryTextColor),
+              text.toUpperCase(),
+              style: TextStyle(
+                fontSize: 11, 
+                color: secondaryTextColor,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.3,
+              ),
             ),
           ),
         ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -10,6 +9,7 @@ import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -24,11 +24,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : Colors.black54;
+    final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
 
     return Scaffold(
       body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
@@ -57,7 +54,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   children: [
                     // Header
                     Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 16,
                       ),
@@ -66,16 +63,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           GestureDetector(
                             onTap: () => Get.back(),
                             child: Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withAlpha(20)
-                                    : Colors.black.withAlpha(10),
+                                color: context.appColors.cardBackground,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(30)
-                                      : Colors.black.withAlpha(20),
+                                  color: context.appColors.glassBorder,
                                 ),
                               ),
                               child: Icon(
@@ -87,11 +80,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           ),
                           const SizedBox(width: 16),
                           Text(
-                            "Change Password",
+                            "CHANGE PASSWORD",
                             style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
                               color: textColor,
+                              letterSpacing: 1.0,
                             ),
                           ),
                         ],
@@ -101,7 +95,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: EdgeInsets.symmetric(horizontal: 24),
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
@@ -113,18 +107,19 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             const SizedBox(height: 32),
 
                             SolidContainer(
-                              padding: const EdgeInsets.all(24),
+                              padding: EdgeInsets.all(24),
                               child: Form(
                                 key: formKey,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Reset Password",
+                                      "RESET PASSWORD",
                                       style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w900,
                                         color: textColor,
+                                        letterSpacing: 1.0,
                                       ),
                                     ),
                                     const SizedBox(height: 12),
@@ -155,6 +150,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                     const SizedBox(height: 32),
                                     SolidButton(
                                       label: "CHANGE PASSWORD",
+                                      allCaps: true,
                                       onPressed: () {
                                         if (emailTextController.text.trim() !=
                                             SuccessGetProfileState

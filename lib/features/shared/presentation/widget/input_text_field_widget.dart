@@ -26,7 +26,7 @@ class InputTextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: size(context).width,
-      decoration: const BoxDecoration(),
+      decoration: BoxDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

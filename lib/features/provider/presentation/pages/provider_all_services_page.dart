@@ -5,6 +5,7 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
 import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/core/core.dart';
 
 class ProviderAllServicesPage extends StatelessWidget {
   const ProviderAllServicesPage({super.key});
@@ -20,7 +21,7 @@ class ProviderAllServicesPage extends StatelessWidget {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -30,24 +31,18 @@ class ProviderAllServicesPage extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white.withAlpha(20)
-                              : Colors.black.withAlpha(10),
+                          color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.white.withAlpha(40)
-                                : Colors.black.withAlpha(20),
+                            color: context.appColors.glassBorder,
+                            width: 1.5,
                           ),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : const Color(0xFF1E1E2E),
+                          color: context.appColors.primaryTextColor,
                           size: 20,
                         ),
                       ),
@@ -58,27 +53,22 @@ class ProviderAllServicesPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Service Catalog",
+                            "SERVICE CATALOG",
                             style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : const Color(0xFF1E1E2E),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: context.appColors.primaryTextColor,
+                              letterSpacing: 1.2,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "Browse all available service categories",
+                            "BROWSE ALL AVAILABLE SERVICE CATEGORIES",
                             style: TextStyle(
-                              fontSize: 14,
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white70
-                                  : Colors.black54,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              color: context.appColors.secondaryTextColor.withAlpha(150),
+                              letterSpacing: 0.8,
                             ),
                           ),
                         ],
@@ -115,7 +105,7 @@ class ProviderAllServicesPage extends StatelessWidget {
                     }
 
                     return GridView.builder(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 10,
                       ),
@@ -142,14 +132,7 @@ class ProviderAllServicesPage extends StatelessWidget {
   }
 
   Widget _buildServiceCard(BuildContext context, dynamic service, int index) {
-    final gradients = [
-      [const Color(0xFF667eea), const Color(0xFF764ba2)],
-      [const Color(0xFFf093fb), const Color(0xFFf5576c)],
-      [const Color(0xFF4facfe), const Color(0xFF00f2fe)],
-      [const Color(0xFF43e97b), const Color(0xFF38f9d7)],
-      [const Color(0xFFfa709a), const Color(0xFFfee140)],
-      [const Color(0xFF30cfd0), const Color(0xFF330867)],
-    ];
+   
 
     final icons = [
       Icons.build_rounded,
@@ -159,8 +142,6 @@ class ProviderAllServicesPage extends StatelessWidget {
       Icons.local_shipping_rounded,
       Icons.home_repair_service_rounded,
     ];
-
-    final gradient = gradients[index % gradients.length];
     final icon = icons[index % icons.length];
 
     return GestureDetector(
@@ -184,41 +165,35 @@ class ProviderAllServicesPage extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: gradient,
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: context.appColors.glassBorder,
+            width: 1.5,
           ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: gradient[0].withAlpha(80),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Stack(
           children: [
             Positioned(
               right: -10,
               bottom: -10,
-              child: Icon(icon, size: 70, color: Colors.white.withAlpha(20)),
+              child: Icon(icon, size: 70, color: context.appColors.glassBorder),
             ),
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(icon, color: Colors.white, size: 24),
+                  Icon(icon, color: context.appColors.primaryColor, size: 24),
                   Text(
-                    service.name ?? "Service",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    (service.name ?? "Service").toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                      color: context.appColors.primaryTextColor,
                       height: 1.2,
+                      letterSpacing: 0.5,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

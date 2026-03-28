@@ -91,7 +91,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
             child: GradientBackground(
               child: SafeArea(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 20,
                   ),
@@ -104,9 +104,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           color:
-                              (Theme.of(context).brightness == Brightness.dark)
-                              ? Colors.white
-                              : Colors.black87,
+                              context.appColors.primaryTextColor,
                           letterSpacing: -1,
                         ),
                       ),
@@ -116,9 +114,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                         style: TextStyle(
                           fontSize: 16,
                           color:
-                              (Theme.of(context).brightness == Brightness.dark)
-                              ? Colors.white.withAlpha(160)
-                              : Colors.black54,
+                              context.appColors.secondaryTextColor,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -128,40 +124,29 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                         child: Stack(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(4),
+                              padding: EdgeInsets.all(4),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color:
-                                      (Theme.of(context).brightness ==
-                                          Brightness.dark)
-                                      ? Colors.white.withAlpha(80)
-                                      : Colors.black.withAlpha(20),
+                                      context.appColors.glassBorder,
                                   width: 2,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: appDeepBlueColor1.withAlpha(
-                                      (Theme.of(context).brightness ==
-                                              Brightness.dark)
-                                          ? 40
-                                          : 60,
-                                    ),
+                                    color: context.appColors.primaryColor.withAlpha(50),
                                     blurRadius: 40,
                                     spreadRadius: -5,
                                   ),
                                 ],
                               ),
                               child: Container(
-                                padding: const EdgeInsets.all(2),
+                                padding: EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color:
-                                        (Theme.of(context).brightness ==
-                                            Brightness.dark)
-                                        ? Colors.white.withAlpha(40)
-                                        : Colors.black.withAlpha(10),
+                                        context.appColors.glassBorder,
                                     width: 1,
                                   ),
                                 ),
@@ -186,9 +171,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                               bottom: 6,
                               right: 6,
                               child: Container(
-                                padding: const EdgeInsets.all(12),
+                                padding: EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: appDeepBlueColor1,
+                                  color: context.appColors.primaryColor,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: Colors.white,
@@ -198,7 +183,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                     BoxShadow(
                                       color: Colors.black.withAlpha(60),
                                       blurRadius: 12,
-                                      offset: const Offset(0, 4),
+                                      offset: Offset(0, 4),
                                     ),
                                   ],
                                 ),
@@ -215,30 +200,16 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                       const SizedBox(height: 40),
                       const SizedBox(height: 40),
                       Container(
-                        padding: const EdgeInsets.all(28),
+                        padding: EdgeInsets.all(28),
                         decoration: BoxDecoration(
                           color:
-                              (Theme.of(context).brightness == Brightness.dark)
-                              ? Colors.white.withAlpha(15)
-                              : Colors.white,
+                              context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(32),
                           border: Border.all(
                             color:
-                                (Theme.of(context).brightness ==
-                                    Brightness.dark)
-                                ? Colors.white.withAlpha(25)
-                                : Colors.black.withAlpha(10),
+                                context.appColors.glassBorder,
                           ),
-                          boxShadow:
-                              (Theme.of(context).brightness == Brightness.light)
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black.withAlpha(5),
-                                    blurRadius: 20,
-                                    spreadRadius: 2,
-                                  ),
-                                ]
-                              : null,
+                         
                         ),
                         child: Form(
                           key: key,
@@ -275,8 +246,8 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   width: 270,
                                   height: 52,
                                   radius: 18,
-                                  selectedColor: Colors.blueAccent.withAlpha(50),
-                                  textColor: Colors.white,
+                                  selectedColor: context.appColors.primaryColor.withAlpha(50),
+                                  textColor: context.appColors.primaryTextColor,
                                 ),
                               const SizedBox(height: 24),
                               SolidTextField(
@@ -320,8 +291,8 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   width: 270,
                                   height: 52,
                                   radius: 18,
-                                  selectedColor: Colors.blueAccent.withAlpha(50),
-                                  textColor: Colors.white,
+                                  selectedColor: context.appColors.primaryColor.withAlpha(50),
+                                  textColor: context.appColors.primaryTextColor,
                                 ),
                               const SizedBox(height: 24),
                               Row(
@@ -341,41 +312,28 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   GestureDetector(
                                     onTap: () =>
                                         _showLocationBottomSheet(context),
-                                    child: Container(
-                                      width: 58,
-                                      height: 58,
-                                      decoration: BoxDecoration(
-                                        color:
-                                            (Theme.of(context).brightness ==
-                                                Brightness.dark)
-                                            ? Colors.white.withAlpha(20)
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                          color:
-                                              (Theme.of(context).brightness ==
-                                                  Brightness.dark)
-                                              ? Colors.white.withAlpha(30)
-                                              : Colors.black.withAlpha(10),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: 25),
+                                        Container(
+                                          width: 58,
+                                          height: 58,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                context.appColors.cardBackground,
+                                            borderRadius: BorderRadius.circular(20),
+                                            border: Border.all(
+                                              color:
+                                                  context.appColors.glassBorder,
+                                            ),
+                                            
+                                          ),
+                                          child:  Icon(
+                                            Icons.my_location_rounded,
+                                            color: context.appColors.primaryColor,
+                                          ),
                                         ),
-                                        boxShadow:
-                                            (Theme.of(context).brightness ==
-                                                Brightness.light)
-                                            ? [
-                                                BoxShadow(
-                                                  color: Colors.black.withAlpha(
-                                                    5,
-                                                  ),
-                                                  blurRadius: 10,
-                                                  spreadRadius: 1,
-                                                ),
-                                              ]
-                                            : null,
-                                      ),
-                                      child: const Icon(
-                                        Icons.my_location_rounded,
-                                        color: Colors.blueAccent,
-                                      ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -439,43 +397,25 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                     );
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                       horizontal: 20,
                                       vertical: 18,
                                     ),
                                     decoration: BoxDecoration(
                                       color:
-                                          (Theme.of(context).brightness ==
-                                              Brightness.dark)
-                                          ? Colors.white.withAlpha(20)
-                                          : Colors.white,
+                                          context.appColors.cardBackground,
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
                                         color:
-                                            (Theme.of(context).brightness ==
-                                                Brightness.dark)
-                                            ? Colors.white.withAlpha(30)
-                                            : Colors.black.withAlpha(10),
+                                            context.appColors.glassBorder,
                                       ),
-                                      boxShadow:
-                                          (Theme.of(context).brightness ==
-                                              Brightness.light)
-                                          ? [
-                                              BoxShadow(
-                                                color: Colors.black.withAlpha(
-                                                  5,
-                                                ),
-                                                blurRadius: 10,
-                                                spreadRadius: 1,
-                                              ),
-                                            ]
-                                          : null,
+                                     
                                     ),
                                     child: Row(
                                       children: [
                                         Icon(
                                           Icons.work_outline_rounded,
-                                          color: Colors.blueAccent.withAlpha(
+                                          color: context.appColors.primaryColor.withAlpha(
                                             200,
                                           ),
                                         ),
@@ -486,18 +426,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                                 ? "Select Your Profession"
                                                 : serviceType,
                                             style: TextStyle(
-                                              color:
-                                                  (Theme.of(
-                                                        context,
-                                                      ).brightness ==
-                                                      Brightness.dark)
-                                                  ? (serviceType.isEmpty
-                                                        ? Colors.white
-                                                              .withAlpha(140)
-                                                        : Colors.white)
-                                                  : (serviceType.isEmpty
-                                                        ? Colors.black54
-                                                        : Colors.black87),
+                                              color: context.appColors.secondaryTextColor,
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -506,10 +435,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                         Icon(
                                           Icons.unfold_more_rounded,
                                           color:
-                                              (Theme.of(context).brightness ==
-                                                  Brightness.dark)
-                                              ? Colors.white.withAlpha(100)
-                                              : Colors.black38,
+                                              context.appColors.secondaryTextColor,
                                           size: 20,
                                         ),
                                       ],
@@ -540,8 +466,8 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                       width: 270,
                                       height: 52,
                                       radius: 18,
-                                      selectedColor: Colors.blueAccent.withAlpha(50),
-                                      textColor: Colors.white,
+                                      selectedColor: context.appColors.primaryColor.withAlpha(50),
+                                      textColor: context.appColors.primaryTextColor,
                                     ),
                                 ],
                             ],
@@ -556,9 +482,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                           borderRadius: BorderRadius.circular(22),
                           boxShadow: [
                             BoxShadow(
-                              color: appDeepBlueColor1.withAlpha(100),
+                              color: context.appColors.primaryColor.withAlpha(100),
                               blurRadius: 20,
-                              offset: const Offset(0, 8),
+                              offset: Offset(0, 8),
                             ),
                           ],
                         ),
@@ -629,7 +555,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: appDeepBlueColor1,
+                            backgroundColor: context.appColors.primaryColor,
                             shadowColor: Colors.transparent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(22),
@@ -658,33 +584,26 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
   }
 
   void _showImagePickerBottomSheet(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // final sheetBg = isDark
-    //     ? const Color(0xFF1E1E2E).withAlpha(200)
-    //     : Colors.white.withAlpha(240);
-    final handleColor = isDark
-        ? Colors.white.withAlpha(60)
-        : Colors.black.withAlpha(20);
+    
+    final handleColor = context.appColors.glassBorder;
 
     Get.bottomSheet(
       Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          color: context.appColors.primaryBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(
-            color: isDark
-                ? Colors.white.withAlpha(20)
-                : Colors.black.withAlpha(10),
+            color: context.appColors.glassBorder,
           ),
         ),
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 45,
               height: 6,
-              margin: const EdgeInsets.only(bottom: 28),
+              margin: EdgeInsets.only(bottom: 28),
               decoration: BoxDecoration(
                 color: handleColor,
                 borderRadius: BorderRadius.circular(12),
@@ -715,33 +634,26 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
   }
 
   void _showLocationBottomSheet(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    // final sheetBg = isDark
-    //     ? const Color(0xFF1E1E2E).withAlpha(200)
-    //     : Colors.white.withAlpha(240);
-    final handleColor = isDark
-        ? Colors.white.withAlpha(60)
-        : Colors.black.withAlpha(20);
+   
+    final handleColor = context.appColors.glassBorder;
 
     Get.bottomSheet(
       Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E2E) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          color: context.appColors.primaryBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           border: Border.all(
-            color: isDark
-                ? Colors.white.withAlpha(20)
-                : Colors.black.withAlpha(10),
+            color: context.appColors.glassBorder,
           ),
         ),
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 45,
               height: 6,
-              margin: const EdgeInsets.only(bottom: 28),
+              margin: EdgeInsets.only(bottom: 28),
               decoration: BoxDecoration(
                 color: handleColor,
                 borderRadius: BorderRadius.circular(12),
@@ -799,23 +711,15 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
     required String label,
     required VoidCallback onTap,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final itemBg = isDark
-        ? Colors.white.withAlpha(12)
-        : Colors.black.withAlpha(5);
-    final borderColor = isDark
-        ? Colors.white.withAlpha(18)
-        : Colors.black.withAlpha(10);
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final arrowColor = isDark
-        ? Colors.white.withAlpha(100)
-        : Colors.black.withAlpha(50);
+    final itemBg = context.appColors.cardBackground;
+    final borderColor = context.appColors.glassBorder;
+    final textColor = context.appColors.primaryTextColor;
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
         decoration: BoxDecoration(
           color: itemBg,
           borderRadius: BorderRadius.circular(20),
@@ -823,7 +727,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.blueAccent, size: 26),
+            Icon(icon, color: context.appColors.primaryColor, size: 26),
             const SizedBox(width: 18),
             Text(
               label,
@@ -834,7 +738,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               ),
             ),
             const Spacer(),
-            Icon(Icons.arrow_forward_ios_rounded, color: arrowColor, size: 16),
+            Icon(Icons.arrow_forward_ios_rounded, color: context.appColors.primaryColor, size: 16),
           ],
         ),
       ),
@@ -843,15 +747,13 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
 
   Widget _buildLabel(String text) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: 4),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: (Theme.of(context).brightness == Brightness.dark)
-              ? Colors.white.withAlpha(200)
-              : Colors.black54,
+          color: context.appColors.primaryTextColor,
           letterSpacing: 0.5,
         ),
       ),

@@ -5,7 +5,6 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 
-import '../../../../core/constants/string_constants.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/notify.dart';
 import '../../../../core/models/profile.dart';
@@ -14,9 +13,9 @@ import '../../../messages/presentation/pages/chat_page.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/pages/about_page.dart';
 import '../../../shared/presentation/bloc/shared_bloc.dart';
-import '../../../shared/presentation/widget/custom_text_widget.dart';
 import '../../../shared/presentation/widget/empty_widget.dart';
 import '../../../shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class SeekerProviderSearchPage extends StatefulWidget {
   const SeekerProviderSearchPage({super.key});
@@ -48,7 +47,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
           return GradientBackground(
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: EdgeInsets.symmetric(
                   horizontal: 20.0,
                   vertical: 10,
                 ),
@@ -56,7 +55,8 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                   children: [
                     SolidTextField(
                       controller: searchController,
-                      hintText: "Search Provider",
+                      hintText: "SEARCH PROVIDERS",
+                      allCapsLabel: true,
                       prefixIcon: Icons.search,
                       onChanged: (value) {
                         setState(() {
@@ -108,7 +108,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                                 displayList.isEmpty) {
                               return Center(
                                 child: SolidContainer(
-                                  padding: const EdgeInsets.all(24),
+                                  padding: EdgeInsets.all(24),
                                   child: EmptyWidget(
                                     message: "No provider matches your search",
                                     height: 200,
@@ -157,7 +157,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                             } else {
                               return Center(
                                 child: SolidContainer(
-                                  padding: const EdgeInsets.all(24),
+                                  padding: EdgeInsets.all(24),
                                   child: EmptyWidget(
                                     message: "No providers found",
                                     height: 200,
@@ -202,6 +202,8 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
       child: SolidContainer(
         padding: EdgeInsets.zero,
         borderRadius: BorderRadius.circular(20),
+        borderColor: context.appColors.glassBorder,
+        borderWidth: 1.5,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -237,34 +239,40 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
             ),
             // Content
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.all(12.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomTextWidget(
-                    text: profile.firstName ?? "Unknown",
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  Text(
+                    (profile.firstName ?? "Unknown").toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding: EdgeInsets.symmetric(
                       horizontal: 6,
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(30),
+                      color: context.appColors.primaryColor,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: CustomTextWidget(
-                      text: getServiceName(profile.service ?? ""),
-                      fontSize: 10,
-                      color: Colors.white.withAlpha(230),
+                    child: Text(
+                      getServiceName(profile.service ?? "").toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
                       overflow: TextOverflow.ellipsis,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -277,10 +285,14 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                       ),
                       const SizedBox(width: 4),
                       Expanded(
-                        child: CustomTextWidget(
-                          text: profile.address ?? "No Address",
-                          fontSize: 11,
-                          color: Colors.white70,
+                        child: Text(
+                          (profile.address ?? "No Address").toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.white.withAlpha(200),
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.3,
+                          ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -300,9 +312,11 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
               top: 8,
               left: 8,
               child: SolidContainer(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 borderRadius: BorderRadius.circular(12),
                 backgroundColor: Colors.black.withAlpha(100),
+                borderColor: Colors.white.withAlpha(40),
+                borderWidth: 1.5,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -312,15 +326,16 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                       size: 14,
                     ),
                     const SizedBox(width: 4),
-                    CustomTextWidget(
-                      text:
-                          double.tryParse(
-                            profile.rating ?? "0.0",
-                          )?.toStringAsFixed(1) ??
-                          "0.0",
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                    Text(
+                      double.tryParse(
+                        profile.rating ?? "0.0",
+                      )?.toStringAsFixed(1) ??
+                      "0.0",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ],
                 ),
@@ -332,29 +347,20 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
               right: 4,
               child: Theme(
                 data: Theme.of(context).copyWith(
-                  cardColor: Theme.of(context).brightness == Brightness.dark
-                      ? const Color(0xFF1E1E2E)
-                      : Colors.white,
+                  cardColor: context.appColors.cardBackground,
                   iconTheme: IconThemeData(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : const Color(0xFF1E1E2E),
+                    color: context.appColors.primaryBackground,
                   ),
                   popupMenuTheme: PopupMenuThemeData(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1E1E2E)
-                        : Colors.white,
+                    color: context.appColors.cardBackground,
                     textStyle: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : const Color(0xFF1E1E2E),
+                      color: context.appColors.primaryBackground,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                       side: BorderSide(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white.withAlpha(20)
-                            : Colors.black.withAlpha(20),
+                        color: context.appColors.glassBorder,
+                        width: 1.5,
                       ),
                     ),
                   ),
@@ -369,12 +375,8 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                     _handleMenuSelection(val, profile, context);
                   },
                   itemBuilder: (context) {
-                    final isDark =
-                        Theme.of(context).brightness == Brightness.dark;
-                    final iconColor = isDark ? Colors.white70 : Colors.black54;
-                    final textColor = isDark
-                        ? Colors.white
-                        : const Color(0xFF1E1E2E);
+                    final iconColor = context.appColors.secondaryTextColor;
+                    final textColor = context.appColors.primaryTextColor;
 
                     return [
                       PopupMenuItem(
@@ -386,7 +388,15 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                               color: iconColor,
                             ),
                             const SizedBox(width: 10),
-                            Text("Details", style: TextStyle(color: textColor)),
+                            Text(
+                              "DETAILS",
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                color: textColor,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -399,7 +409,15 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                               color: iconColor,
                             ),
                             const SizedBox(width: 10),
-                            Text("Chat", style: TextStyle(color: textColor)),
+                            Text(
+                              "CHAT",
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                color: textColor,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -425,12 +443,12 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
         }
       },
       child: SolidContainer(
-        padding: const EdgeInsets.all(6),
+        padding: EdgeInsets.all(6),
         borderRadius: BorderRadius.circular(50), // Circle
         backgroundColor: Colors.black.withAlpha(50),
         child: Icon(
           isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-          color: isFav ? Colors.redAccent : Colors.white,
+          color: isFav ? context.appColors.errorColor : Colors.white,
           size: 18,
         ),
       ),

@@ -8,6 +8,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ChangePasswordMainPage extends StatefulWidget {
   const ChangePasswordMainPage({super.key});
@@ -56,10 +57,8 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // final textColor = isDark ? Colors.white : const Color(0xFF1E1E2E);
-    final secondaryTextColor = isDark
-        ? Colors.white.withAlpha(180)
-        : Colors.black54;
+    // final textColor = context.appColors.primaryTextColor;
+    final secondaryTextColor = context.appColors.glassBorder;
 
     return Scaffold(
       body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
@@ -93,7 +92,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                   children: [
                     // App Bar
                     Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 16,
                       ),
@@ -102,16 +101,12 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                           IconButton(
                             onPressed: () => Get.back(),
                             icon: Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withAlpha(20)
-                                    : Colors.black.withAlpha(10),
-                                borderRadius: BorderRadius.circular(12),
+                                color: context.appColors.cardBackground,
+                                shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(30)
-                                      : Colors.black.withAlpha(20),
+                                  color: context.appColors.glassBorder,
                                 ),
                               ),
                               child: Icon(
@@ -123,11 +118,12 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            "Change Password",
+                            "CHANGE PASSWORD",
                             style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: context.appColors.primaryTextColor,
+                              letterSpacing: 1.0,
                             ),
                           ),
                         ],
@@ -137,7 +133,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        padding: EdgeInsets.symmetric(horizontal: 24),
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
@@ -148,36 +144,23 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                               height: 100,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    isDark
-                                        ? Colors.white.withAlpha(50)
-                                        : Colors.black.withAlpha(10),
-                                    isDark
-                                        ? Colors.white.withAlpha(20)
-                                        : Colors.black.withAlpha(10),
-                                  ],
-                                ),
+                                color: context.appColors.primaryColor.withAlpha(20),
                                 border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withAlpha(40)
-                                      : Colors.black.withAlpha(30),
+                                  color: context.appColors.primaryColor.withAlpha(50),
                                   width: 2,
                                 ),
                               ),
                               child: Icon(
                                 Icons.password_rounded,
                                 size: 50,
-                                color: isDark ? Colors.white : Colors.black,
+                                color: context.appColors.primaryColor,
                               ),
                             ),
                             const SizedBox(height: 32),
 
                             // Glass Container
                             SolidContainer(
-                              padding: const EdgeInsets.all(28),
+                              padding: EdgeInsets.all(28),
                               child: Form(
                                 key: key,
                                 child: Column(
@@ -196,6 +179,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                     SolidTextField(
                                       controller: oldPasswordTextController,
                                       label: "Current Password",
+                                      allCapsLabel: true,
                                       hintText: "Enter your current password",
                                       prefixIcon: Icons.lock_outline_rounded,
                                       obscureText: true,
@@ -213,6 +197,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                     SolidTextField(
                                       controller: passwordTextController,
                                       label: "New Password",
+                                      allCapsLabel: true,
                                       hintText: "Enter new password",
                                       prefixIcon: Icons.lock_outline_rounded,
                                       obscureText: true,
@@ -229,7 +214,8 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
 
                                     SolidTextField(
                                       controller: confirmPasswordTextController,
-                                      label: "Confirm New Password",
+                                      label: "Confirm Password",
+                                      allCapsLabel: true,
                                       hintText: "Confirm new password",
                                       prefixIcon: Icons.lock_outline_rounded,
                                       obscureText: true,
@@ -247,6 +233,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
 
                                     SolidButton(
                                       label: "CHANGE PASSWORD",
+                                      allCaps: true,
                                       isLoading: _isLoading,
                                       onPressed: () {
                                         if (key.currentState!.validate()) {

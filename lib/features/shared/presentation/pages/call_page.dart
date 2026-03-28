@@ -1,6 +1,8 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/services/rtc_service.dart';
+import 'package:nsapp/core/core.dart';
+
 
 class CallPage extends StatefulWidget {
   final String appId;
@@ -76,7 +78,7 @@ class _CallPageState extends State<CallPage> {
             child: Container(
               width: 120,
               height: 180,
-              margin: const EdgeInsets.only(top: 60, left: 20),
+              margin: EdgeInsets.only(top: 60, left: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -138,7 +140,7 @@ class _CallPageState extends State<CallPage> {
   Widget _toolbar() {
     return Alignment.bottomCenter.asWidget(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 40),
+        padding: EdgeInsets.symmetric(vertical: 40),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -150,7 +152,7 @@ class _CallPageState extends State<CallPage> {
                 RTCService.toggleMute(_muted);
               },
               icon: _muted ? Icons.mic_off : Icons.mic,
-              color: _muted ? Colors.redAccent : Colors.white.withAlpha(50),
+              color: _muted ? context.appColors.errorColor : Colors.white.withAlpha(50),
             ),
             const SizedBox(width: 20),
             _circleButton(
@@ -158,7 +160,7 @@ class _CallPageState extends State<CallPage> {
                 if (mounted) Navigator.pop(context);
               },
               icon: Icons.call_end,
-              color: Colors.red,
+              color: context.appColors.errorColor,
               size: 64,
             ),
             const SizedBox(width: 20),
@@ -170,7 +172,7 @@ class _CallPageState extends State<CallPage> {
                 RTCService.toggleCamera(_cameraOff);
               },
               icon: _cameraOff ? Icons.videocam_off : Icons.videocam,
-              color: _cameraOff ? Colors.redAccent : Colors.white.withAlpha(50),
+              color: _cameraOff ? context.appColors.errorColor : Colors.white.withAlpha(50),
             ),
             const SizedBox(width: 20),
             _circleButton(
