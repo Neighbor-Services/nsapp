@@ -25,13 +25,15 @@ import UserNotifications
       }
     }
 
-    let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-    let tokenChannel = FlutterMethodChannel(name: "com.nsapp/notifications",
-                                              binaryMessenger: controller.binaryMessenger)
-    
-    AppDelegate.tokenChannel = tokenChannel
+    let result = super.application(application, didFinishLaunchingWithOptions: launchOptions)
 
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    if let controller = window?.rootViewController as? FlutterViewController {
+        let tokenChannel = FlutterMethodChannel(name: "com.nsapp/notifications",
+                                                  binaryMessenger: controller.binaryMessenger)
+        AppDelegate.tokenChannel = tokenChannel
+    }
+
+    return result
   }
 
   static var tokenChannel: FlutterMethodChannel?
