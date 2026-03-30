@@ -4,16 +4,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
+import '../../../shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/appointment.dart';
+import '../../../../core/models/request_data.dart';
 import '../../../shared/presentation/widget/loading_widget.dart';
 import '../../../../features/shared/presentation/pages/create_dispute_page.dart';
 import '../../../../features/shared/presentation/pages/live_tracking_page.dart';
 import 'package:nsapp/core/core.dart';
+import 'seeker_request_details_page.dart';
 
 class SeekerAppointmentPage extends StatefulWidget {
   const SeekerAppointmentPage({super.key});
@@ -64,6 +68,14 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
           if (state is SuccessCancelAppointmentState) {
             context.read<SeekerBloc>().add(GetAppointmentsEvent());
             customAlert(context, AlertType.success, "Appointment canceled");
+          }
+          if (state is SuccessUpdateAppointmentState) {
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (mounted) {
+                context.read<SeekerBloc>().add(GetAppointmentsEvent());
+              }
+            });
+            customAlert(context, AlertType.success, "Appointment updated");
           }
           if (state is FailureCancelAppointmentState) {
             customAlert(context, AlertType.error, "An error occurred");
@@ -127,11 +139,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
 
                           // Calendar
                           Expanded(
-                            child: _buildCalendarView(
-                              context,
-                              isLargeScreen
-                              
-                            ),
+                            child: _buildCalendarView(context, isLargeScreen),
                           ),
                         ],
                       ),
@@ -146,10 +154,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     );
   }
 
-  Widget _buildCalendarView(
-    BuildContext context,
-    bool isLargeScreen,
-  ) {
+  Widget _buildCalendarView(BuildContext context, bool isLargeScreen) {
     final textColor = context.appColors.primaryTextColor;
     final borderColor = context.appColors.glassBorder;
 
@@ -160,17 +165,20 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
           events.clear();
           for (var data in snapshot.data!) {
             AppointmentData appointmentData = data;
+            final isSeeker = appointmentData.role == 'seeker';
             events.add(
               CalendarEventData(
                 event: appointmentData.appointment!.id,
-                title: appointmentData.appointment!.title ?? "",
+                title:
+                    "${isSeeker ? '[S] ' : '[P] '}${appointmentData.appointment!.title ?? ""}",
                 date:
                     appointmentData.appointment!.appointmentDate ??
                     DateTime.now(),
                 description: appointmentData.appointment!.description ?? "",
-                startTime: appointmentData.appointment?.startDate,
-                endTime: appointmentData.appointment?.endDate,
-                color: context.appColors.secondaryColor,
+                startTime: appointmentData.appointment?.appointmentDate,
+                color: isSeeker
+                    ? context.appColors.secondaryColor
+                    : context.appColors.primaryColor,
               ),
             );
           }
@@ -183,26 +191,27 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 backgroundColor: context.appColors.cardBackground,
                 child: MonthView(
                   borderColor: borderColor,
-                  cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
-                    return FilledCell(
-                      date: date,
-                      shouldHighlight: isToday,
-                      backgroundColor: isInMonth
-                          ? context.appColors.cardBackground
-                          : context.appColors.primaryBackground,
-                      events: events,
-                      isInMonth: isInMonth,
-                      hideDaysNotInMonth: hideDaysNotInMonth,
-                      titleColor: isInMonth
-                          ? context.appColors.primaryTextColor
-                          : context.appColors.secondaryTextColor,
-                      highlightColor: context.appColors.secondaryColor,
-                      tileColor: context.appColors.secondaryColor,
-                      onTileTap: (event, date) {
-                        _showAppointmentDetails(context, [event]);
+                  cellBuilder:
+                      (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+                        return FilledCell(
+                          date: date,
+                          shouldHighlight: isToday,
+                          backgroundColor: isInMonth
+                              ? context.appColors.cardBackground
+                              : context.appColors.primaryBackground,
+                          events: events,
+                          isInMonth: isInMonth,
+                          hideDaysNotInMonth: hideDaysNotInMonth,
+                          titleColor: isInMonth
+                              ? context.appColors.primaryTextColor
+                              : context.appColors.secondaryTextColor,
+                          highlightColor: context.appColors.secondaryColor,
+                          tileColor: context.appColors.secondaryColor,
+                          onTileTap: (event, date) {
+                            _showAppointmentDetails(context, [event]);
+                          },
+                        );
                       },
-                    );
-                  },
                   weekDayBuilder: (day) {
                     return Container(
                       alignment: Alignment.center,
@@ -236,7 +245,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       fontSize: 18,
                       letterSpacing: 0.5,
                     ),
-                    decoration: BoxDecoration(color: context.appColors.cardBackground),
+                    decoration: BoxDecoration(
+                      color: context.appColors.cardBackground,
+                    ),
                     leftIconConfig: IconDataConfig(color: textColor),
                     rightIconConfig: IconDataConfig(color: textColor),
                   ),
@@ -268,7 +279,6 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
   void _showAppointmentDetails(
     BuildContext context,
     List<CalendarEventData> data,
-    
   ) {
     final sheetColor = context.appColors.cardBackground;
     final borderColor = context.appColors.glassBorder;
@@ -285,10 +295,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
             topLeft: Radius.circular(24),
             topRight: Radius.circular(24),
           ),
-          border: Border.all(
-            color: borderColor,
-            width: 1.5,
-          ),
+          border: Border.all(color: borderColor, width: 1.5),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -318,7 +325,6 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       final appt = appointmentData.appointment!;
                       return Column(
                         children: [
-                          
                           if (appt.isFunded == true &&
                               appt.status == 'COMPLETED')
                             Container(
@@ -326,15 +332,18 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               margin: EdgeInsets.only(bottom: 12),
                               padding: EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: context.appColors.successColor.withAlpha(20),
+                                color: context.appColors.successColor.withAlpha(
+                                  20,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: context.appColors.successColor.withAlpha(50),
+                                  color: context.appColors.successColor
+                                      .withAlpha(50),
                                 ),
                               ),
                               child: Row(
                                 children: [
-                                   Icon(
+                                  Icon(
                                     Icons.check_circle_outline_rounded,
                                     color: context.appColors.successColor,
                                     size: 20,
@@ -342,7 +351,8 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      "Project completed and funds released.".toUpperCase(),
+                                      "Project completed and funds released."
+                                          .toUpperCase(),
                                       style: TextStyle(
                                         color: context.appColors.successColor,
                                         fontSize: 11,
@@ -407,25 +417,126 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 ],
               ),
               const SizedBox(height: 24),
-              _buildDetailRow(
-                Icons.title_rounded,
-                "Title",
-                data[0].title
-               
-              ),
+              _buildDetailRow(Icons.title_rounded, "Title", data[0].title),
               _buildDetailRow(
                 Icons.schedule_rounded,
                 "Time",
-                "${data[0].startTime != null ? DateFormat.jm().format(data[0].startTime!.toLocal()) : ''} - ${data[0].endTime != null ? DateFormat.jm().format(data[0].endTime!.toLocal()) : ''}"
-               
+                "${data[0].startTime != null ? DateFormat.jm().format(data[0].startTime!.toLocal()) : ''}",
               ),
               if (data[0].description != null &&
                   data[0].description!.isNotEmpty)
                 _buildDetailRow(
                   Icons.notes_rounded,
                   "Description",
-                  data[0].description!
-                 
+                  data[0].description!,
+                ),
+              const SizedBox(height: 16),
+              // Linked Request Details
+              if (SuccessGetAppointmentsState.appointments != null)
+                FutureBuilder<List<AppointmentData>>(
+                  future: SuccessGetAppointmentsState.appointments,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return const SizedBox();
+                    try {
+                      final appointmentData = snapshot.data!.firstWhere(
+                        (element) => element.appointment?.id == data[0].event,
+                      );
+                      final appt = appointmentData.appointment!;
+                      final req = appt.serviceRequest;
+
+                      if (req == null) return const SizedBox();
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Divider(height: 32),
+                          CustomTextWidget(
+                            text: "LINKED REQUEST",
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                            color: context.appColors.secondaryTextColor,
+                            letterSpacing: 1.0,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildDetailRow(
+                            Icons.assignment_rounded,
+                            "ORIGINAL TITLE",
+                            req.title ?? "N/A",
+                          ),
+                          _buildDetailRow(
+                            Icons.category_rounded,
+                            "SERVICE",
+                            req.service?.name ?? "N/A",
+                          ),
+                          if (req.price != null)
+                            _buildDetailRow(
+                              Icons.payments_rounded,
+                              "REQUEST PRICE",
+                              "\$${req.price}",
+                            ),
+                          if (req.description != null &&
+                              req.description!.isNotEmpty)
+                            _buildDetailRow(
+                              Icons.description_rounded,
+                              "REQ. DESCRIPTION",
+                              req.description!,
+                            ),
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: () {
+                                Get.back();
+                                RequestData request = RequestData(
+                                  request: req,
+                                  user: appointmentData.user,
+                                );
+
+                                if (req.userId ==
+                                    SuccessGetProfileState.profile.user?.id) {
+                                      SeekerRequestDetailState.request =
+                                      RequestData(
+                                        request: req,
+                                        user: appointmentData.user,
+                                      );
+                                  context.read<SeekerBloc>().add(
+                                    SeekerRequestDetailEvent(request: request),
+                                  );
+
+                                  context.read<SeekerBloc>().add(
+                                    NavigateSeekerEvent(
+                                      page: 1,
+                                      widget: const SeekerRequestDetailsPage(),
+                                    ),
+                                  );
+                                 
+                                } else {
+                                  customAlert(context, AlertType.error, "You are not authorized to view this request");
+                                }
+                              },
+                              icon: Icon(
+                                Icons.open_in_new_rounded,
+                                size: 18,
+                                color: context.appColors.primaryColor,
+                              ),
+                              label: Text(
+                                "VIEW FULL DETAILS",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
+                                  color: context.appColors.primaryColor,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const Divider(height: 32),
+                        ],
+                      );
+                    } catch (e) {
+                      return const SizedBox();
+                    }
+                  },
                 ),
               const SizedBox(height: 24),
 
@@ -436,8 +547,6 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) return const SizedBox();
                     try {
-                    
-                       
                       return const SizedBox();
                     } catch (e) {
                       return const SizedBox();
@@ -453,8 +562,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           await SuccessGetAppointmentsState.appointments!;
                       final appointmentData = list.firstWhere(
                         (element) =>
-                            element.appointment?.id ==
-                            data[0].event.toString(),
+                            element.appointment?.id == data[0].event.toString(),
                       );
                       if (appointmentData.appointment != null) {
                         Get.back();
@@ -554,12 +662,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     );
   }
 
-  Widget _buildDetailRow(
-    IconData icon,
-    String label,
-    String value,
-   
-  ) {
+  Widget _buildDetailRow(IconData icon, String label, String value) {
     final iconBg = context.appColors.glassBorder;
     final iconColor = context.appColors.secondaryTextColor;
     final labelColor = context.appColors.glassBorder;

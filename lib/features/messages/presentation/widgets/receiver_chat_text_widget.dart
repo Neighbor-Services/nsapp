@@ -17,7 +17,7 @@ class ReceiverChatTextWidget extends StatelessWidget {
     final bubbleColor = context.appColors.cardBackground;
     final textColor = context.appColors.primaryTextColor;
     final borderColor = context.appColors.glassBorder;
-    final timestampColor = context.appColors.glassBorder;
+    final timestampColor = context.appColors.hintTextColor;
     final shadowColor = context.appColors.glassBorder;
 
     return Padding(

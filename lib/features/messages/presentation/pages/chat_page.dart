@@ -357,9 +357,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       } else if (isCalender) {
         return SenderAppointmentChatWidget(
           chatID: msgId,
-          startTime: message.calenderStartDate ?? DateTime.now(),
+          startTime: message.calenderDate ?? DateTime.now(),
           appointmentDate: message.calenderDate ?? DateTime.now(),
-          endTime: message.calenderEndDate ?? DateTime.now(),
           message: contentTxt,
           from: chatMessage.sender?.user?.id ?? message.sender ?? "",
           onLongPressed: () {},
@@ -383,9 +382,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       } else if (isCalender) {
         return ReceiverAppointmentChatWidget(
           chatID: msgId,
-          startTime: message.calenderStartDate ?? DateTime.now(),
+          startTime: message.calenderDate ?? DateTime.now(),
           appointmentDate: message.calenderDate ?? DateTime.now(),
-          endTime: message.calenderEndDate ?? DateTime.now(),
           message: contentTxt,
           from: chatMessage.receiver?.user?.id ?? message.sender ?? "",
         );
@@ -583,7 +581,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     DateTime selectedDate = DateTime.now();
     TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
-    TimeOfDay endTime = const TimeOfDay(hour: 10, minute: 0);
 
     Get.bottomSheet(
       StatefulBuilder(
@@ -642,28 +639,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   },
                   isDark,
                 ),
-                const SizedBox(height: 16),
-                _buildPickerRow(
-                  Icons.access_time_filled_rounded,
-                  "End Time",
-                  endTime.format(context),
-                  () async {
-                    final picked = await showTimePicker(
-                      context: context,
-                      initialTime: endTime,
-                    );
-                    if (picked != null) {
-                      setSheetState(() => endTime = picked);
-                    }
-                  },
-                  isDark,
-                ),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      _submitAppointment(selectedDate, startTime, endTime);
+                      _submitAppointment(selectedDate, startTime);
                       Get.back();
                     },
                     style: ElevatedButton.styleFrom(
@@ -746,7 +727,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   void _submitAppointment(
     DateTime date,
     TimeOfDay startTime,
-    TimeOfDay endTime,
   ) {
     final receiverId = MessageReceiverState.profile.user?.id;
     final senderId = SuccessGetProfileState.profile.user?.id;
@@ -759,13 +739,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         startTime.hour,
         startTime.minute,
       );
-      final end = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        endTime.hour,
-        endTime.minute,
-      );
 
       context.read<MessageBloc>().add(
         ChatEvent(
@@ -776,9 +749,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             createdAt: DateTime.now(),
             withImage: false,
             isCalender: true,
-            calenderDate: date,
-            calenderStartDate: start,
-            calenderEndDate: end,
+            calenderDate: start,
           ),
         ),
       );

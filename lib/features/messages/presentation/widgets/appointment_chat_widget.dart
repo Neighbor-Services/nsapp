@@ -21,13 +21,11 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
   TextEditingController messageController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController startTimeController = TextEditingController();
-  TextEditingController endTimeController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   DateTime today = DateTime.now();
   DateTime? appointmentDate;
   DateTime? appointmentStartTime;
-  DateTime? appointmentEndTime;
   @override
   Widget build(BuildContext context) {
     final bgColor = context.appColors.primaryBackground;
@@ -89,76 +87,37 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
               },
             ),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: size(context).width * 0.42,
-                  child: AppointmentInputFieldWidget(
-                    controller: startTimeController,
-                    onPressed: () async {
-                      TimeOfDay? time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.fromSeed(seedColor: context.appColors.cardBackground),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (time != null) {
-                        DateTime now = DateTime.now();
-                        DateTime date = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          time.hour,
-                          time.minute,
-                        );
-                        appointmentStartTime = date;
-                        startTimeController.text = DateFormat.jm().format(date);
-                      }
-                    },
-                    label: "Start At",
-                  ),
-                ),
-                SizedBox(
-                  width: size(context).width * 0.42,
-                  child: AppointmentInputFieldWidget(
-                    controller: endTimeController,
-                    onPressed: () async {
-                      TimeOfDay? time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.fromSeed(seedColor: context.appColors.cardBackground),
-                            ),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (time != null) {
-                        DateTime now = DateTime.now();
-                        DateTime date = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          time.hour,
-                          time.minute,
-                        );
-                        appointmentEndTime = date;
-                        endTimeController.text = DateFormat.jm().format(date);
-                      }
-                    },
-                    label: "End At",
-                  ),
-                ),
-              ],
+            AppointmentInputFieldWidget(
+              onPressed: () async {
+                TimeOfDay? time = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        colorScheme: ColorScheme.fromSeed(
+                          seedColor: context.appColors.cardBackground,
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
+                );
+                if (time != null) {
+                  DateTime now = DateTime.now();
+                  DateTime date = DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                    time.hour,
+                    time.minute,
+                  );
+                  appointmentStartTime = date;
+                  startTimeController.text = DateFormat.jm().format(date);
+                }
+              },
+              label: "Start At",
+              controller: startTimeController,
             ),
             const SizedBox(height: 24),
             SolidTextField(
@@ -167,21 +126,12 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
               suffixIcon: IconButton(
                 icon: Icon(Icons.send_rounded, color: context.appColors.secondaryColor),
                 onPressed: () async {
-                  if (appointmentEndTime == null ||
-                      appointmentStartTime == null ||
+                  if (appointmentStartTime == null ||
                       appointmentDate == null) {
                     customAlert(
                       context,
                       AlertType.error,
                       "Please complete the form before sending",
-                    );
-                    return;
-                  }
-                  if (appointmentEndTime!.isBefore(appointmentStartTime!)) {
-                    customAlert(
-                      context,
-                      AlertType.error,
-                      "Start and End time is invalid",
                     );
                     return;
                   }
@@ -197,8 +147,6 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
                     sender: SuccessGetProfileState.profile.user!.id!,
                     receiver: MessageReceiverState.profile.user!.id!,
                     calenderDate: appointmentDate,
-                    calenderEndDate: appointmentEndTime,
-                    calenderStartDate: appointmentStartTime,
                   );
                   context.read<MessageBloc>().add(ChatEvent(message: message));
                   messageController.text = "";

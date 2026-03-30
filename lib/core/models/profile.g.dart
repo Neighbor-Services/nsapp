@@ -48,6 +48,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       isIdentityVerified: fields[31] as bool?,
       subscriptionTier: fields[32] as String?,
       performanceBadges: (fields[33] as List?)?.cast<PerformanceBadge>(),
+      preferredPaymentMode: fields[34] as String?,
     )
       ..portfolioItems = (fields[26] as List?)?.cast<PortfolioItem>()
       ..servicePackages = (fields[27] as List?)?.cast<ServicePackage>()
@@ -57,7 +58,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
   @override
   void write(BinaryWriter writer, Profile obj) {
     writer
-      ..writeByte(34)
+      ..writeByte(35)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -125,7 +126,9 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       ..writeByte(32)
       ..write(obj.subscriptionTier)
       ..writeByte(33)
-      ..write(obj.performanceBadges);
+      ..write(obj.performanceBadges)
+      ..writeByte(34)
+      ..write(obj.preferredPaymentMode);
   }
 
   @override

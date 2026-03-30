@@ -17,28 +17,24 @@ class Message {
   @HiveField(5)
   String? message;
   @HiveField(6)
-  DateTime? calenderStartDate;
-  @HiveField(7)
-  DateTime? calenderEndDate;
-  @HiveField(8)
   DateTime? calenderDate;
-  @HiveField(9)
+  @HiveField(7)
   String? sender;
-  @HiveField(10)
+  @HiveField(8)
   String? receiver;
-  @HiveField(11)
+  @HiveField(9)
   String? mediaUrl;
-  @HiveField(12)
+  @HiveField(10)
   bool? read;
-  @HiveField(13)
+  @HiveField(11)
   DateTime? createdAt;
-  @HiveField(14)
+  @HiveField(12)
   DateTime? updatedAt;
-  @HiveField(15)
+  @HiveField(13)
   int? version;
-  @HiveField(16)
+  @HiveField(14)
   String? image;
-  @HiveField(17)
+  @HiveField(15)
   String? fileName;
   Message({
     this.id,
@@ -47,8 +43,6 @@ class Message {
     this.isCalender,
     this.withImageAndText,
     this.message,
-    this.calenderStartDate,
-    this.calenderEndDate,
     this.calenderDate,
     this.sender,
     this.receiver,
@@ -68,15 +62,11 @@ class Message {
     isCalender = json['is_calender'];
     withImageAndText = json['with_image_and_text'];
     message = json['message'];
-    calenderStartDate = json['calender_start_date'] != null
-        ? DateTime.parse(json['calender_start_date'])
-        : null;
-    calenderEndDate = json['calender_end_date'] != null
-        ? DateTime.parse(json['calender_end_date'])
-        : null;
-    calenderDate = json['calender_date'] != null
-        ? DateTime.parse(json['calender_date'])
-        : null;
+    
+    // Unified calenderDate
+    final cDate = json['calender_date'];
+    calenderDate = cDate != null ? DateTime.parse(cDate.toString()) : null;
+
     sender = json['sender']?.toString();
     receiver = json['receiver']?.toString();
     mediaUrl = json['media_url'];
@@ -100,8 +90,6 @@ class Message {
     data['is_calender'] = isCalender;
     data['with_image_and_text'] = withImageAndText;
     data['message'] = message;
-    data['calender_start_date'] = calenderStartDate?.toUtc().toIso8601String();
-    data['calender_end_date'] = calenderEndDate?.toUtc().toIso8601String();
     data['calender_date'] = calenderDate?.toUtc().toIso8601String();
     data["filename"] = fileName ?? "";
     data["image"] = image ?? "";

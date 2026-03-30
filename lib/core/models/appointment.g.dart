@@ -19,10 +19,8 @@ class AppointmentAdapter extends TypeAdapter<Appointment> {
     return Appointment(
       id: fields[0] as String?,
       title: fields[1] as String?,
-      userId: fields[2] as String?,
+      seekerId: fields[2] as String?,
       description: fields[3] as String?,
-      startDate: fields[4] as DateTime?,
-      endDate: fields[5] as DateTime?,
       appointmentDate: fields[7] as DateTime?,
       chatID: fields[6] as String?,
       fromChat: fields[8] as bool?,
@@ -32,7 +30,6 @@ class AppointmentAdapter extends TypeAdapter<Appointment> {
       version: fields[12] as int?,
       status: fields[13] as String?,
       providerId: fields[14] as String?,
-      scheduledTime: fields[15] as DateTime?,
       isConsultation: fields[16] as bool?,
       consultationChannel: fields[17] as String?,
       isFunded: fields[18] as bool?,
@@ -45,23 +42,19 @@ class AppointmentAdapter extends TypeAdapter<Appointment> {
   @override
   void write(BinaryWriter writer, Appointment obj) {
     writer
-      ..writeByte(22)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.userId)
+      ..write(obj.seekerId)
       ..writeByte(3)
       ..write(obj.description)
-      ..writeByte(4)
-      ..write(obj.startDate)
-      ..writeByte(5)
-      ..write(obj.endDate)
-      ..writeByte(6)
-      ..write(obj.chatID)
       ..writeByte(7)
       ..write(obj.appointmentDate)
+      ..writeByte(6)
+      ..write(obj.chatID)
       ..writeByte(8)
       ..write(obj.fromChat)
       ..writeByte(9)
@@ -76,8 +69,6 @@ class AppointmentAdapter extends TypeAdapter<Appointment> {
       ..write(obj.status)
       ..writeByte(14)
       ..write(obj.providerId)
-      ..writeByte(15)
-      ..write(obj.scheduledTime)
       ..writeByte(16)
       ..write(obj.isConsultation)
       ..writeByte(17)
@@ -116,17 +107,20 @@ class AppointmentDataAdapter extends TypeAdapter<AppointmentData> {
     return AppointmentData(
       appointment: fields[0] as Appointment?,
       user: fields[1] as Profile?,
+      role: fields[2] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AppointmentData obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.appointment)
       ..writeByte(1)
-      ..write(obj.user);
+      ..write(obj.user)
+      ..writeByte(2)
+      ..write(obj.role);
   }
 
   @override

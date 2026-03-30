@@ -1,5 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/user.dart';
 import 'package:nsapp/core/models/portfolio_item.dart';
@@ -16,6 +15,7 @@ import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/core/models/notification.dart';
 import 'package:nsapp/core/models/wallet.dart';
+import 'package:nsapp/core/models/performance_badge.dart';
 
 class HiveService {
   static const String profileBox = 'profile_box';
@@ -25,8 +25,7 @@ class HiveService {
   static const String serviceRequestBox = 'service_request_box';
 
   Future<void> init() async {
-    final directory = await getApplicationDocumentsDirectory();
-    await Hive.initFlutter(directory.path);
+    await Hive.initFlutter();
 
     // TypeAdapters registration
     Hive.registerAdapter(ProfileAdapter());
@@ -54,6 +53,7 @@ class HiveService {
     Hive.registerAdapter(WalletAdapter());
     Hive.registerAdapter(WalletTransactionAdapter());
     Hive.registerAdapter(PayoutRequestAdapter());
+    Hive.registerAdapter(PerformanceBadgeAdapter());
 
     await openBoxes();
   }

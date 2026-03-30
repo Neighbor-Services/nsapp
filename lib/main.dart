@@ -19,6 +19,7 @@ import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/core/services/local_notification_service.dart';
 import 'package:nsapp/core/services/background_notification_service.dart';
+import 'package:nsapp/core/services/device_token_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
@@ -40,8 +41,15 @@ Future<void> main() async {
   // Local Notifications Init
   await LocalNotificationService.initialize();
 
-  // Background Service Init
+  // Background Service Init (Android only)
   await BackgroundNotificationService.initializeService();
+
+  // Foreground WebSocket (works on both Android and iOS)
+  // Connects if user is already logged in (e.g. app restart)
+  BackgroundNotificationService.connectForeground();
+
+  // Initialize Native Notification Token Listener (iOS)
+  DeviceTokenService.initialize();
 
   // Location Permission (Delegated to Helpers/LocationService)
   // If requestPermission exists in Helpers, call it. Otherwise getLocation checks permissions.

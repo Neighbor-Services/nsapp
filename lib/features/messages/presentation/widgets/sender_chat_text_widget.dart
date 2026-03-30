@@ -15,7 +15,7 @@ class SenderChatTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timestampColor = context.appColors.glassBorder;
+    final timestampColor = context.appColors.hintTextColor;
 
     return Padding(
       padding: EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),

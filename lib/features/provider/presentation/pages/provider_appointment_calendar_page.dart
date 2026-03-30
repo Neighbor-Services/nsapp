@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -13,10 +14,12 @@ import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/appointment.dart';
+import '../../../../core/models/request_data.dart';
 import '../../../shared/presentation/widget/appointment_input_field_widget.dart';
 import '../../../shared/presentation/widget/custom_text_widget.dart';
 import '../bloc/provider_bloc.dart';
 import 'provider_on_the_way_page.dart';
+import 'provider_request_detail_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderAppointmentCalendarPage extends StatefulWidget {
@@ -30,15 +33,14 @@ class ProviderAppointmentCalendarPage extends StatefulWidget {
 class _ProviderAppointmentCalendarPageState
     extends State<ProviderAppointmentCalendarPage>
     with TickerProviderStateMixin {
+  DateTime? _calendarSelectedDate;
   final TextEditingController dateController = TextEditingController();
   final TextEditingController startTimeController = TextEditingController();
-  final TextEditingController endTimeController = TextEditingController();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
   DateTime? appointmentDate;
   DateTime? appointmentStartTime;
-  DateTime? appointmentEndTime;
   bool isConsultation = false;
   List<CalendarEventData> events = [];
   String? selectedProposalId;
@@ -49,7 +51,12 @@ class _ProviderAppointmentCalendarPageState
   @override
   void initState() {
     super.initState();
+    _calendarSelectedDate = DateTime.now();
     context.read<ProviderBloc>().add(GetAppointmentsEvent());
+    
+    // Pre-initialize date controller with today
+    dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(_calendarSelectedDate!);
+    appointmentDate = _calendarSelectedDate;
 
     _fadeController = AnimationController(
       vsync: this,
@@ -87,8 +94,26 @@ class _ProviderAppointmentCalendarPageState
             customAlert(context, AlertType.error, "An error occurred");
           }
           if (state is SuccessAddAppointmentState) {
-            context.read<ProviderBloc>().add(GetAppointmentsEvent());
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (mounted) {
+                context.read<ProviderBloc>().add(GetAppointmentsEvent());
+              }
+            });
             customAlert(context, AlertType.success, "Appointment scheduled");
+          }
+          if (state is FailureAddAppointmentState) {
+            customAlert(context, AlertType.error, "Failed to schedule appointment");
+          }
+          if (state is SuccessUpdateAppointmentState) {
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (mounted) {
+                context.read<ProviderBloc>().add(GetAppointmentsEvent());
+              }
+            });
+            customAlert(context, AlertType.success, "Appointment updated");
+          }
+          if (state is FailureUpdateAppointmentState) {
+            customAlert(context, AlertType.error, "Failed to update appointment");
           }
           if (state is SuccessCompleteAppointmentState) {
             context.read<ProviderBloc>().add(GetAppointmentsEvent());
@@ -245,17 +270,20 @@ class _ProviderAppointmentCalendarPageState
           events.clear();
           for (var data in snapshot.data!) {
             AppointmentData appointmentData = data;
+            final appt = appointmentData.appointment;
+            if (appt == null) continue;
+            print(appt.effectiveDate);
+            final isSeeker = appointmentData.role == 'seeker';
             events.add(
               CalendarEventData(
-                event: appointmentData.appointment?.id,
-                title: appointmentData.appointment?.title ?? 'Appointment',
-                date:
-                    appointmentData.appointment?.appointmentDate ??
-                    DateTime.now(),
-                description: appointmentData.appointment?.description,
-                startTime: appointmentData.appointment?.effectiveDate,
-                endTime: appointmentData.appointment?.endDate,
-                color: context.appColors.secondaryColor,
+                event: appt.id,
+                title: appt.title ?? 'Appointment',
+                date: appt.effectiveDate ?? DateTime.now(),
+                description: appt.description,
+                startTime: appt.effectiveDate,
+                color: isSeeker
+                    ? context.appColors.secondaryColor
+                    : context.appColors.primaryColor,
               ),
             );
           }
@@ -311,6 +339,12 @@ class _ProviderAppointmentCalendarPageState
                     );
                   },
                   onCellTap: (events, date) {
+                    setState(() {
+                      _calendarSelectedDate = date;
+                      appointmentDate = date;
+                      dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(date);
+                    });
+                    
                     if (events.isNotEmpty) {
                       Get.bottomSheet(
                         _buildEventDetailsSheet(events[0], context, isDark),
@@ -390,7 +424,7 @@ class _ProviderAppointmentCalendarPageState
             _buildDetailRow(
               Icons.schedule_rounded,
               "TIME",
-              "${data.startTime != null ? DateFormat.jm().format(data.startTime!.toLocal()) : ''} - ${data.endTime != null ? DateFormat.jm().format(data.endTime!.toLocal()) : ''}",
+              data.startTime != null ? DateFormat.jm().format(data.startTime!.toLocal()) : '',
               isDark,
             ),
             if (data.description != null && data.description!.isNotEmpty)
@@ -400,7 +434,111 @@ class _ProviderAppointmentCalendarPageState
                 data.description!,
                 isDark,
               ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+            
+            // Linked Request Details
+            if (SuccessGetAppointmentsState.appointments != null)
+              FutureBuilder<List<AppointmentData>>(
+                future: SuccessGetAppointmentsState.appointments,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const SizedBox();
+                  try {
+                    final appointmentData = snapshot.data!.firstWhere(
+                      (element) =>
+                          element.appointment?.id == data.event.toString(),
+                    );
+                    final appt = appointmentData.appointment!;
+                    final req = appt.serviceRequest;
+
+                    if (req == null) return const SizedBox();
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Divider(height: 32),
+                        CustomTextWidget(
+                          text: "LINKED REQUEST",
+                          fontWeight: FontWeight.w900,
+                          fontSize: 14,
+                          color: context.appColors.secondaryTextColor,
+                          letterSpacing: 1.0,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildDetailRow(
+                          Icons.assignment_rounded,
+                          "ORIGINAL TITLE",
+                          req.title ?? "N/A",
+                          isDark,
+                        ),
+                        _buildDetailRow(
+                          Icons.category_rounded,
+                          "SERVICE",
+                          req.service?.name ?? "N/A",
+                          isDark,
+                        ),
+                        if (req.price != null)
+                          _buildDetailRow(
+                            Icons.payments_rounded,
+                            "REQUEST PRICE",
+                            "\$${req.price}",
+                            isDark,
+                          ),
+                        if (req.description != null && req.description!.isNotEmpty)
+                           _buildDetailRow(
+                            Icons.description_rounded,
+                            "REQ. DESCRIPTION",
+                            req.description!,
+                            isDark,
+                          ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Get.back();
+                              final requestData = RequestData(
+                                request: req,
+                                user: appointmentData.user,
+                              );
+                              context.read<ProviderBloc>().add(
+                                RequestDetailEvent(request: requestData),
+                              );
+                              context.read<ProviderBloc>().add(
+                                ReloadProfileEvent(request: requestData.request!.id!),
+                              );
+                              context.read<ProviderBloc>().add(
+                                NavigateProviderEvent(
+                                  page: 1,
+                                  widget: const ProviderRequestDetailPage(),
+                                ),
+                              );
+                            },
+                            icon: Icon(
+                              Icons.open_in_new_rounded,
+                              size: 18,
+                              color: context.appColors.primaryColor,
+                            ),
+                            label: Text(
+                              "VIEW FULL DETAILS",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w900,
+                                color: context.appColors.primaryColor,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 32),
+                      ],
+                    );
+                  } catch (e) {
+                    return const SizedBox();
+                  }
+                },
+              ),
+
+            const SizedBox(height: 16),
 
             // Escrow Action for Provider
             if (SuccessGetAppointmentsState.appointments != null)
@@ -642,7 +780,9 @@ class _ProviderAppointmentCalendarPageState
                   },
                 );
                 if (date != null) {
-                  appointmentDate = date;
+                  setState(() {
+                    appointmentDate = date;
+                  });
                   dateController.text = DateFormat(
                     "EEEE, MMM dd, yyyy",
                   ).format(date);
@@ -650,60 +790,31 @@ class _ProviderAppointmentCalendarPageState
               },
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: AppointmentInputFieldWidget(
-                    controller: startTimeController,
-                    label: "START TIME",
-                    onPressed: () async {
-                      TimeOfDay? time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (time != null) {
-                        final now = DateTime.now();
-                        appointmentStartTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          time.hour,
-                          time.minute,
-                        );
-                        startTimeController.text = DateFormat.jm().format(
-                          appointmentStartTime!,
-                        );
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: AppointmentInputFieldWidget(
-                    controller: endTimeController,
-                    label: "END TIME",
-                    onPressed: () async {
-                      TimeOfDay? time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (time != null) {
-                        final now = DateTime.now();
-                        appointmentEndTime = DateTime(
-                          now.year,
-                          now.month,
-                          now.day,
-                          time.hour,
-                          time.minute,
-                        );
-                        endTimeController.text = DateFormat.jm().format(
-                          appointmentEndTime!,
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
+            AppointmentInputFieldWidget(
+              controller: startTimeController,
+              label: "START TIME",
+              onPressed: () async {
+                TimeOfDay? time = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                );
+                if (time != null) {
+                  final now = DateTime.now();
+                  final mergedDateTime = DateTime(
+                    appointmentDate?.year ?? now.year,
+                    appointmentDate?.month ?? now.month,
+                    appointmentDate?.day ?? now.day,
+                    time.hour,
+                    time.minute,
+                  );
+                  appointmentStartTime = mergedDateTime;
+                  appointmentDate = mergedDateTime; // Preserve time in appointmentDate
+                  
+                  startTimeController.text = DateFormat.jm().format(
+                    appointmentStartTime!,
+                  );
+                }
+              },
             ),
             const SizedBox(height: 16),
             AppointmentInputFieldWidget(
@@ -736,9 +847,8 @@ class _ProviderAppointmentCalendarPageState
             _buildProposalDropdown(context, isDark),
             const SizedBox(height: 32),
             SolidButton(
-              onPressed: () {
+              onPressed: () async {
                 if (titleController.text.trim().isEmpty ||
-                    appointmentEndTime == null ||
                     appointmentStartTime == null ||
                     appointmentDate == null) {
                   customAlert(
@@ -748,21 +858,51 @@ class _ProviderAppointmentCalendarPageState
                   );
                   return;
                 }
-                if (appointmentEndTime!.isBefore(appointmentStartTime!)) {
-                  customAlert(context, AlertType.error, "Invalid time range");
+
+                if (selectedProposalId == null) {
+                  customAlert(
+                    context,
+                    AlertType.error,
+                    "Please link a proposal to identify the seeker",
+                  );
                   return;
                 }
+
+                final profile = SuccessGetProfileState.profile;
+                final String? providerId = profile.user?.id;
+
+                // Find the seeker (user) from the selected proposal
+                String? seekerId;
+                final proposals = await SuccessGetAcceptRequestState.accepts;
+                if (proposals != null) {
+                  try {
+                    final selectedP = proposals.firstWhere(
+                      (p) => p.acceptance?.id == selectedProposalId,
+                    );
+                    // Use the User ID from the profile, not the Profile ID
+                    seekerId = selectedP.user?.user?.id;
+                  } catch (_) {}
+                }
+
+                if (seekerId == null) {
+                  customAlert(
+                    context,
+                    AlertType.error,
+                    "Could not resolve seeker from selected proposal",
+                  );
+                  return;
+                }
+
                 context.read<ProviderBloc>().add(
                   AddAppointmentEvent(
                     appointment: Appointment(
                       title: titleController.text,
                       description: descriptionController.text,
-                      startDate: appointmentStartTime,
-                      endDate: appointmentEndTime,
                       appointmentDate: appointmentDate,
-                      scheduledTime: appointmentStartTime,
-                      fromUser: "",
-                      fromChat: true,
+                      fromUser: providerId,
+                      seekerId: seekerId, // Mapped to 'seeker' in Appointment.toJson()
+                      providerId: providerId,
+                      fromChat: false,
                       isConsultation: isConsultation,
                       consultationChannel: isConsultation
                           ? "channel_${DateTime.now().millisecondsSinceEpoch}"

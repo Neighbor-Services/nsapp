@@ -23,25 +23,23 @@ class MessageAdapter extends TypeAdapter<Message> {
       isCalender: fields[3] as bool?,
       withImageAndText: fields[4] as bool?,
       message: fields[5] as String?,
-      calenderStartDate: fields[6] as DateTime?,
-      calenderEndDate: fields[7] as DateTime?,
-      calenderDate: fields[8] as DateTime?,
-      sender: fields[9] as String?,
-      receiver: fields[10] as String?,
-      mediaUrl: fields[11] as String?,
-      read: fields[12] as bool?,
-      createdAt: fields[13] as DateTime?,
-      updatedAt: fields[14] as DateTime?,
-      version: fields[15] as int?,
-      image: fields[16] as String?,
-      fileName: fields[17] as String?,
+      calenderDate: fields[6] as DateTime?,
+      sender: fields[7] as String?,
+      receiver: fields[8] as String?,
+      mediaUrl: fields[9] as String?,
+      read: fields[10] as bool?,
+      createdAt: fields[11] as DateTime?,
+      updatedAt: fields[12] as DateTime?,
+      version: fields[13] as int?,
+      image: fields[14] as String?,
+      fileName: fields[15] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Message obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -55,28 +53,24 @@ class MessageAdapter extends TypeAdapter<Message> {
       ..writeByte(5)
       ..write(obj.message)
       ..writeByte(6)
-      ..write(obj.calenderStartDate)
-      ..writeByte(7)
-      ..write(obj.calenderEndDate)
-      ..writeByte(8)
       ..write(obj.calenderDate)
-      ..writeByte(9)
+      ..writeByte(7)
       ..write(obj.sender)
-      ..writeByte(10)
+      ..writeByte(8)
       ..write(obj.receiver)
-      ..writeByte(11)
+      ..writeByte(9)
       ..write(obj.mediaUrl)
-      ..writeByte(12)
+      ..writeByte(10)
       ..write(obj.read)
-      ..writeByte(13)
+      ..writeByte(11)
       ..write(obj.createdAt)
-      ..writeByte(14)
+      ..writeByte(12)
       ..write(obj.updatedAt)
-      ..writeByte(15)
+      ..writeByte(13)
       ..write(obj.version)
-      ..writeByte(16)
+      ..writeByte(14)
       ..write(obj.image)
-      ..writeByte(17)
+      ..writeByte(15)
       ..write(obj.fileName);
   }
 

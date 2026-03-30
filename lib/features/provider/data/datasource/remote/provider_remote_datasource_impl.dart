@@ -230,10 +230,11 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         }
         return true;
       }
+      debugPrint("POST APPOINTMENT FAILED: ${response.statusCode} - ${response.data}");
       return false;
     } catch (e) {
       if (e is DioException) {
-        debugPrint("Dio Error: ${e.response?.data}");
+        debugPrint("Dio Error: ${e.response?.statusCode} - ${e.response?.data}");
       }
       return false;
     }
@@ -249,7 +250,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         options: Options(headers: dioHeaders(token)),
       );
       final data = await response;
-
+      print("Raw API Response data: ${data.data}");
+      
       if (data.statusCode == 200) {
         List<AppointmentData> requests = [];
         var list = (data.data is List)
@@ -257,7 +259,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
             : (data.data is Map
                   ? (data.data["results"] ?? data.data["appointments"])
                   : []);
-        if (list != null) {
+        
+        if (list != null && list.isNotEmpty) {
           for (var appointment in list) {
             if (appointment is Map<String, dynamic>) {
               requests.add(AppointmentData.fromJson(appointment));

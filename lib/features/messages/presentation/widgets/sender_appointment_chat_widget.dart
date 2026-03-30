@@ -10,7 +10,6 @@ import 'package:nsapp/core/core.dart';
 class SenderAppointmentChatWidget extends StatelessWidget {
   final DateTime startTime;
   final DateTime appointmentDate;
-  final DateTime endTime;
   final String message;
   final String from;
   final String chatID;
@@ -21,7 +20,6 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     super.key,
     required this.startTime,
     required this.appointmentDate,
-    required this.endTime,
     required this.message,
     required this.from,
     required this.onLongPressed,
@@ -135,12 +133,10 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                                     chatID: chatID,
                                     title: "Scheduled Appointment From Chat",
                                     description: message,
-                                    startDate: startTime,
-                                    endDate: endTime,
                                     appointmentDate: appointmentDate,
                                     fromUser: from,
                                     fromChat: true,
-                                    userId: seekerId,
+                                    seekerId: seekerId,
                                     providerId: from,
                                     status: "SCHEDULED",
                                     isConsultation: false,
@@ -185,7 +181,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                     const SizedBox(height: 10),
                     _buildInfoRow(
                       Icons.access_time_rounded,
-                      "${DateFormat.jm().format(startTime)} - ${DateFormat.jm().format(endTime)}",
+                      DateFormat.jm().format(startTime),
                       context,
                     ),
                     if (message.isNotEmpty) ...[

@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:nsapp/core/models/profile.dart';
+import 'package:nsapp/core/models/request.dart';
 
 part 'appointment.g.dart';
 
@@ -10,17 +11,13 @@ class Appointment {
   @HiveField(1)
   String? title;
   @HiveField(2)
-  String? userId;
+  String? seekerId; // Unified: renamed from userId to match backend 'seeker'
   @HiveField(3)
   String? description;
-  @HiveField(4)
-  DateTime? startDate;
-  @HiveField(5)
-  DateTime? endDate;
-  @HiveField(6)
-  String? chatID;
   @HiveField(7)
   DateTime? appointmentDate;
+  @HiveField(6)
+  String? chatID;
   @HiveField(8)
   bool? fromChat;
   @HiveField(9)
@@ -35,8 +32,6 @@ class Appointment {
   String? status;
   @HiveField(14)
   String? providerId;
-  @HiveField(15)
-  DateTime? scheduledTime;
   @HiveField(16)
   bool? isConsultation;
   @HiveField(17)
@@ -49,16 +44,16 @@ class Appointment {
   double? totalPrice;
   @HiveField(21)
   String? proposalId;
+  @HiveField(22)
+  Request? serviceRequest;
 
-  DateTime? get effectiveDate => startDate ?? scheduledTime ?? appointmentDate;
+  DateTime? get effectiveDate => appointmentDate;
 
   Appointment({
     this.id,
     this.title,
-    this.userId,
+    this.seekerId,
     this.description,
-    this.startDate,
-    this.endDate,
     this.appointmentDate,
     this.chatID,
     this.fromChat,
@@ -68,75 +63,74 @@ class Appointment {
     this.version,
     this.status,
     this.providerId,
-    this.scheduledTime,
     this.isConsultation,
     this.consultationChannel,
     this.isFunded,
     this.paymentIntentId,
     this.totalPrice,
     this.proposalId,
+    this.serviceRequest,
   });
 
   Appointment.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id']?.toString();
     title = json['title'];
-    userId = json['seeker']?.toString(); // backend uses 'seeker'
+    // Unified seekerId mapping
+    seekerId = (json['seeker'] ?? json['seeker_id'] ?? json['userId'] ?? json['user_id'])?.toString();
     description = json['description'];
-    startDate = json['start_date'] != null
-        ? DateTime.parse(json['start_date'])
-        : null;
-    endDate = json['end_date'] != null
-        ? DateTime.parse(json['end_date'])
-        : null;
-    appointmentDate = json['appointment_date'] != null
-        ? DateTime.parse(json['appointment_date'])
-        : null;
-    fromChat =
-        json['from_chat']; // check if backend has this, if not, it will be null
-    fromUser = json['from_user']?.toString();
-    createdAt = json['created_at'] != null
-        ? DateTime.parse(json['created_at'])
-        : null;
-    updatedAt = json['updated_at'] != null
-        ? DateTime.parse(json['updated_at'])
-        : null;
+    
+    // Unified appointment_date
+    final apptD = json['appointment_date'] ?? json['appointmentDate'];
+    appointmentDate = apptD != null ? DateTime.parse(apptD.toString()) : null;
+
+    chatID = json['chatID'];
+    fromChat = json['from_chat'] ?? json['fromChat'];
+    fromUser = (json['from_user'] ?? json['fromUser'])?.toString();
+    
+    final createdA = json['created_at'] ?? json['createdAt'];
+    createdAt = createdA != null ? DateTime.parse(createdA.toString()) : null;
+    
+    final updatedA = json['updated_at'] ?? json['updatedAt'];
+    updatedAt = updatedA != null ? DateTime.parse(updatedA.toString()) : null;
+    
     version = json['version'];
     status = json['status'];
-    providerId = json['provider']?.toString();
-    scheduledTime = json['scheduled_time'] != null
-        ? DateTime.parse(json['scheduled_time'])
-        : null;
-    isConsultation = json['is_consultation'];
-    consultationChannel = json['consultation_channel'];
-    isFunded = json['is_funded'];
-    paymentIntentId = json['payment_intent_id'];
+    providerId = (json['provider'] ?? json['provider_id'] ?? json['providerId'])?.toString();
+    
+    isConsultation = json['is_consultation'] ?? json['isConsultation'];
+    consultationChannel = json['consultation_channel'] ?? json['consultationChannel'];
+    isFunded = json['is_funded'] ?? json['isFunded'];
+    paymentIntentId = json['payment_intent_id'] ?? json['paymentIntentId'];
+    
     totalPrice = json['total_price'] != null
         ? double.tryParse(json['total_price'].toString())
-        : null;
-    proposalId = json['proposal']?.toString();
+        : (json['totalPrice'] != null ? double.tryParse(json['totalPrice'].toString()) : null);
+        
+    proposalId = (json['proposal'] ?? json['proposal_id'] ?? json['proposalId'])?.toString();
+    
+    if (json['service_request_details'] != null) {
+      serviceRequest = Request.fromJson(json['service_request_details']);
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    if (id != null && id!.isNotEmpty) data['id'] = id;
     if (title != null) data['title'] = title;
+    if (seekerId != null) data['seeker'] = seekerId; 
     if (description != null) data['description'] = description;
-    if (startDate != null) data['start_date'] = startDate?.toIso8601String();
-    if (endDate != null) data['end_date'] = endDate?.toIso8601String();
     if (appointmentDate != null) {
-      data['appointment_date'] = appointmentDate?.toIso8601String();
+      data['appointment_date'] = appointmentDate!.toIso8601String();
     }
     if (status != null) data['status'] = status;
     if (providerId != null) data['provider'] = providerId;
-    if (scheduledTime != null) {
-      data['scheduled_time'] = scheduledTime?.toIso8601String();
+    if (isConsultation != null) data['is_consultation'] = isConsultation;
+    if (consultationChannel != null) {
+      data['consultation_channel'] = consultationChannel;
     }
-    data['is_consultation'] = isConsultation ?? false;
-    data['is_funded'] = isFunded ?? false;
-    if (paymentIntentId != null) {
-      data['payment_intent_id'] = paymentIntentId;
-    }
-    data['total_price'] = totalPrice ?? 0.00;
-    if (userId != null) data['seeker'] = userId;
+    if (isFunded != null) data['is_funded'] = isFunded;
+    if (paymentIntentId != null) data['payment_intent_id'] = paymentIntentId;
+    if (totalPrice != null) data['total_price'] = totalPrice;
     if (proposalId != null) data['proposal'] = proposalId;
     return data;
   }
@@ -148,14 +142,17 @@ class AppointmentData {
   Appointment? appointment;
   @HiveField(1)
   Profile? user;
+  @HiveField(2)
+  String? role;
 
-  AppointmentData({this.appointment, this.user});
+  AppointmentData({this.appointment, this.user, this.role});
 
   AppointmentData.fromJson(Map<String, dynamic> json) {
     appointment = json['appointment'] != null
         ? Appointment.fromJson(json['appointment'])
         : null;
     user = json['user'] != null ? Profile.fromJson(json['user']) : null;
+    role = json['role'];
   }
 
   Map<String, dynamic> toJson() {
@@ -165,6 +162,9 @@ class AppointmentData {
     }
     if (user != null) {
       data['user'] = user!.toJson();
+    }
+    if (role != null) {
+      data['role'] = role;
     }
     return data;
   }

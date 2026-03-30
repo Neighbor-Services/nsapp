@@ -134,12 +134,10 @@ class DialogUtils {
 
   static void addToCalendar(Appointment appointment) async {
     final start =
-        appointment.appointmentDate ?? appointment.startDate ?? DateTime.now();
-    final end = appointment.endDate ?? start.add(const Duration(hours: 1));
+        appointment.appointmentDate ?? DateTime.now();
 
     final dtstamp = DateFormat("yyyyMMdd'T'HHmmss'Z'").format(DateTime.now());
     final dtstart = DateFormat("yyyyMMdd'T'HHmmss'Z'").format(start.toUtc());
-    final dtend = DateFormat("yyyyMMdd'T'HHmmss'Z'").format(end.toUtc());
 
     final summary = appointment.title ?? "Service Appointment";
     final description = appointment.description ?? "";
@@ -152,7 +150,6 @@ class DialogUtils {
         "UID:${appointment.id}@neighborservice.com\n"
         "DTSTAMP:$dtstamp\n"
         "DTSTART:$dtstart\n"
-        "DTEND:$dtend\n"
         "SUMMARY:$summary\n"
         "DESCRIPTION:$description\n"
         "END:VEVENT\n"

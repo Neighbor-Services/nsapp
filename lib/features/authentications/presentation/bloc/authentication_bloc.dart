@@ -13,6 +13,7 @@ import 'package:nsapp/features/authentications/domain/usecase/verify_registered_
 import 'package:nsapp/features/authentications/domain/usecase/request_password_reset_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/verify_email_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/send_email_verification_use_case.dart';
+import 'package:nsapp/core/services/background_notification_service.dart';
 
 part 'authentication_event.dart';
 
@@ -89,6 +90,7 @@ class AuthenticationBloc
     });
     on<LogoutAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
+      BackgroundNotificationService.disconnectForeground();
       final results = await logoutUseCase.call(event);
       results.fold(
         (l) => emit(FailureLoginAuthenticationState()),

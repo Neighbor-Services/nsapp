@@ -72,8 +72,6 @@ class MediaChatWidget extends StatelessWidget {
                           sender: SuccessGetProfileState.profile.user!.id!,
                           receiver: MessageReceiverState.profile.user!.id!,
                           calenderDate: DateTime.now(),
-                          calenderEndDate: DateTime.now(),
-                          calenderStartDate: DateTime.now(),
                         );
                         context.read<MessageBloc>().add(
                           ChatEvent(message: message),

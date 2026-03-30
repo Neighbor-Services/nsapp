@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/core/models/request_data.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
@@ -226,7 +227,7 @@ class _ProviderAcceptedRequestPageState
 
     final isApproved = request.approved ?? false;
     final isAssignedToMe =
-        request.approvedUser == requestAcceptance.provider?.id;
+        request.approvedUser == SuccessGetProfileState.profile.user?.id;
     final status = request.status ?? 'OPEN';
 
     return GestureDetector(

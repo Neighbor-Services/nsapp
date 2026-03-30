@@ -417,7 +417,7 @@ class _AboutPageState extends State<AboutPage>
               style: TextStyle(
                 color: isBorder ? context.appColors.primaryColor : Colors.white,
                 fontWeight: FontWeight.w900,
-                fontSize: 13,
+                fontSize: 9,
                 letterSpacing: 1.0,
               ),
             ),

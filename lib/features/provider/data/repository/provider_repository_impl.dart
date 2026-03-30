@@ -157,6 +157,11 @@ class ProviderRepositoryImpl extends ProviderRepository {
   }) async {
     try {
       final results = await datasource.addAppointment(appointment: appointment);
+      if (results) {
+        await hiveService
+            .getBox(HiveService.appointmentBox)
+            .delete('provider_appointments');
+      }
       return Right(results);
     } catch (e) {
       return Left(Failure(massege: "An error occurred"));
@@ -167,6 +172,7 @@ class ProviderRepositoryImpl extends ProviderRepository {
   Future<Either<Failure, List<AppointmentData>>> getAppointments() async {
     try {
       final results = await datasource.getAppointment();
+      print(results?.length);
       if (results != null) {
         await hiveService
             .getBox(HiveService.appointmentBox)

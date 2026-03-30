@@ -12,6 +12,8 @@ import 'package:get/get.dart';
 
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/core/services/background_notification_service.dart';
+import 'package:nsapp/core/services/device_token_service.dart';
 
 class LoginAuthPage extends StatefulWidget {
   const LoginAuthPage({super.key});
@@ -114,6 +116,10 @@ class _LoginAuthPageState extends State<LoginAuthPage>
 
               if (state is SuccessLoginAuthenticationState ||
                   state is SuccessGoogleRegisterAuthenticationState) {
+                // Start foreground WebSocket (works on both Android & iOS)
+                BackgroundNotificationService.connectForeground();
+                // Register device token for native push (iOS)
+                DeviceTokenService.tryRegisterStoredToken();
                 context.read<ProfileBloc>().add(GetProfileEvent());
               }
 

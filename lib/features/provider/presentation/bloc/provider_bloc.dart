@@ -187,6 +187,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       });
     });
     on<GetAppointmentsEvent>((event, emit) async {
+      emit(LoadingProviderState());
       final results = await getAppointmentsUseCase(event);
       results.fold(
         (l) {

@@ -5,10 +5,15 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
+import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
+import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/core/core.dart';
 
 class AppointmentDetailBottomSheet extends StatefulWidget {
@@ -62,11 +67,8 @@ class _AppointmentDetailBottomSheetState
       id: appt.id,
       title: _titleController.text,
       description: _descriptionController.text,
-      userId: appt.userId,
+      seekerId: appt.seekerId,
       providerId: appt.providerId,
-      startDate: _selectedDate,
-      endDate: appt.endDate,
-      scheduledTime: _selectedDate,
       appointmentDate: _selectedDate,
       status: appt.status,
       totalPrice: appt.totalPrice,
@@ -153,12 +155,37 @@ class _AppointmentDetailBottomSheetState
                     ),
                   )
                 else
-                  CustomTextWidget(
-                    text: (appt.title ?? "Appointment Details").toUpperCase(),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: contentColor,
-                    letterSpacing: 1.0,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: CustomTextWidget(
+                          text: (appt.title ?? "Appointment Details").toUpperCase(),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: contentColor,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      if (widget.data.role != null)
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: context.appColors.secondaryColor.withAlpha(40),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: context.appColors.secondaryColor, width: 1),
+                          ),
+                          child: Text(
+                            widget.data.role!.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: context.appColors.secondaryColor,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 const SizedBox(height: 8),
               ],
@@ -235,7 +262,7 @@ class _AppointmentDetailBottomSheetState
                 icon: Icons.person_outline_rounded,
                 title: "Participant",
                 subtitle: user != null
-                    ? "${user.firstName ?? ''} ${user.lastName ?? ''}".trim()
+                    ? (user.firstName ?? '').trim()
                     : "Unknown User",
                 trailing: user?.userType?.toUpperCase() ?? "",
               ),
@@ -287,6 +314,80 @@ class _AppointmentDetailBottomSheetState
                   height: 1.6,
                 ),
               ),
+            if (!_isEditing && appt.serviceRequest != null) ...[
+              const Divider(height: 48),
+              CustomTextWidget(
+                text: "LINKED REQUEST",
+                fontWeight: FontWeight.w900,
+                fontSize: 14,
+                color: context.appColors.secondaryTextColor,
+                letterSpacing: 1.0,
+              ),
+              const SizedBox(height: 16),
+              _buildInfoSection(
+                context,
+                icon: Icons.assignment_rounded,
+                title: "Original Title",
+                subtitle: appt.serviceRequest?.title ?? "N/A",
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () {
+                    final req = appt.serviceRequest;
+                    Get.back();
+                    if (req == null) return;
+                    if (req.userId == SuccessGetProfileState.profile.user?.id && !DashboardState.isProvider) {
+                      final requestData = RequestData(
+                        request: req,
+                        user: widget.data.user,
+                      );
+                      context.read<SeekerBloc>().add(
+                        SeekerRequestDetailEvent(request: requestData),
+                      );
+                      context.read<SeekerBloc>().add(
+                        NavigateSeekerEvent(
+                          page: 1,
+                          widget: const SeekerRequestDetailsPage(),
+                        ),
+                      );  
+                    } else if (DashboardState.isProvider) {
+                      final requestData = RequestData(
+                        request: req,
+                        user: widget.data.user,
+                      );
+                      context.read<ProviderBloc>().add(
+                        RequestDetailEvent(request: requestData),
+                      );
+                      context.read<ProviderBloc>().add(
+                        ReloadProfileEvent(request: requestData.request!.id!),
+                      );
+                      context.read<ProviderBloc>().add(
+                        NavigateProviderEvent(
+                          page: 1,
+                          widget: const ProviderRequestDetailPage(),
+                        ),
+                      );
+                    }
+                  },
+                  icon: Icon(
+                    Icons.open_in_new_rounded,
+                    size: 18,
+                    color: context.appColors.primaryColor,
+                  ),
+                  label: Text(
+                    "VIEW FULL DETAILS",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: context.appColors.primaryColor,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 40),
             if (_isEditing)
               Row(
