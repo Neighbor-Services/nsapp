@@ -221,7 +221,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                         border: Border.all(color: borderColor, width: 0.5),
                       ),
                       child: Text(
-                        ["S", "M", "T", "W", "T", "F", "S"][day],
+                        ["M", "T", "W", "T", "F", "S", "S"][day],
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
                           fontWeight: FontWeight.w900,

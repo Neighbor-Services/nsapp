@@ -153,4 +153,30 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       return Left(Failure(massege: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> loginWithApple() async {
+    try {
+      final results = await dataSource.loginWithApple();
+      if (results) {
+        return Right(results);
+      }
+      return Left(Failure(massege: "An error occurred"));
+    } catch (e) {
+      return Left(Failure(massege: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteAccount() async {
+    try {
+      final results = await dataSource.deleteAccount();
+      if (results) {
+        return Right(results);
+      }
+      return Left(Failure(massege: "An error occurred"));
+    } catch (e) {
+      return Left(Failure(massege: e.toString()));
+    }
+  }
 }

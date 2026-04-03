@@ -44,3 +44,7 @@ class SuccessSendEmailVerificationState extends AuthenticationState {}
 class FailureVerifyEmailState extends AuthenticationState {}
 
 class SuccessVerifyEmailState extends AuthenticationState {}
+
+class SuccessDeleteAccountState extends AuthenticationState {}
+
+class FailureDeleteAccountState extends AuthenticationState {}

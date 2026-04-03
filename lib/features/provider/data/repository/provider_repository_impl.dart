@@ -260,6 +260,21 @@ class ProviderRepositoryImpl extends ProviderRepository {
   }
 
   @override
+  Future<Either<Failure, RequestData>> getRequestById({
+    required String id,
+  }) async {
+    try {
+      final results = await datasource.getRequestById(id: id);
+      if (results != null) {
+        return Right(results);
+      }
+      return Left(Failure(massege: "Not found"));
+    } catch (e) {
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
+  @override
   Future<Either<Failure, bool>> cancelAppointment({required String id}) async {
     try {
       final isSuccess = await datasource.cancelAppointment(id: id);

@@ -325,7 +325,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          getServiceName(favorite.favoriteUser!.service!).toUpperCase(),
+                          getServiceName(favorite.favoriteUser!.service ?? favorite.favoriteUser!.catalogServiceName ?? "").toUpperCase(),
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,

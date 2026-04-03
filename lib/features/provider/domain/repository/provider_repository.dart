@@ -16,6 +16,7 @@ abstract class ProviderRepository {
   Future<Either<Failure, List<RequestData>>> getRequests({
     RequestSearchParams? params,
   });
+  Future<Either<Failure, RequestData>> getRequestById({required String id});
   Future<Either<Failure, bool>> acceptRequest({
     required String uid,
     required String requestId,

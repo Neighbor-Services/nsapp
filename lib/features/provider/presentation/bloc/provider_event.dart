@@ -148,3 +148,8 @@ class UpdateProviderAppointmentEvent extends ProviderEvent {
 
   UpdateProviderAppointmentEvent({required this.appointment});
 }
+
+class GetRequestDetailEvent extends ProviderEvent {
+  final String id;
+  GetRequestDetailEvent({required this.id});
+}

@@ -13,6 +13,8 @@ import 'package:nsapp/features/authentications/domain/usecase/verify_registered_
 import 'package:nsapp/features/authentications/domain/usecase/request_password_reset_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/verify_email_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/send_email_verification_use_case.dart';
+import 'package:nsapp/features/authentications/domain/usecase/login_with_apple_use_case.dart';
+import 'package:nsapp/features/authentications/domain/usecase/delete_account_use_case.dart';
 import 'package:nsapp/core/services/background_notification_service.dart';
 
 part 'authentication_event.dart';
@@ -32,6 +34,8 @@ class AuthenticationBloc
   final VerifyEmailUseCase verifyEmailUseCase;
   final SendEmailVerificationUseCase sendEmailVerificationUseCase;
   final RequestPasswordResetUseCase requestPasswordResetUseCase;
+  final LoginWithAppleUseCase loginWithAppleUseCase;
+  final DeleteAccountUseCase deleteAccountUseCase;
   final FlutterSecureStorage secureStorage;
 
   AuthenticationBloc(
@@ -46,6 +50,8 @@ class AuthenticationBloc
     this.verifyEmailUseCase,
     this.sendEmailVerificationUseCase,
     this.requestPasswordResetUseCase,
+    this.loginWithAppleUseCase,
+    this.deleteAccountUseCase,
     this.secureStorage,
   ) : super(InitialAuthenticationState()) {
     on<LoginAuthenticationEvent>((event, emit) async {
@@ -161,6 +167,22 @@ class AuthenticationBloc
       results.fold(
         (l) => emit(FailureSendEmailVerificationState()),
         (r) => emit(SuccessSendEmailVerificationState()),
+      );
+    });
+    on<LoginWithAppleAuthenticationEvent>((event, emit) async {
+      emit(LoadingAuthenticationState());
+      final results = await loginWithAppleUseCase.call();
+      results.fold(
+        (l) => emit(FailureLoginAuthenticationState()),
+        (r) => emit(SuccessLoginAuthenticationState()),
+      );
+    });
+    on<DeleteAccountEvent>((event, emit) async {
+      emit(LoadingAuthenticationState());
+      final results = await deleteAccountUseCase.call();
+      results.fold(
+        (l) => emit(FailureDeleteAccountState()),
+        (r) => emit(SuccessDeleteAccountState()),
       );
     });
   }

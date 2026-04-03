@@ -60,7 +60,12 @@ class FailureAddAppointmentState extends ProviderState {}
 class FailureAddPortfolioItemState extends ProviderState {}
 
 class SuccessAddServicePackageState extends ProviderState {
-  static ServicePackage? package;
+  static ServicePackage package = ServicePackage();
+  SuccessAddServicePackageState();
+}
+
+class SuccessGetRequestDetailState extends ProviderState {
+  static RequestData request = RequestData();
 }
 
 class FailureAddServicePackageState extends ProviderState {

@@ -56,3 +56,7 @@ class RequestPasswordResetEvent extends AuthenticationEvent {
 
   RequestPasswordResetEvent({required this.email});
 }
+
+class LoginWithAppleAuthenticationEvent extends AuthenticationEvent {}
+
+class DeleteAccountEvent extends AuthenticationEvent {}

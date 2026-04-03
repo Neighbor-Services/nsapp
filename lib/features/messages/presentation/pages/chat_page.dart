@@ -452,6 +452,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         context.read<MessageBloc>().add(
           ChatEvent(
             message: Message(
+              chatRoomId: Helpers.createChatRoom(
+                sender: senderId,
+                receiver: receiverId,
+              ),
               message: text,
               sender: senderId,
               receiver: receiverId,
@@ -530,6 +534,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         context.read<MessageBloc>().add(
           ChatEvent(
             message: Message(
+              chatRoomId: Helpers.createChatRoom(
+                sender: senderId,
+                receiver: receiverId,
+              ),
               message: "Sent an image",
               sender: senderId,
               receiver: receiverId,
@@ -743,6 +751,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       context.read<MessageBloc>().add(
         ChatEvent(
           message: Message(
+            chatRoomId: Helpers.createChatRoom(
+              sender: senderId,
+              receiver: receiverId,
+            ),
             message: "Suggested Appointment",
             sender: senderId,
             receiver: receiverId,

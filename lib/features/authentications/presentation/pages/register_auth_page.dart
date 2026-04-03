@@ -28,6 +28,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
   late Animation<Offset> _slideAnimation;
   GlobalKey<FormState> key = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _acceptTerms = false;
 
   @override
   void initState() {
@@ -192,14 +193,26 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 32),
-                                    // Sign Up Button
-                                    SolidButton(
-                                      label: "SIGN UP",
-                                      allCaps: true,
-                                      isLoading: _isLoading,
-                                      onPressed: () {
-                                        if (key.currentState!.validate()) {
+                                     const SizedBox(height: 16),
+                                     _buildTermsCheckbox(),
+                                     const SizedBox(height: 32),
+                                     // Sign Up Button
+                                     SolidButton(
+                                       label: "SIGN UP",
+                                       allCaps: true,
+                                       isLoading: _isLoading,
+                                       onPressed: () {
+                                         if (!_acceptTerms) {
+                                           Get.snackbar(
+                                             "Required",
+                                             "Please accept our terms and conditions to proceed",
+                                             snackPosition: SnackPosition.BOTTOM,
+                                             backgroundColor: context.appColors.errorColor.withAlpha(200),
+                                             colorText: Colors.white,
+                                           );
+                                           return;
+                                         }
+                                         if (key.currentState!.validate()) {
                                           context
                                               .read<AuthenticationBloc>()
                                               .add(
@@ -254,14 +267,23 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                       allCaps: true,
                                       imagePath: googleLogo,
                                       isPrimary: false,
-                                      onPressed: () {
-                                        context.read<AuthenticationBloc>().add(
-                                          RegisterWithGoogleAuthenticationEvent(),
-                                        );
-                                      },
+                                       onPressed: () {
+                                         if (!_acceptTerms) {
+                                           Get.snackbar(
+                                             "Required",
+                                             "Please accept our terms and conditions to proceed",
+                                             snackPosition: SnackPosition.BOTTOM,
+                                             backgroundColor: context.appColors.errorColor.withAlpha(200),
+                                             colorText: Colors.white,
+                                           );
+                                           return;
+                                         }
+                                         context.read<AuthenticationBloc>().add(
+                                           RegisterWithGoogleAuthenticationEvent(),
+                                         );
+                                       },
                                     ),
                                     const SizedBox(height: 24),
-                                    _buildLegalText("By signing up, you agree to our\n"),
                                   ],
                                 ),
                               ),
@@ -348,38 +370,57 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
     );
   }
 
-  Widget _buildLegalText(String prefix) {
-    return Center(
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          style: TextStyle(
-            color: context.appColors.secondaryTextColor,
-            fontSize: 12,
-            height: 1.5,
+  Widget _buildTermsCheckbox() {
+    return Row(
+      children: [
+        Theme(
+          data: ThemeData(
+            unselectedWidgetColor: context.appColors.secondaryTextColor,
           ),
-          children: [
-            TextSpan(text: prefix),
-            TextSpan(
-              text: "Terms and Conditions",
-              style: TextStyle(
-                color: context.appColors.primaryTextColor,
-                fontWeight: FontWeight.bold,
-              ),
-              recognizer: TapGestureRecognizer()..onTap = () => Get.toNamed('/legal', arguments: 'TERMS'),
-            ),
-            const TextSpan(text: " and "),
-            TextSpan(
-              text: "Privacy Policy",
-              style: TextStyle(
-                color: context.appColors.primaryTextColor,
-                fontWeight: FontWeight.bold,
-              ),
-              recognizer: TapGestureRecognizer()..onTap = () => Get.toNamed('/legal', arguments: 'PRIVACY'),
-            ),
-          ],
+          child: Checkbox(
+            value: _acceptTerms,
+            activeColor: context.appColors.primaryColor,
+            onChanged: (val) {
+              setState(() {
+                _acceptTerms = val ?? false;
+              });
+            },
+          ),
         ),
-      ),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(
+                color: context.appColors.secondaryTextColor,
+                fontSize: 12,
+                height: 1.5,
+              ),
+              children: [
+                const TextSpan(text: "I accept the "),
+                TextSpan(
+                  text: "Terms and Conditions",
+                  style: TextStyle(
+                    color: context.appColors.primaryTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => Get.toNamed('/legal', arguments: 'TERMS'),
+                ),
+                const TextSpan(text: " and "),
+                TextSpan(
+                  text: "Privacy Policy",
+                  style: TextStyle(
+                    color: context.appColors.primaryTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => Get.toNamed('/legal', arguments: 'PRIVACY'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

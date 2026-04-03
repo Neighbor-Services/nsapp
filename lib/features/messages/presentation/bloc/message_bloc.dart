@@ -43,10 +43,9 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
         channel!.sink.close();
       }
       final token = await Helpers.getString("token");
-      channel = IOWebSocketChannel.connect(
-        '$baseMessagesWsUrl/ws/${Helpers.createChatRoom(sender: event.sender, receiver: event.receiver)}',
-        headers: {"Authorization": "Bearer $token"},
-      );
+      final url = '$baseMessagesWsUrl/ws/${Helpers.createChatRoom(sender: event.sender, receiver: event.receiver)}/?token=$token';
+      print("Connecting to WebSocket: $url");
+      channel = IOWebSocketChannel.connect(Uri.parse(url));
 
       ChatStatusState.targetUserId = event.receiver;
 
@@ -81,9 +80,12 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
             }
           }
         },
-        onError: (error) {},
+        onError: (error) {
+          print("WS Error: $error");
+        },
         onDone: () async {
-          // Reconnect logic
+          print("WS Closed");
+          // Reconnect logic typically handled by adding ConnectWebSocketEvent again after a delay
         },
       );
       emit(SuccessGetMessageState());
@@ -97,8 +99,11 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       emit(ChatStatusState());
     });
     on<ChatEvent>((event, emit) async {
-      channel?.sink.add(json.encode(event.message.toJson()));
-      emit(SuccessGetMyMessagesState());
+      final jsonMsg = json.encode(event.message.toJson());
+      print("Sending WS Message: $jsonMsg");
+      channel?.sink.add(jsonMsg);
+      // Don't emit SuccessGetMyMessagesState here as it belongs to the conversation list
+      // Instead, we stay on the current state and wait for the message to return via the stream
     });
     on<DeleteMessageEvent>((event, emit) async {
       final results = await deleteMessageUseCase(event.message);

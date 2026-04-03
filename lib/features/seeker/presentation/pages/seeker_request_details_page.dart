@@ -12,7 +12,6 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
-import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -296,10 +295,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                             ],
                                           ),
                                         ),
-                                        _getStatusBadge(
-                                          snapshot.data!.request!
-                                         
-                                        ),
+                                        
                                       ],
                                     ),
                                     const SizedBox(height: 24),
@@ -469,44 +465,44 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     );
   }
 
-  Widget _getStatusBadge(Request request) {
-    Color color = context.appColors.warningColor;
-    String text = "Pending";
+  // Widget _getStatusBadge(Request request) {
+  //   Color color = context.appColors.warningColor;
+  //   String text = "Pending";
 
-    if (request.done == true || request.status == 'DONE') {
-      color = context.appColors.warningColor;
-      text = "Completed";
-    } else if (request.status == 'IN_PROGRESS') {
-      color = context.appColors.warningColor;
-      text = "Active";
-    } else if (request.approved == true) {
-      if (request.isFunded == true) {
-        color = context.appColors.warningColor;
-        text = "Active";
-      } else {
-        color = context.appColors.warningColor;
-        text = "Approved, Pending Funding";
-      }
-    }
+  //   if (request.done == true || request.status == 'DONE') {
+  //     color = context.appColors.warningColor;
+  //     text = "Completed";
+  //   } else if (request.status == 'IN_PROGRESS') {
+  //     color = context.appColors.warningColor;
+  //     text = "Active";
+  //   } else if (request.approved == true) {
+  //     if (request.isFunded == true) {
+  //       color = context.appColors.warningColor;
+  //       text = "Active";
+  //     } else {
+  //       color = context.appColors.warningColor;
+  //       text = "Approved, Pending Funding";
+  //     }
+  //   }
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: context.appColors.warningColor.withAlpha(40),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withAlpha(150), width: 1.5),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: color,
-          fontSize: 11,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 1.0,
-        ),
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //     decoration: BoxDecoration(
+  //       color: context.appColors.warningColor.withAlpha(40),
+  //       borderRadius: BorderRadius.circular(10),
+  //       border: Border.all(color: color.withAlpha(150), width: 1.5),
+  //     ),
+  //     child: Text(
+  //       text,
+  //       style: TextStyle(
+  //         color: color,
+  //         fontSize: 11,
+  //         fontWeight: FontWeight.w900,
+  //         letterSpacing: 1.0,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _showDeleteConfirmation(BuildContext context, String requestId) {
     final textColor = context.appColors.primaryTextColor;
@@ -873,9 +869,9 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
         onPressed: () {
           final requestId = SeekerRequestDetailState.request.request?.id;
           final proposalId = acceptedProvider.acceptance?.id;
-          final userId = user?.id;
+          final userId = user?.id ?? provider?.id ?? "unknown";
 
-          if (requestId != null && proposalId != null && userId != null) {
+          if (requestId != null && proposalId != null) {
             context.read<SeekerBloc>().add(
               ApprovedRequestEvent(
                 requestAccept: RequestAccept(

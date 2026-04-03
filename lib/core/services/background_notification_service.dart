@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/services/local_notification_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
@@ -40,13 +40,11 @@ class BackgroundNotificationService {
     if (!_foregroundConnected) return;
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString("token") ?? "";
-
+      final token = await Helpers.getString("token");
       if (token.isEmpty) {
-        debugPrint("DEBUG [Foreground WS]: No token. Retrying in 30s...");
+        debugPrint("DEBUG [Foreground WS]: No token. Retrying in 10s...");
         _foregroundReconnectTimer = Timer(
-          const Duration(seconds: 30),
+          const Duration(seconds: 10),
           _connectForegroundWebSocket,
         );
         return;
@@ -178,14 +176,12 @@ class BackgroundNotificationService {
 
   static void _connectAndroidBackgroundWebSocket(ServiceInstance service) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString("token") ?? "";
-
+      final token = await Helpers.getString("token");
       if (token.isEmpty) {
-        debugPrint("DEBUG [Android BG WS]: No token found. Retrying in 1 minute...");
+        debugPrint("DEBUG [Android BG WS]: No token found. Retrying in 30s...");
         _reconnectTimer?.cancel();
         _reconnectTimer = Timer(
-          const Duration(minutes: 1),
+          const Duration(seconds: 30),
           () => _connectAndroidBackgroundWebSocket(service),
         );
         return;

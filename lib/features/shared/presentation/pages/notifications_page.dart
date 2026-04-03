@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/notification.dart' as not;
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
+import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 
-import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
-import '../../../provider/presentation/bloc/provider_bloc.dart';
-import '../../../seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
+import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' hide GetAppointmentsEvent;
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' as provider_bloc show GetAppointmentsEvent;
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' hide GetAppointmentsEvent;
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as seeker_bloc show GetAppointmentsEvent;
 import '../bloc/shared_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -519,16 +525,48 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
   }
 
-  void _navigateToDetails(
+  Future<void> _navigateToDetails(
     BuildContext context,
     not.NotificationData notificationData,
-  ) {
-    Get.back();
-    switch (notificationData.notification!.notificationType?.toLowerCase()) {
+  ) async {
+    final notification = notificationData.notification;
+    final data = notification?.data;
+    final type = notification?.notificationType?.toLowerCase();
+
+    // Show loading for types that require data fetching
+    bool showLoading = false;
+    if (type == "message" ||
+        type == "proposal" ||
+        type == "request" ||
+        type == "direct_request") {
+      showLoading = true;
+    }
+
+    Get.back(); // Close bottom sheet
+
+    if (showLoading) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: LoadingWidget()),
+      );
+    }
+
+    switch (type) {
       case "message":
-        context.read<MessageBloc>().add(
-          SetMessageReceiverEvent(profile: notificationData.from!),
-        );
+        // Navigate to the specific chat with the sender
+        if (notificationData.from != null) {
+          context.read<MessageBloc>().add(
+            SetMessageReceiverEvent(profile: notificationData.from!),
+          );
+          // Wait for state update
+          await context.read<MessageBloc>().stream.firstWhere(
+                (state) => state is MessageReceiverState,
+              ).timeout(const Duration(seconds: 5), onTimeout: () => MessageReceiverState());
+        }
+        
+        if (showLoading) Navigator.pop(context);
+
         if (DashboardState.isProvider) {
           context.read<ProviderBloc>().add(
             NavigateProviderEvent(page: 4, widget: const ChatPage()),
@@ -539,22 +577,52 @@ class _NotificationsPageState extends State<NotificationsPage>
           );
         }
         break;
+
       case "proposal":
       case "request":
+      case "direct_request":
+        final requestId = data?['request_id']?.toString();
         if (DashboardState.isProvider) {
-          if (notificationData.notification!.notificationType?.toLowerCase() ==
-                  "proposal" &&
-              notificationData.from != null) {
+          if (requestId != null && requestId.isNotEmpty) {
+            // Fetch the specific request, then navigate to it
+            context.read<ProviderBloc>().add(
+              GetRequestDetailEvent(id: requestId),
+            );
+
+            // Wait for data
+            final state = await context.read<ProviderBloc>().stream.firstWhere(
+              (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
+            ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
+
+            if (showLoading) Navigator.pop(context);
+
+            if (state is SuccessGetRequestDetailState) {
+              context.read<ProviderBloc>().add(
+                NavigateProviderEvent(
+                  page: 1,
+                  widget: const ProviderRequestDetailPage(),
+                ),
+              );
+            } else {
+              customAlert(context, AlertType.error, "Failed to load request details");
+            }
+          } else if (type == "proposal" && notificationData.from != null) {
+            // For proposals, go to chat for appointment scheduling
             context.read<MessageBloc>().add(
               SetMessageReceiverEvent(profile: notificationData.from!),
             );
             context.read<MessageBloc>().add(
               CalenderAppointmentEvent(setAppointment: true),
             );
+            
+            if (showLoading) Navigator.pop(context);
+
             context.read<ProviderBloc>().add(
               NavigateProviderEvent(page: 4, widget: const ChatPage()),
             );
           } else {
+            if (showLoading) Navigator.pop(context);
+
             context.read<ProviderBloc>().add(
               NavigateProviderEvent(
                 page: 3,
@@ -563,11 +631,77 @@ class _NotificationsPageState extends State<NotificationsPage>
             );
           }
         } else {
-          context.read<SeekerBloc>().add(
-            NavigateSeekerEvent(page: 4, widget: const SeekerRequestPage()),
-          );
+          // Seeker: navigate to specific request details if we have the ID
+          if (requestId != null && requestId.isNotEmpty) {
+            context.read<ProviderBloc>().add(
+              GetRequestDetailEvent(id: requestId),
+            );
+
+            // Wait for data
+            final state = await context.read<ProviderBloc>().stream.firstWhere(
+              (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
+            ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
+
+            if (showLoading) Navigator.pop(context);
+
+            if (state is SuccessGetRequestDetailState) {
+              final requestData = SuccessGetRequestDetailState.request;
+              requestData.user = notificationData.from;
+              
+              if (requestData.request?.userId != SuccessGetProfileState.profile.user?.id) {
+                customAlert(context, AlertType.error, "You can't view this request");
+                return;
+              }
+              
+              context.read<SeekerBloc>().add(
+                SeekerRequestDetailEvent(request: requestData),
+              );
+              context.read<SeekerBloc>().add(
+                NavigateSeekerEvent(
+                  page: 1,
+                  widget: const SeekerRequestDetailsPage(),
+                ),
+              );
+            } else {
+              customAlert(context, AlertType.error, "Failed to load request details");
+            }
+          } else {
+            if (showLoading) Navigator.pop(context);
+
+            context.read<SeekerBloc>().add(
+              NavigateSeekerEvent(
+                page: 4,
+                widget: const SeekerRequestPage(),
+              ),
+            );
+          }
         }
         break;
+
+      case "appointment":
+        final appointmentId = data?['appointment_id']?.toString();
+        if (appointmentId != null && appointmentId.isNotEmpty) {
+          // Navigate to the appointments tab and refresh
+          if (DashboardState.isProvider) {
+            context.read<ProviderBloc>().add(provider_bloc.GetAppointmentsEvent());
+            context.read<ProviderBloc>().add(
+              NavigateProviderEvent(
+                page: 2,
+                widget: const ProviderAcceptedRequestPage(),
+              ),
+            );
+          } else {
+            context.read<SeekerBloc>().add(seeker_bloc.GetAppointmentsEvent());
+            context.read<SeekerBloc>().add(
+              NavigateSeekerEvent(
+                page: 3,
+                widget: const SeekerRequestPage(),
+              ),
+            );
+          }
+        }
+        break;
+
       default:
         break;
     }

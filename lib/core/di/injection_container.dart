@@ -17,6 +17,8 @@ import 'package:nsapp/features/authentications/domain/usecase/verify_registered_
 import 'package:nsapp/features/authentications/domain/usecase/request_password_reset_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/verify_email_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/send_email_verification_use_case.dart';
+import 'package:nsapp/features/authentications/domain/usecase/login_with_apple_use_case.dart';
+import 'package:nsapp/features/authentications/domain/usecase/delete_account_use_case.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/messages/data/datasource/remote/message_remote_datasource.dart';
 import 'package:nsapp/features/messages/data/datasource/remote/message_remote_datasource_impl.dart';
@@ -65,6 +67,7 @@ import 'package:nsapp/features/provider/domain/usecase/complete_appointment_use_
     as provider_complete;
 import 'package:nsapp/features/provider/domain/usecase/update_appointment_use_case.dart'
     as provider_update_appt;
+import 'package:nsapp/features/provider/domain/usecase/get_request_detail_use_case.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/data/datasource/remote/seeker_remote_datasource.dart';
 import 'package:nsapp/features/seeker/data/datasource/remote/seeker_remote_datasource_impl.dart';
@@ -187,6 +190,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RequestPasswordResetUseCase(sl()));
   sl.registerLazySingleton(() => VerifyEmailUseCase(sl()));
   sl.registerLazySingleton(() => SendEmailVerificationUseCase(sl()));
+  sl.registerLazySingleton(() => LoginWithAppleUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteAccountUseCase(sl()));
 
   // Messsages
   sl.registerLazySingleton(() => GetMessagesUseCase(sl()));
@@ -232,6 +237,7 @@ Future<void> init() async {
   sl.registerLazySingleton(
     () => provider_complete.CompleteAppointmentUseCase(sl()),
   );
+  sl.registerLazySingleton(() => GetRequestDetailUseCase(sl()));
 
   // Seeker
   sl.registerLazySingleton(() => CreateRequestUseCase(sl()));
@@ -298,6 +304,8 @@ Future<void> init() async {
       sl(),
       sl(),
       sl(),
+      sl(),
+      sl(),
     ),
   );
 
@@ -323,6 +331,7 @@ Future<void> init() async {
       sl(),
       sl(),
       sl(),
+      sl(), // GetRequestDetailUseCase
     ),
   );
 

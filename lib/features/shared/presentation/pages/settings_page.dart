@@ -387,6 +387,19 @@ class _SettingsPageState extends State<SettingsPage>
                               onTap: () => _showLogoutDialog(context),
                             ),
                           ]),
+                          const SizedBox(height: 24),
+                          _buildSectionHeader("Danger Zone"),
+                           const SizedBox(height: 12),
+                          _buildSettingsCard(context, [
+                            _buildSettingsTile(
+                              context: context,
+                              icon: Icons.delete_forever_rounded,
+                              iconColor: context.appColors.errorColor,
+                              title: "Delete Account",
+                              subtitle: "Permanently delete your account",
+                              onTap: () => _showDeleteAccountDialog(context),
+                            ),
+                          ]),
                           const SizedBox(height: 40),
                         ],
                       ),
@@ -547,6 +560,61 @@ class _SettingsPageState extends State<SettingsPage>
               },
               label: "LOGOUT",
               isPrimary: true,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: context.appColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            "DELETE ACCOUNT",
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: context.appColors.errorColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+          content: Text(
+            "Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.",
+            style: TextStyle(
+              color: context.appColors.secondaryTextColor,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: context.appColors.secondaryTextColor,
+                ),
+              ),
+            ),
+            SolidButton(
+              onPressed: () {
+                context.read<AuthenticationBloc>().add(
+                  DeleteAccountEvent(),
+                );
+                SuccessGetProfileState.profile = Profile();
+                NavigatorSeekerState.widget = const SeekerHomePage();
+                NavigatorSeekerState.page = 1;
+                NavigatorProviderState.widget = const ProviderHomePage();
+                NavigatorProviderState.page = 1;
+                Get.offAllNamed("/login");
+              },
+              label: "DELETE",
+              isPrimary: true,
+              color: context.appColors.errorColor,
             ),
           ],
         );

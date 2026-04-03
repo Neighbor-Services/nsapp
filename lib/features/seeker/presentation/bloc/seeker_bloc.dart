@@ -223,17 +223,17 @@ class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
 
     on<AddToFavoriteEvent>((event, emit) async {
       final results = await addToFavoriteUseCase(event.userId);
-      results.fold(
-        (l) => emit(FailureAddToFavoriteState()),
-        (r) => emit(SuccessAddToFavoriteState()),
-      );
+      results.fold((l) => emit(FailureAddToFavoriteState()), (r) {
+        add(GetMyFavoritesEvent());
+        emit(SuccessAddToFavoriteState());
+      });
     });
     on<RemoveFromFavoriteEvent>((event, emit) async {
       final results = await removeFromFavoriteUseCase(event.userId);
-      results.fold(
-        (l) => emit(FailureRemoveFromFavoriteState()),
-        (r) => emit(SuccessRemoveFromFavoriteState()),
-      );
+      results.fold((l) => emit(FailureRemoveFromFavoriteState()), (r) {
+        add(GetMyFavoritesEvent());
+        emit(SuccessRemoveFromFavoriteState());
+      });
     });
 
     on<GetMyFavoritesEvent>((event, emit) async {

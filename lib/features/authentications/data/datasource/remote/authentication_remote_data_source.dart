@@ -10,4 +10,6 @@ abstract class AuthenticationRemoteDataSource {
   Future<bool> sendEmailVerification(String email);
   Future<bool> requestPasswordReset(String email);
   Future<bool> logout();
+  Future<bool> loginWithApple();
+  Future<bool> deleteAccount();
 }

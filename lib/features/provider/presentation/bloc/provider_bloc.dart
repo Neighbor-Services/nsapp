@@ -24,6 +24,7 @@ import 'package:nsapp/features/provider/domain/usecase/serach_request_use_case.d
 import 'package:nsapp/features/provider/domain/usecase/add_portfolio_item_use_case.dart';
 import 'package:nsapp/features/provider/domain/usecase/add_service_package_use_case.dart';
 import 'package:nsapp/features/provider/domain/usecase/complete_appointment_use_case.dart';
+import 'package:nsapp/features/provider/domain/usecase/get_request_detail_use_case.dart';
 
 import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
 import 'dart:io';
@@ -53,6 +54,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
   final AddServicePackageUseCase addServicePackageUseCase;
   final CompleteAppointmentUseCase completeAppointmentUseCase;
   final UpdateProviderAppointmentUseCase updateProviderAppointmentUseCase;
+  final GetRequestDetailUseCase getRequestDetailUseCase;
 
   ProviderBloc(
     this.getRecentRequestUseCase,
@@ -70,6 +72,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     this.addServicePackageUseCase,
     this.completeAppointmentUseCase,
     this.updateProviderAppointmentUseCase,
+    this.getRequestDetailUseCase,
   ) : super(ProviderInitial()) {
     on<ProviderEvent>((event, emit) {});
     on<ReloadEvent>((event, emit) {
@@ -388,6 +391,17 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       results.fold(
         (l) => emit(FailureUpdateAppointmentState()),
         (r) => emit(SuccessUpdateAppointmentState()),
+      );
+    });
+    on<GetRequestDetailEvent>((event, emit) async {
+      emit(LoadingProviderState());
+      final results = await getRequestDetailUseCase(event.id);
+      results.fold(
+        (l) => emit(FailureGetRecentRequestState()),
+        (r) {
+          SuccessGetRequestDetailState.request = r;
+          emit(SuccessGetRequestDetailState());
+        },
       );
     });
   }

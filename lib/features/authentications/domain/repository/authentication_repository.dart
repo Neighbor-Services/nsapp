@@ -17,4 +17,6 @@ abstract class AuthenticationRepository {
   Future<Either<Failure, bool>> verifyEmail(String otp);
   Future<Either<Failure, bool>> sentEmailVerification(String email);
   Future<Either<Failure, bool>> requestPasswordReset(String email);
+  Future<Either<Failure, bool>> loginWithApple();
+  Future<Either<Failure, bool>> deleteAccount();
 }

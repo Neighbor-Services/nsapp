@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -277,6 +278,79 @@ class AuthenticationRemoteDataSourceImpl
       if (e is DioException) {
         if (e.type == DioExceptionType.badResponse) {}
       }
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> loginWithApple() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        webAuthenticationOptions: WebAuthenticationOptions(
+          // TODO: Replace with your actual Service ID (clientId) later
+          clientId: 'com.neighborservicesolutionsllc.nsapp.service',
+          redirectUri: Uri.parse(
+            'https://api.neighborservice.com/callbacks/apple',
+          ),
+        ),
+      );
+
+      final String? idToken = credential.identityToken;
+
+      if (idToken == null) return false;
+
+      Map<String, dynamic> data = {
+        "id_token": idToken,
+        "first_name": credential.givenName ?? "",
+        "last_name": credential.familyName ?? ""
+      };
+
+      final response = await dio.post(
+        "$baseUrl/accounts/login-apple/",
+        data: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        final token = response.data;
+        if (credential.email != null) {
+          await Helpers.saveString("email", credential.email!);
+        }
+        final success = await Helpers.saveString(
+          "token",
+          token["access"], 
+        );
+        if (success) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      debugPrint("Apple Login Error: $error");
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deleteAccount() async {
+    try {
+      final token = await Helpers.getString("token");
+      final response = await dio.delete(
+        "$baseUrl/accounts/delete-account/",
+        options: Options(headers: dioHeaders(token)),
+      );
+
+      if (response.statusCode == 200) {
+        await Helpers.deletePref("token");
+        await Helpers.deletePref("email");
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Delete Account Error: $e");
       return false;
     }
   }
