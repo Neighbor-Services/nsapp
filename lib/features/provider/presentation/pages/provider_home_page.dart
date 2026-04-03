@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nsapp/core/core.dart';
+// import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
+// import 'package:nsapp/features/provider/presentation/pages/provider_all_services_page.dart';
+import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_more_requests_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_search_request_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_targeted_requests_page.dart';
 import 'package:nsapp/features/provider/presentation/widgets/provider_recent_request_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/wallet/presentation/pages/wallet_page.dart';
-// import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
-// import 'package:nsapp/features/provider/presentation/pages/provider_all_services_page.dart';
-import 'package:nsapp/core/models/request_acceptance.dart';
-import '../bloc/provider_bloc.dart';
-
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
-import 'package:nsapp/core/core.dart';
+import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
+import 'package:nsapp/features/wallet/presentation/pages/wallet_page.dart';
+
+import '../bloc/provider_bloc.dart';
 
 class ProviderHomePage extends StatefulWidget {
   const ProviderHomePage({super.key});
@@ -111,14 +111,15 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         // const SizedBox(height: 16),
                         // _buildServicesGrid(context),
                         // const SizedBox(height: 32),
-
                         _buildSectionHeader(context, "Explore More"),
                         const SizedBox(height: 16),
                         _buildDirectRequestsCard(context),
                         const SizedBox(height: 16),
                         _buildExploreCard(context),
                         const SizedBox(height: 16),
-                        if (SuccessGetProfileState.profile.preferredPaymentMode !=
+                        if (SuccessGetProfileState
+                                .profile
+                                .preferredPaymentMode !=
                             'ON_SITE') ...[
                           _buildWalletCard(context),
                           const SizedBox(height: 32),
@@ -171,7 +172,8 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                     Text(
                                       "TOTAL BALANCE",
                                       style: TextStyle(
-                                        color: context.appColors.primaryTextColor,
+                                        color:
+                                            context.appColors.primaryTextColor,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 1.2,
@@ -181,7 +183,8 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                     Text(
                                       "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
                                       style: TextStyle(
-                                        color: context.appColors.primaryTextColor,
+                                        color:
+                                            context.appColors.primaryTextColor,
                                         fontSize: 32,
                                         fontWeight: FontWeight.w900,
                                       ),
@@ -210,12 +213,13 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                         width: 1.5,
                                       ),
                                     ),
-                                    child:  Row(
+                                    child: Row(
                                       children: [
                                         Text(
                                           "WALLET",
                                           style: TextStyle(
-                                            color: context.appColors.primaryColor,
+                                            color:
+                                                context.appColors.primaryColor,
                                             fontWeight: FontWeight.w900,
                                             fontSize: 12,
                                             letterSpacing: 1.0,
@@ -278,10 +282,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: context.appColors.glassBorder,
-            width: 1.5,
-          ),
+          border: Border.all(color: context.appColors.glassBorder, width: 1.5),
         ),
         child: Row(
           children: [
@@ -291,7 +292,11 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: context.appColors.primaryColor, size: 20),
+              child: Icon(
+                icon,
+                color: context.appColors.primaryColor,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Column(
@@ -301,7 +306,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   value,
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -309,7 +314,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   label.toUpperCase(),
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
-                    fontSize: 10,
+                    fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.8,
                   ),
@@ -350,10 +355,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: borderColor,
-            width: 1.5,
-          ),
+          border: Border.all(color: borderColor, width: 1.5),
         ),
         child: Row(
           children: [
@@ -375,7 +377,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 color: context.appColors.secondaryColor.withAlpha(40),
                 shape: BoxShape.circle,
               ),
-              child:  Icon(
+              child: Icon(
                 Icons.arrow_forward_rounded,
                 color: context.appColors.secondaryColor,
                 size: 20,
@@ -484,7 +486,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   //           ),
   //           child: Stack(
   //             children: [
-              
+
   //               Padding(
   //                 padding: EdgeInsets.all(20),
   //                 child: Column(
@@ -541,10 +543,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: borderColor,
-            width: 1.5,
-          ),
+          border: Border.all(color: borderColor, width: 1.5),
         ),
         child: Row(
           children: [
@@ -597,7 +596,6 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     final borderColor = context.appColors.glassBorder;
     final textColor = context.appColors.primaryTextColor;
 
-
     return GestureDetector(
       onTap: () {
         if (ValidUserSubscriptionState.isValid) {
@@ -619,10 +617,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: borderColor,
-            width: 1.5,
-          ),
+          border: Border.all(color: borderColor, width: 1.5),
         ),
         child: Row(
           children: [
@@ -675,7 +670,6 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     final borderColor = context.appColors.glassBorder;
     final textColor = context.appColors.primaryTextColor;
 
-
     return GestureDetector(
       onTap: () {
         context.read<ProviderBloc>().add(
@@ -687,10 +681,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         decoration: BoxDecoration(
           color: cardColor,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: borderColor,
-            width: 1.5,
-          ),
+          border: Border.all(color: borderColor, width: 1.5),
         ),
         child: Row(
           children: [

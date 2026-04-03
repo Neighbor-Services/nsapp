@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.neighborservicesolutionsllc.nsapp.refresh</string>
+		<string>com.neighborservicesolutionsllc.nsapp.cleanup</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -23,22 +28,24 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>com.googleusercontent.apps.681650672596-atgvaam5nsbi0ffevhgc55h6rem0m7bm</string>
-				</array>
-			</dict>
-		</array>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.681650672596-atgvaam5nsbi0ffevhgc55h6rem0m7bm</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>GIDClientID</key>
 	<string>681650672596-atgvaam5nsbi0ffevhgc55h6rem0m7bm.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>16.0</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to camera when open.</string>
 	<key>NSFaceIDUsageDescription</key>
@@ -51,8 +58,6 @@
 	<string>Your location is used to provide real-time update on requests and job provider nearby on the map</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to photo library when open.</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -74,20 +79,14 @@
 			</array>
 		</dict>
 	</dict>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>processing</string>
+		<string>remote-notification</string>
 	</array>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>com.neighborservicesolutionsllc.nsapp.refresh</string>
-		<string>com.neighborservicesolutionsllc.nsapp.cleanup</string>
-	</array>
-	<key>MinimumOSVersion</key>
-	<string>16.0</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -97,5 +96,4 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 </dict>
-</plist>
 </plist>
