@@ -48,7 +48,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
             child: SafeArea(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(20.0.r),
                 child: Column(
                   children: [
                     // Glassmorphic Search Bar
@@ -87,11 +87,11 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                         });
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
 
                     // Request Grid
                     SizedBox(
-                      height: size(context).height - 200,
+                      height: size(context).height - 200.h,
                       child: FutureBuilder<List<RequestData>>(
                         future: SuccessSearchRequestState.requests,
                         builder: (context, snapshot) {
@@ -107,10 +107,10 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                   SearchingState.isSearching) {
                                 return Center(
                                   child: SolidContainer(
-                                    padding: EdgeInsets.all(24),
+                                    padding: EdgeInsets.all(24.r),
                                     child: EmptyWidget(
                                       message: "No request matches your search",
-                                      height: 200,
+                                      height: 200.h,
                                     ),
                                   ),
                                 );
@@ -120,10 +120,10 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 physics: const BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                    SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
-                                      crossAxisSpacing: 16,
-                                      mainAxisSpacing: 16,
+                                      crossAxisSpacing: 16.w,
+                                      mainAxisSpacing: 16.h,
                                       childAspectRatio: 0.75,
                                     ),
                                 itemCount: displayList.length,
@@ -156,11 +156,11 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             } else {
                               return Center(
                                 child: SolidContainer(
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(20.r),
                                   child: EmptyWidget(
                                     message:
                                         "No request available at the moment",
-                                    height: 250,
+                                    height: 250.h,
                                   ),
                                 ),
                               );
@@ -214,15 +214,15 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
           },
           child: SolidContainer(
             padding: EdgeInsets.zero,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
             borderColor: context.appColors.glassBorder,
-            borderWidth: 1.5,
+            borderWidth: 1.5.r,
             child: Stack(
               fit: StackFit.expand,
               children: [
                 // Content
                 Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.0.r),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -230,12 +230,12 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                       // Service Tag
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
+                          horizontal: 10.w,
+                          vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
                           color: context.appColors.primaryColor.withAlpha(30),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
                             color: context.appColors.primaryColor.withAlpha(50),
                           ),
@@ -244,7 +244,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           (requestData.request?.service?.name ?? "Service")
                               .toUpperCase(),
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 10.sp,
                             fontWeight: FontWeight.w900,
                             color: context.appColors.primaryColor,
                             letterSpacing: 0.5,
@@ -261,7 +261,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           Text(
                             requestData.request?.title ?? "",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor,
                               letterSpacing: 0.5,
@@ -269,11 +269,11 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8.h),
                           Row(
                             children: [
                               CircleAvatar(
-                                radius: 12,
+                                radius: 12.r,
                                 backgroundColor: context.appColors.glassBorder,
                                 backgroundImage:
                                     (profile.profilePictureUrl != null &&
@@ -285,12 +285,12 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                         profile.profilePictureUrl!.isEmpty)
                                     ? Icon(
                                         Icons.person,
-                                        size: 14,
+                                        size: 14.r,
                                         color: iconColor,
                                       )
                                     : null,
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8.w),
                               Expanded(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -300,7 +300,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                       (profile.firstName ?? "User")
                                           .toUpperCase(),
                                       style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                         fontWeight: FontWeight.w900,
                                         color: textColor,
                                         letterSpacing: 0.5,
@@ -312,16 +312,16 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                       children: [
                                         Icon(
                                           Icons.location_on,
-                                          size: 12,
+                                          size: 12.r,
                                           color: secondaryTextColor,
                                         ),
-                                        const SizedBox(width: 4),
+                                        SizedBox(width: 4.w),
                                         Text(
                                           requestData.request?.distance != null
                                               ? "${requestData.request!.distance!.toStringAsFixed(1)} km"
                                               : "N/A",
                                           style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 12.sp,
                                             color: secondaryTextColor,
                                           ),
                                         ),
@@ -332,7 +332,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.h),
                         ],
                       ),
                     ],
@@ -341,17 +341,17 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
 
                 // Actions Menu
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 8.h,
+                  right: 8.w,
                   child: PopupMenuButton(
                     icon: Icon(Icons.more_horiz_rounded, color: context.appColors.primaryTextColor),
                     color: context.appColors.primaryBackground,
                     surfaceTintColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15.r),
                       side: BorderSide(
                         color: context.appColors.glassBorder,
-                        width: 1.5,
+                        width: 1.5.r,
                       ),
                     ),
                     onSelected: (val) {
@@ -395,15 +395,15 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               Icon(
                                 Icons.remove_red_eye_rounded,
                                 color: popupTextColor,
-                                size: 20,
+                                size: 20.r,
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12.w),
                               Text(
                                 "DETAILS",
                                 style: TextStyle(
                                   color: popupTextColor,
                                   fontWeight: FontWeight.w900,
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
                               ),
@@ -417,15 +417,15 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               Icon(
                                 Icons.chat_bubble_outline_rounded,
                                 color: popupTextColor,
-                                size: 20,
+                                size: 20.r,
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12.w),
                               Text(
                                 "CHAT",
                                 style: TextStyle(
                                   color: popupTextColor,
                                   fontWeight: FontWeight.w900,
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
                               ),

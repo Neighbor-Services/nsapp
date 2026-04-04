@@ -130,7 +130,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              padding: EdgeInsets.all(20),
+                              padding: EdgeInsets.all(20.r),
                               decoration: BoxDecoration(
                                 color: context.appColors.errorColor.withAlpha(20),
                                 shape: BoxShape.circle,
@@ -138,19 +138,19 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                               child:  Icon(
                                 Icons.error_outline_rounded,
                                 color: context.appColors.errorColor,
-                                size: 60,
+                                size: 60.r,
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
                             Text(
                               "Failed to load request details",
                               style: TextStyle(
                                 color: textColor,
-                                fontSize: 18,
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                             SolidButton(
                               label: "Retry",
                               onPressed: () {
@@ -166,8 +166,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                 );
                               },
                               isPrimary: true,
-                              height: 50,
-                              width: 120,
+                              height: 50.h,
+                              width: 120.w,
                             ),
                           ],
                         ),
@@ -176,12 +176,12 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     if (snapshot.hasData) {
                       return Center(
                         child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 800),
+                          constraints: BoxConstraints(maxWidth: 800.w),
                           child: ListView(
                             physics: const BouncingScrollPhysics(),
                             padding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 20,
+                              horizontal: 16.w,
+                              vertical: 20.h,
                             ),
                             children: [
                               // Modified Header
@@ -194,27 +194,27 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       );
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.all(12),
+                                      padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
                                         color: buttonColor,
-                                        borderRadius: BorderRadius.circular(14),
+                                        borderRadius: BorderRadius.circular(14.r),
                                         border: Border.all(
                                           color: borderColor,
-                                          width: 1.5,
+                                          width: 1.5.r,
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.arrow_back_ios_new_rounded,
                                         color: textColor,
-                                        size: 20,
+                                        size: 20.r,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  SizedBox(width: 16.w),
                                   Text(
                                     "REQUEST DETAILS",
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.w900,
                                       color: textColor,
                                       letterSpacing: 1.2,
@@ -224,33 +224,33 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                   _buildActionMenu(snapshot.data!, context),
                                 ],
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
 
                               // Request Info Card
                               SolidContainer(
-                                padding: EdgeInsets.all(24),
+                                padding: EdgeInsets.all(24.r),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
                                         Container(
-                                          padding: EdgeInsets.all(12),
+                                          padding: EdgeInsets.all(12.r),
                                           decoration: BoxDecoration(
                                             color:
                                                 context.appColors.primaryColor
                                                     .withAlpha(40),
                                             borderRadius: BorderRadius.circular(
-                                              8,
+                                              8.r,
                                             ),
                                           ),
                                           child: Icon(
                                             Icons.assignment_rounded,
                                             color: context.appColors.primaryColor,
-                                            size: 24,
+                                            size: 24.r,
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
+                                        SizedBox(width: 8.w),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -270,7 +270,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
-                                              const SizedBox(height: 4),
+                                              SizedBox(height: 4.h),
                                               Text(
                                                 snapshot
                                                             .data
@@ -287,7 +287,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                       )
                                                     : "",
                                                 style: TextStyle(
-                                                  fontSize: 13,
+                                                  fontSize: 13.sp,
                                                   fontWeight: FontWeight.w500,
                                                   color: context.appColors.hintTextColor,
                                                 ),
@@ -361,7 +361,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                         child: Image.network(
                                           snapshot.data?.request?.imageUrl ??
                                               "",
-                                          height: 350,
+                                          height: 350.h,
                                           width: double.infinity,
                                           fit: BoxFit.cover,
                                           loadingBuilder:
@@ -374,7 +374,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                   return child;
                                                 }
                                                 return Container(
-                                                  height: 350,
+                                                  height: 350.h,
                                                   color: buttonColor,
                                                   child: const Center(
                                                     child: LoadingWidget(),
@@ -425,7 +425,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                             const NeverScrollableScrollPhysics(),
                                         itemCount: acceptedProviders.length,
                                         separatorBuilder: (context, index) =>
-                                            const SizedBox(height: 16),
+                                            SizedBox(height: 16.h),
                                         itemBuilder: (context, index) {
                                           return _buildAcceptedUserItem(
                                             acceptedProviders[index],
@@ -436,11 +436,11 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       );
                                     } else {
                                       return SolidContainer(
-                                        padding: EdgeInsets.all(40),
-                                        child: const EmptyWidget(
+                                        padding: EdgeInsets.all(40.r),
+                                        child: EmptyWidget(
                                           message:
                                               "No acceptance for your request yet!",
-                                          height: 150,
+                                          height: 150.h,
                                         ),
                                       );
                                     }
@@ -511,14 +511,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
       context: context,
       builder: (context) => Center(
         child: SolidContainer(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.all(24.r),
           width: MediaQuery.of(context).size.width * 0.8,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(16.r),
                 decoration: BoxDecoration(
                   color: context.appColors.errorColor.withAlpha(30),
                   shape: BoxShape.circle,
@@ -526,29 +526,29 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 child:  Icon(
                   Icons.delete_forever_rounded,
                   color: context.appColors.errorColor,
-                  size: 32,
+                  size: 32.r,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Text(
                 "Delete Request?",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                   color: textColor,
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               Text(
                 "This action cannot be undone. Are you sure you want to delete this service request?",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: textColor.withAlpha(160),
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   height: 1.5,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               Row(
                 children: [
                   Expanded(
@@ -571,7 +571,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                         Navigator.pop(context);
                       },
                       isPrimary: true,
-                      height: 50,
+                      height: 50.h,
                     ),
                   ),
                 ],
@@ -597,19 +597,19 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           color: cardColor,
           textStyle: TextStyle(color: iconColor),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(18.r),
             side: BorderSide(color: borderColor),
           ),
         ),
       ),
       child: PopupMenuButton(
         icon: Container(
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8.r),
           decoration: BoxDecoration(
             color: menuIconBg,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(Icons.more_horiz_rounded, color: iconColor, size: 20),
+          child: Icon(Icons.more_horiz_rounded, color: iconColor, size: 20.r),
         ),
         onSelected: (val) {
           switch (val) {
@@ -672,14 +672,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 1,
               child: Row(
                 children: [
-                  Icon(Icons.edit_document, color: appBlueCardColor, size: 20),
-                  SizedBox(width: 12),
+                  Icon(Icons.edit_document, color: appBlueCardColor, size: 20.r),
+                  SizedBox(width: 12.w),
                   Text(
                     "EDIT",
                     style: TextStyle(
                       color: iconColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -690,14 +690,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 2,
               child: Row(
                 children: [
-                  Icon(Icons.delete, color: context.appColors.errorColor, size: 20),
-                  SizedBox(width: 12),
+                  Icon(Icons.delete, color: context.appColors.errorColor, size: 20.r),
+                  SizedBox(width: 12.w),
                   Text(
                     "DELETE",
                     style: TextStyle(
                       color: iconColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -708,14 +708,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 3,
               child: Row(
                 children: [
-                  Icon(Icons.check_circle, color: context.appColors.successColor, size: 20),
-                  SizedBox(width: 12),
+                  Icon(Icons.check_circle, color: context.appColors.successColor, size: 20.r),
+                  SizedBox(width: 12.w),
                   Text(
                     "MARK AS DONE",
                     style: TextStyle(
                       color: iconColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -726,14 +726,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 4,
               child: Row(
                 children: [
-                  Icon(Icons.payment, color: context.appColors.secondaryColor, size: 20),
-                  SizedBox(width: 12),
+                  Icon(Icons.payment, color: context.appColors.secondaryColor, size: 20.r),
+                  SizedBox(width: 12.w),
                   Text(
                     "FUND PROVIDER",
                     style: TextStyle(
                       color: iconColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -757,16 +757,16 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     final avatarBg = context.appColors.glassBorder;
 
     return SolidContainer(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       child: Row(
         children: [
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: borderColor, width: 2),
+              border: Border.all(color: borderColor, width: 2.r),
             ),
             child: CircleAvatar(
-              radius: 28,
+              radius: 28.r,
               backgroundColor: avatarBg,
               backgroundImage:
                   (provider?.profilePictureUrl != null &&
@@ -784,25 +784,25 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 Text(
                   (provider?.firstName ?? "Unknown").toUpperCase(),
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w900,
                     color: textColor,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Row(
                   children: [
                      Icon(
                       Icons.star_rounded,
                       color: context.appColors.warningColor,
-                      size: 16,
+                      size: 16.r,
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4.w),
                     Text(
                       "4.8", // Hardcoded for design
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         color: textColor.withAlpha(140),
                       ),
                     ),
@@ -815,7 +815,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildApprovalButton(acceptedProvider, context),
-              const SizedBox(width: 4),
+              SizedBox(width: 4.w),
               _buildAcceptedUserMenu(acceptedProvider, context),
             ],
           ),
@@ -847,10 +847,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           }
         },
         icon: Container(
-          padding: EdgeInsets.all(12),
+          padding: EdgeInsets.all(12.r),
           decoration: BoxDecoration(
             color: context.appColors.primaryColor.withAlpha(40),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.r),
           ),
           child: Icon(
             Icons.cancel_outlined,
@@ -884,10 +884,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           }
         },
         icon: Container(
-          padding: EdgeInsets.all(12),
+          padding: EdgeInsets.all(12.r),
           decoration: BoxDecoration(
             color: context.appColors.primaryColor.withAlpha(40),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10.r),
           ),
           child: Icon(
             Icons.check_circle_outline,
@@ -921,10 +921,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
         ),
       ),
       child: Container(
-        padding: EdgeInsets.all(1),
+        padding: EdgeInsets.all(1.r),
         decoration: BoxDecoration(
           color: context.appColors.primaryColor.withAlpha(40),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: PopupMenuButton(
           icon: Icon(Icons.more_vert_rounded, color: iconColor.withAlpha(160)),
@@ -958,15 +958,15 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                    Icon(
                     Icons.remove_red_eye_rounded,
                     color: context.appColors.infoColor,
-                    size: 20,
+                    size: 20.r,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12.w),
                   Text(
                     "ABOUT",
                     style: TextStyle(
                       color: iconColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -980,15 +980,15 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                    Icon(
                     Icons.chat_bubble_rounded,
                     color: context.appColors.successColor,
-                    size: 20,
+                    size: 20.r,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12.w),
                   Text(
                     "CHAT",
                     style: TextStyle(
                       color: iconColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -1043,9 +1043,9 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           color: Colors.transparent,
           child: Center(
             child: SolidContainer(
-              padding: EdgeInsets.all(24),
+              padding: EdgeInsets.all(24.r),
               width: MediaQuery.of(context).size.width * 0.85,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -1055,20 +1055,20 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                       children: [
                         CustomTextWidget(
                           text: "FUND PROJECT & SECURE PROVIDER",
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.w900,
                           color: textColor,
                           letterSpacing: 0.5,
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12.h),
                         CustomTextWidget(
                           text:
                               "Funds will be held in escrow until you mark the job as completed.",
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           color: textColor.withAlpha(180),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         SolidTextField(
                           controller: amountController,
                           hintText: "Amount (\$)",
@@ -1082,7 +1082,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: 20.h),
                       ],
                     ),
                   ),
@@ -1093,23 +1093,23 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                         child: TextButton(
                           onPressed: () => Navigator.pop(dialogContext),
                           style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                               side: BorderSide(color: borderColor),
                             ),
                           ),
                           child: Text(
                             "Cancel",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: textColor.withAlpha(200),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       Expanded(
                         child: SolidButton(
                           label: "Fund Now",
@@ -1135,7 +1135,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                               }
                             }
                           },
-                          height: 50,
+                          height: 50.h,
                         ),
                       ),
                     ],

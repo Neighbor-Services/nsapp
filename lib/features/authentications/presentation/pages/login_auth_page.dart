@@ -142,11 +142,11 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.symmetric(
-                      horizontal: isLargeScreen ? 40 : 24,
-                      vertical: isLargeScreen ? 40 : 0,
+                      horizontal: isLargeScreen ? 40.w : 24.w,
+                      vertical: isLargeScreen ? 40.h : 0,
                     ),
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 450),
+                      constraints: BoxConstraints(maxWidth: 450.w),
                       child: FadeTransition(
                         opacity: _fadeAnimation,
                         child: SlideTransition(
@@ -156,11 +156,11 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                             children: [
                               // Logo/Branding
                               _buildHeader(),
-                              const SizedBox(height: 40),
+                              SizedBox(height: 40.h),
 
                               // Glass Form Container
                               SolidContainer(
-                                padding: EdgeInsets.all(28),
+                                padding: EdgeInsets.all(28.r),
                                 child: Form(
                                   key: key,
                                   child: Column(
@@ -183,7 +183,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           return null;
                                         },
                                       ),
-                                      const SizedBox(height: 24),
+                                      SizedBox(height: 24.h),
                                       // Password Field
                                       SolidTextField(
                                         controller: passwordTextController,
@@ -202,7 +202,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         },
                                       ),
                                       // Forgot Password
-                                      const SizedBox(height: 12),
+                                      SizedBox(height: 12.h),
                                       Align(
                                         alignment: Alignment.centerRight,
                                         child: GestureDetector(
@@ -212,7 +212,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                             "Forgot Password?",
                                             style: TextStyle(
                                               color: context.appColors.secondaryTextColor,
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -220,15 +220,15 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       ),
                                       // Error Message
                                       if (_errorMessage != null) ...[
-                                        const SizedBox(height: 16),
+                                        SizedBox(height: 16.h),
                                         Container(
                                           padding: EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 12,
+                                            horizontal: 16.w,
+                                            vertical: 12.h,
                                           ),
                                           decoration: BoxDecoration(
                                             color: context.appColors.errorColor.withAlpha(25),
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(12.r),
                                             border: Border.all(
                                               color: context.appColors.errorColor.withAlpha(60),
                                             ),
@@ -238,15 +238,15 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                               Icon(
                                                 Icons.error_outline_rounded,
                                                 color: context.appColors.errorColor,
-                                                size: 20,
+                                                size: 20.r,
                                               ),
-                                              const SizedBox(width: 12),
+                                              SizedBox(width: 12.w),
                                               Expanded(
                                                 child: Text(
                                                   _errorMessage!,
                                                   style: TextStyle(
                                                     color: context.appColors.errorColor,
-                                                    fontSize: 13,
+                                                    fontSize: 13.sp,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
@@ -255,9 +255,9 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           ),
                                         ),
                                       ],
-                                      const SizedBox(height: 16),
+                                      SizedBox(height: 16.h),
                                       _buildTermsCheckbox(),
-                                      const SizedBox(height: 28),
+                                      SizedBox(height: 28.h),
                                       // Login Button
                                       SolidButton(
                                         label: "LOGIN",
@@ -291,7 +291,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           }
                                         },
                                       ),
-                                      const SizedBox(height: 24),
+                                      SizedBox(height: 24.h),
                                       // Divider
                                       Row(
                                         children: [
@@ -301,19 +301,19 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                               thickness: 1,
                                             ),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 16,
-                                            ),
-                                            child: Text(
-                                              "or",
-                                              style: TextStyle(
-                                                color: context.appColors.secondaryTextColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ),
+                                           Padding(
+                                             padding: EdgeInsets.symmetric(
+                                               horizontal: 16.w,
+                                             ),
+                                             child: Text(
+                                               "or",
+                                               style: TextStyle(
+                                                 color: context.appColors.secondaryTextColor,
+                                                 fontSize: 14.sp,
+                                                 fontWeight: FontWeight.w400,
+                                               ),
+                                             ),
+                                           ),
                                           Expanded(
                                             child: Divider(
                                               color: context.appColors.glassBorder.withAlpha(80),
@@ -322,7 +322,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 24),
+                                      SizedBox(height: 24.h),
                                       // Google Sign In
                                       SolidButton(
                                         label: "SIGN IN WITH GOOGLE",
@@ -346,7 +346,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           );
                                         },
                                       ),
-                                      const SizedBox(height: 16),
+                                      SizedBox(height: 16.h),
                                       // Apple Sign In
                                       SolidButton(
                                         label: "SIGN IN WITH APPLE",
@@ -370,12 +370,12 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           );
                                         },
                                       ),
-                                      const SizedBox(height: 24),
+                                      SizedBox(height: 24.h),
                                     ],
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
 
                               // Sign Up Link
                               Row(
@@ -385,7 +385,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     "Don't have an account? ",
                                     style: TextStyle(
                                       color: context.appColors.secondaryTextColor,
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       letterSpacing: 0.3,
                                     ),
                                   ),
@@ -395,7 +395,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       "Sign Up",
                                       style: TextStyle(
                                         color: context.appColors.primaryTextColor,
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
                                         letterSpacing: 0.3,
                                       ),
@@ -403,7 +403,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 40),
+                              SizedBox(height: 40.h),
                             ],
                           ),
                         ),
@@ -424,32 +424,32 @@ class _LoginAuthPageState extends State<LoginAuthPage>
       children: [
         // App Logo
         Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.r),
           decoration: BoxDecoration(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4.r),
           ),
           child: Image.asset(
             logo2Assets,
-            height: 60,
+            height: 60.h,
             fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(height: 32),
+        SizedBox(height: 32.h),
         Text(
           "WELCOME BACK",
           style: TextStyle(
-            fontSize: 28,
+            fontSize: 28.sp,
             fontWeight: FontWeight.w900,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.5,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           "Sign in to continue to Neighbor Service",
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 14.sp,
             color: context.appColors.secondaryTextColor,
             letterSpacing: 0.5,
           ),
@@ -480,7 +480,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
             text: TextSpan(
               style: TextStyle(
                 color: context.appColors.secondaryTextColor,
-                fontSize: 12,
+                fontSize: 12.sp,
                 height: 1.5,
               ),
               children: [

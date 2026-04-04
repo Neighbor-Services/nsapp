@@ -85,7 +85,7 @@ class _AboutPageState extends State<AboutPage>
                  
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -102,7 +102,7 @@ class _AboutPageState extends State<AboutPage>
                               }
                             },
                             child: Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: EdgeInsets.all(12.r),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -112,36 +112,36 @@ class _AboutPageState extends State<AboutPage>
                               child: Icon(
                                 Icons.arrow_back_ios_new_rounded,
                                 color: context.appColors.primaryTextColor,
-                                size: 16,
+                                size: 16.r,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20.h),
                           SolidContainer(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(20),
+                            padding: EdgeInsets.all(20.r),
                             child: Column(
                               children: [
                                 Container(
-                                  height: 180,
+                                  height: 180.h,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: context.appColors.primaryColor
                                         .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(20.r),
                                   ),
                                   child: Icon(
                                     Icons.photo_library_outlined,
-                                    size: 60,
+                                    size: 60.r,
                                     color: context.appColors.primaryColor,
                                   ),
                                 ),
                                 Transform.translate(
-                                  offset: const Offset(0, -40),
+                                  offset: Offset(0, -40.h),
                                   child: Column(
                                     children: [
                                       Container(
-                                        padding: const EdgeInsets.all(3),
+                                        padding: EdgeInsets.all(3.r),
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           gradient: LinearGradient(
@@ -152,7 +152,7 @@ class _AboutPageState extends State<AboutPage>
                                           ),
                                         ),
                                         child: CircleAvatar(
-                                          radius: 40,
+                                          radius: 40.r,
                                           backgroundImage: (profile
                                                           .profilePictureUrl !=
                                                       null &&
@@ -164,14 +164,14 @@ class _AboutPageState extends State<AboutPage>
                                               : null,
                                         ),
                                       ),
-                                      const SizedBox(height: 12),
+                                      SizedBox(height: 12.h),
                                       Text(
                                         (profile.firstName ?? "User")
                                             .toUpperCase(),
                                         style: TextStyle(
                                           color: context
                                               .appColors.primaryTextColor,
-                                          fontSize: 22,
+                                          fontSize: 22.sp,
                                           fontWeight: FontWeight.w900,
                                         ),
                                       ),
@@ -181,20 +181,20 @@ class _AboutPageState extends State<AboutPage>
                                         style: TextStyle(
                                           color: context
                                               .appColors.secondaryTextColor,
-                                          fontSize: 12,
+                                          fontSize: 12.sp,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: 8.h),
                                       Text(
                                         "Payment Mode : On Site",
                                         style: TextStyle(
                                           color: context.appColors.successColor,
-                                          fontSize: 12,
+                                          fontSize: 12.sp,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: 8.h),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -210,15 +210,15 @@ class _AboutPageState extends State<AboutPage>
                                                   color: Colors.amber,
                                                 ),
                                             itemCount: 5,
-                                            itemSize: 14,
+                                            itemSize: 14.r,
                                           ),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: 8.w),
                                           Text(
                                             "${profile.rating ?? "0.0"} (${profile.totalReviews ?? 0} reviews)",
                                             style: TextStyle(
                                               color: context
                                                   .appColors.secondaryTextColor,
-                                              fontSize: 12,
+                                              fontSize: 12.sp,
                                             ),
                                           ),
                                         ],
@@ -229,7 +229,7 @@ class _AboutPageState extends State<AboutPage>
                               ],
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           Row(
                             children: [
                               Expanded(
@@ -320,12 +320,12 @@ class _AboutPageState extends State<AboutPage>
                         unselectedLabelColor:
                             context.appColors.secondaryTextColor,
                         indicatorColor: context.appColors.primaryColor,
-                        indicatorWeight: 4,
+                        indicatorWeight: 4.r,
                         indicatorSize: TabBarIndicatorSize.label,
                         dividerColor: Colors.transparent,
-                        labelStyle: const TextStyle(
+                        labelStyle: TextStyle(
                           fontWeight: FontWeight.w900,
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           letterSpacing: 0.5,
                         ),
                         tabs: const [
@@ -349,7 +349,7 @@ class _AboutPageState extends State<AboutPage>
                 (PortfolioUserState.userId !=
                     SuccessGetProfileState.profile.user?.id)
             ? Container(
-                margin: EdgeInsets.only(bottom: 100),
+                margin: EdgeInsets.only(bottom: 100.h),
                 child: FloatingActionButton.extended(
                   onPressed: () {
                     Get.dialog(
@@ -395,10 +395,10 @@ class _AboutPageState extends State<AboutPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 50,
+        height: 50.h,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15.r),
           border: isBorder
               ? Border.all(color: context.appColors.primaryColor)
               : null,
@@ -409,15 +409,15 @@ class _AboutPageState extends State<AboutPage>
             Icon(
               icon,
               color: isBorder ? context.appColors.primaryColor : Colors.white,
-              size: 20,
+              size: 20.r,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8.w),
             Text(
               label,
               style: TextStyle(
                 color: isBorder ? context.appColors.primaryColor : Colors.white,
                 fontWeight: FontWeight.w900,
-                fontSize: 9,
+                fontSize: 9.sp,
                 letterSpacing: 1.0,
               ),
             ),

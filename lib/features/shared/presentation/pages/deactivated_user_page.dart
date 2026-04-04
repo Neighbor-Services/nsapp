@@ -19,17 +19,17 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
       body: GradientBackground(
         child: SafeArea(
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.r),
             width: size(context).width,
             height: size(context).height,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 Text(
                   "HI, ${SuccessGetProfileState.profile.firstName?.toUpperCase() ?? ''}",
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 22.sp,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
                     letterSpacing: 1.2,
@@ -38,41 +38,41 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
                 const Spacer(),
                 Center(
                   child: SolidContainer(
-                    padding: EdgeInsets.all(30),
+                    padding: EdgeInsets.all(30.r),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20.r),
                           decoration: BoxDecoration(
                             color: context.appColors.errorColor.withAlpha(50),
                             shape: BoxShape.circle,
                           ),
-                          child:  Icon(
+                          child: Icon(
                             Icons.block,
                             color: context.appColors.errorColor,
-                            size: 80,
+                            size: 80.r,
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
+                        SizedBox(height: 20.h),
+                        Text(
                           "ACCOUNT DEACTIVATED",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                            color: context.appColors.primaryTextColor,
                             letterSpacing: 1.2,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10.h),
                         Text(
                           "YOUR ACCOUNT HAS BEEN DEACTIVATED BY THE ADMINISTRATOR.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 11.sp,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white.withAlpha(200),
+                            color: context.appColors.secondaryTextColor,
                             letterSpacing: 0.8,
                           ),
                         ),
@@ -81,9 +81,7 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
                   ),
                 ),
                 const Spacer(),
-                // Placeholder for reason if available in future
-                // CustomTextWidget(text: "Reason: ..."),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
               ],
             ),
           ),

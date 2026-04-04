@@ -137,12 +137,12 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                   child: SafeArea(
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 550),
+                        constraints: BoxConstraints(maxWidth: 550.w),
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
                           padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32 : 20,
-                            vertical: 24,
+                            horizontal: isLargeScreen ? 32.w : 20.w,
+                            vertical: 24.h,
                           ),
                           child: FadeTransition(
                             opacity: _fadeAnimation,
@@ -150,9 +150,9 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _buildHeader(context),
-                                const SizedBox(height: 32),
+                                SizedBox(height: 32.h),
                                 SolidContainer(
-                                  padding: EdgeInsets.all(24),
+                                  padding: EdgeInsets.all(24.r),
                                   child: Form(
                                     key: _formKey,
                                     child: Column(
@@ -164,7 +164,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                           isDark,
                                         ),
                                         _buildServiceDropdown(),
-                                        const SizedBox(height: 20),
+                                        SizedBox(height: 20.h),
                                         SolidTextField(
                                           controller: titleTextController,
                                           hintText:
@@ -179,13 +179,13 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                             return null;
                                           },
                                         ),
-                                        const SizedBox(height: 20),
+                                        SizedBox(height: 20.h),
                                         _buildLabel("Location", isDark),
                                         _buildLocationRow(context),
-                                        const SizedBox(height: 20),
+                                        SizedBox(height: 20.h),
                                         _buildLabel("Schedule", isDark),
                                         _buildScheduledTimePicker(context),
-                                        const SizedBox(height: 20),
+                                        SizedBox(height: 20.h),
                                         SolidTextField(
                                           controller: descriptionTextController,
                                           hintText:
@@ -202,11 +202,11 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                           },
                                         ),
 
-                                        const SizedBox(height: 28),
+                                        SizedBox(height: 28.h),
                                         _buildLabel("Update Image", isDark),
                                         if (request != null)
                                           _buildImagePicker(context, request),
-                                        const SizedBox(height: 28),
+                                        SizedBox(height: 28.h),
                                         SolidButton(
                                           label: "UPDATE REQUEST",
                                           icon: Icons
@@ -218,7 +218,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 40),
+                                SizedBox(height: 40.h),
                               ],
                             ),
                           ),
@@ -250,27 +250,27 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               onTap: () =>
                   context.read<SeekerBloc>().add(SeekerBackPressedEvent()),
               child: Container(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: iconBg,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(14.r),
                   border: Border.all(
                     color: context.appColors.glassBorder,
-                    width: 1.5,
+                    width: 1.5.r,
                   ),
                 ),
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   color: iconColor,
-                  size: 20,
+                  size: 20.r,
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16.w),
             Text(
               "UPDATE REQUEST",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.w900,
                 color: titleColor,
                 letterSpacing: 1.5,
@@ -278,13 +278,13 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Padding(
-          padding: EdgeInsets.only(left: 60),
+          padding: EdgeInsets.only(left: 60.w),
           child: Text(
             "REFINE YOUR PROJECT DETAILS",
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w900,
               color: subTitleColor,
               letterSpacing: 1.0,
@@ -326,19 +326,19 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         );
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: containerColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: borderColor,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Row(
           children: [
-            Icon(Icons.category_rounded, color: iconColor, size: 20),
-            const SizedBox(width: 12),
+            Icon(Icons.category_rounded, color: iconColor, size: 20.r),
+            SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 selectedServiceName.isEmpty
@@ -346,7 +346,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                     : selectedServiceName.toUpperCase(),
                 style: TextStyle(
                   color: selectedServiceName.isEmpty ? hintColor : textColor,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: selectedServiceName.isEmpty ? FontWeight.normal : FontWeight.w900,
                 ),
               ),
@@ -374,20 +374,20 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             },
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         GestureDetector(
           onTap: () => _showLocationPicker(context),
           child: Container(
-            width: 56,
-            height: 56,
+            width: 56.r,
+            height: 56.r,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF5C6BC0), Color(0xFF7E57C2)],
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16.r),
               border: Border.all(
                 color: Colors.white.withAlpha(50),
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: const Icon(Icons.my_location_rounded, color: Colors.white),
@@ -408,24 +408,24 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       onTap: () => _showImagePicker(context),
       child: Container(
         width: double.infinity,
-        height: 140,
+        height: 140.h,
         decoration: BoxDecoration(
           color: containerColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: borderColor,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: ImageSeekerState.picture != null
             ? Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16.r),
                     child: Image.file(
                       File(ImageSeekerState.picture!.path),
                       width: double.infinity,
-                      height: 140,
+                      height: 140.h,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -436,15 +436,15 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                       onTap: () =>
                           context.read<SeekerBloc>().add(ClearImageEvent()),
                       child: Container(
-                        padding: EdgeInsets.all(6),
+                        padding: EdgeInsets.all(6.r),
                         decoration: BoxDecoration(
                           color: context.appColors.errorColor.withAlpha(200),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.close,
                           color: Colors.white,
-                          size: 18,
+                          size: 18.r,
                         ),
                       ),
                     ),
@@ -454,18 +454,18 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             : (originalRequest.imageUrl != null &&
                   originalRequest.imageUrl!.isNotEmpty)
             ? ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
                 child: Image.network(
                   originalRequest.imageUrl!,
                   width: double.infinity,
-                  height: 140,
+                  height: 140.h,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Center(
                       child: Icon(
                         Icons.broken_image_rounded,
                         color: errorIconColor,
-                        size: 40,
+                        size: 40.r,
                       ),
                     );
                   },
@@ -476,13 +476,13 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 children: [
                   Icon(
                     Icons.add_photo_alternate_rounded,
-                    size: 40,
+                    size: 40.r,
                     color: iconColor,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     "Update Image (Optional)",
-                    style: TextStyle(color: textColor, fontSize: 14),
+                    style: TextStyle(color: textColor, fontSize: 14.sp),
                   ),
                 ],
               ),
@@ -497,30 +497,30 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
 
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(24.r),
+            topRight: Radius.circular(24.r),
           ),
           border: Border.all(
             color: borderColor,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40,
-              height: 4,
+              width: 40.w,
+              height: 4.h,
               decoration: BoxDecoration(
                 color: handleColor,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
             Row(
               children: [
                 Expanded(
@@ -537,7 +537,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                     },
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16.w),
                 Expanded(
                   child: _buildPickerOption(
                     context,
@@ -554,7 +554,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
@@ -573,22 +573,22 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 20),
+        padding: EdgeInsets.symmetric(vertical: 20.h),
         decoration: BoxDecoration(
           color: color.withAlpha(30),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(color: color.withAlpha(60)),
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: 12),
+            Icon(icon, color: color, size: 32.r),
+            SizedBox(height: 12.h),
             Text(
               label,
               style: TextStyle(
                 color: textColor,
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: 16.sp,
               ),
             ),
           ],
@@ -607,12 +607,12 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
 
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(24.r),
+            topRight: Radius.circular(24.r),
           ),
           border: Border(top: BorderSide(color: borderColor)),
         ),
@@ -620,14 +620,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40,
-              height: 4,
+              width: 40.w,
+              height: 4.h,
               decoration: BoxDecoration(
                 color: handleColor,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             ListTile(
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
@@ -645,12 +645,12 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 }
               },
               leading: Container(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: Color(0xFF5C6BC0).withAlpha(30),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.my_location_rounded,
                   color: Color(0xFF5C6BC0),
                 ),
@@ -664,15 +664,15 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               ),
               subtitle: Text(
                 "Quick and accurate",
-                style: TextStyle(color: subtitleColor, fontSize: 12),
+                style: TextStyle(color: subtitleColor, fontSize: 12.sp),
               ),
               trailing: Icon(
                 Icons.arrow_forward_ios_rounded,
                 color: arrowColor,
-                size: 16,
+                size: 16.r,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             ListTile(
               onTap: () {
                 Get.back();
@@ -681,10 +681,10 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 Get.toNamed("map-location");
               },
               leading: Container(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: context.appColors.secondaryColor.withAlpha(30),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(Icons.map_rounded, color: context.appColors.secondaryColor),
               ),
@@ -697,15 +697,15 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               ),
               subtitle: Text(
                 "Pin your exact spot",
-                style: TextStyle(color: subtitleColor, fontSize: 12),
+                style: TextStyle(color: subtitleColor, fontSize: 12.sp),
               ),
               trailing: Icon(
                 Icons.arrow_forward_ios_rounded,
                 color: arrowColor,
-                size: 16,
+                size: 16.r,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
@@ -760,11 +760,11 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
 
   Widget _buildLabel(String label, bool isDark) {
     return Padding(
-      padding: EdgeInsets.only(left: 4, bottom: 8),
+      padding: EdgeInsets.only(left: 4.w, bottom: 8.h),
       child: Text(
         label.toUpperCase(),
         style: TextStyle(
-          fontSize: 10,
+          fontSize: 10.sp,
           fontWeight: FontWeight.w900,
           color: context.appColors.secondaryTextColor,
           letterSpacing: 1.2,

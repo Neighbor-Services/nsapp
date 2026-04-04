@@ -36,9 +36,9 @@ class _DisputesListPageState extends State<DisputesListPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.all(12.r),
               child: SizedBox(
-                height: 60,
+                height: 60.h,
                 width: size(context).width,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,20 +47,20 @@ class _DisputesListPageState extends State<DisputesListPage> {
                       onTap: () {
                         if (DashboardState.isProvider) {
                           context.read<ProviderBloc>().add(
-                            ProviderBackPressedEvent(),
-                          );
+                                ProviderBackPressedEvent(),
+                              );
                         } else {
                           context.read<SeekerBloc>().add(
-                            SeekerBackPressedEvent(),
-                          );
+                                SeekerBackPressedEvent(),
+                              );
                         }
                       },
                       child: Container(
-                        padding: EdgeInsets.all(12),
-                        margin: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(12.r),
+                        margin: EdgeInsets.all(8.r),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
                             color: context.appColors.glassBorder,
                           ),
@@ -68,7 +68,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           color: textColor,
-                          size: 18,
+                          size: 18.r,
                         ),
                       ),
                     ),
@@ -77,7 +77,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                       style: TextStyle(
                         color: textColor,
                         fontWeight: FontWeight.w900,
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -86,25 +86,26 @@ class _DisputesListPageState extends State<DisputesListPage> {
                         Get.toNamed('/create-dispute');
                       },
                       child: Container(
-                        margin: EdgeInsets.all(8),
+                        margin: EdgeInsets.all(8.r),
                         padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
+                          horizontal: 12.w,
+                          vertical: 10.h,
                         ),
                         decoration: BoxDecoration(
                           color: context.appColors.primaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                         
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.add_rounded, color: Colors.white, size: 18),
-                            SizedBox(width: 4),
+                            Icon(Icons.add_rounded,
+                                color: Colors.white, size: 18.r),
+                            SizedBox(width: 4.w),
                             Text(
                               'NEW',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w900,
+                                fontSize: 13.sp,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -157,18 +158,18 @@ class _DisputesListPageState extends State<DisputesListPage> {
   Widget _buildEmptyState(Color textColor, Color secondaryTextColor) {
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.r),
         child: SolidContainer(
-          padding: EdgeInsets.all(40),
+          padding: EdgeInsets.all(40.r),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 80,
-                height: 80,
+                width: 80.w,
+                height: 80.h,
                 decoration: BoxDecoration(
                   color: context.appColors.warningColor.withAlpha(30),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: context.appColors.warningColor.withAlpha(50),
                   ),
@@ -176,31 +177,31 @@ class _DisputesListPageState extends State<DisputesListPage> {
                 child: Icon(
                   Icons.gavel_rounded,
                   color: context.appColors.warningColor,
-                  size: 40,
+                  size: 40.r,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Text(
                 'NO DISPUTES',
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.0,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               Text(
                 'YOU HAVEN\'T RAISED ANY DISPUTES YET',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: secondaryTextColor,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               SolidButton(
                 label: 'RAISE A DISPUTE',
                 allCaps: true,
@@ -217,25 +218,24 @@ class _DisputesListPageState extends State<DisputesListPage> {
 
   Widget _buildDisputesList(
     List<Dispute> disputes,
-
     Color textColor,
     Color secondaryTextColor,
   ) {
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       itemCount: disputes.length,
       physics: const BouncingScrollPhysics(),
       itemBuilder: (context, index) {
         final dispute = disputes[index];
 
         return Container(
-          margin: EdgeInsets.only(bottom: 16),
+          margin: EdgeInsets.only(bottom: 16.h),
           child: GestureDetector(
             onTap: () => Get.toNamed('/dispute-details', arguments: dispute),
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: SolidContainer(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(20.r),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -244,14 +244,15 @@ class _DisputesListPageState extends State<DisputesListPage> {
                       children: [
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
+                            horizontal: 10.w,
+                            vertical: 5.h,
                           ),
                           decoration: BoxDecoration(
                             color: context.appColors.primaryColor.withAlpha(20),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10.r),
                             border: Border.all(
-                              color: context.appColors.primaryColor.withAlpha(40),
+                              color:
+                                  context.appColors.primaryColor.withAlpha(40),
                             ),
                           ),
                           child: Row(
@@ -259,19 +260,19 @@ class _DisputesListPageState extends State<DisputesListPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Container(
-                                width: 6,
-                                height: 6,
+                                width: 6.r,
+                                height: 6.r,
                                 decoration: BoxDecoration(
                                   color: context.appColors.primaryColor,
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8.w),
                               Text(
                                 (dispute.status ?? 'OPEN').toUpperCase(),
                                 style: TextStyle(
                                   color: context.appColors.primaryColor,
-                                  fontSize: 11,
+                                  fontSize: 11.sp,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 0.8,
                                 ),
@@ -279,44 +280,43 @@ class _DisputesListPageState extends State<DisputesListPage> {
                             ],
                           ),
                         ),
-                       
                         Icon(
                           Icons.arrow_forward_ios_rounded,
                           color: secondaryTextColor,
-                          size: 14,
+                          size: 14.r,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     Text(
                       dispute.reason.toUpperCase(),
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
                       dispute.description,
                       style: TextStyle(
                         color: secondaryTextColor,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         height: 1.4,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     Row(
                       children: [
                         Icon(
                           Icons.access_time_rounded,
                           color: secondaryTextColor,
-                          size: 14,
+                          size: 14.r,
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6.w),
                         Text(
                           dispute.createdAt != null
                               ? DateFormat.yMMMd().format(
@@ -325,7 +325,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                               : 'Recent',
                           style: TextStyle(
                             color: context.appColors.hintTextColor,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                         ),
                         const Spacer(),
@@ -333,7 +333,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                           'VIEW DETAILS',
                           style: TextStyle(
                             color: context.appColors.warningColor,
-                            fontSize: 11,
+                            fontSize: 11.sp,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 0.5,
                           ),

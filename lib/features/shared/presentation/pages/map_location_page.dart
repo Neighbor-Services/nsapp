@@ -115,35 +115,37 @@ class _MapLocationPageState extends State<MapLocationPage> {
                 ),
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 50),
+                    padding: EdgeInsets.only(bottom: 50.h),
                     child: TweenAnimationBuilder<double>(
                       duration: const Duration(milliseconds: 200),
                       tween: Tween(begin: 1.0, end: isMoving ? 1.3 : 1.0),
                       builder: (context, scale, child) {
                         return Transform.scale(
                           scale: scale,
-                          origin: Offset(0, 25),
+                          origin: Offset(0, 25.h),
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
                               Container(
-                                width: 60,
-                                height: 60,
+                                width: 60.w,
+                                height: 60.h,
                                 decoration: BoxDecoration(
-                                  color: context.appColors.primaryColor.withAlpha(40),
+                                  color: context.appColors.primaryColor
+                                      .withAlpha(40),
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: context.appColors.secondaryColor.withAlpha(30),
-                                      blurRadius: 15,
-                                      spreadRadius: 5,
+                                      color: context.appColors.secondaryColor
+                                          .withAlpha(30),
+                                      blurRadius: 15.r,
+                                      spreadRadius: 5.r,
                                     ),
                                   ],
                                 ),
                               ),
-                               Icon(
+                              Icon(
                                 Icons.location_on_rounded,
-                                size: 50,
+                                size: 50.r,
                                 color: context.appColors.errorColor,
                               ),
                             ],
@@ -154,20 +156,20 @@ class _MapLocationPageState extends State<MapLocationPage> {
                   ),
                 ),
                 Positioned(
-                  left: 20,
-                  right: 20,
-                  top: 60,
+                  left: 20.w,
+                  right: 20.w,
+                  top: 60.h,
                   child: GestureDetector(
                     onTap: () {
                       Get.bottomSheet(
                         Container(
-                          padding: EdgeInsets.all(24),
+                          padding: EdgeInsets.all(24.r),
                           width: size(context).width,
                           height: size(context).height * 0.85,
                           decoration: BoxDecoration(
                             color: context.appColors.cardBackground,
                             borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(30),
+                              top: Radius.circular(30.r),
                             ),
                           ),
                           child: const SearchLocationMapWidget(),
@@ -179,22 +181,23 @@ class _MapLocationPageState extends State<MapLocationPage> {
                       tag: 'map_search',
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
+                          horizontal: 20.w,
+                          vertical: 14.h,
                         ),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: context.appColors.glassBorder),
-                          
+                          borderRadius: BorderRadius.circular(16.r),
+                          border:
+                              Border.all(color: context.appColors.glassBorder),
                         ),
                         child: Row(
                           children: [
-                             Icon(
+                            Icon(
                               Icons.search_rounded,
                               color: context.appColors.secondaryTextColor,
+                              size: 20.r,
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12.w),
                             Expanded(
                               child: Text(
                                 locationTextController.text.isEmpty
@@ -202,7 +205,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                                     : locationTextController.text,
                                 style: TextStyle(
                                   color: context.appColors.primaryTextColor,
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 maxLines: 1,
@@ -216,8 +219,8 @@ class _MapLocationPageState extends State<MapLocationPage> {
                   ),
                 ),
                 Positioned(
-                  right: 20,
-                  bottom: 120,
+                  right: 20.w,
+                  bottom: 120.h,
                   child: GestureDetector(
                     onTap: () async {
                       GoogleMapController con = await _controller.future;
@@ -234,15 +237,17 @@ class _MapLocationPageState extends State<MapLocationPage> {
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.all(12),
+                      padding: EdgeInsets.all(12.r),
                       decoration: BoxDecoration(
                         color: context.appColors.cardBackground,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: context.appColors.glassBorder),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border:
+                            Border.all(color: context.appColors.glassBorder),
                       ),
-                      child:  Icon(
+                      child: Icon(
                         Icons.my_location_rounded,
                         color: context.appColors.primaryTextColor,
+                        size: 24.r,
                       ),
                     ),
                   ),
@@ -261,29 +266,30 @@ class _MapLocationPageState extends State<MapLocationPage> {
           Get.back();
         },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 16.h),
           decoration: BoxDecoration(
             color: context.appColors.primaryColor,
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(50.r),
             boxShadow: [
               BoxShadow(
                 color: context.appColors.primaryColor.withAlpha(100),
-                blurRadius: 15,
-                offset: Offset(0, 5),
+                blurRadius: 15.r,
+                offset: Offset(0, 5.h),
               ),
             ],
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle_outline_rounded, color: Colors.white),
-              SizedBox(width: 8),
+              Icon(Icons.check_circle_outline_rounded,
+                  color: Colors.white, size: 24.r),
+              SizedBox(width: 8.w),
               Text(
                 "Confirm Location",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                 ),
               ),
             ],

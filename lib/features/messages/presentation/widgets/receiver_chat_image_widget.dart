@@ -41,7 +41,12 @@ class ReceiverChatImageWidget extends StatelessWidget {
     final progressColor = context.appColors.primaryTextColor;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
+      padding: EdgeInsets.only(
+        bottom: 12.h,
+        top: 4.h,
+        left: 8.w,
+        right: 40.w,
+      ),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Column(
@@ -51,16 +56,16 @@ class ReceiverChatImageWidget extends StatelessWidget {
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75,
               ),
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.r),
               decoration: BoxDecoration(
                 color: bubbleColor,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                  bottomLeft: Radius.circular(6),
+                  topLeft: Radius.circular(24.r),
+                  topRight: Radius.circular(24.r),
+                  bottomRight: Radius.circular(24.r),
+                  bottomLeft: Radius.circular(6.r),
                 ),
-                border: Border.all(color: borderColor, width: 1),
+                border: Border.all(color: borderColor, width: 1.r),
                
               ),
               child: Column(
@@ -74,14 +79,14 @@ class ReceiverChatImageWidget extends StatelessWidget {
                       Get.toNamed("/image");
                     },
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(18.r),
                       child: CachedNetworkImage(
                         imageUrl: finalUrl,
                         fit: BoxFit.cover,
                         progressIndicatorBuilder:
                             (context, url, downloadProgress) => Container(
                               width: double.infinity,
-                              height: 250,
+                              height: 250.h,
                               decoration: BoxDecoration(
                                 color: placeholderColor,
                                 image: DecorationImage(
@@ -99,12 +104,12 @@ class ReceiverChatImageWidget extends StatelessWidget {
                               ),
                             ),
                         errorWidget: (context, url, error) => Container(
-                          height: 150,
+                          height: 150.h,
                           width: double.infinity,
                           color: errorWidgetColor,
                           child: Icon(
                             Icons.broken_image_outlined,
-                            size: 40,
+                            size: 40.r,
                             color: iconColor,
                           ),
                         ),
@@ -113,12 +118,12 @@ class ReceiverChatImageWidget extends StatelessWidget {
                   ),
                   if (withText)
                     Padding(
-                      padding: EdgeInsets.fromLTRB(8, 12, 8, 4),
+                      padding: EdgeInsets.fromLTRB(8.w, 12.h, 8.w, 4.h),
                       child: SelectableText(
                         message,
                         style: TextStyle(
                           color: textColor,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                           height: 1.4,
                         ),
                       ),
@@ -127,12 +132,12 @@ class ReceiverChatImageWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 4, left: 4),
+              padding: EdgeInsets.only(top: 4.h, left: 4.w),
               child: Text(
                 DateFormat("HH:mm").format(dateTime.toLocal()),
                 style: TextStyle(
                   color: timestampColor,
-                  fontSize: 10,
+                  fontSize: 10.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),

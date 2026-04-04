@@ -24,75 +24,75 @@ class ProviderListItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: 12),
-        padding: EdgeInsets.all(12),
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
           color: Colors.white.withAlpha(
             200,
-          ), // Semi-transparent for glass effect availability
-          borderRadius: BorderRadius.circular(16),
+          ),
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(20),
-              blurRadius: 10,
-              offset: Offset(0, 4),
+              blurRadius: 10.r,
+              offset: Offset(0, 4.h),
             ),
           ],
         ),
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               child:
                   (profile.profilePictureUrl != null &&
                       profile.profilePictureUrl != "" &&
                       profile.profilePictureUrl != "picture")
                   ? Image.network(
                       profile.profilePictureUrl!,
-                      width: 80,
-                      height: 80,
+                      width: 80.w,
+                      height: 80.h,
                       fit: BoxFit.cover,
                       errorBuilder: (context, _, _) => Image.asset(
-                        logo2Assets, // Make sure string_constants is imported
-                        width: 80,
-                        height: 80,
+                        logo2Assets,
+                        width: 80.w,
+                        height: 80.h,
                         fit: BoxFit.cover,
                       ),
                     )
                   : Image.asset(
                       logo2Assets,
-                      width: 80,
-                      height: 80,
+                      width: 80.w,
+                      height: 80.h,
                       fit: BoxFit.cover,
                     ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomTextWidget(
                     text: profile.firstName ?? "Unknown",
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                     color: appBlackColor,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   CustomTextWidget(
                     text: _getServiceName(profile.service),
                     color: appGreyColor,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Row(
                     children: [
-                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16),
-                      const SizedBox(width: 4),
+                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16.r),
+                      SizedBox(width: 4.w),
                       CustomTextWidget(
                         text: (double.tryParse(profile.rating ?? "0") ?? 0.0)
                             .toStringAsFixed(1),
                         color: appBlackColor,
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
                       ),
                       const Spacer(),
@@ -103,15 +103,15 @@ class ProviderListItem extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.location_on,
-                                size: 14,
+                                size: 14.r,
                                 color: appGreyColor,
                               ),
-                              const SizedBox(width: 2),
+                              SizedBox(width: 2.w),
                               Flexible(
                                 child: Text(
                                   profile.address!,
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     color: appGreyColor,
                                   ),
                                   overflow: TextOverflow.ellipsis,

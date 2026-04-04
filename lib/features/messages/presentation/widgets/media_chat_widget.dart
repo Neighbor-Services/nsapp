@@ -29,32 +29,29 @@ class MediaChatWidget extends StatelessWidget {
             child: ListView(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
-                  ),
+                  padding: EdgeInsets.all(10.r),
                   child: SizedBox(
                     width: size(context).width,
                     height:
-                        (size(context).height * 0.50) - 130, // Adjusted height
+                        (size(context).height * 0.50) - 130.h, // Adjusted height
                     child: (MessageImageState.image != null)
                         ? ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(10.r),
                             child: Image.file(
                               File(MessageImageState.image!.path),
                               fit: BoxFit.cover,
                             ),
                           )
-                        : SizedBox(),
+                        : const SizedBox.shrink(),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: SolidTextField(
                     controller: messageController,
                     hintText: 'Type a message...',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.send, color: Colors.white),
+                      icon: Icon(Icons.send, color: Colors.white, size: 20.r),
                       onPressed: () async {
                         File image = File(MessageImageState.image!.path);
                         List<int> imageByte = await image.readAsBytes();

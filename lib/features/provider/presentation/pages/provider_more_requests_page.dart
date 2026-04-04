@@ -99,7 +99,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: EdgeInsets.all(20.0.r),
                     child: Row(
                       children: [
                         GestureDetector(
@@ -107,29 +107,29 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                             ProviderBackPressedEvent(),
                           ),
                           child: Container(
-                            padding: EdgeInsets.all(12),
+                            padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(
                               color: context.appColors.cardBackground,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                               border: Border.all(
                                 color: context.appColors.glassBorder,
-                                width: 1.5,
+                                width: 1.5.r,
                               ),
                             ),
                             child: Icon(
                               Icons.arrow_back_ios_new_rounded,
                               color: context.appColors.primaryTextColor,
-                              size: 18,
+                              size: 18.r,
                             ),
                           ),
                         ),
-                        SizedBox(width: 16),
+                        SizedBox(width: 16.w),
                         Text(
                           "BROWSE REQUESTS",
                           style: TextStyle(
                             color: context.appColors.primaryTextColor,
                             fontWeight: FontWeight.w900,
-                            fontSize: 20,
+                            fontSize: 20.sp,
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -138,10 +138,10 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8.0.r),
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 700),
+                          constraints: BoxConstraints(maxWidth: 700.w),
                           child: FadeTransition(
                             opacity: _fadeAnimation,
                             child: Column(
@@ -175,31 +175,31 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
           if (snapshot.data!.isEmpty) {
             return Center(
               child: SolidContainer(
-                padding: EdgeInsets.all(40),
+                padding: EdgeInsets.all(40.r),
                 borderColor: context.appColors.glassBorder,
-                borderWidth: 1.5,
+                borderWidth: 1.5.r,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.work_off_rounded,
-                      size: 60,
+                      size: 60.r,
                       color: context.appColors.glassBorder,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     Text(
                       "No requests available",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
                         color: context.appColors.glassBorder,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
                       "Check back later for new projects",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         color: context.appColors.glassBorder,
                       ),
                     ),
@@ -214,16 +214,16 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
             controller: scrollController,
             physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.symmetric(
-              horizontal: isLargeScreen ? 32 : 16,
-              vertical: 16,
+              horizontal: isLargeScreen ? 32.w : 16.w,
+              vertical: 16.h,
             ),
             itemCount: snapshot.data!.length + (isLoadingMore ? 1 : 0),
             itemBuilder: (context, index) {
               if (index < snapshot.data!.length) {
                 return _buildRequestCard(context, snapshot.data![index], index);
               } else {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24),
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24.h),
                   child: Center(child: LoadingWidget()),
                 );
               }
@@ -261,23 +261,23 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
           );
         },
         child: Padding(
-          padding: EdgeInsets.only(bottom: 16),
+          padding: EdgeInsets.only(bottom: 16.h),
           child: SolidContainer(
             padding: EdgeInsets.zero,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
             borderColor: context.appColors.glassBorder,
-            borderWidth: 1.5,
+            borderWidth: 1.5.r,
             child: Row(
               children: [
                 // Image
                 SizedBox(
-                  width: 100,
-                  height: 125,
+                  width: 100.w,
+                  height: 125.h,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20.r),
                         child:
                             (data.user?.profilePictureUrl != null &&
                                 data.user!.profilePictureUrl!.isNotEmpty)
@@ -297,8 +297,8 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            bottomLeft: Radius.circular(20),
+                            topLeft: Radius.circular(20.r),
+                            bottomLeft: Radius.circular(20.r),
                           ),
                           
                         ),
@@ -310,7 +310,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                 // Content
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16.r),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -323,7 +323,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                                 child: Text(
                                   (data.user?.firstName ?? "User").toUpperCase(),
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 0.5,
                                     color: context.appColors.primaryTextColor,
@@ -334,54 +334,54 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                             ],
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6.h),
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 8,
+                            horizontal: 8.w,
+                            vertical: 8.h,
                           ),
                           decoration: BoxDecoration(
                             color: context.appColors.primaryColor.withAlpha(50),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                             border: Border.all(
                               color: context.appColors.primaryColor,
-                              width: 1.5,
+                              width: 1.5.r,
                             ),
                           ),
                           child: Text(
                             data.request?.service?.name ?? "Service",
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 11.sp,
                               color: context.appColors.primaryColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8.h),
                         Text(
                           data.request?.title ?? "",
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             color: context.appColors.secondaryTextColor,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6.h),
                         Row(
                           children: [
                             Icon(
                               Icons.calendar_today_rounded,
-                              size: 12,
+                              size: 12.r,
                               color: context.appColors.secondaryTextColor,
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: 4.w),
                             Text(
                               DateFormat("MMM dd, yyyy").format(
                                 data.request?.createdAt ?? DateTime.now(),
                               ),
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 color: context.appColors.secondaryTextColor,
                               ),
                             ),
@@ -394,13 +394,13 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
 
                 // Arrow
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0.r),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                      
                       Padding(
-                        padding: EdgeInsets.only(right: 16),
+                        padding: EdgeInsets.only(right: 16.w),
                         child: Icon(
                           Icons.chevron_right_rounded,
                           color: context.appColors.secondaryTextColor,

@@ -10,6 +10,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/core/core.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -55,18 +56,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     // Header
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
+                        horizontal: 16.w,
+                        vertical: 16.h,
                       ),
                       child: Row(
                         children: [
                           GestureDetector(
                             onTap: () => Get.back(),
                             child: Container(
-                              padding: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(10.r),
                               decoration: BoxDecoration(
                                 color: context.appColors.cardBackground,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(
                                   color: context.appColors.glassBorder,
                                 ),
@@ -74,15 +75,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               child: Icon(
                                 Icons.arrow_back_ios_new_rounded,
                                 color: textColor,
-                                size: 18,
+                                size: 18.r,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: 16.w),
                           Text(
                             "CHANGE PASSWORD",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor,
                               letterSpacing: 1.0,
@@ -95,19 +96,19 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
+                            SizedBox(height: 20.h),
                             Image.asset(
                               resetPasswordLogo,
-                              width: 200,
+                              width: 200.w,
                               fit: BoxFit.contain,
                             ),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
 
                             SolidContainer(
-                              padding: EdgeInsets.all(24),
+                              padding: EdgeInsets.all(24.r),
                               child: Form(
                                 key: formKey,
                                 child: Column(
@@ -116,22 +117,22 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                     Text(
                                       "RESET PASSWORD",
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 20.sp,
                                         fontWeight: FontWeight.w900,
                                         color: textColor,
                                         letterSpacing: 1.0,
                                       ),
                                     ),
-                                    const SizedBox(height: 12),
+                                    SizedBox(height: 12.h),
                                     Text(
                                       "Please enter the email you registered your Neighbor Service account with to change your password",
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         color: secondaryTextColor,
                                         height: 1.5,
                                       ),
                                     ),
-                                    const SizedBox(height: 32),
+                                    SizedBox(height: 32.h),
                                     SolidTextField(
                                       controller: emailTextController,
                                       hintText: "Enter your email",
@@ -147,7 +148,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 32),
+                                    SizedBox(height: 32.h),
                                     SolidButton(
                                       label: "CHANGE PASSWORD",
                                       allCaps: true,
@@ -181,7 +182,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 40),
+                            SizedBox(height: 40.h),
                           ],
                         ),
                       ),

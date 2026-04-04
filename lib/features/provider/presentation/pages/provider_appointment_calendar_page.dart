@@ -134,7 +134,7 @@ class _ProviderAppointmentCalendarPageState
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700),
+                    constraints: BoxConstraints(maxWidth: 700.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: Column(
@@ -143,8 +143,8 @@ class _ProviderAppointmentCalendarPageState
                           // Header
                           Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 32,
+                              horizontal: 24.w,
+                              vertical: 32.h,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,17 +155,17 @@ class _ProviderAppointmentCalendarPageState
                                     Text(
                                       "CALENDAR",
                                       style: TextStyle(
-                                        fontSize: 22,
+                                        fontSize: 22.sp,
                                         fontWeight: FontWeight.w900,
                                         color: textColor,
                                         letterSpacing: 1.2,
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: 4.h),
                                     Text(
                                       "MANAGE YOUR SCHEDULE",
                                       style: TextStyle(
-                                        fontSize: 9,
+                                        fontSize: 9.sp,
                                         fontWeight: FontWeight.w900,
                                         color: secondaryTextColor,
                                         letterSpacing: 0.8,
@@ -225,29 +225,29 @@ class _ProviderAppointmentCalendarPageState
         );
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [context.appColors.secondaryColor, context.appColors.secondaryColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: context.appColors.secondaryColor.withAlpha(100),
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
-        child: const Row(
+        child: Row(
           children: [
-            Icon(Icons.add_rounded, color: Colors.white, size: 20),
-            SizedBox(width: 8),
+            Icon(Icons.add_rounded, color: Colors.white, size: 20.r),
+            SizedBox(width: 8.w),
             Text(
               "SCHEDULE",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w900,
-                fontSize: 12,
+                fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
             ),
@@ -290,7 +290,7 @@ class _ProviderAppointmentCalendarPageState
           final borderColor = context.appColors.glassBorder;
 
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: CalendarControllerProvider(
               controller: EventController()..addAll(events),
               child: SolidContainer(
@@ -323,17 +323,17 @@ class _ProviderAppointmentCalendarPageState
                   weekDayBuilder: (day) {
                     return Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
                       decoration: BoxDecoration(
                         color: Colors.transparent,
-                        border: Border.all(color: borderColor, width: 0.5),
+                        border: Border.all(color: borderColor, width: 0.5.r),
                       ),
                       child: Text(
                         ["M", "T", "W", "T", "F", "S", "S"][day],
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
                           fontWeight: FontWeight.w900,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                       ),
                     );
@@ -364,7 +364,7 @@ class _ProviderAppointmentCalendarPageState
                     headerTextStyle: TextStyle(
                       color: textColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 18,
+                      fontSize: 18.sp,
                       letterSpacing: 0.5,
                     ),
                     decoration: const BoxDecoration(color: Colors.transparent),
@@ -391,8 +391,8 @@ class _ProviderAppointmentCalendarPageState
     final handleColor = context.appColors.glassBorder;
 
     return SolidContainer(
-      padding: EdgeInsets.all(24),
-      borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      padding: EdgeInsets.all(24.r),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -400,26 +400,26 @@ class _ProviderAppointmentCalendarPageState
           children: [
             Center(
               child: Container(
-                width: 50,
-                height: 5,
+                width: 50.w,
+                height: 5.h,
                 decoration: BoxDecoration(
                   color: handleColor,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             if (SuccessGetAppointmentsState.appointments != null)
              
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             CustomTextWidget(
               text: "APPOINTMENT DETAILS",
               fontWeight: FontWeight.w900,
-              fontSize: 18,
+              fontSize: 18.sp,
               color: textColor,
               letterSpacing: 1.0,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             _buildDetailRow(Icons.title_rounded, "TITLE", data.title, isDark),
             _buildDetailRow(
               Icons.schedule_rounded,
@@ -434,7 +434,7 @@ class _ProviderAppointmentCalendarPageState
                 data.description!,
                 isDark,
               ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             
             // Linked Request Details
             if (SuccessGetAppointmentsState.appointments != null)
@@ -455,15 +455,15 @@ class _ProviderAppointmentCalendarPageState
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Divider(height: 32),
+                        Divider(height: 32.h),
                         CustomTextWidget(
                           text: "LINKED REQUEST",
                           fontWeight: FontWeight.w900,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           color: context.appColors.secondaryTextColor,
                           letterSpacing: 1.0,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         _buildDetailRow(
                           Icons.assignment_rounded,
                           "ORIGINAL TITLE",
@@ -490,7 +490,7 @@ class _ProviderAppointmentCalendarPageState
                             req.description!,
                             isDark,
                           ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12.h),
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton.icon(
@@ -515,13 +515,13 @@ class _ProviderAppointmentCalendarPageState
                             },
                             icon: Icon(
                               Icons.open_in_new_rounded,
-                              size: 18,
+                              size: 18.r,
                               color: context.appColors.primaryColor,
                             ),
                             label: Text(
                               "VIEW FULL DETAILS",
-                              style: TextStyle(
-                                fontSize: 12,
+                                style: TextStyle(
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w900,
                                 color: context.appColors.primaryColor,
                                 letterSpacing: 0.5,
@@ -529,7 +529,7 @@ class _ProviderAppointmentCalendarPageState
                             ),
                           ),
                         ),
-                        const Divider(height: 32),
+                        Divider(height: 32.h),
                       ],
                     );
                   } catch (e) {
@@ -538,7 +538,7 @@ class _ProviderAppointmentCalendarPageState
                 },
               ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             // Escrow Action for Provider
             if (SuccessGetAppointmentsState.appointments != null)
@@ -555,7 +555,7 @@ class _ProviderAppointmentCalendarPageState
 
                     if (appt.isFunded == true && appt.status != 'COMPLETED') {
                       return Padding(
-                        padding: EdgeInsets.only(bottom: 16),
+                        padding: EdgeInsets.only(bottom: 16.h),
                         child: SolidButton(
                           onPressed: () {
                             context.read<ProviderBloc>().add(
@@ -568,7 +568,7 @@ class _ProviderAppointmentCalendarPageState
                           },
                           icon: Icons.verified_rounded,
                           label: "Mark as Completed",
-                          height: 55,
+                          height: 55.h,
                         ),
                       );
                     }
@@ -588,9 +588,9 @@ class _ProviderAppointmentCalendarPageState
               label: "Add to Calendar",
               isPrimary: false,
               color: context.appColors.primaryTextColor,
-              height: 55,
+              height: 55.h,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             SolidButton(
               onPressed: () async {
                 if (SuccessGetAppointmentsState.appointments != null) {
@@ -630,9 +630,9 @@ class _ProviderAppointmentCalendarPageState
               
               color: context.appColors.successColor.withAlpha(50),
               textColor: context.appColors.successColor,
-              height: 55,
+              height: 55.h,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             SolidButton(
               onPressed: () {
                 context.read<ProviderBloc>().add(
@@ -644,9 +644,9 @@ class _ProviderAppointmentCalendarPageState
               isPrimary: false,
               color: context.appColors.errorColor.withAlpha(50),
               textColor: context.appColors.errorColor,
-              height: 55,
+              height: 55.h,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
           ],
         ),
       ),
@@ -665,20 +665,20 @@ class _ProviderAppointmentCalendarPageState
     final valueColor = context.appColors.primaryTextColor;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.only(bottom: 20.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 42,
-            height: 42,
+            width: 42.r,
+            height: 42.r,
             decoration: BoxDecoration(
               color: iconBg,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Icon(icon, color: iconColor, size: 20),
+            child: Icon(icon, color: iconColor, size: 20.r),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -686,17 +686,17 @@ class _ProviderAppointmentCalendarPageState
                 Text(
                   label.toUpperCase(),
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w900,
                     color: labelColor,
                     letterSpacing: 0.8,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     color: valueColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -716,12 +716,12 @@ class _ProviderAppointmentCalendarPageState
     return SolidContainer(
       width: size(context).width,
       padding: EdgeInsets.fromLTRB(
-        24,
-        20,
-        24,
-        MediaQuery.of(context).viewInsets.bottom + 24,
+        24.w,
+        20.h,
+        24.w,
+        MediaQuery.of(context).viewInsets.bottom + 24.h,
       ),
-      borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -729,31 +729,31 @@ class _ProviderAppointmentCalendarPageState
           children: [
             Center(
               child: Container(
-                width: 50,
-                height: 5,
+                width: 50.w,
+                height: 5.h,
                 decoration: BoxDecoration(
                   color: handleColor,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Text(
               "SCHEDULE APPOINTMENT",
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.w900,
                 color: textColor,
                 letterSpacing: 1.2,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             AppointmentInputFieldWidget(
               controller: titleController,
               readOnly: false,
               label: "TITLE",
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             AppointmentInputFieldWidget(
               controller: dateController,
               label: "DATE",
@@ -789,7 +789,7 @@ class _ProviderAppointmentCalendarPageState
                 }
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             AppointmentInputFieldWidget(
               controller: startTimeController,
               label: "START TIME",
@@ -816,13 +816,13 @@ class _ProviderAppointmentCalendarPageState
                 }
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             AppointmentInputFieldWidget(
               controller: descriptionController,
               label: "NOTES",
               readOnly: false,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             StatefulBuilder(
               builder: (context, setSheetState) {
                 return CheckboxListTile(
@@ -830,7 +830,7 @@ class _ProviderAppointmentCalendarPageState
                     "Consultation Call (Video/Audio)",
                     style: TextStyle(
                       color: context.appColors.primaryTextColor,
-                      fontSize: 15,
+                      fontSize: 15.sp,
                     ),
                   ),
                   value: isConsultation,
@@ -843,9 +843,9 @@ class _ProviderAppointmentCalendarPageState
                 );
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             _buildProposalDropdown(context, isDark),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
             SolidButton(
               onPressed: () async {
                 if (titleController.text.trim().isEmpty ||
@@ -930,7 +930,7 @@ class _ProviderAppointmentCalendarPageState
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Padding(
-            padding: EdgeInsets.only(bottom: 20),
+            padding: EdgeInsets.only(bottom: 20.h),
             child: Text(
               "Loading proposals...",
               style: TextStyle(color: context.appColors.secondaryTextColor),
@@ -939,7 +939,7 @@ class _ProviderAppointmentCalendarPageState
         }
         if (snapshot.data!.isEmpty) {
           return Padding(
-            padding: EdgeInsets.only(bottom: 20),
+            padding: EdgeInsets.only(bottom: 20.h),
             child: Text(
               "No accepted proposals found to link.",
               style: TextStyle(color: context.appColors.secondaryTextColor),
@@ -960,18 +960,18 @@ class _ProviderAppointmentCalendarPageState
               "Link Proposal (Optional)",
               style: TextStyle(
                 color: context.appColors.secondaryTextColor,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Container(
               decoration: BoxDecoration(
                 color: context.appColors.cardBackground,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
                   color: context.appColors.glassBorder,
-                  width: 1.5,
+                  width: 1.5.r,
                 ),
               ),
               child: DropdownButtonFormField<String>(
@@ -982,10 +982,10 @@ class _ProviderAppointmentCalendarPageState
                   color: context.appColors.secondaryTextColor,
                 ),
                 style: TextStyle(color: context.appColors.primaryTextColor),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                    horizontal: 16.w,
+                    vertical: 12.h,
                   ),
                   border: InputBorder.none,
                 ),

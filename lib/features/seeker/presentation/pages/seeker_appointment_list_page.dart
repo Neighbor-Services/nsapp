@@ -45,7 +45,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w900,
-            fontSize: 18,
+            fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
         ),
@@ -57,19 +57,19 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
             context.read<SeekerBloc>().add(SeekerBackPressedEvent());
           },
           child: Container(
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: buttonColor,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: borderColor,
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: textColor,
-              size: 16,
+              size: 16.r,
             ),
           ),
         ),
@@ -138,9 +138,9 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                   );
                                 },
                                 child: SolidContainer(
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(20.r),
                                   borderColor: context.appColors.glassBorder,
-                                  borderWidth: 1.5,
+                                  borderWidth: 1.5.r,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -155,40 +155,40 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               children: [
                                                 CustomTextWidget(
                                                   text: (appt.title ?? "No Title").toUpperCase(),
-                                                  fontSize: 16,
+                                                  fontSize: 16.sp,
                                                   fontWeight: FontWeight.w900,
                                                   color: textColor,
                                                   letterSpacing: 0.5,
                                                 ),
-                                                const SizedBox(height: 4),
+                                                SizedBox(height: 4.h),
                                                 Row(
                                                   children: [
                                                     Icon(
                                                       Icons
                                                           .person_outline_rounded,
-                                                      size: 14,
+                                                      size: 14.r,
                                                       color: context.appColors.hintTextColor,
                                                     ),
-                                                    const SizedBox(width: 6),
+                                                    SizedBox(width: 6.w),
                                                     CustomTextWidget(
                                                       text:
                                                           (data.user?.firstName ?? '')
                                                               .trim(),
-                                                      fontSize: 12,
+                                                      fontSize: 12.sp,
                                                       color: context.appColors.hintTextColor,
                                                     ),
                                                     if (data.role != null) ...[
-                                                      const SizedBox(width: 12),
+                                                      SizedBox(width: 12.w),
                                                       Container(
-                                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                                                         decoration: BoxDecoration(
                                                           color: context.appColors.secondaryColor.withAlpha(30),
-                                                          borderRadius: BorderRadius.circular(6),
+                                                          borderRadius: BorderRadius.circular(6.r),
                                                         ),
                                                         child: Text(
                                                           data.role!.toUpperCase(),
                                                           style: TextStyle(
-                                                            fontSize: 8,
+                                                            fontSize: 8.sp,
                                                             fontWeight: FontWeight.w900,
                                                             color: context.appColors.secondaryColor,
                                                           ),
@@ -203,26 +203,26 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                           _buildStatusBadge(appt, context),
                                         ],
                                       ),
-                                      const SizedBox(height: 16),
-                                      Divider(color: dividerColor, height: 1),
-                                      const SizedBox(height: 16),
+                                      SizedBox(height: 16.h),
+                                      Divider(color: dividerColor, height: 1.h),
+                                      SizedBox(height: 16.h),
                                       Row(
                                         children: [
                                           Container(
-                                            padding: EdgeInsets.all(8),
+                                            padding: EdgeInsets.all(8.r),
                                             decoration: BoxDecoration(
                                               color: context.appColors.primaryColor.withAlpha(40),
                                               borderRadius: BorderRadius.circular(
-                                                10,
+                                                10.r,
                                               ),
                                             ),
                                             child: Icon(
                                               Icons.calendar_today_rounded,
-                                              size: 16,
+                                              size: 16.r,
                                               color: context.appColors.primaryColor,
                                             ),
                                           ),
-                                          const SizedBox(width: 12),
+                                          SizedBox(width: 12.w),
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -230,13 +230,13 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               Text(
                                                 "SCHEDULED FOR",
                                                 style: TextStyle(
-                                                  fontSize: 10,
+                                                  fontSize: 10.sp,
                                                   color: context.appColors.hintTextColor,
                                                   fontWeight: FontWeight.w900,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
-                                              const SizedBox(height: 2),
+                                              SizedBox(height: 2.h),
                                               CustomTextWidget(
                                                 text: appt.effectiveDate != null
                                                     ? DateFormat(
@@ -246,7 +246,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                             .toLocal(),
                                                       )
                                                     : "Date TBD",
-                                                fontSize: 14,
+                                                fontSize: 14.sp,
                                                 color: textColor.withAlpha(220),
                                               ),
                                             ],
@@ -284,19 +284,19 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: context.appColors.primaryColor.withAlpha(40),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: context.appColors.primaryColor,
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: CustomTextWidget(
         text: text.toUpperCase(),
         color: context.appColors.primaryColor,
-        fontSize: 10,
+        fontSize: 10.sp,
         fontWeight: FontWeight.w900,
         letterSpacing: 0.5,
       ),

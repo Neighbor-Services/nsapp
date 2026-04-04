@@ -21,33 +21,33 @@ class ConnectAccountSetupWidget extends StatelessWidget {
         Text(
           "Payment Setup",
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 24.sp,
             fontWeight: FontWeight.bold,
             color: textColor,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         Text(
           "To receive payments safely, you need to connect your payout account.",
-          style: TextStyle(fontSize: 16, color: subtitleColor),
+          style: TextStyle(fontSize: 16.sp, color: subtitleColor),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24.h),
         Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.r),
           decoration: BoxDecoration(
             color: infoBgColor,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: infoBorderColor),
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: infoBorderColor, width: 1.r),
           ),
           child: Row(
             children: [
-               Icon(Icons.info_outline, color: context.appColors.infoColor),
-              const SizedBox(width: 12),
+              Icon(Icons.info_outline, color: context.appColors.infoColor, size: 24.r),
+              SizedBox(width: 12.w),
               Expanded(
                 child: Text(
                   "You'll be redirected to a secure page to complete setup.",
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     color: context.appColors.glassBorder,
                   ),
                 ),
@@ -55,7 +55,7 @@ class ConnectAccountSetupWidget extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 30),
+        SizedBox(height: 30.h),
         SolidButton(
           label: "CONTINUE TO SETUP",
           onPressed: () {

@@ -23,7 +23,7 @@ class InputDropdownWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomTextWidget(text: label),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           DropdownButtonFormField(
             items: items,
             onChanged: onChange,
@@ -31,34 +31,34 @@ class InputDropdownWidget extends StatelessWidget {
             dropdownColor: context.appColors.cardBackground,
             style: TextStyle(
               color: context.appColors.primaryTextColor,
-              fontSize: 16,
+              fontSize: 16.sp,
             ),
             iconEnabledColor: context.appColors.secondaryTextColor,
             decoration: InputDecoration(
               filled: true,
               fillColor: context.appColors.cardBackground,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide(
                   color: context.appColors.glassBorder,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide(
                   color: context.appColors.glassBorder,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide(
                   color: context.appColors.secondaryColor,
-                  width: 1.5,
+                  width: 1.5.r,
                 ),
               ),
               contentPadding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
+                horizontal: 16.w,
+                vertical: 12.h,
               ),
             ),
           ),

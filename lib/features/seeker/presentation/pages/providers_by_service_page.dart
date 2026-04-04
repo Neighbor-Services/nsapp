@@ -58,7 +58,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
             children: [
               // Header
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(20.r),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -68,23 +68,23 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12.r),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(14.r),
                           border: Border.all(
                             color: context.appColors.glassBorder,
-                            width: 1.5,
+                            width: 1.5.r,
                           ),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           color: textColor,
-                          size: 20,
+                          size: 20.r,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,17 +92,17 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           Text(
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.h),
                           Text(
                             "AVAILABLE PROFESSIONALS",
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
@@ -141,22 +141,22 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                                 children: [
                                   Icon(
                                     Icons.search_off_rounded,
-                                    size: 80,
+                                    size: 80.r,
                                     color: secondaryTextColor.withAlpha(60),
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: 16.h),
                                   Text(
                                     "No providers found",
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       color: secondaryTextColor,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8.h),
                                   Text(
                                     "Try searching for a different service",
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       color: secondaryTextColor.withAlpha(100),
                                     ),
                                   ),
@@ -167,13 +167,13 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
 
                           return ListView.separated(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 16,
+                              horizontal: 20.w,
+                              vertical: 16.h,
                             ),
                             physics: const BouncingScrollPhysics(),
                             itemCount: providers.length,
                             separatorBuilder: (context, index) =>
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16.h),
                             itemBuilder: (context, index) {
                               final profile = providers[index];
                               return _buildProviderCard(context, profile);
@@ -187,7 +187,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                       child: Text(
                         "Start searching for providers",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color: secondaryTextColor,
                         ),
                       ),
@@ -222,38 +222,38 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
         );
       },
       child: SolidContainer(
-        padding: EdgeInsets.all(16),
-        borderWidth: 1.5,
+        padding: EdgeInsets.all(16.r),
+        borderWidth: 1.5.r,
         child: Row(
           children: [
             // Profile Picture
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               child:
                   (profile.profilePictureUrl != null &&
                       profile.profilePictureUrl!.isNotEmpty)
                   ? Image.network(
                       profile.profilePictureUrl!,
-                      width: 70,
-                      height: 70,
+                      width: 70.r,
+                      height: 70.r,
                       fit: BoxFit.cover,
                       errorBuilder: (context, _, __) {
                         return Image.asset(
                           logo2Assets,
-                          width: 70,
-                          height: 70,
+                          width: 70.r,
+                          height: 70.r,
                           fit: BoxFit.cover,
                         );
                       },
                     )
                   : Image.asset(
                       logo2Assets,
-                      width: 70,
-                      height: 70,
+                      width: 70.r,
+                      height: 70.r,
                       fit: BoxFit.cover,
                     ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16.w),
             // Provider Info
             Expanded(
               child: Column(
@@ -265,7 +265,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         child: Text(
                           (profile.firstName ?? "Provider").toUpperCase(),
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 15.sp,
                             fontWeight: FontWeight.w900,
                             color: textColor,
                             letterSpacing: 0.5,
@@ -274,53 +274,53 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         ),
                       ),
                       if (profile.isIdentityVerified == true) ...[
-                        const SizedBox(width: 4),
-                         Icon(
+                        SizedBox(width: 4.w),
+                        Icon(
                           Icons.verified_rounded,
                           color: context.appColors.infoColor,
-                          size: 16,
+                          size: 16.r,
                         ),
                       ],
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     getServiceName(profile.service ?? "").toUpperCase(),
                     style: TextStyle(
                       color: secondaryTextColor,
-                      fontSize: 10,
+                      fontSize: 10.sp,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Row(
                     children: [
-                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16),
-                      const SizedBox(width: 4),
+                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16.r),
+                      SizedBox(width: 4.w),
                       Text(
                         double.parse(
                           profile.rating ?? "0.0",
                         ).toStringAsFixed(1),
                         style: TextStyle(
                           color: textColor,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12.w),
                       Icon(
                         Icons.location_on,
                         color: secondaryTextColor,
-                        size: 16,
+                        size: 16.r,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4.w),
                       Expanded(
                         child: Text(
                           profile.city ?? "N/A",
                           style: TextStyle(
                             color: secondaryTextColor,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -335,7 +335,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
             Icon(
               Icons.arrow_forward_ios_rounded,
               color: context.appColors.glassBorder,
-              size: 18,
+              size: 18.r,
             ),
           ],
         ),

@@ -69,28 +69,28 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                     return const LoadingWidget();
                   }
                   if (snapshot.data!.isEmpty) {
-                    return const EmptyWidget(
+                    return EmptyWidget(
                       message: "No reviews yet. Be the first to write one!",
-                      height: 300,
+                      height: 300.h,
                     );
                   }
 
                   final reviews = snapshot.data!;
                   return ListView.builder(
                     padding: EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 10,
-                      bottom: 100,
+                      left: 16.w,
+                      right: 16.w,
+                      top: 10.h,
+                      bottom: 100.h,
                     ),
                     physics: const BouncingScrollPhysics(),
                     itemCount: reviews.length,
                     itemBuilder: (context, index) {
                       final review = reviews[index];
                       return Container(
-                        margin: EdgeInsets.only(bottom: 16),
+                        margin: EdgeInsets.only(bottom: 16.h),
                         child: SolidContainer(
-                          padding: EdgeInsets.all(20),
+                          padding: EdgeInsets.all(20.r),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -101,11 +101,11 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: context.appColors.glassBorder,
-                                        width: 1.5,
+                                        width: 1.5.r,
                                       ),
                                     ),
                                     child: CircleAvatar(
-                                      radius: 22,
+                                      radius: 22.r,
                                       backgroundColor: Colors.white.withAlpha(
                                         20,
                                       ),
@@ -122,7 +122,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                 as ImageProvider,
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  SizedBox(width: 16.w),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -133,18 +133,18 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                               (review.from?.firstName ??
                                               "Anonymous").toUpperCase(),
                                           fontWeight: FontWeight.w900,
-                                          fontSize: 14,
+                                          fontSize: 14.sp,
                                           color: context.appColors.primaryTextColor,
                                           letterSpacing: 0.5,
                                         ),
-                                        const SizedBox(height: 4),
+                                        SizedBox(height: 4.h),
                                         CustomTextWidget(
                                           text: DateFormat("MMMM dd, yyyy")
                                               .format(
                                                 review.review?.createdAt ??
                                                     DateTime.now(),
                                               ),
-                                          fontSize: 12,
+                                          fontSize: 12.sp,
                                           color: context.appColors.secondaryTextColor,
                                         ),
                                       ],
@@ -165,16 +165,16 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                            Icon(
                                             Icons.star_rounded,
                                             color: context.appColors.secondaryColor,
-                                            size: 16,
+                                            size: 16.r,
                                           ),
-                                          const SizedBox(width: 4),
+                                          SizedBox(width: 4.w),
                                           Text(
                                             review.review!.rating!
                                                 .toStringAsFixed(1),
                                             style: TextStyle(
                                               color: context.appColors.secondaryColor,
                                               fontWeight: FontWeight.w900,
-                                              fontSize: 12,
+                                              fontSize: 12.sp,
                                               letterSpacing: 0.5,
                                             ),
                                           ),
@@ -183,20 +183,20 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                     ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16.h),
                               Container(
                                 width: double.infinity,
-                                padding: EdgeInsets.all(16),
+                                padding: EdgeInsets.all(16.r),
                                 decoration: BoxDecoration(
                                   color: context.appColors.cardBackground,
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(16.r),
                                   border: Border.all(
                                     color: context.appColors.glassBorder,
                                   ),
                                 ),
                                 child: CustomTextWidget(
                                   text: review.review?.comment ?? "",
-                                  fontSize: 15,
+                                  fontSize: 15.sp,
                                   color: context.appColors.primaryTextColor,
                                   height: 1.5,
                                 ),

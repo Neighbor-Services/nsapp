@@ -15,71 +15,65 @@ class SubscribeDialogWidget extends StatelessWidget {
       child: Center(
         child: Container(
           width: size(context).width * 0.85,
-          constraints: BoxConstraints(maxWidth: 400),
-          padding: EdgeInsets.all(24),
+          constraints: BoxConstraints(maxWidth: 400.w),
+          padding: EdgeInsets.all(24.r),
           decoration: BoxDecoration(
             color: Color(0xFF1E1E2E),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(50),
-                blurRadius: 15,
-                offset: Offset(0, 5),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(color: Colors.white12, width: 1.r),
+           
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(16.r),
                 decoration: BoxDecoration(
                   color: context.appColors.warningColor.withAlpha(30),
                   shape: BoxShape.circle,
                 ),
                 child:  Icon(
                   Icons.star_rounded,
-                  size: 40,
+                  size: 40.r,
                   color: context.appColors.warningColor,
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
+              SizedBox(height: 20.h),
+              Text(
                 "Premium Feature",
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               Text(
                 "You must subscribe to use this feature.",
-                style: TextStyle(fontSize: 16, color: Colors.white70),
+                style: TextStyle(fontSize: 16.sp, color: Colors.white70),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30.h),
               Row(
                 children: [
                   Expanded(
                     child: TextButton(
                       onPressed: () => Get.back(),
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                       ),
-                      child: const Text(
+                      child: Text(
                         "Cancel",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color: Colors.white54,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
@@ -93,16 +87,16 @@ class SubscribeDialogWidget extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: context.appColors.warningColor,
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
                         elevation: 0,
                       ),
-                      child: const Text(
+                      child: Text(
                         "Subscribe",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                         ),

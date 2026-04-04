@@ -40,12 +40,12 @@ class _AISearchPageState extends State<AISearchPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "AI MAGIC MATCH",
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w900,
-            fontSize: 22,
+            fontSize: 22.sp,
             letterSpacing: 1.0,
           ),
         ),
@@ -55,19 +55,19 @@ class _AISearchPageState extends State<AISearchPage> {
         leading: GestureDetector(
           onTap: () => context.read<SeekerBloc>().add(SeekerBackPressedEvent()),
           child: Container(
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: context.appColors.glassBorder,
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: context.appColors.primaryTextColor,
-              size: 16,
+              size: 16.r,
             ),
           ),
         ),
@@ -76,29 +76,29 @@ class _AISearchPageState extends State<AISearchPage> {
         child: BlocProvider.value(
           value: _bloc,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16, 120, 16, 0),
+            padding: EdgeInsets.fromLTRB(16.w, 120.h, 16.w, 0),
             child: Column(
               children: [
                 SolidContainer(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24.r),
                   borderColor: context.appColors.glassBorder,
-                  borderWidth: 1.5,
+                  borderWidth: 1.5.r,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 35),
+                      SizedBox(height: 35.h),
                       Row(
                         children: [
                            Icon(
                             Icons.auto_awesome,
                             color: context.appColors.secondaryColor,
-                            size: 24,
+                            size: 24.r,
                           ),
-                          const SizedBox(width: 12),
-                          const Text(
+                          SizedBox(width: 12.w),
+                          Text(
                             "AI ASSISTANT",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w900,
                               color: Colors.white,
                               letterSpacing: 1.5,
@@ -106,7 +106,7 @@ class _AISearchPageState extends State<AISearchPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       SolidTextField(
                         controller: _controller,
                         hintText:
@@ -116,7 +116,7 @@ class _AISearchPageState extends State<AISearchPage> {
                         prefixIcon: Icons.chat_bubble_outline_rounded,
                         isMultiLine: true,
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       SolidButton(
                         label: "Find Best Providers",
                         onPressed: _search,
@@ -125,7 +125,7 @@ class _AISearchPageState extends State<AISearchPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 Expanded(
                   child: BlocBuilder<SeekerBloc, SeekerState>(
                     builder: (context, state) {
@@ -154,15 +154,15 @@ class _AISearchPageState extends State<AISearchPage> {
                                   children: [
                                     Icon(
                                       Icons.search_off_rounded,
-                                      size: 64,
+                                      size: 64.r,
                                       color: Colors.white.withAlpha(60),
                                     ),
-                                    const SizedBox(height: 16),
+                                    SizedBox(height: 16.h),
                                     Text(
                                       "NO MATCHING PROVIDERS FOUND",
                                       style: TextStyle(
                                         color: Colors.white.withAlpha(150),
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 1.0,
                                       ),
@@ -176,13 +176,13 @@ class _AISearchPageState extends State<AISearchPage> {
                               physics: const BouncingScrollPhysics(),
                               padding: EdgeInsets.only(
                                 top: 0,
-                                bottom: 40,
+                                bottom: 40.h,
                               ),
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index) {
                                 final provider = snapshot.data![index];
                                 return Padding(
-                                  padding: EdgeInsets.only(bottom: 12),
+                                  padding: EdgeInsets.only(bottom: 12.h),
                                   child: ProviderListItem(
                                     profile: provider,
                                     onTap: () {
@@ -202,9 +202,9 @@ class _AISearchPageState extends State<AISearchPage> {
                               Icon(
                                 Icons.error_outline_rounded,
                                 color: context.appColors.errorColor,
-                                size: 48,
+                                size: 48.r,
                               ),
-                               SizedBox(height: 16),
+                               SizedBox(height: 16.h),
                               Text(
                                 "Failed to find providers. Please try again.",
                                 style: TextStyle(color: Colors.white70),
@@ -227,19 +227,19 @@ class _AISearchPageState extends State<AISearchPage> {
                                   scale: value,
                                   child: Icon(
                                     Icons.auto_awesome,
-                                    size: 80,
+                                    size: 80.r,
                                     color: context.appColors.secondaryColor.withAlpha(100),
                                   ),
                                 );
                               },
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
                             Text(
                               "DESCRIBE YOUR TASK ABOVE\nAND LET AI DO THE MAGIC",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white.withAlpha(150),
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.2,
                                 height: 1.5,

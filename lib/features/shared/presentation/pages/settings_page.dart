@@ -111,14 +111,14 @@ class _SettingsPageState extends State<SettingsPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 600),
+                    constraints: BoxConstraints(maxWidth: 600.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: ListView(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
-                          horizontal: isLargeScreen ? 32 : 20,
-                          vertical: 24,
+                          horizontal: isLargeScreen ? 32.w : 20.w,
+                          vertical: 24.h,
                         ),
                         children: [
                           Row(
@@ -136,10 +136,10 @@ class _SettingsPageState extends State<SettingsPage>
                                   }
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
                                     color: context.appColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12.r),
                                     border: Border.all(
                                       color: context.appColors.glassBorder,
                                     ),
@@ -147,15 +147,15 @@ class _SettingsPageState extends State<SettingsPage>
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
                                     color: textColor,
-                                    size: 20,
+                                    size: 20.r,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16.w),
                               Text(
                                 "SETTINGS",
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 18.sp,
                                   fontWeight: FontWeight.w900,
                                   color: textColor,
                                   letterSpacing: 1.2,
@@ -163,9 +163,9 @@ class _SettingsPageState extends State<SettingsPage>
                               ),
                             ],
                           ),
-                          const SizedBox(height: 32),
+                          SizedBox(height: 32.h),
                           _buildSectionHeader("Appearance"),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
@@ -189,9 +189,9 @@ class _SettingsPageState extends State<SettingsPage>
                               ),
                             ),
                           ]),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildSectionHeader("Account"),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
@@ -267,9 +267,9 @@ class _SettingsPageState extends State<SettingsPage>
                               onTap: () => Get.toNamed("/change-password"),
                             ),
                           ]),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildSectionHeader("Payments"),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
@@ -313,13 +313,13 @@ class _SettingsPageState extends State<SettingsPage>
                                   Get.bottomSheet(
                                     Container(
                                       width: size(context).width,
-                                      height: 350,
-                                      padding: EdgeInsets.all(24),
+                                      height: 350.h,
+                                      padding: EdgeInsets.all(24.r),
                                       decoration: BoxDecoration(
                                         color: context.appColors.cardBackground,
                                         borderRadius:
                                             BorderRadius.vertical(
-                                              top: Radius.circular(25),
+                                              top: Radius.circular(25.r),
                                             ),
                                       ),
                                       child: const ConnectAccountSetupWidget(),
@@ -329,9 +329,9 @@ class _SettingsPageState extends State<SettingsPage>
                               ),
                             ],
                           ]),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildSectionHeader("Other"),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
@@ -351,9 +351,9 @@ class _SettingsPageState extends State<SettingsPage>
                               onTap: () => Get.toNamed('/legal', arguments: 'PRIVACY'),
                             ),
                           ]),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildSectionHeader("Other"),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
@@ -365,11 +365,11 @@ class _SettingsPageState extends State<SettingsPage>
                                 Get.bottomSheet(
                                   Container(
                                     width: size(context).width,
-                                    padding: EdgeInsets.all(24),
+                                    padding: EdgeInsets.all(24.r),
                                     decoration: BoxDecoration(
                                       color: context.appColors.cardBackground,
                                       borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(25),
+                                        top: Radius.circular(25.r),
                                       ),
                                     ),
                                     child: const ChangeUserTypeWidget(),
@@ -387,9 +387,9 @@ class _SettingsPageState extends State<SettingsPage>
                               onTap: () => _showLogoutDialog(context),
                             ),
                           ]),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildSectionHeader("Danger Zone"),
-                           const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
@@ -400,7 +400,7 @@ class _SettingsPageState extends State<SettingsPage>
                               onTap: () => _showDeleteAccountDialog(context),
                             ),
                           ]),
-                          const SizedBox(height: 40),
+                          SizedBox(height: 40.h),
                         ],
                       ),
                     ),
@@ -416,11 +416,11 @@ class _SettingsPageState extends State<SettingsPage>
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: 4.w),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
-          fontSize: 11,
+          fontSize: 11.sp,
           fontWeight: FontWeight.w900,
           letterSpacing: 1.2,
           color: context.appColors.secondaryTextColor,
@@ -433,7 +433,7 @@ class _SettingsPageState extends State<SettingsPage>
     return Container(
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: context.appColors.glassBorder,
         ),
@@ -457,21 +457,21 @@ class _SettingsPageState extends State<SettingsPage>
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16.r),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
+              width: 44.w,
+              height: 44.h,
               decoration: BoxDecoration(
                 color: context.appColors.primaryColor.withAlpha(40),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(icon, color: context.appColors.primaryColor, size: 22),
+              child: Icon(icon, color: context.appColors.primaryColor, size: 22.r),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,15 +479,15 @@ class _SettingsPageState extends State<SettingsPage>
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w900,
                       color: textColor,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: subtitleColor),
+                    style: TextStyle(fontSize: 12.sp, color: subtitleColor),
                   ),
                 ],
               ),
@@ -507,8 +507,8 @@ class _SettingsPageState extends State<SettingsPage>
 
   Widget _buildDivider(BuildContext context) {
     return Divider(
-      height: 1,
-      indent: 74,
+      height: 1.h,
+      indent: 74.w,
       color: context.appColors.glassBorder,
     );
   }
@@ -520,7 +520,7 @@ class _SettingsPageState extends State<SettingsPage>
         return AlertDialog(
           backgroundColor: context.appColors.cardBackground,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
           ),
           title: Text(
             "LOGOUT",
@@ -574,7 +574,7 @@ class _SettingsPageState extends State<SettingsPage>
         return AlertDialog(
           backgroundColor: context.appColors.cardBackground,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
           ),
           title: Text(
             "DELETE ACCOUNT",
@@ -627,10 +627,10 @@ class _SettingsPageState extends State<SettingsPage>
 
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(28),
+        padding: EdgeInsets.all(28.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -639,21 +639,21 @@ class _SettingsPageState extends State<SettingsPage>
             Text(
               "PREFERRED PAYMENT METHOD",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w900,
                 color: context.appColors.primaryTextColor,
                 letterSpacing: 1.2,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Text(
               "Choose how you'd like to receive payments from seekers.",
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: context.appColors.secondaryTextColor,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             _buildPaymentOption(
               context: context,
               icon: Icons.account_balance_wallet_rounded,
@@ -663,7 +663,7 @@ class _SettingsPageState extends State<SettingsPage>
               currentValue: profile.preferredPaymentMode ?? "ON_SITE",
               onChanged: (val) => _updatePaymentMode(context, val),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             _buildPaymentOption(
               context: context,
               icon: Icons.handshake_rounded,
@@ -673,7 +673,7 @@ class _SettingsPageState extends State<SettingsPage>
               currentValue: profile.preferredPaymentMode ?? "ON_SITE",
               onChanged: (val) => _updatePaymentMode(context, val),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
           ],
         ),
       ),
@@ -693,25 +693,25 @@ class _SettingsPageState extends State<SettingsPage>
 
     return InkWell(
       onTap: () => onChanged(value),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20.r),
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.r),
         decoration: BoxDecoration(
           color: isSelected
               ? context.appColors.primaryColor.withAlpha(20)
               : context.appColors.glassBorder,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: isSelected
                 ? context.appColors.primaryColor.withAlpha(100)
                 : context.appColors.glassBorder,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.r),
               decoration: BoxDecoration(
                 color: isSelected
                     ? context.appColors.primaryColor.withAlpha(40)
@@ -721,10 +721,10 @@ class _SettingsPageState extends State<SettingsPage>
               child: Icon(
                 icon,
                 color: isSelected ? context.appColors.primaryColor : context.appColors.secondaryTextColor,
-                size: 24,
+                size: 24.r,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -732,17 +732,17 @@ class _SettingsPageState extends State<SettingsPage>
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w900,
                       color: context.appColors.primaryTextColor,
                       letterSpacing: 0.3,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     description,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       color: context.appColors.secondaryTextColor,
                     ),
                   ),
@@ -750,7 +750,7 @@ class _SettingsPageState extends State<SettingsPage>
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle_rounded, color: context.appColors.primaryColor, size: 24),
+              Icon(Icons.check_circle_rounded, color: context.appColors.primaryColor, size: 24.r),
           ],
         ),
       ),

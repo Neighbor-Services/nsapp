@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 15,
+                      radius: 15.r,
                       backgroundImage:
                           (SuccessGetProfileState.profile.profilePictureUrl !=
                                   null &&
@@ -81,8 +81,8 @@ class _HomePageState extends State<HomePage> {
                 value: 2,
                 child: Row(
                   children: [
-                    Icon(Icons.logout, size: 30, color: context.appColors.errorColor),
-                    const SizedBox(width: 10),
+                    Icon(Icons.logout, size: 30.r, color: context.appColors.errorColor),
+                    SizedBox(width: 10.w),
                     CustomTextWidget(
                       text: "LOGOUT",
                       color: context.appColors.errorColor,

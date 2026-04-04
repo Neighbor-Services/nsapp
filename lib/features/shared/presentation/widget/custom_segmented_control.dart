@@ -63,15 +63,16 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
     final int selectedIndex = widget.buttonValues.indexOf(selectedValue);
 
     return Container(
-      height: widget.height,
+      height: widget.height.h,
       width: size(context).width,
       decoration: BoxDecoration(
         color: widget.unSelectedColor ??
             context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(widget.radius),
+        borderRadius: BorderRadius.circular(widget.radius.r),
         border: Border.all(
           color: widget.unSelectedBorderColor ??
               context.appColors.glassBorder,
+          width: 1.r,
         ),
       ),
       child: Stack(
@@ -85,18 +86,18 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
               0,
             ),
             child: Container(
-              width: widgetWidth / itemCount,
-              height: widget.height,
-              margin: EdgeInsets.all(4),
+              width: widgetWidth.w / itemCount,
+              height: widget.height.h,
+              margin: EdgeInsets.all(4.r),
               decoration: BoxDecoration(
                 color: widget.selectedColor ?? context.appColors.primaryColor,
-                borderRadius: BorderRadius.circular(widget.radius - 4),
+                borderRadius: BorderRadius.circular((widget.radius - 4).r),
                 boxShadow: [
                   BoxShadow(
                     color: (widget.selectedColor ?? context.appColors.primaryColor)
                         .withAlpha(60),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
+                    blurRadius: 10.r,
+                    offset: Offset(0, 4.h),
                   ),
                 ],
               ),
@@ -127,7 +128,7 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
                                 context.appColors.secondaryTextColor),
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.w500,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                       ),
                       child: Text(widget.buttonLables[index]),
                     ),

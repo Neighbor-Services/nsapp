@@ -49,9 +49,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
 
     // Calculate dynamic width for OTP fields
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double availableWidth = screenWidth - 48 - 56;
+    final double availableWidth = screenWidth - 48.w - 56.w;
     final double fieldWidth =
-        (availableWidth / 4) - 12; // 4 fields, more spacing
+        (availableWidth / 4) - 12.w; // 4 fields, more spacing
 
     return Scaffold(
       body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
@@ -89,56 +89,55 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                       child: Center(
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
-                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(horizontal: 24.w),
                           child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: 450),
+                            constraints: BoxConstraints(maxWidth: 450.w),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 // Icon
                                 Container(
-                                  width: 100,
-                                  height: 100,
+                                  width: 100.w,
+                                  height: 100.h,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    
                                     border: Border.all(
                                       color: context.appColors.glassBorder,
-                                      width: 2,
+                                      width: 2.r,
                                     ),
                                   ),
-                                  child:  Icon(
+                                  child: Icon(
                                     Icons.verified_user_rounded,
-                                    size: 50,
+                                    size: 50.r,
                                     color: context.appColors.primaryColor,
                                   ),
                                 ),
-                                const SizedBox(height: 32),
+                                SizedBox(height: 32.h),
 
                                 // Glass Container
                                 SolidContainer(
-                                  padding: EdgeInsets.all(28),
+                                  padding: EdgeInsets.all(28.r),
                                   child: Column(
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Verify Email",
                                         style: TextStyle(
-                                          fontSize: 28,
+                                          fontSize: 28.sp,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
                                       ),
-                                      const SizedBox(height: 12),
+                                      SizedBox(height: 12.h),
                                       Text(
                                         "Enter the verification code we sent to your email to reset your password",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 14.sp,
                                           color: secondaryTextColor,
                                           height: 1.5,
                                         ),
                                       ),
-                                      const SizedBox(height: 40),
+                                      SizedBox(height: 40.h),
 
                                       // OTP Field with Dynamic Width
                                       OtpTextField(
@@ -150,8 +149,8 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                             ? 70
                                             : fieldWidth + 10,
                                         showFieldAsBox: true,
-                                        borderWidth: 1.5,
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderWidth: 1.5.r,
+                                        borderRadius: BorderRadius.circular(12.r),
                                         fillColor: context.appColors.glassBorder,
                                         filled: true,
                                         borderColor: context.appColors.glassBorder,
@@ -160,12 +159,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                             .withAlpha(20),
                                         cursorColor: Colors.white,
                                         textStyle: TextStyle(
-                                          fontSize: fieldWidth > 40 ? 24 : 18,
+                                          fontSize: (fieldWidth > 40 ? 24 : 18).sp,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
                                         margin: EdgeInsets.only(
-                                          right: 12.0,
+                                          right: 12.0.w,
                                         ),
                                         onSubmit: (code) {
                                           verificationCode = code;
@@ -174,7 +173,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                           verificationCode = code;
                                         },
                                       ),
-                                      const SizedBox(height: 40),
+                                      SizedBox(height: 40.h),
 
                                       SolidButton(
                                         label: "VERIFY",
@@ -201,7 +200,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 40),
+                                SizedBox(height: 40.h),
                               ],
                             ),
                           ),

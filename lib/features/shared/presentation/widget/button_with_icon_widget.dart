@@ -22,17 +22,17 @@ class ButtonWithIconWidget extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: size(context).width,
-        height: 50,
+        height: 50.h,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(logo!, width: 20),
-              SizedBox(width: 10),
+              Image.asset(logo!, width: 20.r),
+              SizedBox(width: 10.w),
               CustomTextWidget(text: label!, color: appBlueCardColor),
             ],
           ),

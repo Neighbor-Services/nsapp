@@ -1,3 +1,4 @@
+import 'package:nsapp/core/core.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextWidget extends StatelessWidget {
@@ -29,10 +30,10 @@ class CustomTextWidget extends StatelessWidget {
     return Text(
       text,
       style: Theme.of(context).textTheme.titleMedium!.copyWith(
-        fontSize: fontSize,
+        fontSize: fontSize?.sp,
         color: color,
         fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
+        letterSpacing: letterSpacing?.sp,
         height: height,
       ),
       textAlign: textAlign,

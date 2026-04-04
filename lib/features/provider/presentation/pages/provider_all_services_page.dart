@@ -21,7 +21,7 @@ class ProviderAllServicesPage extends StatelessWidget {
             children: [
               // Header
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(20.r),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -31,23 +31,23 @@ class ProviderAllServicesPage extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12.r),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(14.r),
                           border: Border.all(
                             color: context.appColors.glassBorder,
-                            width: 1.5,
+                            width: 1.5.r,
                           ),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           color: context.appColors.primaryTextColor,
-                          size: 20,
+                          size: 20.r,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,17 +55,17 @@ class ProviderAllServicesPage extends StatelessWidget {
                           Text(
                             "SERVICE CATALOG",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w900,
                               color: context.appColors.primaryTextColor,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.h),
                           Text(
                             "BROWSE ALL AVAILABLE SERVICE CATEGORIES",
                             style: TextStyle(
-                              fontSize: 9,
+                              fontSize: 9.sp,
                               fontWeight: FontWeight.w900,
                               color: context.appColors.secondaryTextColor.withAlpha(150),
                               letterSpacing: 0.8,
@@ -91,10 +91,10 @@ class ProviderAllServicesPage extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.category_outlined,
-                              size: 64,
+                              size: 64.r,
                               color: Colors.white.withAlpha(50),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                             const Text(
                               "No services available",
                               style: TextStyle(color: Colors.white70),
@@ -106,13 +106,13 @@ class ProviderAllServicesPage extends StatelessWidget {
 
                     return GridView.builder(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
+                        horizontal: 20.w,
+                        vertical: 10.h,
                       ),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: isLargeScreen ? 3 : 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12.w,
+                        mainAxisSpacing: 12.h,
                         childAspectRatio: 1.3,
                       ),
                       itemCount: services.length,
@@ -166,30 +166,30 @@ class ProviderAllServicesPage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
             color: context.appColors.glassBorder,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Stack(
           children: [
             Positioned(
-              right: -10,
-              bottom: -10,
-              child: Icon(icon, size: 70, color: context.appColors.glassBorder),
+              right: -10.r,
+              bottom: -10.r,
+              child: Icon(icon, size: 70.r, color: context.appColors.glassBorder),
             ),
             Padding(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(12.r),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(icon, color: context.appColors.primaryColor, size: 24),
+                  Icon(icon, color: context.appColors.primaryColor, size: 24.r),
                   Text(
                     (service.name ?? "Service").toUpperCase(),
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w900,
                       color: context.appColors.primaryTextColor,
                       height: 1.2,

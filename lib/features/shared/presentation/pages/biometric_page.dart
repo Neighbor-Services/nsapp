@@ -119,32 +119,32 @@ class _BiometricPageState extends State<BiometricPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: EdgeInsets.all(30),
+                          padding: EdgeInsets.all(30.r),
                           decoration: BoxDecoration(
                             color: context.appColors.cardBackground,
                             shape: BoxShape.circle,
                             border: Border.all(color: glassBorderColor),
                           ),
                           child: Icon(Icons.fingerprint,
-                              color: contentColor, size: 80),
+                              color: contentColor, size: 80.r),
                         ),
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30.h),
                         Text(
                           "NEIGHBOR SERVICE LOCKED",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.w900,
                             color: contentColor,
                             letterSpacing: 1.0,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10.h),
                         Text(
                           "Authenticate to continue",
-                          style: TextStyle(fontSize: 16, color: secondaryColor),
+                          style: TextStyle(fontSize: 16.sp, color: secondaryColor),
                         ),
-                        const SizedBox(height: 50),
+                        SizedBox(height: 50.h),
                         if (!_isAuthenticating)
                           TextButton.icon(
                             onPressed: auth,
@@ -153,19 +153,19 @@ class _BiometricPageState extends State<BiometricPage> {
                               "UNLOCK",
                               style: TextStyle(
                                 color: contentColor, 
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.0,
                               ),
                             ),
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 30,
-                                vertical: 15,
+                                horizontal: 30.w,
+                                vertical: 15.h,
                               ),
                               backgroundColor: glassColor,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                                borderRadius: BorderRadius.circular(30.r),
                                 side: BorderSide(color: glassBorderColor),
                               ),
                             ),

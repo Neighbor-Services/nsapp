@@ -46,15 +46,15 @@ class _LoadingViewState extends State<LoadingView>
               ),
               Center(
                 child: Container(
-                  height: 140,
-                  width: 140,
-                  padding: EdgeInsets.all(20),
+                  height: 140.r,
+                  width: 140.r,
+                  padding: EdgeInsets.all(20.r),
                   decoration: BoxDecoration(
                     color: context.appColors.cardBackground,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
                       color: context.appColors.glassBorder,
-                      width: 1.5,
+                      width: 1.5.r,
                     ),
                   ),
                   child: Column(
@@ -62,12 +62,12 @@ class _LoadingViewState extends State<LoadingView>
                     children: [
                       RotationTransition(
                         turns: Tween(begin: 0.0, end: 1.0).animate(controller),
-                        child: Image.asset(logo2Assets, width: 60),
+                        child: Image.asset(logo2Assets, width: 60.r),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                       CustomTextWidget(
                         text: "Processing",
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
                         color: context.appColors.primaryTextColor,
                       ),

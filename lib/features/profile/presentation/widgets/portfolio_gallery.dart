@@ -40,12 +40,12 @@ class PortfolioGallery extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.collections_rounded, color: titleColor, size: 20),
-                const SizedBox(width: 12),
+                Icon(Icons.collections_rounded, color: titleColor, size: 20.r),
+                SizedBox(width: 12.w),
                 CustomTextWidget(
                   text: "Portfolio",
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   color: titleColor,
                   letterSpacing: 0.5,
                 ),
@@ -56,12 +56,12 @@ class PortfolioGallery extends StatelessWidget {
                 onTap: onAddImage,
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                    horizontal: 12.w,
+                    vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
                     color: context.appColors.secondaryColor.withAlpha(40),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(10.r),
                     border: Border.all(color: context.appColors.secondaryColor.withAlpha(80)),
                   ),
                   child: Row(
@@ -69,15 +69,15 @@ class PortfolioGallery extends StatelessWidget {
                       Icon(
                         Icons.add_a_photo_rounded,
                         color: context.appColors.secondaryColor,
-                        size: 16,
+                        size: 16.r,
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       Text(
                         "Add",
                         style: TextStyle(
                           color: context.appColors.secondaryColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                       ),
                     ],
@@ -86,49 +86,49 @@ class PortfolioGallery extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         if (items.isEmpty && isProvider)
           SolidContainer(
-            padding: EdgeInsets.all(32),
+            padding: EdgeInsets.all(32.r),
             width: double.infinity,
             child: Column(
               children: [
                 Icon(
                   Icons.photo_library_outlined,
                   color: emptyIconColor,
-                  size: 48,
+                  size: 48.r,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 CustomTextWidget(
                   text: "Add photos to showcase your work!",
                   color: emptyTextColor,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
               ],
             ),
           )
         else
           SizedBox(
-            height: 180,
+            height: 180.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               itemCount: items.length,
-              separatorBuilder: (c, i) => const SizedBox(width: 16),
+              separatorBuilder: (c, i) => SizedBox(width: 16.w),
               itemBuilder: (context, index) {
                 final item = items[index];
                 return GestureDetector(
                   onTap: () => _showItemDetails(context, item),
                   child: Container(
-                    width: 240,
+                    width: 240.w,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20.r),
                       border: Border.all(color: Colors.white.withAlpha(30)),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withAlpha(60),
-                          blurRadius: 15,
-                          offset: Offset(0, 5),
+                          blurRadius: 15.r,
+                          offset: Offset(0, 5.h),
                         ),
                       ],
                     ),
@@ -136,7 +136,7 @@ class PortfolioGallery extends StatelessWidget {
                       children: [
                         Positioned.fill(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20.r),
                             child: CachedNetworkImage(
                               imageUrl: item.imageUrl,
                               fit: BoxFit.cover,
@@ -167,20 +167,20 @@ class PortfolioGallery extends StatelessWidget {
                         ),
                         if (item.tags != null && item.tags!.isNotEmpty)
                           Positioned(
-                            top: 12,
-                            left: 12,
+                            top: 12.h,
+                            left: 12.w,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(10.r),
                               child: BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
+                                    horizontal: 10.w,
+                                    vertical: 6.h,
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withAlpha(100),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10.r),
                                     border: Border.all(
                                       color: Colors.white.withAlpha(40),
                                     ),
@@ -190,15 +190,15 @@ class PortfolioGallery extends StatelessWidget {
                                     children: [
                                        Icon(
                                         Icons.auto_awesome,
-                                        size: 12,
+                                        size: 12.r,
                                         color: context.appColors.infoColor,
                                       ),
-                                      const SizedBox(width: 6),
+                                      SizedBox(width: 6.w),
                                       Text(
                                         item.tags!.first.toUpperCase(),
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 10,
+                                          fontSize: 10.sp,
                                           fontWeight: FontWeight.w900,
                                           letterSpacing: 0.5,
                                         ),
@@ -211,16 +211,16 @@ class PortfolioGallery extends StatelessWidget {
                           ),
                         if (item.description != null)
                           Positioned(
-                            bottom: 12,
-                            left: 12,
-                            right: 12,
+                            bottom: 12.h,
+                            left: 12.w,
+                            right: 12.w,
                             child: Text(
                               item.description!,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 11,
+                                fontSize: 11.sp,
                                 fontWeight: FontWeight.w500,
                                 height: 1.3,
                               ),
@@ -251,16 +251,16 @@ class PortfolioGallery extends StatelessWidget {
       BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.all(24.r),
           decoration: BoxDecoration(
             color: sheetBg,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-            border: Border(top: BorderSide(color: borderColor, width: 1.5)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
+            border: Border(top: BorderSide(color: borderColor, width: 1.5.r)),
             boxShadow: [
               BoxShadow(
                 color: shadowColor,
-                blurRadius: 20,
-                offset: Offset(0, -5),
+                blurRadius: 20.r,
+                offset: Offset(0, -5.h),
               ),
             ],
           ),
@@ -271,32 +271,32 @@ class PortfolioGallery extends StatelessWidget {
               children: [
                 Center(
                   child: Container(
-                    width: 50,
-                    height: 5,
+                    width: 50.w,
+                    height: 5.h,
                     decoration: BoxDecoration(
                       color: handleColor,
-                      borderRadius: BorderRadius.circular(2.5),
+                      borderRadius: BorderRadius.circular(2.5.r),
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(24.r),
                   child: Stack(
                     children: [
                       CachedNetworkImage(
                         imageUrl: item.imageUrl,
                         width: double.infinity,
-                        height: 300,
+                        height: 300.h,
                         fit: BoxFit.cover,
                       ),
                       Positioned(
-                        top: 16,
-                        right: 16,
+                        top: 16.h,
+                        right: 16.w,
                         child: GestureDetector(
                           onTap: () => Get.back(),
                           child: Container(
-                            padding: EdgeInsets.all(8),
+                            padding: EdgeInsets.all(8.r),
                             decoration: BoxDecoration(
                               color: Colors.black.withAlpha(150),
                               shape: BoxShape.circle,
@@ -304,10 +304,10 @@ class PortfolioGallery extends StatelessWidget {
                                 color: Colors.white.withAlpha(40),
                               ),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.close_rounded,
                               color: Colors.white,
-                              size: 20,
+                              size: 20.r,
                             ),
                           ),
                         ),
@@ -315,43 +315,43 @@ class PortfolioGallery extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 if (item.tags != null && item.tags!.isNotEmpty) ...[
                    Row(
                     children: [
                       Icon(
                         Icons.auto_awesome,
                         color: context.appColors.infoColor,
-                        size: 16,
+                        size: 16.r,
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: 8.w),
                       CustomTextWidget(
                         text: "AI ANALYSIS TAGS",
                         color: context.appColors.infoColor,
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
+                    spacing: 10.w,
+                    runSpacing: 10.h,
                     children: item.tags!
                         .map(
                           (tag) => ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20.r),
                             child: BackdropFilter(
                               filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
+                                  horizontal: 16.w,
+                                  vertical: 8.h,
                                 ),
                                 decoration: BoxDecoration(
                                   color: context.appColors.infoColor.withAlpha(30),
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(20.r),
                                   border: Border.all(
                                     color: context.appColors.infoColor.withAlpha(80),
                                   ),
@@ -360,7 +360,7 @@ class PortfolioGallery extends StatelessWidget {
                                   "#$tag".toUpperCase(),
                                   style: TextStyle(
                                     color: Colors.lightBlueAccent,
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -370,42 +370,42 @@ class PortfolioGallery extends StatelessWidget {
                         )
                         .toList(),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32.h),
                 ],
                 if (item.description != null) ...[
                   Row(
                     children: [
-                      Icon(Icons.notes_rounded, color: labelColor, size: 16),
-                      const SizedBox(width: 8),
+                      Icon(Icons.notes_rounded, color: labelColor, size: 16.r),
+                      SizedBox(width: 8.w),
                       CustomTextWidget(
                         text: "AI DESCRIPTION",
                         color: labelColor,
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16.h),
                   Container(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.all(20.r),
                     decoration: BoxDecoration(
                       color: descriptionBg,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(color: descriptionBorder),
                     ),
                     child: Text(
                       item.description!,
                       style: TextStyle(
                         color: descriptionColor,
-                        fontSize: 15,
+                        fontSize: 15.sp,
                         height: 1.6,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
                 ],
-                const SizedBox(height: 48),
+                SizedBox(height: 48.h),
               ],
             ),
           ),

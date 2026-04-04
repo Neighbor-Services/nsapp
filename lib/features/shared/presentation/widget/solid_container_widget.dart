@@ -33,7 +33,7 @@ class SolidContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(24);
+    final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(24.r);
 
     // Theme-aware default colors
     final defaultBackgroundColor = context.appColors.cardBackground; // Light mode: white
@@ -43,15 +43,15 @@ class SolidContainer extends StatelessWidget {
 
 
     return Container(
-      width: width,
-      height: height,
+      width: width?.w,
+      height: height?.h,
       margin: margin,
       decoration: BoxDecoration(
         color: backgroundColor ?? defaultBackgroundColor,
         borderRadius: effectiveBorderRadius,
         border: Border.all(
           color: borderColor ?? defaultBorderColor,
-          width: borderWidth,
+          width: borderWidth.r,
         ),
        
         gradient: gradient,
@@ -59,7 +59,7 @@ class SolidContainer extends StatelessWidget {
       child: ClipRRect(
         borderRadius: effectiveBorderRadius,
         child: Padding(
-          padding: padding ?? EdgeInsets.all(24),
+          padding: padding ?? EdgeInsets.all(24.r),
           child: child,
         ),
       ),

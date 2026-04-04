@@ -48,8 +48,8 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
             child: SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 10,
+                  horizontal: 20.0.w,
+                  vertical: 10.h,
                 ),
                 child: Column(
                   children: [
@@ -88,7 +88,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         });
                       },
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     Expanded(
                       child: FutureBuilder<List<Profile>>(
                         future: SuccessSearchProviderState.providers,
@@ -122,13 +122,13 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                                 physics: const BouncingScrollPhysics(),
                                 shrinkWrap: true,
                                 gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 16,
-                                      mainAxisSpacing: 16,
-                                      childAspectRatio:
-                                          0.75, // Adjust for card height
-                                    ),
+                                     SliverGridDelegateWithFixedCrossAxisCount(
+                                       crossAxisCount: 2,
+                                       crossAxisSpacing: 16.w,
+                                       mainAxisSpacing: 16.h,
+                                       childAspectRatio:
+                                           0.75, // Adjust for card height
+                                     ),
                                 itemCount: displayList.length,
                                 itemBuilder: (context, index) {
                                   // Add staggered animation

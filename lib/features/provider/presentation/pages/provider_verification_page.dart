@@ -44,19 +44,19 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: Container(
-            margin: EdgeInsets.all(8),
+            margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: context.appColors.glassBorder,
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: context.appColors.primaryTextColor,
-              size: 18,
+              size: 18.r,
             ),
           ),
         ),
@@ -65,7 +65,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
           style: TextStyle(
             color: context.appColors.primaryTextColor,
             fontWeight: FontWeight.w900,
-            fontSize: 16,
+            fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
         ),
@@ -73,43 +73,43 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
       body: GradientBackground(
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(24),
+            padding: EdgeInsets.all(24.r),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "VERIFY YOUR ACCOUNT",
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 22.sp,
                     fontWeight: FontWeight.w900,
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 1.0,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 Text(
                   "UPLOAD A GOVERNMENT-ISSUED ID OR BUSINESS LICENSE TO RECEIVE YOUR VERIFICATION BADGE AND BUILD TRUST WITH SEEKERS.",
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w900,
                     color: context.appColors.secondaryTextColor,
                     height: 1.5,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
                 _buildUploadSection(
                   title: "ID Front / License",
                   image: _frontImage,
                   onTap: () => _pickImage(true),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 _buildUploadSection(
                   title: "ID Back (Optional)",
                   image: _backImage,
                   onTap: () => _pickImage(false),
                 ),
-                const SizedBox(height: 60),
+                SizedBox(height: 60.h),
                 SolidButton(
                   label: "SUBMIT FOR REVIEW",
                   onPressed: _frontImage == null
@@ -144,20 +144,20 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
           style: TextStyle(
             color: context.appColors.primaryTextColor,
             fontWeight: FontWeight.w900,
-            fontSize: 14,
+            fontSize: 14.sp,
             letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         GestureDetector(
           onTap: onTap,
           child: SolidContainer(
             width: size(context).width,
-            height: 180,
+            height: 180.h,
             padding: EdgeInsets.zero,
             child: image != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.r),
                     child: Image.file(image, fit: BoxFit.cover),
                   )
                 : Column(
@@ -166,14 +166,14 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                       Icon(
                         Icons.add_a_photo_rounded,
                         color: context.appColors.primaryTextColor,
-                        size: 40,
+                        size: 40.r,
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                       Text(
                         "Tap to upload",
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                         ),
                       ),
                     ],

@@ -121,12 +121,12 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                   color: Colors.transparent,
                   child: Center(
                     child: Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: EdgeInsets.all(20.0.r),
                       child: Container(
-                        padding: EdgeInsets.all(24),
+                        padding: EdgeInsets.all(24.r),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
                             color: context.appColors.glassBorder,
                           ),
@@ -135,7 +135,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              padding: EdgeInsets.all(16),
+                              padding: EdgeInsets.all(16.r),
                               decoration: BoxDecoration(
                                 color: context.appColors.errorColor.withAlpha(30),
                                 shape: BoxShape.circle,
@@ -143,33 +143,33 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                               child: Icon(
                                 Icons.wifi_off_rounded,
                                 color: context.appColors.errorColor,
-                                size: 40,
+                                size: 40.r,
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
                             CustomTextWidget(
                               text: "Connection Lost",
-                              fontSize: 22,
+                              fontSize: 22.sp,
                               fontWeight: FontWeight.bold,
                               color: context.appColors.primaryTextColor,
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 12),
+                            SizedBox(height: 12.h),
                             CustomTextWidget(
                               text:
                                   "Please check your internet connection and try again.",
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: context.appColors.secondaryTextColor,
                               textAlign: TextAlign.center,
                               maxLines: 3,
                             ),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
                             Container(
                               width: double.infinity,
-                              height: 55,
+                              height: 55.h,
                               decoration: BoxDecoration(
                                 gradient: context.appColors.primaryGradient,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(16.r),
                                 
                               ),
                               child: ElevatedButton(
@@ -184,13 +184,13 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                                   backgroundColor: Colors.transparent,
                                   shadowColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(16.r),
                                   ),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   "CLOSE APP",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                     letterSpacing: 1.1,
@@ -298,29 +298,29 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                     child: Opacity(
                       opacity: _logoFadeAnimation.value,
                       child: Container(
-                        padding: EdgeInsets.all(24),
+                        padding: EdgeInsets.all(24.r),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: context.appColors.glassBorder,
-                            width: 1.5,
+                            width: 1.5.r,
                           ),
                          
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: BorderRadius.circular(100.r),
                           child: Image.asset(
                             logo2Assets,
-                            width: 110,
-                            height: 110,
+                            width: 110.w,
+                            height: 110.h,
                             fit: BoxFit.cover,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
                   SlideTransition(
                     position: _textSlideAnimation,
                     child: FadeTransition(
@@ -330,26 +330,26 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                           Text(
                             'Neighbor Service',
                             style: TextStyle(
-                              fontSize: 34,
+                              fontSize: 34.sp,
                               fontWeight: FontWeight.w800,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h),
                           SlideTransition(
                             position: _subtitleSlideAnimation,
                             child: FadeTransition(
                               opacity: _subtitleFadeAnimation,
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 30,
+                                  horizontal: 30.w,
                                 ),
                                 child: Text(
                                   'Connecting your business and\nyour side hustle to neighbors',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 16.sp,
                                     color: context.appColors.secondaryTextColor,
                                     height: 1.6,
                                     fontWeight: FontWeight.w500,
@@ -369,16 +369,16 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                     child: Column(
                       children: [
                         SizedBox(
-                          width: 40,
-                          height: 40,
+                          width: 40.w,
+                          height: 40.h,
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
                               context.appColors.secondaryTextColor,
                             ),
-                            strokeWidth: 3,
+                            strokeWidth: 3.r,
                           ),
                         ),
-                        const SizedBox(height: 60),
+                        SizedBox(height: 60.h),
                       ],
                     ),
                   ),

@@ -60,7 +60,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
             children: [
               // Header
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(20.r),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -70,23 +70,23 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12.r),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(14.r),
                           border: Border.all(
                             color: context.appColors.glassBorder,
-                            width: 1.5,
+                            width: 1.5.r,
                           ),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           color: backBtnIconColor,
-                          size: 20,
+                          size: 20.r,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,17 +94,17 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                           Text(
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 20.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.h),
                           Text(
                             "AVAILABLE REQUESTS",
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w900,
                               color: secondaryTextColor,
                               letterSpacing: 0.5,
@@ -143,22 +143,22 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                                 children: [
                                   Icon(
                                     Icons.search_off_rounded,
-                                    size: 80,
+                                    size: 80.r,
                                     color: secondaryTextColor.withAlpha(60),
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: 16.h),
                                   Text(
                                     "No requests found",
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       color: secondaryTextColor,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8.h),
                                   Text(
                                     "Try searching for a different service",
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       color: secondaryTextColor.withAlpha(100),
                                     ),
                                   ),
@@ -169,13 +169,13 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
 
                           return ListView.separated(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 16,
+                              horizontal: 20.w,
+                              vertical: 16.h,
                             ),
                             physics: const BouncingScrollPhysics(),
                             itemCount: requestsData.length,
                             separatorBuilder: (context, index) =>
-                                const SizedBox(height: 16),
+                                SizedBox(height: 16.h),
                             itemBuilder: (context, index) {
                               final requestData = requestsData[index];
                               return _buildRequestCard(context, requestData);
@@ -189,7 +189,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                       child: Text(
                         "Start searching for requests",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color: secondaryTextColor,
                         ),
                       ),
@@ -229,9 +229,9 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
         );
       },
       child: SolidContainer(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         borderColor: context.appColors.glassBorder,
-        borderWidth: 1.5,
+        borderWidth: 1.5.r,
         // backgroundColor handled by SolidContainer
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,7 +242,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                   child: Text(
                     request.title?.toUpperCase() ?? "UNTITLED REQUEST",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w900,
                       color: textColor,
                       letterSpacing: 0.5,
@@ -254,35 +254,35 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                 _buildStatusBadge(request.status),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Text(
               request.description ?? "No description",
-              style: TextStyle(color: secondaryTextColor, fontSize: 13),
+              style: TextStyle(color: secondaryTextColor, fontSize: 13.sp),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Row(
               children: [
-                Icon(Icons.location_on, color: locationIconColor, size: 16),
-                const SizedBox(width: 4),
+                Icon(Icons.location_on, color: locationIconColor, size: 16.r),
+                SizedBox(width: 4.w),
                 Expanded(
                   child: Text(
                     request.address ?? "N/A",
-                    style: TextStyle(color: locationIconColor, fontSize: 12),
+                    style: TextStyle(color: locationIconColor, fontSize: 12.sp),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (request.distance != null) ...[
-                  const SizedBox(width: 12),
-                  Icon(Icons.near_me, color: context.appColors.secondaryColor, size: 16),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 12.w),
+                  Icon(Icons.near_me, color: context.appColors.secondaryColor, size: 16.r),
+                  SizedBox(width: 4.w),
                   Text(
                     "${request.distance!.toStringAsFixed(1)} km",
                     style: TextStyle(
                       color: context.appColors.secondaryColor,
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -291,20 +291,20 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
             ),
             if (request.proposalsCount != null &&
                 request.proposalsCount! > 0) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               Row(
                 children: [
                   Icon(
                     Icons.people_outline,
                     color: context.appColors.infoColor.withAlpha(200),
-                    size: 16,
+                    size: 16.r,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4.w),
                   Text(
                     "${request.proposalsCount} proposal${request.proposalsCount! > 1 ? 's' : ''}",
                     style: TextStyle(
                       color: context.appColors.infoColor.withAlpha(200),
-                      fontSize: 12,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ],
@@ -333,19 +333,19 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: color.withAlpha(30),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
           color: color.withAlpha(100),
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: Text(
         status?.toUpperCase() ?? "OPEN",
         style: TextStyle(
-          fontSize: 8,
+          fontSize: 8.sp,
           fontWeight: FontWeight.w900,
           color: color,
           letterSpacing: 0.5,

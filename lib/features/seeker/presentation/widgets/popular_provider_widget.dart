@@ -42,7 +42,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
       },
       builder: (context, state) {
         return Container(
-          height: 200,
+          height: 200.h,
           width: size(context).width,
           decoration: BoxDecoration(),
           child: FutureBuilder<List<Profile>>(
@@ -79,22 +79,22 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                           );
                         },
                         child: Container(
-                          width: 200,
+                          width: 200.w,
                           margin: EdgeInsets.only(
-                            right: 20,
-                            bottom: 10,
-                            top: 4,
+                            right: 20.w,
+                            bottom: 10.h,
+                            top: 4.h,
                           ),
                           decoration: BoxDecoration(
                             color: context.appColors.cardBackground,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: context.appColors.glassBorder,
-                              
+                              width: 1.5.r,
                             ),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
@@ -115,15 +115,15 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                 //       ),
 
                                 Positioned(
-                                  top: 12,
-                                  left: 12,
+                                  top: 12.h,
+                                  left: 12.w,
                                   child: _buildFloatingRating(
                                     profile.rating ?? "0.0",
                                   ),
                                 ),
                                 Positioned(
-                                  top: 12,
-                                  right: 12,
+                                  top: 12.h,
+                                  right: 12.w,
                                   child: _buildFavoriteAction(profile),
                                 ),
 
@@ -132,7 +132,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                   left: 0,
                                   right: 0,
                                   child: Container(
-                                    height: 100,
+                                    height: 100.h,
                                     decoration: BoxDecoration(
                                       color: context.appColors.cardBackground,
                                     ),
@@ -144,7 +144,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                   left: 0,
                                   right: 0,
                                   child: Padding(
-                                    padding: EdgeInsets.all(16),
+                                    padding: EdgeInsets.all(16.r),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -158,7 +158,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                                 style: TextStyle(
                                                   color: context.appColors.primaryTextColor,
                                                   fontWeight: FontWeight.w900,
-                                                  fontSize: 16,
+                                                  fontSize: 16.sp,
                                                   letterSpacing: 0.5,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
@@ -169,16 +169,16 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                                Icon(
                                                 Icons.verified_rounded,
                                                 color: context.appColors.primaryColor,
-                                                size: 16,
+                                                size: 16.r,
                                               ),
                                           ],
                                         ),
-                                        const SizedBox(height: 2),
+                                        SizedBox(height: 2.h),
                                         Text(
                                           getServiceName(profile.service ?? "").toUpperCase(),
                                           style: TextStyle(
                                             color: context.appColors.primaryTextColor,
-                                            fontSize: 10,
+                                            fontSize: 10.sp,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 0.5,
                                           ),
@@ -197,9 +197,9 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                     },
                   );
                 } else {
-                  return const EmptyWidget(
+                   return  EmptyWidget(
                     message: "No popular providers available",
-                    height: 180,
+                    height: 180.h,
                   );
                 }
               } else {
@@ -214,26 +214,26 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
 
   Widget _buildFloatingRating(String rating) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
           color: context.appColors.glassBorder,
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.star_rounded, color: Colors.yellow, size: 14),
-          const SizedBox(width: 4),
+          Icon(Icons.star_rounded, color: Colors.yellow, size: 14.r),
+          SizedBox(width: 4.w),
           Text(
             double.parse(rating).toStringAsFixed(1),
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontWeight: FontWeight.w900,
-              fontSize: 11,
+              fontSize: 11.sp,
             ),
           ),
         ],
@@ -261,8 +261,8 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
         }
       },
       child: Container(
-        height: 32,
-        width: 32,
+        height: 32.h,
+        width: 32.w,
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
           shape: BoxShape.circle,
@@ -270,7 +270,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
         child: Icon(
           isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
           color: isFavorite ? context.appColors.errorColor : Colors.white,
-          size: 18,
+          size: 18.r,
         ),
       ),
     );

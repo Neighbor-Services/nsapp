@@ -29,10 +29,10 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
     return Center(
       child: Container(
         width: context.width * 0.9,
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
             color: context.appColors.glassBorder,
           ),
@@ -44,33 +44,33 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 40,
-                height: 4,
+                width: 40.w,
+                height: 4.h,
                 decoration: BoxDecoration(
                   color: context.appColors.glassBorder,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
 
               CustomTextWidget(
                 text: "Rate your experience",
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
                 color: context.appColors.primaryTextColor,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               CustomTextWidget(
                 text: "How was your service with ${providerProfile.firstName}?",
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: context.appColors.secondaryTextColor,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
 
               StarRating(
                 rating: _currentRating,
-                size: 48,
+                size: 48.r,
                 color: context.appColors.secondaryColor,
                 borderColor: context.appColors.secondaryTextColor,
                 emptyIcon: Icons.star_border_rounded,
@@ -81,14 +81,14 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
                   });
                 },
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
 
               SolidTextField(
                 controller: _reviewController,
                 hintText: "Write your review here...",
                 isMultiLine: true,
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
 
               Row(
                 children: [
@@ -96,9 +96,9 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
                     child: TextButton(
                       onPressed: () => Get.back(),
                       style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16.r),
                           side: BorderSide(
                             color:
                                 context.appColors.glassBorder,
@@ -112,16 +112,16 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _submitReview,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: context.appColors.secondaryColor,
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
                       ),
                       child: const CustomTextWidget(

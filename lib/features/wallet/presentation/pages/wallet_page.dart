@@ -48,7 +48,7 @@ class _WalletPageState extends State<WalletPage> {
           style: TextStyle(
             color: context.appColors.primaryTextColor,
             fontWeight: FontWeight.w900,
-            fontSize: 18,
+            fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
         ),
@@ -64,10 +64,10 @@ class _WalletPageState extends State<WalletPage> {
             }
           },
           child: Container(
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: context.appColors.iconContainerBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: context.appColors.glassBorder,
               ),
@@ -76,15 +76,15 @@ class _WalletPageState extends State<WalletPage> {
                   : [
                       BoxShadow(
                         color: Colors.black.withAlpha(10),
-                        blurRadius: 10,
-                        spreadRadius: 2,
+                        blurRadius: 10.r,
+                        spreadRadius: 2.r,
                       ),
                     ],
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: context.appColors.primaryTextColor,
-              size: 16,
+              size: 16.r,
             ),
           ),
         ),
@@ -102,41 +102,41 @@ class _WalletPageState extends State<WalletPage> {
             child: GradientBackground(
               child: SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Column(
                     children: [
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       TweenAnimationBuilder<double>(
                         tween: Tween(begin: 0, end: 1),
                         duration: const Duration(milliseconds: 800),
                         builder: (context, value, child) => Opacity(
                           opacity: value,
                           child: Transform.translate(
-                            offset: Offset(0, 20 * (1 - value)),
+                            offset: Offset(0, 20.h * (1 - value)),
                             child: child,
                           ),
                         ),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                             color: context.appColors.cardBackground,
                             gradient: context.appColors.primaryGradient,
                             border: Border.all(
                               color: context.appColors.glassBorder,
                             ),
                           ),
-                          padding: EdgeInsets.all(32),
+                          padding: EdgeInsets.all(32.r),
                           child: Column(
                             children: [
                               CustomTextWidget(
                                 text: "TOTAL BALANCE",
                                 color: context.appColors.secondaryTextColor,
-                                fontSize: 15,
+                                fontSize: 15.sp,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.2,
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12.h),
                               Builder(
                                 builder: (context) {
                                   final wallet = SuccessGetMyWalletState.wallet;
@@ -145,14 +145,14 @@ class _WalletPageState extends State<WalletPage> {
                                     "${wallet?.currency ?? "\$"} ${balance.toStringAsFixed(2)}",
                                     style: TextStyle(
                                       color: context.appColors.primaryColor,
-                                      fontSize: 42,
+                                      fontSize: 42.sp,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: -0.5,
                                     ),
                                   );
                                 },
                               ),
-                              const SizedBox(height: 32),
+                              SizedBox(height: 32.h),
                               Row(
                                 children: [
                                   Expanded(
@@ -162,7 +162,7 @@ class _WalletPageState extends State<WalletPage> {
                                           _showPayoutDialog(context),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  SizedBox(width: 16.w),
                                   Expanded(
                                     child: SolidButton(
                                       label: "Stripe",
@@ -178,25 +178,25 @@ class _WalletPageState extends State<WalletPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: 40.h),
                       Row(
                         children: [
                           Icon(
                             Icons.history_rounded,
                             color: context.appColors.secondaryTextColor,
-                            size: 20,
+                            size: 20.r,
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12.w),
                           CustomTextWidget(
                             text: "RECENT TRANSACTIONS",
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w900,
                             color: context.appColors.primaryTextColor,
                             letterSpacing: 1.1,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       Expanded(
                         child: Builder(
                           builder: (context) {
@@ -210,14 +210,14 @@ class _WalletPageState extends State<WalletPage> {
                                   children: [
                                     Icon(
                                       Icons.receipt_long_rounded,
-                                      size: 64,
+                                      size: 64.r,
                                       color: context.appColors.secondaryTextColor.withAlpha(30),
                                     ),
-                                    const SizedBox(height: 16),
+                                    SizedBox(height: 16.h),
                                     CustomTextWidget(
                                       text: "NO TRANSACTIONS YET",
                                       color: context.appColors.secondaryTextColor.withAlpha(100),
-                                      fontSize: 12,
+                                      fontSize: 12.sp,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.0,
                                     ),
@@ -228,7 +228,7 @@ class _WalletPageState extends State<WalletPage> {
                             return ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               itemCount: transactions.length,
-                              padding: EdgeInsets.only(bottom: 20),
+                              padding: EdgeInsets.only(bottom: 20.h),
                               itemBuilder: (context, index) {
                                 final tx = transactions[index];
                                 final isPayout = tx.transactionType == "PAYOUT";
@@ -242,13 +242,13 @@ class _WalletPageState extends State<WalletPage> {
                                           : context.appColors.errorColor);
 
                                 return Container(
-                                  margin: EdgeInsets.only(bottom: 12),
+                                  margin: EdgeInsets.only(bottom: 12.h),
                                   child: SolidContainer(
-                                    padding: EdgeInsets.all(16),
+                                    padding: EdgeInsets.all(16.r),
                                     child: Row(
                                       children: [
                                         Container(
-                                          padding: EdgeInsets.all(12),
+                                          padding: EdgeInsets.all(12.r),
                                           decoration: BoxDecoration(
                                             color:
                                                 (isCredit
@@ -258,7 +258,7 @@ class _WalletPageState extends State<WalletPage> {
                                                               : context.appColors.errorColor))
                                                     .withAlpha(30),
                                             borderRadius: BorderRadius.circular(
-                                              15,
+                                              15.r,
                                             ),
                                           ),
                                           child: Icon(
@@ -270,10 +270,10 @@ class _WalletPageState extends State<WalletPage> {
                                                 : (isPayout
                                                       ? context.appColors.warningColor
                                                       : context.appColors.errorColor),
-                                            size: 20,
+                                            size: 20.r,
                                           ),
                                         ),
-                                        const SizedBox(width: 16),
+                                        SizedBox(width: 16.w),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -283,17 +283,17 @@ class _WalletPageState extends State<WalletPage> {
                                                 text:
                                                     (tx.description ?? "Transaction").toUpperCase(),
                                                 fontWeight: FontWeight.w900,
-                                                fontSize: 14,
+                                                fontSize: 14.sp,
                                                 color: context.appColors.primaryTextColor,
                                               ),
-                                              const SizedBox(height: 4),
+                                              SizedBox(height: 4.h),
                                               CustomTextWidget(
                                                 text: tx.createdAt != null
                                                     ? DateFormat(
                                                         "MMM dd, yyyy • h:mm a",
                                                       ).format(tx.createdAt!)
                                                     : "Date Unknown",
-                                                fontSize: 12,
+                                                fontSize: 12.sp,
                                                 color: context.appColors.secondaryTextColor,
                                               ),
                                             ],
@@ -312,28 +312,28 @@ class _WalletPageState extends State<WalletPage> {
                                                           ? context.appColors.warningColor
                                                           : context.appColors.errorColor),
                                                 fontWeight: FontWeight.w900,
-                                                fontSize: 16,
+                                                fontSize: 16.sp,
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
+                                            SizedBox(height: 4.h),
                                             Container(
                                               padding:
                                                   EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 2,
+                                                    horizontal: 8.w,
+                                                    vertical: 2.h,
                                                   ),
                                               decoration: BoxDecoration(
                                                 color: statusColor.withAlpha(
                                                   20,
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(8),
+                                                    BorderRadius.circular(8.r),
                                               ),
                                               child: CustomTextWidget(
                                                 text:
                                                     tx.status?.toUpperCase() ??
                                                     "PENDING",
-                                                fontSize: 10,
+                                                fontSize: 10.sp,
                                                 fontWeight: FontWeight.bold,
                                                 color: statusColor,
                                               ),
@@ -368,7 +368,7 @@ class _WalletPageState extends State<WalletPage> {
       builder: (context) => AlertDialog(
         backgroundColor: context.appColors.cardBackground,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           side: BorderSide(
             color: context.appColors.glassBorder,
           ),
@@ -378,7 +378,7 @@ class _WalletPageState extends State<WalletPage> {
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w900,
-            fontSize: 18,
+            fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
         ),
@@ -389,10 +389,10 @@ class _WalletPageState extends State<WalletPage> {
               "Enter the amount you wish to transfer to your bank account.",
               style: TextStyle(
                 color: context.appColors.secondaryTextColor,
-                fontSize: 14,
+                fontSize: 14.sp,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             SolidTextField(
               controller: amountController,
               hintText: "Amount (e.g. 50.00)",
@@ -409,7 +409,7 @@ class _WalletPageState extends State<WalletPage> {
               style: TextStyle(
                 color: context.appColors.secondaryTextColor.withAlpha(150),
                 fontWeight: FontWeight.w900,
-                fontSize: 12,
+                fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
             ),
@@ -464,7 +464,7 @@ class _WalletPageState extends State<WalletPage> {
               return AlertDialog(
                 backgroundColor: context.appColors.cardBackground,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(24.r),
                   side: BorderSide(
                     color: context.appColors.glassBorder,
                   ),
@@ -474,7 +474,7 @@ class _WalletPageState extends State<WalletPage> {
                   style: TextStyle(
                     color: textColor,
                     fontWeight: FontWeight.w900,
-                    fontSize: 18,
+                    fontSize: 18.sp,
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -482,7 +482,7 @@ class _WalletPageState extends State<WalletPage> {
                   "You need to set up your Stripe Connect account first. Would you like to start onboarding?",
                   style: TextStyle(
                     color: context.appColors.secondaryTextColor,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                   ),
                 ),
                 actions: [

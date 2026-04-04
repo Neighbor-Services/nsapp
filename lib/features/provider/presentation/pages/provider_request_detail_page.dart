@@ -93,14 +93,14 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700),
+                    constraints: BoxConstraints(maxWidth: 700.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
-                          horizontal: isLargeScreen ? 32 : 16,
-                          vertical: 20,
+                          horizontal: isLargeScreen ? 32.w : 16.w,
+                          vertical: 20.h,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,27 +115,27 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                     );
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.all(12),
+                                    padding: EdgeInsets.all(12.r),
                                     decoration: BoxDecoration(
                                       color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(14),
+                                      borderRadius: BorderRadius.circular(14.r),
                                       border: Border.all(
                                         color: context.appColors.glassBorder,
-                                        width: 1.5,
+                                        width: 1.5.r,
                                       ),
                                     ),
                                     child: Icon(
                                       Icons.arrow_back_ios_new_rounded,
                                       color: context.appColors.primaryTextColor,
-                                      size: 20,
+                                      size: 20.r,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                SizedBox(width: 16.w),
                                 Text(
                                   "REQUEST DETAILS",
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.w900,
                                     color: context.appColors.primaryTextColor,
                                     letterSpacing: 1.2,
@@ -155,37 +155,37 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                     );
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.all(12),
+                                    padding: EdgeInsets.all(12.r),
                                     decoration: BoxDecoration(
                                       color: context.appColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(14),
+                                      borderRadius: BorderRadius.circular(14.r),
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.chat_bubble_rounded,
                                       color: Colors.white,
-                                      size: 20,
+                                      size: 20.r,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 28),
+                            SizedBox(height: 28.h),
 
                             // Image Card
                             _buildImageCard(request, isDark),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
 
                             // User Info Card
                             _buildUserInfoCard(user, request, isDark),
-                            const SizedBox(height: 20),
+                            SizedBox(height: 20.h),
 
                             // Request Details Card
                             _buildRequestDetailsCard(request, isDark),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
 
                             // Action Button
                             _buildActionButton(context, request, isDark),
-                            const SizedBox(height: 40),
+                            SizedBox(height: 40.h),
                           ],
                         ),
                       ),
@@ -204,19 +204,19 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     bool hasImage = request.withImage ?? false;
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(28.r),
         
         border: Border.all(
           color: context.appColors.glassBorder,
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(28.r),
         child: Stack(
           children: [
             SizedBox(
-              height: 280,
+              height: 280.h,
               width: double.infinity,
               child: hasImage
                   ? GestureDetector(
@@ -240,11 +240,11 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                           },
                           errorBuilder: (context, _, __) => Container(
                             color: Colors.white.withAlpha(10),
-                            child: const Center(
+                            child: Center(
                               child: Icon(
                                 Icons.image_not_supported_rounded,
                                 color: Colors.white24,
-                                size: 50,
+                                size: 50.r,
                               ),
                             ),
                           ),
@@ -258,7 +258,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
               left: 0,
               right: 0,
               child: Container(
-                height: 120,
+                height: 120.h,
                 decoration: BoxDecoration(
                  
                 ),
@@ -271,7 +271,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 2,
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -284,13 +284,13 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
 
   Widget _buildUserInfoCard(dynamic user, dynamic request, bool isDark) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         border: Border.all(
           color: context.appColors.glassBorder,
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: Row(
@@ -299,10 +299,10 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
             decoration: BoxDecoration(
               
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withAlpha(40), width: 2),
+              border: Border.all(color: Colors.white.withAlpha(40), width: 2.r),
             ),
             child: CircleAvatar(
-              radius: 30,
+              radius: 30.r,
               backgroundColor: context.appColors.glassBorder,
               backgroundImage:
                   (user.profilePictureUrl != null &&
@@ -311,7 +311,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                   : const AssetImage(logo2Assets) as ImageProvider,
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,7 +322,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                     Text(
                       (user.firstName ?? "User").toUpperCase(),
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w900,
                         color: context.appColors.primaryTextColor,
                         letterSpacing: 0.5,
@@ -334,17 +334,17 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6.h),
                 Row(
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                        horizontal: 8.w,
+                        vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
                         color: context.appColors.primaryColor.withAlpha(30),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
                           color: context.appColors.primaryColor.withAlpha(50),
                         ),
@@ -352,20 +352,20 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                       child: Text(
                         (request.service?.name ?? "Service").toUpperCase(),
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.w900,
                           color: context.appColors.primaryColor,
                           letterSpacing: 0.5,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8.w),
                     Text(
                       DateFormat(
                         "MMM dd, yyyy",
                       ).format(request.createdAt ?? DateTime.now()),
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         color: context.appColors.secondaryTextColor,
                       ),
                     ),
@@ -382,13 +382,13 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   Widget _buildRequestDetailsCard(dynamic request, bool isDark) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         border: Border.all(
           color: context.appColors.glassBorder,
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: Column(
@@ -399,13 +399,13 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                Icon(
                 Icons.info_outline_rounded,
                 color: context.appColors.primaryColor,
-                size: 20,
+                size: 20.r,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Text(
                 "REQUEST SUMMARY",
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.2,
                   color: context.appColors.secondaryTextColor,
@@ -413,21 +413,21 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           Text(
             (request.title ?? "Service Request").toUpperCase(),
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w900,
               color: context.appColors.primaryTextColor,
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Text(
             request.description ?? "",
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 15.sp,
               height: 1.6,
               color: context.appColors.secondaryTextColor,
             ),
@@ -452,7 +452,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
           ? _cancelRequest(context, request)
           : _acceptRequest(context, request),
       isPrimary: !isAccepted,
-      height: 60,
+      height: 60.h,
     );
   }
 
@@ -507,21 +507,21 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withAlpha(150), width: 1.5),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: color.withAlpha(150), width: 1.5.r),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 6),
+          Icon(icon, size: 14.r, color: color),
+          SizedBox(width: 6.w),
           Text(
             status.toUpperCase(),
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w900,
               color: color,
               letterSpacing: 0.5,

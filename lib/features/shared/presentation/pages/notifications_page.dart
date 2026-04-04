@@ -68,7 +68,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 700),
+                  constraints: BoxConstraints(maxWidth: 700.w),
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Column(
@@ -76,8 +76,8 @@ class _NotificationsPageState extends State<NotificationsPage>
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32 : 20,
-                            vertical: 24,
+                            horizontal: isLargeScreen ? 32.w : 20.w,
+                            vertical: 24.h,
                           ),
                           child: Row(
                             children: [
@@ -94,10 +94,10 @@ class _NotificationsPageState extends State<NotificationsPage>
                                   }
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
                                     color: context.appColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12.r),
                                     border: Border.all(
                                       color: context.appColors.glassBorder,
                                     ),
@@ -105,15 +105,15 @@ class _NotificationsPageState extends State<NotificationsPage>
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
                                     color: context.appColors.primaryTextColor,
-                                    size: 20,
+                                    size: 20.r,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16.w),
                               Text(
                                 "NOTIFICATIONS",
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 18.sp,
                                   fontWeight: FontWeight.w900,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 1.2,
@@ -133,9 +133,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                                   return ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     padding: EdgeInsets.only(
-                                      left: isLargeScreen ? 32 : 16,
-                                      right: isLargeScreen ? 32 : 16,
-                                      bottom: 24,
+                                      left: isLargeScreen ? 32.w : 16.w,
+                                      right: isLargeScreen ? 32.w : 16.w,
+                                      bottom: 24.h,
                                     ),
                                     itemCount: snapshot.data!.length,
                                     itemBuilder: (context, index) {
@@ -149,45 +149,45 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 } else {
                                   return Center(
                                     child: Container(
-                                      padding: EdgeInsets.all(40),
-                                      decoration: BoxDecoration(
-                                        color: context.appColors.cardBackground,
-                                        borderRadius: BorderRadius.circular(24),
-                                        border: Border.all(
-                                          color: context.appColors.glassBorder,
-                                        ),
+                                    padding: EdgeInsets.all(40.r),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.circular(24.r),
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
                                       ),
+                                    ),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Container(
-                                            padding: EdgeInsets.all(20),
+                                            padding: EdgeInsets.all(20.r),
                                             decoration: BoxDecoration(
                                               color: context.appColors.glassBorder,
                                               shape: BoxShape.circle,
                                             ),
                                             child: Icon(
                                               Icons.notifications_off_rounded,
-                                              size: 50,
+                                              size: 50.r,
                                               color: context.appColors.glassBorder,
                                             ),
                                           ),
-                                          const SizedBox(height: 24),
+                                          SizedBox(height: 24.h),
                                           Text(
                                             "NO NOTIFICATIONS YET",
                                             style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 16.sp,
                                               fontWeight: FontWeight.w900,
                                               color: context.appColors.glassBorder,
                                               letterSpacing: 1.0,
                                             ),
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12.h),
                                           Text(
                                             "You'll see your notifications here\nas soon as they arrive.",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               color: context.appColors.glassBorder,
                                               height: 1.5,
                                             ),
@@ -229,7 +229,7 @@ class _NotificationsPageState extends State<NotificationsPage>
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Transform.translate(
-          offset: Offset(0, 30 * (1 - value)),
+          offset: Offset(0, 30.h * (1 - value)),
           child: Opacity(opacity: value, child: child),
         );
       },
@@ -238,18 +238,18 @@ class _NotificationsPageState extends State<NotificationsPage>
         child: Builder(
           builder: (context) {
             return Container(
-              margin: EdgeInsets.only(bottom: 16),
-              padding: EdgeInsets.all(18),
+              margin: EdgeInsets.only(bottom: 16.h),
+              padding: EdgeInsets.all(18.r),
               decoration: BoxDecoration(
                 color: isUnread
                     ? context.appColors.cardBackground
                     : context.appColors.cardBackground,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
                   color: isUnread
                       ? context.appColors.glassBorder
                       : context.appColors.glassBorder,
-                  width: isUnread ? 1.2 : 0.8,
+                  width: isUnread ? 1.2.r : 0.8.r,
                 ),
             
               ),
@@ -257,23 +257,23 @@ class _NotificationsPageState extends State<NotificationsPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 52,
-                    height: 52,
+                    width: 52.w,
+                    height: 52.h,
                     decoration: BoxDecoration(
                       color: _getNotificationColor(
                         notification.notificationType,
                       ).withAlpha(40),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                     ),
                     child: Icon(
                       _getNotificationIcon(notification.notificationType),
                       color: _getNotificationColor(
                         notification.notificationType,
                       ),
-                      size: 26,
+                      size: 26.r,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,7 +284,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                               child: Text(
                                 (notification.title ?? "").toUpperCase(),
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                   fontWeight: FontWeight.w900,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 0.5,
@@ -293,9 +293,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                             ),
                             if (isUnread)
                               Container(
-                                width: 10,
-                                height: 10,
-                                margin: EdgeInsets.only(left: 8),
+                                width: 10.r,
+                                height: 10.h,
+                                margin: EdgeInsets.only(left: 8.w),
                                 decoration: BoxDecoration(
                                   color: context.appColors.primaryColor,
                                   shape: BoxShape.circle,
@@ -303,30 +303,30 @@ class _NotificationsPageState extends State<NotificationsPage>
                               ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6.h),
                         Text(
                           notification.message ?? "",
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             color: context.appColors.hintTextColor,
                             height: 1.4,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10.h),
                         Row(
                           children: [
                             Icon(
                               Icons.access_time_filled_rounded,
-                              size: 12,
+                              size: 12.r,
                               color: context.appColors.hintTextColor,
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: 4.w),
                             Text(
                               _formatDate(notification.createdAt!),
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
                                 color: context.appColors.hintTextColor,
                               ),
@@ -398,35 +398,35 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.fromLTRB(24, 12, 24, 40),
+        padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 40.h),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
           border: Border.all(
             color: context.appColors.glassBorder,
-            width: 1,
+            width: 1.r,
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 45,
-              height: 5,
+              width: 45.w,
+              height: 5.h,
               decoration: BoxDecoration(
                 color: context.appColors.glassBorder,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
             Container(
-              width: 80,
-              height: 80,
+              width: 80.w,
+              height: 80.h,
               decoration: BoxDecoration(
                 color: _getNotificationColor(
                   notificationData.notification!.notificationType,
                 ).withAlpha(40),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(24.r),
               ),
               child: Icon(
                 _getNotificationIcon(
@@ -435,25 +435,25 @@ class _NotificationsPageState extends State<NotificationsPage>
                 color: _getNotificationColor(
                   notificationData.notification!.notificationType,
                 ),
-                size: 38,
+                size: 38.r,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Text(
               (notificationData.notification!.title ?? "NOTIFICATION").toUpperCase(),
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w900,
                 color: context.appColors.primaryTextColor,
                 letterSpacing: 1.0,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             Text(
               notificationData.notification!.message ?? "",
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 color: context.appColors.hintTextColor,
                 height: 1.5,
               ),
@@ -462,10 +462,10 @@ class _NotificationsPageState extends State<NotificationsPage>
             if (notificationData.notification!.notificationType
                     ?.toLowerCase() !=
                 "system") ...[
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 56.h,
                 child: ElevatedButton(
                   onPressed: () =>
                       _navigateToDetails(context, notificationData),
@@ -476,13 +476,13 @@ class _NotificationsPageState extends State<NotificationsPage>
                     foregroundColor: Colors.black,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(18.r),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     "VIEW DETAILS",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.0,
                       color: Colors.white,
@@ -491,10 +491,10 @@ class _NotificationsPageState extends State<NotificationsPage>
                 ),
               ),
             ] else ...[
-              const SizedBox(height: 32),
+              SizedBox(height: 32.h),
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 56.h,
                 child: OutlinedButton(
                   onPressed: () => Get.back(),
                   style: OutlinedButton.styleFrom(
@@ -502,14 +502,14 @@ class _NotificationsPageState extends State<NotificationsPage>
                       color: context.appColors.glassBorder,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(18.r),
                     ),
                   ),
                   child: Text(
                     "DISMISS",
                     style: TextStyle(
                       color: context.appColors.primaryTextColor,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.0,
                     

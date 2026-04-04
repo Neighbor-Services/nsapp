@@ -111,11 +111,11 @@ class _AppointmentDetailBottomSheetState
     if (appt == null) return const SizedBox.shrink();
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-        border: Border.all(color: dividerColor, width: 1.5),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
+        border: Border.all(color: dividerColor, width: 1.5.r),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -124,15 +124,15 @@ class _AppointmentDetailBottomSheetState
           children: [
             Center(
               child: Container(
-                width: 40,
-                height: 4,
+                width: 40.w,
+                height: 4.h,
                 decoration: BoxDecoration(
                   color: dividerColor,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -141,7 +141,7 @@ class _AppointmentDetailBottomSheetState
                     controller: _titleController,
                     style: TextStyle(
                       color: contentColor,
-                      fontSize: 24,
+                      fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: InputDecoration(
@@ -161,7 +161,7 @@ class _AppointmentDetailBottomSheetState
                       Expanded(
                         child: CustomTextWidget(
                           text: (appt.title ?? "Appointment Details").toUpperCase(),
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.w900,
                           color: contentColor,
                           letterSpacing: 1.0,
@@ -169,16 +169,16 @@ class _AppointmentDetailBottomSheetState
                       ),
                       if (widget.data.role != null)
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                           decoration: BoxDecoration(
                             color: context.appColors.secondaryColor.withAlpha(40),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: context.appColors.secondaryColor, width: 1),
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(color: context.appColors.secondaryColor, width: 1.r),
                           ),
                           child: Text(
                             widget.data.role!.toUpperCase(),
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w900,
                               color: context.appColors.secondaryColor,
                               letterSpacing: 0.5,
@@ -187,11 +187,11 @@ class _AppointmentDetailBottomSheetState
                         ),
                     ],
                   ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
               ],
             ),
 
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
             _buildInfoSection(
               context,
 
@@ -245,7 +245,7 @@ class _AppointmentDetailBottomSheetState
                     )
                   : null,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             GestureDetector(
               onTap: () {
                 Get.back();
@@ -267,13 +267,13 @@ class _AppointmentDetailBottomSheetState
                 trailing: user?.userType?.toUpperCase() ?? "",
               ),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomTextWidget(
                   text: "DESCRIPTION",
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w900,
                   color: contentColor,
                   letterSpacing: 0.5,
@@ -288,19 +288,19 @@ class _AppointmentDetailBottomSheetState
                   ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             if (_isEditing)
               TextField(
                 controller: _descriptionController,
                 maxLines: 5,
-                style: TextStyle(color: contentColor, fontSize: 15),
+                style: TextStyle(color: contentColor, fontSize: 15.sp),
                 decoration: InputDecoration(
                   hintText: "Enter description",
                   hintStyle: TextStyle(color: dividerColor),
                   filled: true,
                   fillColor: context.appColors.glassBorder,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                     borderSide: BorderSide.none,
                   ),
                 ),
@@ -310,27 +310,27 @@ class _AppointmentDetailBottomSheetState
                 appt.description ?? "No description provided.",
                 style: TextStyle(
                   color: secondaryTextColor,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   height: 1.6,
                 ),
               ),
             if (!_isEditing && appt.serviceRequest != null) ...[
-              const Divider(height: 48),
+              Divider(height: 48.h),
               CustomTextWidget(
                 text: "LINKED REQUEST",
                 fontWeight: FontWeight.w900,
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: context.appColors.secondaryTextColor,
                 letterSpacing: 1.0,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               _buildInfoSection(
                 context,
                 icon: Icons.assignment_rounded,
                 title: "Original Title",
                 subtitle: appt.serviceRequest?.title ?? "N/A",
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12.h),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
@@ -373,13 +373,13 @@ class _AppointmentDetailBottomSheetState
                   },
                   icon: Icon(
                     Icons.open_in_new_rounded,
-                    size: 18,
+                    size: 18.r,
                     color: context.appColors.primaryColor,
                   ),
                   label: Text(
                     "VIEW FULL DETAILS",
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w900,
                       color: context.appColors.primaryColor,
                       letterSpacing: 0.5,
@@ -388,7 +388,7 @@ class _AppointmentDetailBottomSheetState
                 ),
               ),
             ],
-            const SizedBox(height: 40),
+            SizedBox(height: 40.h),
             if (_isEditing)
               Row(
                 children: [
@@ -400,16 +400,16 @@ class _AppointmentDetailBottomSheetState
                       color: Colors.transparent,
                       textColor: Colors.white,
                       borderColor: dividerColor,
-                      height: 50,
+                      height: 50.h,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: SolidButton(
                       label: "SAVE CHANGES",
                       onPressed: _onSave,
                       color: context.appColors.secondaryColor,
-                      height: 50,
+                      height: 50.h,
                     ),
                   ),
                 ],
@@ -422,9 +422,9 @@ class _AppointmentDetailBottomSheetState
                 color: context.appColors.hintTextColor,
                 textColor: Colors.white,
                 borderColor: dividerColor,
-                height: 50,
+                height: 50.h,
               ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
           ],
         ),
       ),
@@ -443,23 +443,23 @@ class _AppointmentDetailBottomSheetState
     final glassBorderColor = context.appColors.glassBorder;
 
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         border: Border.all(color: glassBorderColor),
       ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: context.appColors.secondaryColor.withAlpha(20),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: context.appColors.hintTextColor, size: 20),
+            child: Icon(icon, color: context.appColors.hintTextColor, size: 20.r),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,18 +468,18 @@ class _AppointmentDetailBottomSheetState
                   title.toUpperCase(),
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4.h),
                 if (content != null)
                   content
                 else
                   CustomTextWidget(
                     text: subtitle ?? "",
-                    fontSize: 15,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
                     color: contentColor,
                   ),
@@ -488,14 +488,14 @@ class _AppointmentDetailBottomSheetState
           ),
           if (content == null && trailing != null && trailing.isNotEmpty)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
               decoration: BoxDecoration(
                 color: context.appColors.glassBorder,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
               child: CustomTextWidget(
                 text: trailing,
-                fontSize: 12,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.bold,
                 color: contentColor,
               ),

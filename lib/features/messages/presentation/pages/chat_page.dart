@@ -127,11 +127,11 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return ScaleTransition(
       scale: _headerAnimation,
       child: Container(
-        margin: EdgeInsets.fromLTRB(16, 8, 16, 12),
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        margin: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(color: borderColor),
         ),
         child: Row(
@@ -146,10 +146,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               },
               icon: const Icon(Icons.arrow_back_ios_new_rounded),
               color: iconColor,
-              iconSize: 20,
+              iconSize: 20.r,
             ),
             _buildAvatar(receiver),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +159,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                     "${receiver.firstName}",
                     style: TextStyle(
                       color: textColor,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -167,8 +167,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   Row(
                     children: [
                       Container(
-                        width: 8,
-                        height: 8,
+                        width: 8.r,
+                        height: 8.r,
                         decoration: BoxDecoration(
                           color: ChatStatusState.isOnline
                               ? context.appColors.successColor
@@ -176,19 +176,19 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      SizedBox(width: 6.w),
                       Text(
                         ChatStatusState.isTyping
                             ? "Typing..."
                             : (ChatStatusState.isOnline ? "Online" : "Offline"),
-                        style: TextStyle(color: subtitleColor, fontSize: 12),
+                        style: TextStyle(color: subtitleColor, fontSize: 12.sp),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            _buildHeaderActions(context),
+           
           ],
         ),
       ),
@@ -197,13 +197,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   Widget _buildAvatar(dynamic receiver) {
     return Container(
-      padding: EdgeInsets.all(2),
+      padding: EdgeInsets.all(2.r),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: context.appColors.secondaryColor.withAlpha(100), width: 2),
+        border: Border.all(color: context.appColors.secondaryColor.withAlpha(100), width: 2.r),
       ),
       child: CircleAvatar(
-        radius: 20,
+        radius: 20.r,
         backgroundColor: Colors.grey.withAlpha(30),
         backgroundImage:
             (receiver.profilePictureUrl != null &&
@@ -226,6 +226,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           () => _handleCall(isVideo: true),
           iconColor,
         ),
+        SizedBox(width: 8.w),
         _buildIconButton(
           Icons.call_rounded,
           () => _handleCall(isVideo: false),
@@ -239,7 +240,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return IconButton(
       onPressed: onTap,
       icon: Icon(icon, color: context.appColors.primaryColor),
-      iconSize: 22,
+      iconSize: 22.r,
     );
   }
 
@@ -272,13 +273,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               children: [
                 Icon(
                   Icons.chat_bubble_outline_rounded,
-                  size: 64,
+                  size: 64.r,
                   color: iconColor,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 Text(
                   "Start a conversation",
-                  style: TextStyle(color: emptyTextColor, fontSize: 16),
+                  style: TextStyle(color: emptyTextColor, fontSize: 16.sp),
                 ),
               ],
             ),
@@ -287,7 +288,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
         return ListView.builder(
           controller: _scrollController,
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           itemCount: messages.length,
           itemBuilder: (context, index) {
             final chatMessage = messages[index];
@@ -307,19 +308,19 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final shadowColor = context.appColors.glassBorder;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 8, 16, 20),
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 20.h),
       color: Colors.transparent,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 8.r, vertical: 8.r),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(28.r),
           border: Border.all(color: borderColor),
           boxShadow: [
             BoxShadow(
               color: shadowColor,
-              blurRadius: 10,
-              offset: Offset(0, -4),
+              blurRadius: 10.r,
+              offset: Offset(0, -4.h),
             ),
           ],
         ),
@@ -416,8 +417,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       backgroundColor: snackBarBg,
       colorText: snackBarText,
       duration: const Duration(seconds: 4),
-      margin: EdgeInsets.all(16),
-      borderRadius: 16,
+      margin: EdgeInsets.all(16.r),
+      borderRadius: 16.r,
       mainButton: TextButton(
         onPressed: () => Get.back(),
         child: Text("Dismiss", style: TextStyle(color: snackBarText)),
@@ -477,10 +478,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -488,12 +489,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             Text(
               "Send Image",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
                 color: textColor,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -511,7 +512,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 }, isDark),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
           ],
         ),
       ),
@@ -568,14 +569,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-            child: Icon(icon, color: iconColor, size: 30),
+            child: Icon(icon, color: iconColor, size: 30.r),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Text(
             label,
-            style: TextStyle(color: iconColor, fontWeight: FontWeight.w500),
+            style: TextStyle(color: iconColor, fontWeight: FontWeight.w500, fontSize: 13.sp),
           ),
         ],
       ),
@@ -594,11 +595,11 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       StatefulBuilder(
         builder: (context, setSheetState) {
           return Container(
-            padding: EdgeInsets.all(24),
+            padding: EdgeInsets.all(24.r),
             decoration: BoxDecoration(
               color: sheetColor,
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(24),
+                top: Radius.circular(24.r),
               ),
             ),
             child: Column(
@@ -608,12 +609,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 Text(
                   "Schedule Appointment",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                     color: textColor,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 _buildPickerRow(
                   Icons.calendar_month_rounded,
                   "Date",
@@ -631,7 +632,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   },
                   isDark,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 _buildPickerRow(
                   Icons.access_time_rounded,
                   "Start Time",
@@ -647,7 +648,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   },
                   isDark,
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -657,22 +658,22 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.appColors.secondaryColor,
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Send Appointment",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
               ],
             ),
           );
@@ -695,15 +696,15 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
         ),
         child: Row(
           children: [
-            Icon(icon, color: context.appColors.secondaryColor, size: 24),
-            const SizedBox(width: 16),
+            Icon(icon, color: context.appColors.secondaryColor, size: 24.r),
+            SizedBox(width: 16.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -711,14 +712,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   label,
                   style: TextStyle(
                     color: textColor.withAlpha(150),
-                    fontSize: 12,
+                    fontSize: 12.sp,
                   ),
                 ),
                 Text(
                   value,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

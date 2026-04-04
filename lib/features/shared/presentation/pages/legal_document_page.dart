@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class LegalDocumentPage extends StatefulWidget {
   const LegalDocumentPage({super.key});
@@ -65,19 +66,19 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                 children: [
                   // Header
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 20,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 20.h,
                     ),
                     child: Row(
                       children: [
                         GestureDetector(
                           onTap: () => Get.back(),
                           child: Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(
                               color: Theme.of(context).cardColor,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                               border: Border.all(
                                 color: Theme.of(
                                   context,
@@ -87,18 +88,18 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                             child: Icon(
                               Icons.arrow_back_ios_new_rounded,
                               color: textColor,
-                              size: 20,
+                              size: 20.r,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: 16.w),
                         Expanded(
                           child: Text(
                             _docType == 'TERMS'
                                 ? 'TERMS OF SERVICE'
                                 : 'PRIVACY POLICY',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor,
                               letterSpacing: 1.2,
@@ -148,24 +149,24 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           children: [
             Icon(
               Icons.error_outline_rounded,
-              size: 56,
+              size: 56.r,
               color: subtitleColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Text(
               'Documents not available',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
                 color: textColor,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Text(
               'Please check back later.',
-              style: TextStyle(color: subtitleColor, fontSize: 13),
+              style: TextStyle(color: subtitleColor, fontSize: 13.sp),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             TextButton.icon(
               onPressed: () {
                 context.read<SharedBloc>().add(
@@ -191,14 +192,14 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           children: [
             Icon(
               Icons.info_outline_rounded,
-              size: 56,
+              size: 56.r,
               color: subtitleColor,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Text(
               'No documents found',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
                 color: textColor,
               ),
@@ -212,9 +213,9 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
       opacity: _fadeAnimation,
       child: ListView.separated(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
         itemCount: docs.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 32),
+        separatorBuilder: (context, index) => SizedBox(height: 32.h),
         itemBuilder: (context, index) {
           final doc = docs[index];
           return Column(
@@ -222,13 +223,13 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
             children: [
               // Meta info card
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: 12.h,
                 ),
                 decoration: BoxDecoration(
                   color: secondaryColor.withAlpha(20),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                   border: Border.all(color: secondaryColor.withAlpha(60)),
                 ),
                 child: Row(
@@ -238,9 +239,9 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                           ? Icons.gavel_rounded
                           : Icons.privacy_tip_rounded,
                       color: secondaryColor,
-                      size: 22,
+                      size: 22.r,
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,15 +250,15 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                             doc.title,
                             style: TextStyle(
                               fontWeight: FontWeight.w800,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               color: textColor,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2.h),
                           Text(
                             'Version ${doc.version}  •  Last updated ${_formatDate(doc.updatedAt)}',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 11.sp,
                               color: subtitleColor,
                             ),
                           ),
@@ -267,12 +268,12 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               // Document content
               Text(
                 doc.content,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: textColor.withAlpha(210),
                   height: 1.7,
                 ),

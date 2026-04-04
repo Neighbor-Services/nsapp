@@ -26,14 +26,14 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
               listener: (context, state) {},
               builder: (context, state) {
                 return Container(
-                  height: 72,
-                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  height: 72.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
                   decoration: BoxDecoration(
                     color: backgroundColor,
                     border: Border(
                       top: BorderSide(
                         color: borderColor,
-                        width: 1.5,
+                        width: 1.5.r,
                       ),
                     ),
                   ),
@@ -125,12 +125,12 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         child: Badge(
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
           ),
           backgroundColor: context.appColors.errorColor,
           child: Column(
@@ -138,11 +138,11 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 26,
+                size: 26.r,
                 color: isActive ? context.appColors.primaryColor : inactiveColor,
               ),
-                const SizedBox(height: 4),
-                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9)),
+                SizedBox(height: 4.h),
+                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9.sp)),
              
             ],
           ),
@@ -159,27 +159,27 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
         );
       },
       child: Container(
-        width: 52,
-        height: 52,
+        width: 52.r,
+        height: 52.r,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: context.appColors.primaryColor,
           border: Border.all(
             color: Colors.white24,
-            width: 2,
+            width: 2.r,
           ),
           boxShadow: [
             BoxShadow(
               color: context.appColors.primaryColor.withAlpha(80),
-              blurRadius: 12,
-              offset: Offset(0, 4),
+              blurRadius: 12.r,
+              offset: Offset(0, 4.h),
             ),
           ],
         ),
         child: Center(
           child: Icon(
             Icons.work_rounded,
-            size: 26,
+            size: 26.r,
             color: Colors.white,
           ),
         ),

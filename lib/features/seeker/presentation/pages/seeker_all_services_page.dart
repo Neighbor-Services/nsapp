@@ -21,7 +21,7 @@ class SeekerAllServicesPage extends StatelessWidget {
             children: [
               // Header
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.all(20.r),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -31,23 +31,23 @@ class SeekerAllServicesPage extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(12.r),
                         decoration: BoxDecoration(
                           color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(14.r),
                           border: Border.all(
                             color: context.appColors.glassBorder,
-                            width: 1.5,
+                            width: 1.5.r,
                           ),
                         ),
                         child: Icon(
                           Icons.arrow_back_ios_new_rounded,
                           color: textColor,
-                          size: 20,
+                          size: 20.r,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,17 +55,17 @@ class SeekerAllServicesPage extends StatelessWidget {
                           Text(
                             "SERVICE SELECTION",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.h),
                           Text(
                             "FIND THE BEST PROFESSIONALS",
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 10.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
@@ -91,10 +91,10 @@ class SeekerAllServicesPage extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.search_off_rounded,
-                              size: 64,
+                              size: 64.r,
                               color: textColor.withAlpha(50),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                             Text(
                               "No services found",
                               style: TextStyle(color: textColor.withAlpha(180)),
@@ -106,13 +106,13 @@ class SeekerAllServicesPage extends StatelessWidget {
 
                     return GridView.builder(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
+                        horizontal: 20.w,
+                        vertical: 10.h,
                       ),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: isLargeScreen ? 3 : 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12.w,
+                        mainAxisSpacing: 12.h,
                         childAspectRatio: 1.3,
                       ),
                       itemCount: services.length,
@@ -160,41 +160,41 @@ class SeekerAllServicesPage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: context.appColors.glassBorder,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Stack(
           children: [
             Positioned(
-              right: -5,
-              bottom: -5,
+              right: -5.r,
+              bottom: -5.r,
               child: Icon(
                 icon,
-                size: 60,
+                size: 60.r,
                 color: context.appColors.primaryColor.withAlpha(20),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8.r),
                     decoration: BoxDecoration(
                       color: context.appColors.primaryColor,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 20),
+                    child: Icon(icon, color: Colors.white, size: 20.r),
                   ),
                   Text(
                     (service.name ?? "Service").toUpperCase(),
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w900,
                       color: context.appColors.primaryTextColor,
                       letterSpacing: 0.5,

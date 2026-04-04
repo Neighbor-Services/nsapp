@@ -23,33 +23,34 @@ class AppointmentInputFieldWidget extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
+        horizontal: 16.w,
+        vertical: 8.h,
       ),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: context.appColors.glassBorder,
+          width: 1.r,
         ),
       ),
       child: TextFormField(
         controller: controller,
         readOnly: readOnly, // Typically true for date pickers
         onTap: onPressed,
-        style: TextStyle(color: textColor, fontSize: 13),
+        style: TextStyle(color: textColor, fontSize: 13.sp),
         decoration: InputDecoration(
           labelText: allCapsLabel ? label.toUpperCase() : label,
           labelStyle: TextStyle(
             color: labelColor,
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: allCapsLabel ? FontWeight.w900 : FontWeight.normal,
             letterSpacing: allCapsLabel ? 0.5 : null,
           ),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
+            horizontal: 16.w,
+            vertical: 8.h,
           ),
           isDense: true,
         ),

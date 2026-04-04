@@ -35,35 +35,35 @@ AppBar homeAppBar({
     elevation: 0,
     backgroundColor: Colors.transparent,
     surfaceTintColor: Colors.transparent,
-    toolbarHeight: 80,
+    toolbarHeight: 80.h,
     centerTitle: true,
     flexibleSpace: Container(
       decoration: BoxDecoration(
         color: appBarColor,
-        border: Border(bottom: BorderSide(color: borderColor, width: 1)),
+        border: Border(bottom: BorderSide(color: borderColor, width: 1.r)),
       ),
     ),
-    leadingWidth: 70,
+    leadingWidth: 70.w,
     leading: Builder(
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.only(left: 16.0),
+          padding: EdgeInsets.only(left: 16.0.w),
           child: Center(
             child: GestureDetector(
               onTap: () {
                 Scaffold.of(context).openDrawer();
               },
               child: Container(
-                padding: EdgeInsets.all(2),
+                padding: EdgeInsets.all(2.r),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: context.appColors.secondaryColor,
-                    width: 1.5,
+                    width: 1.5.r,
                   ),
                 ),
                 child: CircleAvatar(
-                  radius: 18,
+                  radius: 18.r,
                   backgroundColor: appBlueCardColor,
                   backgroundImage:
                       (SuccessGetProfileState.profile.profilePictureUrl !=
@@ -86,10 +86,10 @@ AppBar homeAppBar({
       },
     ),
     title: Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(30.r),
         border: Border.all(color: borderDecorColor),
       ),
       child: Row(
@@ -101,7 +101,7 @@ AppBar homeAppBar({
             style: TextStyle(
               color: titleColor,
               fontWeight: FontWeight.w900,
-              fontSize: 13,
+              fontSize: 13.sp,
               letterSpacing: 1.0,
             ),
           ),
@@ -110,7 +110,7 @@ AppBar homeAppBar({
     ),
     actions: [
       Padding(
-        padding: EdgeInsets.symmetric(vertical: 20.0),
+        padding: EdgeInsets.symmetric(vertical: 20.0.h),
         child: BlocBuilder<SharedBloc, SharedState>(
           builder: (context, state) {
             return Helpers.isProvider(ReloadState.type)
@@ -131,16 +131,16 @@ AppBar homeAppBar({
         ),
       ),
       Padding(
-        padding: EdgeInsets.only(right: 12.0),
+        padding: EdgeInsets.only(right: 12.0.w),
         child: PlatformPopupMenu(
           icon: Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
               shape: BoxShape.circle,
               border: Border.all(color: borderDecorColor),
             ),
-            child: Icon(Icons.grid_view_rounded, color: iconColor, size: 20),
+            child: Icon(Icons.grid_view_rounded, color: iconColor, size: 20.r),
           ),
           options: actions!,
         ),
@@ -176,7 +176,7 @@ class PlatformPopupMenu extends StatelessWidget {
       shadowColor: Colors.black.withAlpha(100),
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         side: BorderSide(color: borderColor),
       ),
       itemBuilder: (context) => options,
@@ -194,18 +194,18 @@ class PlatformPopupMenu extends StatelessWidget {
                   color: Colors.transparent,
                   child: Center(
                     child: Container(
-                      padding: EdgeInsets.all(24),
+                      padding: EdgeInsets.all(24.r),
                       width: size(context).width * 0.85,
-                      constraints: BoxConstraints(maxWidth: 400),
+                      constraints: BoxConstraints(maxWidth: 400.w),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20.r),
                         color: dialogBg,
                         border: Border.all(color: borderColor),
                         boxShadow: [
                           BoxShadow(
                             color: shadowColor,
-                            blurRadius: 20,
-                            offset: Offset(0, 10),
+                            blurRadius: 20.r,
+                            offset: Offset(0, 10.h),
                           ),
                         ],
                       ),
@@ -213,34 +213,34 @@ class PlatformPopupMenu extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            padding: EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16.r),
                             decoration: BoxDecoration(
                               color: context.appColors.errorColor.withAlpha(30),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.logout_rounded,
-                              size: 32,
+                              size: 32.r,
                               color: context.appColors.errorColor,
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20.h),
                           Text(
                             "LOGOUT",
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 22.sp,
                               fontWeight: FontWeight.w900,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           CustomTextWidget(
                             text: "Are you sure you want to logout?",
                             textAlign: TextAlign.center,
                             color: subTextColor,
                           ),
-                          const SizedBox(height: 30),
+                          SizedBox(height: 30.h),
                           Row(
                             children: [
                               Expanded(
@@ -248,17 +248,17 @@ class PlatformPopupMenu extends StatelessWidget {
                                   onPressed: () => Get.back(),
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.symmetric(
-                                      vertical: 14,
+                                      vertical: 14.h,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: BorderRadius.circular(16.r),
                                       side: BorderSide(color: borderColor),
                                     ),
                                   ),
                                   child: Text(
                                     "CANCEL",
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       color: subTextColor,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.0,
@@ -266,7 +266,7 @@ class PlatformPopupMenu extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16.w),
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
@@ -288,17 +288,17 @@ class PlatformPopupMenu extends StatelessWidget {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: context.appColors.errorColor,
                                     padding: EdgeInsets.symmetric(
-                                      vertical: 14,
+                                      vertical: 14.h,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: BorderRadius.circular(16.r),
                                     ),
                                     elevation: 0,
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     "LOGOUT",
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.0,

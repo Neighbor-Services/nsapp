@@ -124,12 +124,12 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 550),
+                    constraints: BoxConstraints(maxWidth: 550.w),
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.symmetric(
-                        horizontal: isLargeScreen ? 32 : 20,
-                        vertical: 24,
+                        horizontal: isLargeScreen ? 32.w : 20.w,
+                        vertical: 24.h,
                       ),
                       child: FadeTransition(
                         opacity: _fadeAnimation,
@@ -137,9 +137,9 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildHeader(),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
                             SolidContainer(
-                              padding: EdgeInsets.all(24),
+                              padding: EdgeInsets.all(24.r),
                               child: Form(
                                 key: key,
                                 child: Column(
@@ -147,7 +147,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                   children: [
                                     _buildServiceDropdown(),
                                     if (OtherServiceSelectState.others) ...[
-                                      const SizedBox(height: 20),
+                                      SizedBox(height: 20.h),
                                       SolidTextField(
                                         controller: serviceTextController,
                                         hintText: "Enter service name",
@@ -161,7 +161,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                                   : null),
                                       ),
                                     ],
-                                    const SizedBox(height: 20),
+                                    SizedBox(height: 20.h),
                                     SolidTextField(
                                       controller: titleTextController,
                                       hintText: "What do you need help with?",
@@ -173,11 +173,11 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                                 ? "Special characters not allowed"
                                                 : null),
                                     ),
-                                    const SizedBox(height: 20),
+                                    SizedBox(height: 20.h),
                                     _buildLocationRow(context),
-                                    const SizedBox(height: 20),
+                                    SizedBox(height: 20.h),
                                     _buildScheduledTimePicker(context),
-                                    const SizedBox(height: 20),
+                                    SizedBox(height: 20.h),
                                     SolidTextField(
                                       controller: descriptionTextController,
                                       hintText:
@@ -189,9 +189,9 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                           ? "Description is required"
                                           : null,
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     _buildImagePicker(context),
-                                    const SizedBox(height: 28),
+                                    SizedBox(height: 28.h),
                                     SolidButton(
                                       label: "CREATE REQUEST",
                                       icon: Icons.send_rounded,
@@ -201,7 +201,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 40),
+                            SizedBox(height: 40.h),
                           ],
                         ),
                       ),
@@ -223,17 +223,17 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
         Text(
           "NEW REQUEST",
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 24.sp,
             fontWeight: FontWeight.w900,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.2,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           "TELL US WHAT SERVICE YOU NEED",
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 10.sp,
             fontWeight: FontWeight.w900,
             color: context.appColors.secondaryTextColor,
             letterSpacing: 1.0,
@@ -251,12 +251,12 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           "Service Type",
           style: TextStyle(
             color: context.appColors.hintTextColor,
-            fontSize: 10,
+            fontSize: 10.sp,
             fontWeight: FontWeight.w900,
             letterSpacing: 0.5,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         GestureDetector(
           onTap: () {
             showServiceSelector(
@@ -281,13 +281,13 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             );
           },
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
             decoration: BoxDecoration(
               color: context.appColors.surfaceBackground,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16.r),
               border: Border.all(
                 color: context.appColors.glassBorder,
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: Row(
@@ -295,9 +295,9 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 Icon(
                   Icons.category_rounded,
                   color: context.appColors.glassBorder,
-                  size: 20,
+                  size: 20.r,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Text(
                     selectedService ?? "Select a service",
@@ -305,7 +305,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                       color: selectedService == null
                           ? context.appColors.secondaryTextColor
                           : context.appColors.primaryTextColor,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                     ),
                   ),
                 ),
@@ -335,15 +335,15 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             validator: (val) => val!.isEmpty ? "Location is required" : null,
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         GestureDetector(
           onTap: () => _showLocationPicker(context),
           child: Container(
-            width: 56,
-            height: 56,
+            width: 56.r,
+            height: 56.r,
             decoration: BoxDecoration(
               color: context.appColors.primaryColor,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16.r),
             ),
             child: Icon(Icons.my_location_rounded, color: context.appColors.cardBackground),
           ),
@@ -407,27 +407,27 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   void _showLocationPicker(BuildContext context) {
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
           border: Border.all(
             color: context.appColors.glassBorder,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40,
-              height: 4,
+              width: 40.w,
+              height: 4.h,
               decoration: BoxDecoration(
                 color: context.appColors.glassBorder,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             ListTile(
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
@@ -445,10 +445,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 }
               },
               leading: Container(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(10.r),
                 decoration: BoxDecoration(
                   color: context.appColors.infoColor.withAlpha(20),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
                   Icons.location_on_rounded,
@@ -466,7 +466,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             ListTile(
               onTap: () {
                 Get.back();
@@ -475,10 +475,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 Get.toNamed("map-location");
               },
               leading: Container(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(10.r),
                 decoration: BoxDecoration(
                   color: context.appColors.successColor.withAlpha(20),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(Icons.map_rounded, color: context.appColors.successColor),
               ),
@@ -493,7 +493,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
           ],
         ),
       ),
@@ -505,13 +505,13 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
       onTap: () => _showImagePicker(context),
       child: Container(
         width: double.infinity,
-        height: 140,
+        height: 140.h,
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: context.appColors.glassBorder,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: ImageSeekerState.picture == null
@@ -520,15 +520,15 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 children: [
                   Icon(
                     Icons.add_photo_alternate_rounded,
-                    size: 40,
+                    size: 40.r,
                     color: context.appColors.hintTextColor,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8.h),
                   Text(
                     "Add Image (Optional)",
                     style: TextStyle(
                       color: context.appColors.hintTextColor,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ],
@@ -536,11 +536,11 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             : Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16.r),
                     child: Image.file(
                       File(ImageSeekerState.picture!.path),
                       width: double.infinity,
-                      height: 140,
+                      height: 140.h,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -551,7 +551,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                       onTap: () =>
                           context.read<SeekerBloc>().add(ClearImageEvent()),
                       child: Container(
-                        padding: EdgeInsets.all(6),
+                        padding: EdgeInsets.all(6.r),
                         decoration: BoxDecoration(
                           color: context.appColors.errorColor.withAlpha(200),
                           shape: BoxShape.circle,
@@ -559,7 +559,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                         child: Icon(
                           Icons.close,
                           color: context.appColors.primaryColor,
-                          size: 18,
+                          size: 18.r,
                         ),
                       ),
                     ),
@@ -573,27 +573,27 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   void _showImagePicker(BuildContext context) {
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
           border: Border.all(
             color: context.appColors.glassBorder,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40,
-              height: 4,
+              width: 40.w,
+              height: 4.h,
               decoration: BoxDecoration(
                 color: context.appColors.cardBackground,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             ListTile(
               onTap: () =>
                   context.read<SeekerBloc>().add(SelectImageFromGalleryEvent()),

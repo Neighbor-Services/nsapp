@@ -60,29 +60,29 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 800),
+              constraints: BoxConstraints(maxWidth: 800.w),
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(
-                    horizontal: isLargeScreen ? 32 : 20,
-                    vertical: 20,
+                    horizontal: isLargeScreen ? 32.w : 20.w,
+                    vertical: 20.h,
                   ),
                   children: [
                     // AI-Powered Hero Section
                     _buildHero(context, isLargeScreen),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
 
                     // Active Request Section
                     _buildActiveRequestSection(context),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
 
                     // Popular Providers Section
                     _buildSectionHeader(context, "Top Rated Professionals"),
-                    const SizedBox(height: 16),
-                    const SizedBox(height: 200, child: PopularProviderWidget()),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 16.h),
+                    SizedBox(height: 200.h, child: PopularProviderWidget()),
+                    SizedBox(height: 32.h),
 
                     // Available Services Section
                     _buildSectionHeader(
@@ -97,9 +97,9 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                         );
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     _buildServicesGrid(context),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40.h),
                   ],
                 ),
               ),
@@ -128,10 +128,10 @@ class _SeekerHomePageState extends State<SeekerHomePage>
 
   Widget _buildHero(BuildContext context, bool isLargeScreen) {
     return SolidContainer(
-      padding: EdgeInsets.all(28),
+      padding: EdgeInsets.all(28.r),
       backgroundColor: context.appColors.primaryColor,
       gradient: context.appColors.primaryGradient,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(12.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -140,32 +140,32 @@ class _SeekerHomePageState extends State<SeekerHomePage>
               Icon(
                 Icons.auto_awesome_rounded,
                 color: context.appColors.primaryColor,
-                size: 22,
+                size: 22.r,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Text(
                 "SMART SEARCH",
                 style: TextStyle(
                   color: context.appColors.primaryTextColor,
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
            Text(
             "FIND THE BEST HELP IN SECONDS",
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w900,
               color: context.appColors.primaryTextColor,
               height: 1.2,
               letterSpacing: 1.0,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           _buildHeroSearchBar(context),
         ],
       ),
@@ -183,32 +183,32 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         );
       },
       child: Container(
-        height: 56,
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        height: 56.h,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: context.appColors.glassBorder,
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
         child: Row(
           children: [
             Icon(Icons.search_rounded, color: context.appColors.hintTextColor),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 "SEARCH SERVICES...",
                 style: TextStyle(
                   color: context.appColors.hintTextColor,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.0,
                 ),
               ),
             ),
-            const VerticalDivider(width: 20, indent: 15, endIndent: 15),
+            VerticalDivider(width: 20.w, indent: 15, endIndent: 15),
             GestureDetector(
               onTap: () {
                 context.read<SeekerBloc>().add(
@@ -236,7 +236,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         Text(
           title.toUpperCase(),
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w900,
             color: textColor,
             letterSpacing: 1.2,
@@ -250,7 +250,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
               style: TextStyle(
                 color: textColor.withAlpha(180),
                 fontWeight: FontWeight.w900,
-                fontSize: 12,
+                fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
             ),
@@ -279,10 +279,10 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: 16.w,
+        mainAxisSpacing: 16.h,
         childAspectRatio: 1.3,
       ),
       itemCount: displayServices.length,
@@ -305,33 +305,33 @@ class _SeekerHomePageState extends State<SeekerHomePage>
           child: Container(
             decoration: BoxDecoration(
               color: cardColor,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(24.r),
               border: Border.all(
                 color: borderColor,
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: Stack(
               children: [
                 
                 Padding(
-                  padding: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20.r),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
                           color: context.appColors.primaryColor.withAlpha(40),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: Icon(icon, color: context.appColors.primaryColor, size: 24),
+                        child: Icon(icon, color: context.appColors.primaryColor, size: 24.r),
                       ),
                       Text(
                         (service.name ?? "SERVICE").toUpperCase(),
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w900,
                           color: textColor,
                           height: 1.2,
@@ -377,7 +377,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSectionHeader(context, "Active Project"),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 GestureDetector(
                   onTap: () {
                     context.read<SeekerBloc>().add(
@@ -391,22 +391,22 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                     );
                   },
                   child: SolidContainer(
-                    padding: EdgeInsets.all(20),
+                    padding: EdgeInsets.all(20.r),
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12.r),
                           decoration: BoxDecoration(
                             color: context.appColors.primaryColor.withAlpha(40),
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(14.r),
                           ),
                           child: Icon(
                             Icons.pending_actions_rounded,
                             color: context.appColors.primaryColor,
-                            size: 24,
+                            size: 24.r,
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: 16.w),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -415,7 +415,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                 (activeRequest.request?.title ?? "PROJECT")
                                     .toUpperCase(),
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 15.sp,
                                   fontWeight: FontWeight.w900,
                                   color: textColor,
                                   letterSpacing: 0.5,
@@ -423,12 +423,12 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 6),
+                              SizedBox(height: 6.h),
                               Text(
                                 "STATUS: ${activeRequest.request?.status ?? 'PROCESSING'}"
                                     .toUpperCase(),
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 11.sp,
                                   fontWeight: FontWeight.w800,
                                   color: textColor.withAlpha(150),
                                   letterSpacing: 0.8,

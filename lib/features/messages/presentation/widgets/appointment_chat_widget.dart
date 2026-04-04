@@ -33,10 +33,10 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
 
     return Container(
       width: size(context).width,
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -45,22 +45,22 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
           children: [
             Center(
               child: Container(
-                width: 40,
-                height: 4,
-                margin: EdgeInsets.only(bottom: 24),
+                width: 40.w,
+                height: 4.h,
+                margin: EdgeInsets.only(bottom: 24.h),
                 decoration: BoxDecoration(
                   color: context.appColors.glassBorder,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
             ),
             CustomTextWidget(
               text: "Send Appointment",
-              fontSize: 22,
+              fontSize: 22.sp,
               fontWeight: FontWeight.bold,
               color: textColor,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             AppointmentInputFieldWidget(
               controller: dateController,
               label: "Appointment Date",
@@ -86,7 +86,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
                 }
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             AppointmentInputFieldWidget(
               onPressed: () async {
                 TimeOfDay? time = await showTimePicker(
@@ -119,7 +119,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
               label: "Start At",
               controller: startTimeController,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             SolidTextField(
               controller: messageController,
               hintText: 'Add a message (optional)',
@@ -154,7 +154,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
                 },
               ),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32.h),
           ],
         ),
       ),

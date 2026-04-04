@@ -23,7 +23,7 @@ class DisputeDetailsPage extends StatelessWidget {
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w900,
-            fontSize: 18,
+            fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
         ),
@@ -33,16 +33,16 @@ class DisputeDetailsPage extends StatelessWidget {
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: Container(
-            margin: EdgeInsets.all(8),
+            margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: context.appColors.glassBorder),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: textColor,
-              size: 18,
+              size: 18.r,
             ),
           ),
         ),
@@ -51,13 +51,13 @@ class DisputeDetailsPage extends StatelessWidget {
         child: SizedBox(
           height: size(context).height,
           child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(20, 110, 20, 20),
+            padding: EdgeInsets.fromLTRB(20.w, 110.h, 20.w, 20.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header Card
                 SolidContainer(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24.r),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -65,14 +65,14 @@ class DisputeDetailsPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: 64,
-                            height: 64,
+                            width: 64.w,
+                            height: 64.h,
                             decoration: BoxDecoration(
                               color: _getStatusColor(
                                 context,
                                 dispute.status,
                               ).withAlpha(30),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
                                 color: _getStatusColor(
                                   context,
@@ -83,20 +83,20 @@ class DisputeDetailsPage extends StatelessWidget {
                             child: Icon(
                               Icons.gavel_rounded,
                               color: _getStatusColor(context, dispute.status),
-                              size: 32,
+                              size: 32.r,
                             ),
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
+                              horizontal: 16.w,
+                              vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
                               color: _getStatusColor(
                                 context,
                                 dispute.status,
                               ).withAlpha(30),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(20.r),
                               border: Border.all(
                                 color: _getStatusColor(
                                   context,
@@ -108,7 +108,7 @@ class DisputeDetailsPage extends StatelessWidget {
                               dispute.status ?? 'OPEN',
                               style: TextStyle(
                                 color: _getStatusColor(context, dispute.status),
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.0,
                               ),
@@ -116,22 +116,22 @@ class DisputeDetailsPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       Text(
                         dispute.reason.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: textColor,
-                          fontSize: 20,
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.5,
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
           
                 // Information Section
                 _buildSection(
@@ -169,19 +169,19 @@ class DisputeDetailsPage extends StatelessWidget {
                 const SizedBox(height: 20),
           
                 // Description Section
-                _buildSection(
-                  title: 'Description',
-                  textColor: textColor,
-                  secondaryTextColor: secondaryTextColor,
-                  child: Text(
-                    dispute.description,
-                    style: TextStyle(
-                      color: textColor.withAlpha(200),
-                      fontSize: 16,
-                      height: 1.6,
+                  _buildSection(
+                    title: 'Description',
+                    textColor: textColor,
+                    secondaryTextColor: secondaryTextColor,
+                    child: Text(
+                      dispute.description,
+                      style: TextStyle(
+                        color: textColor.withAlpha(200),
+                        fontSize: 16.sp,
+                        height: 1.6,
+                      ),
                     ),
                   ),
-                ),
           
                 if (dispute.resolutionNotes != null &&
                     dispute.resolutionNotes!.isNotEmpty) ...[
@@ -196,7 +196,7 @@ class DisputeDetailsPage extends StatelessWidget {
                       dispute.resolutionNotes!,
                       style: TextStyle(
                         color: textColor.withAlpha(200),
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         height: 1.6,
                       ),
                     ),
@@ -221,19 +221,19 @@ class DisputeDetailsPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 8, bottom: 10),
+          padding: EdgeInsets.only(left: 8.w, bottom: 10.h),
           child: Text(
             title.toUpperCase(),
             style: TextStyle(
               color: color ?? secondaryTextColor,
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
             ),
           ),
         ),
         SolidContainer(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.r),
           backgroundColor: color?.withAlpha(20),
           borderColor: color?.withAlpha(40),
           child: SizedBox(width: double.infinity, child: child),
@@ -253,14 +253,14 @@ class DisputeDetailsPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8.r),
           decoration: BoxDecoration(
             color: context.appColors.glassBorder,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: textColor, size: 16),
+          child: Icon(icon, color: textColor, size: 16.r),
         ),
-        const SizedBox(width: 14),
+        SizedBox(width: 14.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +269,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 label.toUpperCase(),
                 style: TextStyle(
                   color: secondaryTextColor,
-                  fontSize: 10,
+                  fontSize: 10.sp,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
                 ),
@@ -278,7 +278,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 value.toUpperCase(),
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
                 ),

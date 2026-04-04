@@ -72,11 +72,11 @@ class _ReportPageState extends State<ReportPage> {
                 child: SafeArea(
                   bottom: false,
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.all(20.0),
+                    padding: EdgeInsets.all(20.r),
                     child: Center(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          maxWidth: 600,
+                          maxWidth: 600.w,
                           minHeight: MediaQuery.of(context).size.height,
                         ),
                         child: Form(
@@ -97,10 +97,10 @@ class _ReportPageState extends State<ReportPage> {
                                   }
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
                                     color: context.appColors.glassBorder,
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(14.r),
                                     border: Border.all(
                                       color: context.appColors.glassBorder,
                                     ),
@@ -109,25 +109,25 @@ class _ReportPageState extends State<ReportPage> {
                                         : [
                                             BoxShadow(
                                               color: Colors.black.withAlpha(5),
-                                              blurRadius: 10,
-                                              spreadRadius: 2,
+                                              blurRadius: 10.r,
+                                              spreadRadius: 2.r,
                                             ),
                                           ],
                                   ),
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
                                     color: context.appColors.primaryTextColor,
-                                    size: 20,
+                                    size: 20.r,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 40),
+                              SizedBox(height: 40.h),
                               SizedBox(
                                 width: double.infinity,
                                 child: Text(
                                   "REPORT AN ISSUE",
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 18.sp,
                                     fontWeight: FontWeight.w900,
                                     color: context.appColors.primaryTextColor,
                                     letterSpacing: 1.2,
@@ -135,13 +135,13 @@ class _ReportPageState extends State<ReportPage> {
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8.h),
                               SizedBox(
                                 width: double.infinity,
                                 child: Text(
                                   "HELP US IMPROVE BY REPORTING ANY ISSUES",
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: FontWeight.w900,
                                     color: context.appColors.secondaryTextColor,
                                     letterSpacing: 1.0,
@@ -149,48 +149,51 @@ class _ReportPageState extends State<ReportPage> {
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              const SizedBox(height: 30),
-                              SolidContainer(
-                                padding: EdgeInsets.all(20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildLabel("Issue Type"),
-                                    const SizedBox(height: 10),
-                                    SolidContainer(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          value: title,
-                                          isExpanded: true,
-                                          dropdownColor: context.appColors.cardBackground,
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: context.appColors.primaryTextColor,
+                              SizedBox(height: 30.h),
+                                SolidContainer(
+                                  padding: EdgeInsets.all(20.r),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      _buildLabel("Issue Type"),
+                                      SizedBox(height: 10.h),
+                                      SolidContainer(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 16.w,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15.r),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<String>(
+                                            value: title,
+                                            isExpanded: true,
+                                            dropdownColor:
+                                                context.appColors.cardBackground,
+                                            icon: Icon(
+                                              Icons.keyboard_arrow_down,
+                                              color: context
+                                                  .appColors.primaryTextColor,
+                                            ),
+                                            style: TextStyle(
+                                              color: context
+                                                  .appColors.primaryTextColor,
+                                            ),
+                                            items: reportIssues.map((
+                                              String value,
+                                            ) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged: (val) {
+                                              setState(() {
+                                                title = val!;
+                                              });
+                                            },
                                           ),
-                                          style: TextStyle(
-                                            color: context.appColors.primaryTextColor,
-                                          ),
-                                          items: reportIssues.map((
-                                            String value,
-                                          ) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
-                                          onChanged: (val) {
-                                            setState(() {
-                                              title = val!;
-                                            });
-                                          },
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 20),
+                                      SizedBox(height: 20.h),
                                     SolidTextField(
                                       controller: descriptionController,
                                       hintText:
@@ -204,20 +207,19 @@ class _ReportPageState extends State<ReportPage> {
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 30),
+                                    SizedBox(height: 30.h),
                                     Container(
                                       width: double.infinity,
-                                      height: 55,
+                                      height: 55.h,
                                       decoration: BoxDecoration(
-                                       
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(16.r),
                                         boxShadow: [
                                           BoxShadow(
                                             color: context.appColors.secondaryColor.withAlpha(
                                               100,
                                             ),
-                                            blurRadius: 15,
-                                            offset: Offset(0, 5),
+                                            blurRadius: 15.r,
+                                            offset: Offset(0, 5.h),
                                           ),
                                         ],
                                       ),
@@ -233,29 +235,30 @@ class _ReportPageState extends State<ReportPage> {
                                           }
                                           if (key.currentState!.validate()) {
                                             context.read<SharedBloc>().add(
-                                              AddReportEvent(
-                                                report: Report(
-                                                  reason:
-                                                      "[$title] ${descriptionController.text}",
-                                                  resourceType: "system",
-                                                  resourceId: "global",
-                                                ),
-                                              ),
-                                            );
+                                                  AddReportEvent(
+                                                    report: Report(
+                                                      reason:
+                                                          "[$title] ${descriptionController.text}",
+                                                      resourceType: "system",
+                                                      resourceId: "global",
+                                                    ),
+                                                  ),
+                                                );
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: context.appColors.primaryColor,
+                                          backgroundColor:
+                                              context.appColors.primaryColor,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
-                                              16,
+                                              16.r,
                                             ),
                                           ),
                                         ),
-                                        child: const Text(
+                                        child: Text(
                                           "SUBMIT REPORT",
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 16.sp,
                                             fontWeight: FontWeight.w900,
                                             color: Colors.white,
                                             letterSpacing: 1.1,
@@ -286,7 +289,7 @@ class _ReportPageState extends State<ReportPage> {
     return Text(
       text.toUpperCase(),
       style: TextStyle(
-        fontSize: 10,
+        fontSize: 10.sp,
         fontWeight: FontWeight.w900,
         color: context.appColors.primaryTextColor,
         letterSpacing: 1.2,

@@ -39,7 +39,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
         }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
             return FutureBuilder<Profile?>(
@@ -63,7 +63,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                     final aboutData = aboutSnapshot.data ?? AboutData();
 
                     return ListView(
-                      padding: EdgeInsets.only(bottom: 40),
+                      padding: EdgeInsets.only(bottom: 40.h),
                       physics: const BouncingScrollPhysics(),
                       children: [
                         if (aboutData.about != null) ...[
@@ -72,20 +72,20 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                             title: "COMPANY ADDRESS",
                             content: aboutData.about?.address ?? "Not Set",
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h),
                           _buildInfoSection(
                             icon: Icons.business_center_rounded,
                             title: "COMPANY SPECIFICATION",
                             content:
                                 aboutData.about?.specification ?? "Not Set",
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h),
                           _buildInfoSection(
                             icon: Icons.description_rounded,
                             title: "COMPANY DESCRIPTION",
                             content: aboutData.about?.description ?? "Not Set",
                           ),
-                          const SizedBox(height: 32),
+                          SizedBox(height: 32.h),
                           if (aboutData.about?.experienceYears != null &&
                               (aboutData.about?.experienceYears ?? 0) > 0) ...[
                             _buildInfoSection(
@@ -94,7 +94,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               content:
                                   "${aboutData.about!.experienceYears} Years",
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                           ],
                           if (aboutData.about?.education != null &&
                               aboutData.about!.education!.isNotEmpty) ...[
@@ -103,7 +103,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               title: "EDUCATION",
                               content: aboutData.about?.education ?? "",
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                           ],
                           if (aboutData.about?.skills != null &&
                               aboutData.about!.skills!.isNotEmpty) ...[
@@ -114,7 +114,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                 " • ",
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16.h),
                           ],
                           if (aboutData.about?.languages != null &&
                               aboutData.about!.languages!.isNotEmpty) ...[
@@ -124,7 +124,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               content: (aboutData.about!.languages as List)
                                   .join(" • "),
                             ),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
                           ],
                         ],
 
@@ -142,32 +142,32 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                     Icons.photo_library_rounded,
                                     color:
                                         context.appColors.primaryBackground,
-                                    size: 20,
+                                    size: 20.r,
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12.w),
                                   CustomTextWidget(
                                     text: "PORTFOLIO",
                                     fontWeight: FontWeight.w900,
-                                    fontSize: 18,
+                                    fontSize: 18.sp,
                                     color:
                                         context.appColors.primaryBackground,
                                     letterSpacing: 1.2,
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16.h),
                               SizedBox(
-                                height: 180,
+                                height: 180.h,
                                 child: ListView.separated(
                                   scrollDirection: Axis.horizontal,
                                   physics: const BouncingScrollPhysics(),
                                   itemCount: aboutData.about!.imageUrls!.length,
                                   separatorBuilder: (c, i) =>
-                                      const SizedBox(width: 12),
+                                      SizedBox(width: 12.w),
                                   itemBuilder: (c, i) => Container(
-                                    width: 240,
+                                    width: 240.w,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20.r),
                                       border: Border.all(
                                         color:
                                             context.appColors.glassBorder,
@@ -175,13 +175,13 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withAlpha(40),
-                                          blurRadius: 10,
-                                          offset: Offset(0, 4),
+                                          blurRadius: 10.r,
+                                          offset: Offset(0, 4.h),
                                         ),
                                       ],
                                     ),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20.r),
                                       child: Image.network(
                                         aboutData.about!.imageUrls![i],
                                         fit: BoxFit.cover,
@@ -196,9 +196,9 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                         if (profile == null &&
                             (aboutData.about?.imageUrls == null ||
                                 aboutData.about!.imageUrls!.isEmpty))
-                          const EmptyWidget(
+                          EmptyWidget(
                             message: "No portfolio info available",
-                            height: 150.0,
+                            height: 150.0.h,
                           ),
                       ],
                     );
@@ -219,42 +219,42 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
   }) {
     return SolidContainer(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: context.appColors.primaryColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
                   icon,
                   color: context.appColors.primaryColor,
-                  size: 20,
+                  size: 20.r,
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: 16.w),
               Expanded(
                 child: Text(
                   title,
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
                     fontWeight: FontWeight.w900,
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     letterSpacing: 0.5,
                   ),
                 ),
               ),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.h),
             child: Divider(
-              height: 1,
+              height: 1.h,
               thickness: 0.5,
             ),
           ),
@@ -262,7 +262,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
             content.toUpperCase(),
             style: TextStyle(
               color: context.appColors.primaryTextColor,
-              fontSize: 16,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w500,
               height: 1.5,
             ),

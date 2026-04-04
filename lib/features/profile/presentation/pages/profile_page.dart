@@ -103,14 +103,14 @@ class _ProfilePageState extends State<ProfilePage>
                     child: SafeArea(
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 600),
+                          constraints: BoxConstraints(maxWidth: 600.w),
                           child: FadeTransition(
                             opacity: _fadeAnimation,
                             child: ListView(
                               physics: const BouncingScrollPhysics(),
                               padding: EdgeInsets.symmetric(
-                                horizontal: isLargeScreen ? 32 : 20,
-                                vertical: 24,
+                                horizontal: isLargeScreen ? 32.w : 20.w,
+                                vertical: 24.h,
                               ),
                               children: [
                                 // Back & Edit Buttons
@@ -121,52 +121,52 @@ class _ProfilePageState extends State<ProfilePage>
                                     GestureDetector(
                                       onTap: () => Navigator.pop(context),
                                       child: Container(
-                                        padding: EdgeInsets.all(12),
+                                        padding: EdgeInsets.all(12.r),
                                         decoration: BoxDecoration(
                                           color: context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(12.r),
                                           border: Border.all(
                                             color: context.appColors.glassBorder,
-                                            width: 1.5,
+                                            width: 1.5.r,
                                           ),
                                         ),
                                         child: Icon(
                                           Icons.arrow_back_ios_new_rounded,
                                           color: context.appColors.primaryTextColor,
-                                          size: 20,
+                                          size: 20.r,
                                         ),
                                       ),
                                     ),
                                     GestureDetector(
                                       onTap: () => Get.toNamed("/edit-profile"),
                                       child: Container(
-                                        padding: EdgeInsets.all(12),
+                                        padding: EdgeInsets.all(12.r),
                                         decoration: BoxDecoration(
                                           color: context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(12.r),
                                           border: Border.all(
                                             color: context.appColors.glassBorder,
-                                            width: 1.5,
+                                            width: 1.5.r,
                                           ),
                                         ),
                                         child: Icon(
                                           Icons.edit_rounded,
                                           color: context.appColors.primaryTextColor,
-                                          size: 20,
+                                          size: 20.r,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 32),
+                                SizedBox(height: 32.h),
 
                                 // Profile Header
                                 _buildProfileHeader(profile, isProvider),
-                                const SizedBox(height: 32),
+                                SizedBox(height: 32.h),
 
                                 // Info Section
                                 _buildInfoSection(profile),
-                                const SizedBox(height: 24),
+                                SizedBox(height: 24.h),
 
                               
                               ],
@@ -195,33 +195,33 @@ class _ProfilePageState extends State<ProfilePage>
       children: [
         // Avatar
         Container(
-          padding: EdgeInsets.all(4),
+          padding: EdgeInsets.all(4.r),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
               color: context.appColors.glassBorder,
-              width: 1.5,
+              width: 1.5.r,
             ),
             boxShadow: [
               BoxShadow(
                 color: (isProvider ? context.appColors.primaryColor : context.appColors.secondaryColor)
                     .withAlpha(60),
-                blurRadius: 40,
-                spreadRadius: -10,
+                blurRadius: 40.r,
+                spreadRadius: -10.r,
               ),
             ],
           ),
           child: Container(
-            padding: EdgeInsets.all(2),
+            padding: EdgeInsets.all(2.r),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
                 color: context.appColors.glassBorder,
-                width: 1,
+                width: 1.r,
               ),
             ),
             child: CircleAvatar(
-              radius: 60,
+              radius: 60.r,
               backgroundColor: context.appColors.glassBorder,
               backgroundImage:
                   (profile.profilePictureUrl != null &&
@@ -232,46 +232,46 @@ class _ProfilePageState extends State<ProfilePage>
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               profile.firstName ?? "USER",
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 28.sp,
                 fontWeight: FontWeight.w900,
                 color: textColor,
                 letterSpacing: -0.5,
               ),
             ),
             if (profile.isIdentityVerified == true) ...[
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
                Icon(
                 Icons.verified_rounded,
                 color: context.appColors.infoColor,
-                size: 26,
+                size: 26.r,
               ),
             ],
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           profile.user?.email ?? "No email provided",
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w500,
             color: subTextColor,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
           decoration: BoxDecoration(
             color: (isProvider ? context.appColors.primaryColor : context.appColors.secondaryColor).withAlpha(
               40,
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
             border: Border.all(
               color: (isProvider ? context.appColors.primaryColor : context.appColors.secondaryColor)
                   .withAlpha(60),
@@ -284,16 +284,16 @@ class _ProfilePageState extends State<ProfilePage>
                 isProvider
                     ? Icons.business_center_rounded
                     : Icons.person_rounded,
-                size: 14,
+                size: 14.r,
                 color: isProvider
                     ? context.appColors.primaryColor
                     : context.appColors.warningColor,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Text(
                 profile.userType?.toUpperCase() ?? "USER",
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 10.sp,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.2,
                   color: isProvider
@@ -306,13 +306,13 @@ class _ProfilePageState extends State<ProfilePage>
         ),
         if (profile.performanceBadges != null &&
             profile.performanceBadges!.isNotEmpty) ...[
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: profile.performanceBadges!
                 .map(
-                  (badge) => Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6),
+                   (badge) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6.w),
                     child: PerformanceBadgeWidget(badge: badge),
                   ),
                 )
@@ -328,13 +328,13 @@ class _ProfilePageState extends State<ProfilePage>
     final borderColor = context.appColors.glassBorder;
 
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       decoration: BoxDecoration(
         color: containerColor,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(30.r),
         border: Border.all(
           color: borderColor,
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: Column(
@@ -421,30 +421,30 @@ class _ProfilePageState extends State<ProfilePage>
   Widget _buildInfoRow(String label, String value, IconData icon) {
     final labelColor = context.appColors.secondaryTextColor;
     final valueColor = context.appColors.primaryTextColor;
-
+ 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12),
+      padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
           border: Border.all(color: context.appColors.glassBorder),
         ),
         child: Row(
           children: [
             Container(
-              width: 50,
-              height: 50,
-              padding: EdgeInsets.all(10),
+              width: 50.r,
+              height: 50.r,
+              padding: EdgeInsets.all(10.r),
               decoration: BoxDecoration(
                 color: context.appColors.primaryColor.withAlpha(40),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
                 border: Border.all(color: context.appColors.glassBorder),
               ),
-              child: Icon(icon, color: context.appColors.primaryColor, size: 25),
+              child: Icon(icon, color: context.appColors.primaryColor, size: 25.r),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -452,17 +452,17 @@ class _ProfilePageState extends State<ProfilePage>
                   Text(
                     label.toUpperCase(),
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w900,
                       color: labelColor,
                       letterSpacing: 0.8,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2.h),
                   Text(
                     value.isNotEmpty ? value : "Not set",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                       color: valueColor,
                     ),

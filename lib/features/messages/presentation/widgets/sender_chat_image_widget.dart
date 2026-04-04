@@ -36,9 +36,13 @@ class SenderChatImageWidget extends StatelessWidget {
     final timestampColor = context.appColors.secondaryTextColor;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),
+      padding: EdgeInsets.only(
+        bottom: 12.h,
+        top: 4.h,
+        right: 8.w,
+        left: 40.w,
+      ),
       child: Align(
-        alignment: Alignment.centerRight,
         child: GestureDetector(
           onLongPress: onLongPressed,
           child: Column(
@@ -48,18 +52,18 @@ class SenderChatImageWidget extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75,
                 ),
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(8.r),
                 decoration: BoxDecoration(
                   color: context.appColors.cardBackground,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                    bottomLeft: Radius.circular(24),
-                    bottomRight: Radius.circular(6),
+                    topLeft: Radius.circular(24.r),
+                    topRight: Radius.circular(24.r),
+                    bottomLeft: Radius.circular(24.r),
+                    bottomRight: Radius.circular(6.r),
                   ),
                   border: Border.all(
                     color: context.appColors.glassBorder,
-                    width: 1,
+                    width: 1.r,
                   ),
                  
                 ),
@@ -81,7 +85,7 @@ class SenderChatImageWidget extends StatelessWidget {
                           progressIndicatorBuilder:
                               (context, url, downloadProgress) => Container(
                                 width: double.infinity,
-                                height: 250,
+                                height: 250.h,
                                 decoration: BoxDecoration(
                                   color: context.appColors.cardBackground,
                                   image: DecorationImage(
@@ -94,17 +98,17 @@ class SenderChatImageWidget extends StatelessWidget {
                                   child: CircularProgressIndicator(
                                     value: downloadProgress.progress,
                                     color: context.appColors.primaryColor,
-                                    strokeWidth: 2,
+                                    strokeWidth: 2.r,
                                   ),
                                 ),
                               ),
                           errorWidget: (context, url, error) => Container(
-                            height: 150,
+                            height: 150.h,
                             width: double.infinity,
                             color: context.appColors.cardBackground,
                             child: Icon(
                               Icons.broken_image_outlined,
-                              size: 40,
+                              size: 40.r,
                               color: context.appColors.primaryTextColor,
                             ),
                           ),
@@ -113,12 +117,12 @@ class SenderChatImageWidget extends StatelessWidget {
                     ),
                     if (withText)
                       Padding(
-                        padding: EdgeInsets.fromLTRB(8, 12, 8, 4),
+                        padding: EdgeInsets.fromLTRB(8.w, 12.h, 8.w, 4.h),
                         child: SelectableText(
                           message,
                           style: TextStyle(
                             color: context.appColors.primaryTextColor,
-                            fontSize: 15,
+                            fontSize: 15.sp,
                             height: 1.4,
                           ),
                         ),
@@ -127,12 +131,12 @@ class SenderChatImageWidget extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 4, right: 4),
+                padding: EdgeInsets.only(top: 4.h, right: 4.w),
                 child: Text(
                   DateFormat("HH:mm").format(dateTime.toLocal()),
                   style: TextStyle(
                     color: timestampColor,
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

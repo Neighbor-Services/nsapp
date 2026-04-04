@@ -27,16 +27,16 @@ class ChatInputField extends StatelessWidget {
         Expanded(
           child: TextField(
             controller: controller,
-            style: TextStyle(color: textColor, fontSize: 16),
+            style: TextStyle(color: textColor, fontSize: 16.sp),
             decoration: InputDecoration(
               hintText: "Type a message...",
               hintStyle: TextStyle(color: hintColor),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 12),
+              contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         IconButton(
           onPressed: onImagePick,
           icon: const Icon(Icons.add_photo_alternate_rounded),
@@ -52,16 +52,16 @@ class ChatInputField extends StatelessWidget {
         GestureDetector(
           onTap: onSend,
           child: Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: context.appColors.primaryColor,
               shape: BoxShape.circle,
              
             ),
-            child: const Icon(
+            child: Icon(
               Icons.send_rounded,
               color: Colors.white,
-              size: 20,
+              size: 20.r,
             ),
           ),
         ),

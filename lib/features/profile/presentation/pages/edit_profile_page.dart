@@ -154,13 +154,13 @@ class _EditProfilePageState extends State<EditProfilePage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700),
+                    constraints: BoxConstraints(maxWidth: 700.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: SingleChildScrollView(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 24,
+                          horizontal: 20.w,
+                          vertical: 24.h,
                         ),
                         child: Form(
                           key: key,
@@ -170,43 +170,43 @@ class _EditProfilePageState extends State<EditProfilePage>
                               GestureDetector(
                                 onTap: () => Navigator.pop(context),
                                 child: Container(
-                                  padding: EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
                                     color: context.appColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(12.r),
                                     border: Border.all(
                                       color: context.appColors.glassBorder,
-                                      width: 1.5,
+                                      width: 1.5.r,
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
                                     color: context.appColors.primaryTextColor,
-                                    size: 20,
+                                    size: 20.r,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 32),
+                              SizedBox(height: 32.h),
                               Text(
                                 "EDIT PROFESSIONAL PROFILE",
                                 style: TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w900,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 0.5,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8.h),
                               Text(
                                 "KEEP YOUR PROFILE UPDATED TO BUILD TRUST",
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 10.sp,
                                   fontWeight: FontWeight.w900,
                                   color: context.appColors.secondaryTextColor,
                                   letterSpacing: 1.0,
                                 ),
                               ),
-                              const SizedBox(height: 30),
+                              SizedBox(height: 30.h),
                               Center(
                                 child: GestureDetector(
                                   onTap: () {
@@ -215,32 +215,32 @@ class _EditProfilePageState extends State<EditProfilePage>
                                   child: Stack(
                                     children: [
                                       Container(
-                                        padding: EdgeInsets.all(4),
+                                        padding: EdgeInsets.all(4.r),
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           border: Border.all(
                                             color: context.appColors.glassBorder,
-                                            width: 2,
+                                            width: 2.r,
                                           ),
                                           boxShadow: [
                                             BoxShadow(
                                               color: context.appColors.primaryColor.withAlpha(50),
-                                              blurRadius: 40,
-                                              spreadRadius: -5,
+                                              blurRadius: 40.r,
+                                              spreadRadius: -5.r,
                                             ),
                                           ],
                                         ),
                                         child: Container(
-                                          padding: EdgeInsets.all(2),
+                                          padding: EdgeInsets.all(2.r),
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             border: Border.all(
                                               color: context.appColors.glassBorder,
-                                              width: 1,
+                                              width: 1.r,
                                             ),
                                           ),
                                           child: CircleAvatar(
-                                            radius: 60,
+                                            radius: 60.r,
                                             backgroundColor: Colors.white
                                                 .withAlpha(10),
                                             backgroundImage:
@@ -283,31 +283,31 @@ class _EditProfilePageState extends State<EditProfilePage>
                                         ),
                                       ),
                                       Positioned(
-                                        bottom: 4,
-                                        right: 4,
+                                        bottom: 4.r,
+                                        right: 4.r,
                                         child: Container(
-                                          padding: EdgeInsets.all(10),
+                                          padding: EdgeInsets.all(10.r),
                                           decoration: BoxDecoration(
                                             color: context.appColors.primaryColor,
                                             shape: BoxShape.circle,
                                             border: Border.all(
                                               color: Colors.white.withAlpha(40),
-                                              width: 2,
+                                              width: 2.r,
                                             ),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.black.withAlpha(
                                                   40,
                                                 ),
-                                                blurRadius: 10,
-                                                offset: Offset(0, 4),
+                                                blurRadius: 10.r,
+                                                offset: Offset(0, 4.h),
                                               ),
                                             ],
                                           ),
-                                          child: const Icon(
+                                          child: Icon(
                                             Icons.camera_alt_rounded,
                                             color: Colors.white,
-                                            size: 18,
+                                            size: 18.r,
                                           ),
                                         ),
                                       ),
@@ -315,15 +315,15 @@ class _EditProfilePageState extends State<EditProfilePage>
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 40),
+                              SizedBox(height: 40.h),
                               Container(
-                                padding: EdgeInsets.all(24),
+                                padding: EdgeInsets.all(24.r),
                                 decoration: BoxDecoration(
                                   color: context.appColors.cardBackground,
-                                  borderRadius: BorderRadius.circular(24),
+                                  borderRadius: BorderRadius.circular(24.r),
                                   border: Border.all(
                                     color: context.appColors.glassBorder,
-                                    width: 1.5,
+                                    width: 1.5.r,
                                   ),
                                 ),
                                 child: Column(
@@ -344,9 +344,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     _buildLabel("Gender"),
-                                    const SizedBox(height: 12),
+                                    SizedBox(height: 12.h),
                                     CustomSegmentedControl<String>(
                                       buttonLables: const ["MALE", "FEMALE"],
                                       buttonValues: const ["Male", "Female"],
@@ -357,15 +357,15 @@ class _EditProfilePageState extends State<EditProfilePage>
                                           gender = val;
                                         });
                                       },
-                                      width: 240,
-                                      height: 50,
-                                      radius: 16,
+                                      width: 240.w,
+                                      height: 50.h,
+                                      radius: 16.r,
                                       selectedColor: context.appColors.primaryColor.withAlpha(40),
                                       textColor: context.appColors.primaryTextColor,
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     _buildLabel("Role Type"),
-                                    const SizedBox(height: 12),
+                                    SizedBox(height: 12.h),
                                     CustomSegmentedControl<String>(
                                       buttonLables: const [
                                         "SEEKER",
@@ -385,13 +385,13 @@ class _EditProfilePageState extends State<EditProfilePage>
                                               SetUserTypeEvent(userType: val),
                                             );
                                       },
-                                      width: 240,
-                                      height: 50,
-                                      radius: 16,
+                                      width: 240.w,
+                                      height: 50.h,
+                                      radius: 16.r,
                                       selectedColor: context.appColors.primaryColor.withAlpha(40),
                                       textColor: context.appColors.primaryTextColor,
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     Row(
                                       children: [
                                         Expanded(
@@ -410,26 +410,26 @@ class _EditProfilePageState extends State<EditProfilePage>
                                             },
                                           ),
                                         ),
-                                        const SizedBox(width: 16),
+                                        SizedBox(width: 16.w),
                                         GestureDetector(
                                           onTap: () =>
                                               _showLocationSheet(context),
                                           child: Column(
                                             children: [
-                                              SizedBox(height: 25),
+                                              SizedBox(height: 25.h),
                                               Container(
-                                                width: 58,
-                                                height: 58,
+                                                width: 58.r,
+                                                height: 58.r,
                                                 decoration: BoxDecoration(
                                                   color: context.appColors.primaryColor.withAlpha(40),
                                                   borderRadius:
-                                                      BorderRadius.circular(18),
+                                                      BorderRadius.circular(18.r),
                                                   border: Border.all(
                                                     color: context.appColors.primaryColor,
                                                   ),
                                                   
                                                 ),
-                                                child:  Icon(
+                                                child: Icon(
                                                   Icons.map_rounded,
                                                   color: context.appColors.primaryColor,
                                                 ),
@@ -439,7 +439,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     SolidTextField(
                                       controller: contactTextController,
                                       hintText: "PHONE NUMBER",
@@ -458,7 +458,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     SolidTextField(
                                       controller: countryTextController,
                                       hintText: "COUNTRY",
@@ -472,7 +472,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     SolidTextField(
                                       controller: stateTextController,
                                       hintText: "State",
@@ -485,7 +485,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     SolidTextField(
                                       controller: zipCodeTextController,
                                       hintText: "Zip Code",
@@ -495,9 +495,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                                     if (Helpers.isProvider(
                                       UserTypeProfileState.userType,
                                     )) ...[
-                                      const SizedBox(height: 24),
+                                      SizedBox(height: 24.h),
                                       _buildLabel("Primary Service"),
-                                      const SizedBox(height: 12),
+                                      SizedBox(height: 12.h),
                                       GestureDetector(
                                         onTap: () {
                                           showServiceSelector(
@@ -535,13 +535,13 @@ class _EditProfilePageState extends State<EditProfilePage>
                                         },
                                         child: Container(
                                           padding: EdgeInsets.symmetric(
-                                            horizontal: 20,
-                                            vertical: 18,
+                                            horizontal: 20.w,
+                                            vertical: 18.h,
                                           ),
                                           decoration: BoxDecoration(
                                             color: context.appColors.cardBackground,
                                             borderRadius: BorderRadius.circular(
-                                              18,
+                                              18.r,
                                             ),
                                             border: Border.all(
                                               color: context.appColors.glassBorder,
@@ -555,7 +555,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                 color: context.appColors.primaryColor
                                                     .withAlpha(180),
                                               ),
-                                              const SizedBox(width: 14),
+                                              SizedBox(width: 14.w),
                                               Expanded(
                                                 child: Text(
                                                   serviceType == ""
@@ -568,7 +568,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                       : serviceType,
                                                   style: TextStyle(
                                                     color: context.appColors.primaryTextColor,
-                                                    fontSize: 16,
+                                                    fontSize: 16.sp,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
@@ -576,14 +576,14 @@ class _EditProfilePageState extends State<EditProfilePage>
                                               Icon(
                                                 Icons.unfold_more_rounded,
                                                 color: context.appColors.glassBorder,
-                                                size: 20,
+                                                size: 20.r,
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
                                       if (OtherServiceSelectState.others) ...[
-                                        const SizedBox(height: 24),
+                                        SizedBox(height: 24.h),
                                         SolidTextField(
                                           controller: serviceTextController,
                                           hintText: "Specify service",
@@ -601,9 +601,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       if (Helpers.isProvider(
                                         UserTypeProfileState.userType,
                                       )) ...[
-                                        const SizedBox(height: 24),
+                                        SizedBox(height: 24.h),
                                         _buildLabel("Preferred Payment Mode"),
-                                        const SizedBox(height: 12),
+                                        SizedBox(height: 12.h),
                                         CustomSegmentedControl<String>(
                                           buttonLables: const [
                                             "In-App",
@@ -619,9 +619,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                                               preferredPaymentMode = val;
                                             });
                                           },
-                                          width: 240,
-                                          height: 50,
-                                          radius: 16,
+                                          width: 240.w,
+                                          height: 50.h,
+                                          radius: 16.r,
                                           selectedColor: context.appColors.primaryColor.withAlpha(40),
                                           textColor: context.appColors.primaryTextColor,
                                         ),
@@ -630,15 +630,15 @@ class _EditProfilePageState extends State<EditProfilePage>
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 40),
+                              SizedBox(height: 40.h),
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(20.r),
                                   boxShadow: [
                                     BoxShadow(
                                       color: context.appColors.primaryColor.withAlpha(80),
-                                      blurRadius: 15,
-                                      offset: Offset(0, 5),
+                                      blurRadius: 15.r,
+                                      offset: Offset(0, 5.h),
                                     ),
                                   ],
                                 ),
@@ -648,18 +648,18 @@ class _EditProfilePageState extends State<EditProfilePage>
                                     backgroundColor: context.appColors.primaryColor,
                                     shadowColor: Colors.transparent,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20.r),
                                     ),
-                                    minimumSize: const Size(
+                                    minimumSize: Size(
                                       double.infinity,
-                                      58,
+                                      58.h,
                                     ),
                                     elevation: 0,
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     "SAVE CHANGES",
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 18.sp,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.0,
                                     ),
@@ -690,7 +690,7 @@ class _EditProfilePageState extends State<EditProfilePage>
           Text(
             text.toUpperCase(),
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w900,
               color: context.appColors.primaryTextColor,
               letterSpacing: 0.8,
@@ -708,22 +708,22 @@ class _EditProfilePageState extends State<EditProfilePage>
       Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
           border: Border.all(
             color: context.appColors.glassBorder,
           ),
         ),
-        padding: EdgeInsets.all(28),
+        padding: EdgeInsets.all(28.r),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40,
-              height: 5,
-              margin: EdgeInsets.only(bottom: 28),
+              width: 40.w,
+              height: 5.h,
+              margin: EdgeInsets.only(bottom: 28.h),
               decoration: BoxDecoration(
                 color: handleColor,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
             _buildSheetItem(
@@ -734,7 +734,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                 Get.back();
               },
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             _buildSheetItem(
               icon: Icons.camera_alt_rounded,
               label: "Take a Photo",
@@ -743,7 +743,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                 Get.back();
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
           ],
         ),
       ),
@@ -762,28 +762,28 @@ class _EditProfilePageState extends State<EditProfilePage>
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(18.r),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: itemBg,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           border: Border.all(color: borderColor),
         ),
         child: Row(
           children: [
-            Icon(icon, color: context.appColors.infoColor, size: 24),
-            const SizedBox(width: 16),
+            Icon(icon, color: context.appColors.infoColor, size: 24.r),
+            SizedBox(width: 16.w),
             Text(
               label,
               style: TextStyle(
                 color: textColor,
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const Spacer(),
-            Icon(Icons.arrow_forward_ios_rounded, color: arrowColor, size: 14),
+            Icon(Icons.arrow_forward_ios_rounded, color: arrowColor, size: 14.r),
           ],
         ),
       ),
@@ -798,22 +798,22 @@ class _EditProfilePageState extends State<EditProfilePage>
       Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
           border: Border.all(
             color: context.appColors.glassBorder,
           ),
         ),
-        padding: EdgeInsets.all(28),
+        padding: EdgeInsets.all(28.r),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40,
-              height: 5,
-              margin: EdgeInsets.only(bottom: 28),
+              width: 40.w,
+              height: 5.h,
+              margin: EdgeInsets.only(bottom: 28.h),
               decoration: BoxDecoration(
                 color: handleColor,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
             _buildSheetItem(
@@ -842,7 +842,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                 }
               },
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12.h),
             _buildSheetItem(
               icon: Icons.map_rounded,
               label: "Choose from Map",
@@ -856,7 +856,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                 Get.toNamed("map-location");
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
           ],
         ),
       ),

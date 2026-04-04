@@ -18,15 +18,18 @@ class EmptyWidget extends StatelessWidget {
 
     return Container(
       width: size(context).width,
-      height: height,
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: isSmall ? 8 : 16),
+      height: height.h,
+      padding: EdgeInsets.symmetric(
+        horizontal: 24.w,
+        vertical: isSmall ? 8.h : 16.h,
+      ),
       child: Center(
         child: Container(
-          padding: EdgeInsets.all(isSmall ? 16 : 32),
+          padding: EdgeInsets.all(isSmall ? 16.r : 32.r),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: borderColor),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(color: borderColor, width: 1.r),
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -38,16 +41,16 @@ class EmptyWidget extends StatelessWidget {
                   opacity: iconOpacity,
                   child: Image.asset(
                     emptyLogo,
-                    width: isSmall ? 80 : 120,
-                    height: isSmall ? 80 : 120,
+                    width: isSmall ? 80.r : 120.r,
+                    height: isSmall ? 80.r : 120.r,
                     fit: BoxFit.contain,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 CustomTextWidget(
                   text: message,
                   textAlign: TextAlign.center,
-                  fontSize: isSmall ? 14 : 16,
+                  fontSize: (isSmall ? 14 : 16).sp,
                   color: textColor,
                 ),
               ],

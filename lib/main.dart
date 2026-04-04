@@ -11,6 +11,7 @@ import 'package:nsapp/core/di/injection_container.dart' as di;
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/helpers/pages.dart';
 import 'package:nsapp/core/initialize/init.dart';
+import 'package:nsapp/core/utils/responsive_size.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -91,6 +92,15 @@ class NeighborServiceApp extends StatelessWidget {
             initialRoute: "/",
             getPages: pages,
             debugShowCheckedModeBanner: false,
+            builder: (context, child) {
+              Responsive.init(context);
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: TextScaler.noScaling,
+                ),
+                child: child!,
+              );
+            },
           );
         },
       ),

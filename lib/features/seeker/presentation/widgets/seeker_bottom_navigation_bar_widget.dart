@@ -27,16 +27,16 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
               listener: (context, state) {},
               builder: (context, snapshot) {
                 return Container(
-                  height: 70,
-                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  height: 70.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
                   decoration: BoxDecoration(
                     color: backgroundColor,
                     border: Border.all(color: borderColor, width: 1),
                     boxShadow: [
                       BoxShadow(
                         color: shadowColor,
-                        blurRadius: 15,
-                        offset: Offset(0, 8),
+                        blurRadius: 15.r,
+                        offset: Offset(0, 8.h),
                       ),
                     ],
                   ),
@@ -128,12 +128,12 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         child: Badge(
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
           ),
           backgroundColor: context.appColors.errorColor,
           child: Column(
@@ -141,12 +141,12 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 26,
+                size: 26.r,
                 color: isActive ? context.appColors.primaryColor : inactiveColor,
               ),
               
-                const SizedBox(height: 4),
-                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9)),
+                SizedBox(height: 4.h),
+                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9.sp)),
               
             ],
           ),
@@ -163,8 +163,8 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
         );
       },
       child: Container(
-        width: 50,
-        height: 50,
+        width: 50.r,
+        height: 50.r,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
@@ -175,12 +175,12 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: context.appColors.primaryColor.withAlpha(100),
-              blurRadius: 12,
-              offset: Offset(0, 4),
+              blurRadius: 12.r,
+              offset: Offset(0, 4.h),
             ),
           ],
         ),
-        child: const Icon(Icons.add_rounded, size: 28, color: Colors.white),
+        child: Icon(Icons.add_rounded, size: 28.r, color: Colors.white),
       ),
     );
   }

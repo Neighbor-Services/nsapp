@@ -92,66 +92,66 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               child: SafeArea(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 20,
+                    horizontal: 24.w,
+                    vertical: 20.h,
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 32),
+                      SizedBox(height: 32.h),
                       Text(
                         "Create Your Profile",
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 32.sp,
                           fontWeight: FontWeight.bold,
                           color:
                               context.appColors.primaryTextColor,
                           letterSpacing: -1,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h),
                       Text(
                         "Complete your information to get started",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           color:
                               context.appColors.secondaryTextColor,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: 40.h),
                       GestureDetector(
                         onTap: () => _showImagePickerBottomSheet(context),
                         child: Stack(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(4),
+                              padding: EdgeInsets.all(4.r),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color:
                                       context.appColors.glassBorder,
-                                  width: 2,
+                                  width: 2.r,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: context.appColors.primaryColor.withAlpha(50),
-                                    blurRadius: 40,
-                                    spreadRadius: -5,
+                                    blurRadius: 40.r,
+                                    spreadRadius: -5.r,
                                   ),
                                 ],
                               ),
                               child: Container(
-                                padding: EdgeInsets.all(2),
+                                padding: EdgeInsets.all(2.r),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color:
                                         context.appColors.glassBorder,
-                                    width: 1,
+                                    width: 1.r,
                                   ),
                                 ),
                                 child: CircleAvatar(
-                                  radius: 65,
+                                  radius: 65.r,
                                   backgroundColor: Colors.white.withAlpha(15),
                                   backgroundImage:
                                       (ImageProfileState.profilePicture != null)
@@ -168,43 +168,43 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                               ),
                             ),
                             Positioned(
-                              bottom: 6,
-                              right: 6,
+                              bottom: 6.r,
+                              right: 6.r,
                               child: Container(
-                                padding: EdgeInsets.all(12),
+                                padding: EdgeInsets.all(12.r),
                                 decoration: BoxDecoration(
                                   color: context.appColors.primaryColor,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: Colors.white,
-                                    width: 2,
+                                    width: 2.r,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withAlpha(60),
-                                      blurRadius: 12,
-                                      offset: Offset(0, 4),
+                                      blurRadius: 12.r,
+                                      offset: Offset(0, 4.h),
                                     ),
                                   ],
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.camera_alt_rounded,
                                   color: Colors.white,
-                                  size: 20,
+                                  size: 20.r,
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 40),
-                      const SizedBox(height: 40),
+                      SizedBox(height: 40.h),
+                      SizedBox(height: 40.h),
                       Container(
-                        padding: EdgeInsets.all(28),
+                        padding: EdgeInsets.all(28.r),
                         decoration: BoxDecoration(
                           color:
                               context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(32),
+                          borderRadius: BorderRadius.circular(32.r),
                           border: Border.all(
                             color:
                                 context.appColors.glassBorder,
@@ -231,9 +231,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
                               _buildLabel("Gender"),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12.h),
                                 CustomSegmentedControl<String>(
                                   buttonLables: const ["Male", "Female"],
                                   buttonValues: const ["Male", "Female"],
@@ -243,13 +243,13 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                       gender = val;
                                     });
                                   },
-                                  width: 270,
-                                  height: 52,
-                                  radius: 18,
+                                  width: 270.w,
+                                  height: 52.h,
+                                  radius: 18.r,
                                   selectedColor: context.appColors.primaryColor.withAlpha(50),
                                   textColor: context.appColors.primaryTextColor,
                                 ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
                               SolidTextField(
                                 controller: dateOfBirthTextController,
                                 hintText: "Select birth date",
@@ -266,9 +266,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   return null;
                                 },
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
                               _buildLabel("User Role"),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12.h),
                                 CustomSegmentedControl<String>(
                                   buttonLables: const [
                                     userTypeSeeker,
@@ -288,13 +288,13 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                           ),
                                         );
                                   },
-                                  width: 270,
-                                  height: 52,
-                                  radius: 18,
+                                  width: 270.w,
+                                  height: 52.h,
+                                  radius: 18.r,
                                   selectedColor: context.appColors.primaryColor.withAlpha(50),
                                   textColor: context.appColors.primaryTextColor,
                                 ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
                               Row(
                                 children: [
                                   Expanded(
@@ -308,20 +308,20 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                       },
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12.w),
                                   GestureDetector(
                                     onTap: () =>
                                         _showLocationBottomSheet(context),
                                     child: Column(
                                       children: [
-                                        SizedBox(height: 25),
+                                        SizedBox(height: 25.h),
                                         Container(
-                                          width: 58,
-                                          height: 58,
+                                          width: 58.w,
+                                          height: 58.h,
                                           decoration: BoxDecoration(
                                             color:
                                                 context.appColors.cardBackground,
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(20.r),
                                             border: Border.all(
                                               color:
                                                   context.appColors.glassBorder,
@@ -338,7 +338,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -365,9 +365,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                               if (Helpers.isProvider(
                                 UserTypeProfileState.userType,
                               )) ...[
-                                const SizedBox(height: 24),
+                                SizedBox(height: 24.h),
                                 _buildLabel("Service Type"),
-                                const SizedBox(height: 12),
+                                SizedBox(height: 12.h),
                                 GestureDetector(
                                   onTap: () {
                                     showServiceSelector(
@@ -398,13 +398,13 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 18,
+                                      horizontal: 20.w,
+                                      vertical: 18.h,
                                     ),
                                     decoration: BoxDecoration(
                                       color:
                                           context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(20.r),
                                       border: Border.all(
                                         color:
                                             context.appColors.glassBorder,
@@ -419,7 +419,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                             200,
                                           ),
                                         ),
-                                        const SizedBox(width: 14),
+                                        SizedBox(width: 14.w),
                                         Expanded(
                                           child: Text(
                                             serviceType.isEmpty
@@ -427,7 +427,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                                 : serviceType,
                                             style: TextStyle(
                                               color: context.appColors.secondaryTextColor,
-                                              fontSize: 16,
+                                              fontSize: 16.sp,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -436,14 +436,14 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                           Icons.unfold_more_rounded,
                                           color:
                                               context.appColors.secondaryTextColor,
-                                          size: 20,
+                                          size: 20.r,
                                         ),
                                       ],
                                     ),
                                   ),
                                 ),
                                 if (OtherServiceSelectState.others) ...[
-                                  const SizedBox(height: 24),
+                                  SizedBox(height: 24.h),
                                   SolidTextField(
                                     controller: serviceTextController,
                                     hintText: "Enter your custom service",
@@ -451,9 +451,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                     prefixIcon: Icons.add_business_outlined,
                                   ),
                                   ],
-                                  const SizedBox(height: 24),
+                                  SizedBox(height: 24.h),
                                   _buildLabel("Preferred Payment Method"),
-                                  const SizedBox(height: 12),
+                                  SizedBox(height: 12.h),
                                     CustomSegmentedControl<String>(
                                       buttonLables: const ["In-App", "On-Site"],
                                       buttonValues: const ["IN_APP", "ON_SITE"],
@@ -463,9 +463,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                           preferredPaymentMode = val;
                                         });
                                       },
-                                      width: 270,
-                                      height: 52,
-                                      radius: 18,
+                                      width: 270.w,
+                                      height: 52.h,
+                                      radius: 18.r,
                                       selectedColor: context.appColors.primaryColor.withAlpha(50),
                                       textColor: context.appColors.primaryTextColor,
                                     ),
@@ -474,17 +474,17 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: 40.h),
                       Container(
                         width: double.infinity,
-                        height: 60,
+                        height: 60.h,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
+                          borderRadius: BorderRadius.circular(22.r),
                           boxShadow: [
                             BoxShadow(
                               color: context.appColors.primaryColor.withAlpha(100),
-                              blurRadius: 20,
-                              offset: Offset(0, 8),
+                              blurRadius: 20.r,
+                              offset: Offset(0, 8.h),
                             ),
                           ],
                         ),
@@ -558,20 +558,20 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                             backgroundColor: context.appColors.primaryColor,
                             shadowColor: Colors.transparent,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(22),
+                              borderRadius: BorderRadius.circular(22.r),
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             "Complete Profile Creation",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: 40.h),
                     ],
                   ),
                 ),
@@ -591,22 +591,22 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
       Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
           border: Border.all(
             color: context.appColors.glassBorder,
           ),
         ),
-        padding: EdgeInsets.all(32),
+        padding: EdgeInsets.all(32.r),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 45,
-              height: 6,
-              margin: EdgeInsets.only(bottom: 28),
+              width: 45.w,
+              height: 6.h,
+              margin: EdgeInsets.only(bottom: 28.h),
               decoration: BoxDecoration(
                 color: handleColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
             ),
             _buildSheetItem(
@@ -617,7 +617,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 Get.back();
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             _buildSheetItem(
               icon: Icons.camera_alt_rounded,
               label: "Take a Photo",
@@ -626,7 +626,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 Get.back();
               },
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
@@ -641,22 +641,22 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
       Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
           border: Border.all(
             color: context.appColors.glassBorder,
           ),
         ),
-        padding: EdgeInsets.all(32),
+        padding: EdgeInsets.all(32.r),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 45,
-              height: 6,
-              margin: EdgeInsets.only(bottom: 28),
+              width: 45.w,
+              height: 6.h,
+              margin: EdgeInsets.only(bottom: 28.h),
               decoration: BoxDecoration(
                 color: handleColor,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
             ),
             _buildSheetItem(
@@ -685,7 +685,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 }
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             _buildSheetItem(
               icon: Icons.map_rounded,
               label: "Pick from Map",
@@ -699,7 +699,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 Get.toNamed("map-location");
               },
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
@@ -717,28 +717,28 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20.r),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 18.h),
         decoration: BoxDecoration(
           color: itemBg,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(color: borderColor),
         ),
         child: Row(
           children: [
-            Icon(icon, color: context.appColors.primaryColor, size: 26),
-            const SizedBox(width: 18),
+            Icon(icon, color: context.appColors.primaryColor, size: 26.r),
+            SizedBox(width: 18.w),
             Text(
               label,
               style: TextStyle(
                 color: textColor,
-                fontSize: 17,
+                fontSize: 17.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const Spacer(),
-            Icon(Icons.arrow_forward_ios_rounded, color: context.appColors.primaryColor, size: 16),
+            Icon(Icons.arrow_forward_ios_rounded, color: context.appColors.primaryColor, size: 16.r),
           ],
         ),
       ),
@@ -747,11 +747,11 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
 
   Widget _buildLabel(String text) {
     return Padding(
-      padding: EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: 4.w),
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 14,
+          fontSize: 14.sp,
           fontWeight: FontWeight.w600,
           color: context.appColors.primaryTextColor,
           letterSpacing: 0.5,

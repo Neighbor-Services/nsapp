@@ -20,10 +20,10 @@ class ButtonWithoutIconWidget extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: size(context).width,
-        height: 45,
+        height: 45.h,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
         ),
         child: Center(
           child: CustomTextWidget(

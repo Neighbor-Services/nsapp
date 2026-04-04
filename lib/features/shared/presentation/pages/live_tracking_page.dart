@@ -86,61 +86,63 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
             },
           ),
           Positioned(
-            top: 60,
-            left: 20,
+            top: 60.h,
+            left: 20.w,
             child: InkWell(
               onTap: () => Navigator.pop(context),
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: context.appColors.cardBackground,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: context.appColors.glassBorder,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: context.appColors.primaryTextColor,
-                    size: 20,
+              child: Container(
+                padding: EdgeInsets.all(12.r),
+                decoration: BoxDecoration(
+                  color: context.appColors.cardBackground,
+                  borderRadius: BorderRadius.circular(14.r),
+                  border: Border.all(
+                    color: context.appColors.glassBorder,
+                    width: 1.5.w,
                   ),
                 ),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: context.appColors.primaryTextColor,
+                  size: 20.r,
+                ),
+              ),
             ),
           ),
           Positioned(
-            bottom: 40,
-            left: 20,
-            right: 20,
+            bottom: 40.h,
+            left: 20.w,
+            right: 20.w,
             child: SolidContainer(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(20.r),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
                           color: context.appColors.infoColor.withAlpha(50),
                           shape: BoxShape.circle,
                         ),
-                        child:  Icon(
+                        child: Icon(
                           Icons.delivery_dining_rounded,
                           color: context.appColors.infoColor,
+                          size: 24.r,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${widget.providerName} IS ON THE WAY!".toUpperCase(),
+                              "${widget.providerName} IS ON THE WAY!"
+                                  .toUpperCase(),
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
                                 fontWeight: FontWeight.w900,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -148,7 +150,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                               "TRACKING LIVE LOCATION...",
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor,
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.0,
                               ),

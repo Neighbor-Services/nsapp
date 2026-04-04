@@ -45,7 +45,7 @@ class _ProviderAppointmentListPageState
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.w900,
-            fontSize: 18,
+            fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
         ),
@@ -57,19 +57,19 @@ class _ProviderAppointmentListPageState
             context.read<ProviderBloc>().add(ProviderBackPressedEvent());
           },
           child: Container(
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: context.appColors.glassBorder,
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: textColor,
-              size: 16,
+              size: 16.r,
             ),
           ),
         ),
@@ -99,7 +99,7 @@ class _ProviderAppointmentListPageState
               child: GradientBackground(
                 child: SafeArea(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: FutureBuilder<List<AppointmentData>>(
                       future: SuccessGetAppointmentsState.appointments,
                       builder: (context, snapshot) {
@@ -107,10 +107,10 @@ class _ProviderAppointmentListPageState
                           return const Center(child: LoadingWidget());
                         }
                         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(
+                          return Center(
                             child: EmptyWidget(
                               message: "No appointments found",
-                              height: 200,
+                              height: 200.h,
                             ),
                           );
                         }
@@ -120,7 +120,7 @@ class _ProviderAppointmentListPageState
                           physics: const BouncingScrollPhysics(),
                           itemCount: appointments.length,
                           separatorBuilder: (context, index) =>
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16.h),
                           itemBuilder: (context, index) {
                             final data = appointments[index];
                             final appt = data.appointment;
@@ -138,9 +138,9 @@ class _ProviderAppointmentListPageState
                                   );
                                 },
                                 child: SolidContainer(
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(20.r),
                                   borderColor: context.appColors.glassBorder,
-                                  borderWidth: 1.5,
+                                  borderWidth: 1.5.r,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -155,39 +155,39 @@ class _ProviderAppointmentListPageState
                                               children: [
                                                 CustomTextWidget(
                                                   text: (appt.title ?? "No Title").toUpperCase(),
-                                                  fontSize: 16,
+                                                  fontSize: 16.sp,
                                                   fontWeight: FontWeight.w900,
                                                   color: textColor,
                                                   letterSpacing: 0.5,
                                                 ),
-                                                const SizedBox(height: 4),
+                                                SizedBox(height: 4.h),
                                                 Row(
                                                   children: [
                                                     Icon(
                                                       Icons
                                                           .person_outline_rounded,
-                                                      size: 14,
+                                                      size: 14.r,
                                                       color: secondaryTextColor,
                                                     ),
-                                                    const SizedBox(width: 6),
+                                                    SizedBox(width: 6.w),
                                                     CustomTextWidget(
                                                       text:
                                                           (data.user?.firstName ?? '').trim(),
-                                                      fontSize: 12,
+                                                      fontSize: 12.sp,
                                                       color: secondaryTextColor,
                                                     ),
                                                     if (data.role != null) ...[
-                                                      const SizedBox(width: 12),
+                                                      SizedBox(width: 12.w),
                                                       Container(
-                                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                                                         decoration: BoxDecoration(
                                                           color: context.appColors.primaryColor.withAlpha(30),
-                                                          borderRadius: BorderRadius.circular(6),
+                                                          borderRadius: BorderRadius.circular(6.r),
                                                         ),
                                                         child: Text(
                                                           data.role!.toUpperCase(),
                                                           style: TextStyle(
-                                                            fontSize: 8,
+                                                            fontSize: 8.sp,
                                                             fontWeight: FontWeight.w900,
                                                             color: context.appColors.primaryColor,
                                                           ),
@@ -202,26 +202,26 @@ class _ProviderAppointmentListPageState
                                           _buildStatusBadge(appt, context),
                                         ],
                                       ),
-                                      const SizedBox(height: 16),
-                                      Divider(color: dividerColor, height: 1),
-                                      const SizedBox(height: 16),
+                                      SizedBox(height: 16.h),
+                                      Divider(color: dividerColor, height: 1.h),
+                                      SizedBox(height: 16.h),
                                       Row(
                                         children: [
                                           Container(
-                                            padding: EdgeInsets.all(8),
+                                            padding: EdgeInsets.all(8.r),
                                             decoration: BoxDecoration(
                                               color: iconBgColor,
                                               borderRadius: BorderRadius.circular(
-                                                10,
+                                                10.r,
                                               ),
                                             ),
                                             child: Icon(
                                               Icons.calendar_today_rounded,
-                                              size: 16,
+                                              size: 16.r,
                                               color: context.appColors.secondaryColor,
                                             ),
                                           ),
-                                          const SizedBox(width: 12),
+                                          SizedBox(width: 12.w),
                                           Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -229,14 +229,14 @@ class _ProviderAppointmentListPageState
                                               Text(
                                                 "SCHEDULED FOR",
                                                 style: TextStyle(
-                                                  fontSize: 10,
+                                                  fontSize: 10.sp,
                                                   color: secondaryTextColor
                                                       .withAlpha(180),
                                                   fontWeight: FontWeight.w900,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
-                                              const SizedBox(height: 2),
+                                              SizedBox(height: 2.h),
                                               CustomTextWidget(
                                                 text: appt.effectiveDate != null
                                                     ? DateFormat(
@@ -246,7 +246,7 @@ class _ProviderAppointmentListPageState
                                                             .toLocal(),
                                                       )
                                                     : "Date TBD",
-                                                fontSize: 14,
+                                                fontSize: 14.sp,
                                                 color: textColor.withAlpha(220),
                                               ),
                                             ],
@@ -284,19 +284,19 @@ class _ProviderAppointmentListPageState
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: context.appColors.primaryColor.withAlpha(40),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: context.appColors.primaryColor.withAlpha(100),
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: CustomTextWidget(
         text: text.toUpperCase(),
         color: context.appColors.primaryColor,
-        fontSize: 10,
+        fontSize: 10.sp,
         fontWeight: FontWeight.w900,
         letterSpacing: 0.5,
       ),

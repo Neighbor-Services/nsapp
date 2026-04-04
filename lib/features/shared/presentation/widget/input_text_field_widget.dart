@@ -31,7 +31,7 @@ class InputTextFieldWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomTextWidget(text: label!),
-          SizedBox(height: 10),
+          SizedBox(height: 10.h),
           TextFormField(
             minLines: isMultiLine ? 5 : 1,
             maxLines: isMultiLine ? 7 : 1,
@@ -40,7 +40,7 @@ class InputTextFieldWidget extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hintText,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
             keyboardType: keyboardType,

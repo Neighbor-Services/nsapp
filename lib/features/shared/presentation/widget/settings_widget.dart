@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 
 class SettingsWidget extends StatelessWidget {
@@ -11,15 +12,17 @@ class SettingsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(30.r),
         color: Theme.of(context).cardColor,
-        
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [CustomTextWidget(text: name, fontSize: 20), action],
+        children: [
+          CustomTextWidget(text: name, fontSize: 20.sp),
+          action,
+        ],
       ),
     );
   }

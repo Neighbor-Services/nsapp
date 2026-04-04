@@ -93,15 +93,15 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                     // App Bar
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 16,
+                        horizontal: 8.w,
+                        vertical: 16.h,
                       ),
                       child: Row(
                         children: [
                           IconButton(
                             onPressed: () => Get.back(),
                             icon: Container(
-                              padding: EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8.r),
                               decoration: BoxDecoration(
                                 color: context.appColors.cardBackground,
                                 shape: BoxShape.circle,
@@ -112,15 +112,15 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                               child: Icon(
                                 Icons.arrow_back_ios_new_rounded,
                                 color: isDark ? Colors.white : Colors.black,
-                                size: 18,
+                                size: 18.r,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
                           Text(
                             "CHANGE PASSWORD",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 18.sp,
                               fontWeight: FontWeight.w900,
                               color: context.appColors.primaryTextColor,
                               letterSpacing: 1.0,
@@ -133,34 +133,34 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Column(
                           children: [
-                            const SizedBox(height: 20),
+                            SizedBox(height: 20.h),
 
                             // Icon
                             Container(
-                              width: 100,
-                              height: 100,
+                              width: 100.r,
+                              height: 100.r,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: context.appColors.primaryColor.withAlpha(20),
                                 border: Border.all(
                                   color: context.appColors.primaryColor.withAlpha(50),
-                                  width: 2,
+                                  width: 2.r,
                                 ),
                               ),
                               child: Icon(
                                 Icons.password_rounded,
-                                size: 50,
+                                size: 50.r,
                                 color: context.appColors.primaryColor,
                               ),
                             ),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
 
                             // Glass Container
                             SolidContainer(
-                              padding: EdgeInsets.all(28),
+                              padding: EdgeInsets.all(28.r),
                               child: Form(
                                 key: key,
                                 child: Column(
@@ -169,12 +169,12 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                       "Secure your account with a new password",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 14.sp,
                                         color: secondaryTextColor,
                                         height: 1.5,
                                       ),
                                     ),
-                                    const SizedBox(height: 28),
+                                    SizedBox(height: 28.h),
 
                                     SolidTextField(
                                       controller: oldPasswordTextController,
@@ -192,7 +192,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 18),
+                                    SizedBox(height: 18.h),
 
                                     SolidTextField(
                                       controller: passwordTextController,
@@ -210,7 +210,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 18),
+                                    SizedBox(height: 18.h),
 
                                     SolidTextField(
                                       controller: confirmPasswordTextController,
@@ -229,7 +229,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 32),
+                                    SizedBox(height: 32.h),
 
                                     SolidButton(
                                       label: "CHANGE PASSWORD",
@@ -257,7 +257,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 40),
+                            SizedBox(height: 40.h),
                           ],
                         ),
                       ),

@@ -21,7 +21,12 @@ class ReceiverChatTextWidget extends StatelessWidget {
     final shadowColor = context.appColors.glassBorder;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 12, top: 4, left: 8, right: 40),
+      padding: EdgeInsets.only(
+        bottom: 12.h,
+        top: 4.h,
+        left: 8.w,
+        right: 40.w,
+      ),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Column(
@@ -31,21 +36,24 @@ class ReceiverChatTextWidget extends StatelessWidget {
               constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75,
               ),
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 12.h,
+              ),
               decoration: BoxDecoration(
                 color: bubbleColor,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                  bottomLeft: Radius.circular(6),
+                  topLeft: Radius.circular(24.r),
+                  topRight: Radius.circular(24.r),
+                  bottomRight: Radius.circular(24.r),
+                  bottomLeft: Radius.circular(6.r),
                 ),
-                border: Border.all(color: borderColor, width: 1),
+                border: Border.all(color: borderColor, width: 1.r),
                 boxShadow: [
                   BoxShadow(
                     color: shadowColor,
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
+                    blurRadius: 10.r,
+                    offset: Offset(0, 4.h),
                   ),
                 ],
               ),
@@ -53,19 +61,19 @@ class ReceiverChatTextWidget extends StatelessWidget {
                 message,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   height: 1.45,
                   fontWeight: FontWeight.w400,
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 4, left: 4),
+              padding: EdgeInsets.only(top: 4.h, left: 4.w),
               child: Text(
                 DateFormat("HH:mm").format(dateTime.toLocal()),
                 style: TextStyle(
                   color: timestampColor,
-                  fontSize: 10,
+                  fontSize: 10.sp,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
                 ),

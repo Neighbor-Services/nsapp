@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/core/core.dart';
 
 class ImageViewPage extends StatefulWidget {
   const ImageViewPage({super.key});
@@ -29,7 +30,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                   height: size(context).height,
                   child: InteractiveViewer(
                     panEnabled: true,
-                    boundaryMargin: EdgeInsets.all(20),
+                    boundaryMargin: EdgeInsets.all(20.r),
                     minScale: 0.5,
                     maxScale: 5,
                     child: CachedNetworkImage(
@@ -47,14 +48,15 @@ class _ImageViewPageState extends State<ImageViewPage> {
                         children: [
                           Icon(
                             Icons.broken_image,
-                            size: 100,
+                            size: 100.r,
                             color: Colors.white.withAlpha(100),
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: 10.h),
                           Text(
                             "Could not load image",
                             style: TextStyle(
                               color: Colors.white.withAlpha(150),
+                              fontSize: 14.sp,
                             ),
                           ),
                         ],
@@ -65,21 +67,21 @@ class _ImageViewPageState extends State<ImageViewPage> {
               ),
               // Glass Close Button
               Positioned(
-                top: 40,
-                left: 20,
+                top: 40.h,
+                left: 20.w,
                 child: GestureDetector(
                   onTap: () => Get.back(),
                   child: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10.r),
                     decoration: BoxDecoration(
                       color: Colors.black.withAlpha(50),
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white.withAlpha(30)),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_back,
                       color: Colors.white,
-                      size: 24,
+                      size: 24.r,
                     ),
                   ),
                 ),

@@ -66,34 +66,34 @@ class _ProviderHomePageState extends State<ProviderHomePage>
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 800),
+                  constraints: BoxConstraints(maxWidth: 800.w),
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: ListView(
                       physics: const BouncingScrollPhysics(),
                       padding: EdgeInsets.symmetric(
-                        horizontal: isLargeScreen ? 32 : 20,
-                        vertical: 20,
+                        horizontal: isLargeScreen ? 32.w : 20.w,
+                        vertical: 20.h,
                       ),
                       children: [
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
 
                         // Performance Dashboard (Replaced Search Hero)
                         _buildDashboard(context, isLargeScreen),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32.h),
 
                         // Search Bar (Minimalist)
                         _buildSearchBar(context),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32.h),
 
                         // Recent Requests Section
                         _buildSectionHeader(context, "Recent Requests"),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         SizedBox(
-                          height: 250,
+                          height: 250.h,
                           child: const ProviderRecentRequestWidget(),
                         ),
-                        const SizedBox(height: 32),
+                        SizedBox(height: 32.h),
 
                         // // Service Categories Section
                         // _buildSectionHeader(
@@ -112,20 +112,20 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         // _buildServicesGrid(context),
                         // const SizedBox(height: 32),
                         _buildSectionHeader(context, "Explore More"),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         _buildDirectRequestsCard(context),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         _buildExploreCard(context),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         if (SuccessGetProfileState
                                 .profile
                                 .preferredPaymentMode !=
                             'ON_SITE') ...[
                           _buildWalletCard(context),
-                          const SizedBox(height: 32),
+                          SizedBox(height: 32.h),
                         ],
 
-                        const SizedBox(height: 40),
+                        SizedBox(height: 40.h),
                       ],
                     ),
                   ),
@@ -156,9 +156,9 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         : 0;
 
                     return SolidContainer(
-                      padding: EdgeInsets.all(24),
+                      padding: EdgeInsets.all(24.r),
                       backgroundColor: context.appColors.primaryColor,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(28.r),
                       gradient: context.appColors.primaryGradient,
                       child: Column(
                         children: [
@@ -174,18 +174,18 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                       style: TextStyle(
                                         color:
                                             context.appColors.primaryTextColor,
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 1.2,
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: 4.h),
                                     Text(
                                       "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
                                       style: TextStyle(
                                         color:
                                             context.appColors.primaryTextColor,
-                                        fontSize: 32,
+                                        fontSize: 32.sp,
                                         fontWeight: FontWeight.w900,
                                       ),
                                     ),
@@ -202,15 +202,15 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
+                                      horizontal: 16.w,
+                                      vertical: 10.h,
                                     ),
                                     decoration: BoxDecoration(
                                       color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12.r),
                                       border: Border.all(
                                         color: context.appColors.glassBorder,
-                                        width: 1.5,
+                                        width: 1.5.r,
                                       ),
                                     ),
                                     child: Row(
@@ -221,14 +221,14 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                             color:
                                                 context.appColors.primaryColor,
                                             fontWeight: FontWeight.w900,
-                                            fontSize: 12,
+                                            fontSize: 12.sp,
                                             letterSpacing: 1.0,
                                           ),
                                         ),
-                                        SizedBox(width: 8),
+                                        SizedBox(width: 8.w),
                                         Icon(
                                           Icons.arrow_forward_ios_rounded,
-                                          size: 10,
+                                          size: 10.r,
                                           color: context.appColors.primaryColor,
                                         ),
                                       ],
@@ -237,7 +237,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
                           ],
                           Row(
                             children: [
@@ -247,7 +247,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                 Icons.gavel_rounded,
                                 context.appColors.warningColor,
                               ),
-                              const SizedBox(width: 16),
+                              SizedBox(width: 16.w),
                               _buildDashboardStat(
                                 "Avg Rating",
                                 profile.averageRating?.toStringAsFixed(1) ??
@@ -278,27 +278,27 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   ) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: context.appColors.glassBorder, width: 1.5),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: context.appColors.glassBorder, width: 1.5.r),
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.r),
               decoration: BoxDecoration(
                 color: context.appColors.primaryColor.withAlpha(40),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
               child: Icon(
                 icon,
                 color: context.appColors.primaryColor,
-                size: 20,
+                size: 20.r,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -306,7 +306,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   value,
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -314,7 +314,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   label.toUpperCase(),
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
-                    fontSize: 9,
+                    fontSize: 9.sp,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.8,
                   ),
@@ -350,29 +350,29 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         }
       },
       child: Container(
-        height: 60,
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        height: 60.h,
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor, width: 1.5),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: borderColor, width: 1.5.r),
         ),
         child: Row(
           children: [
             Icon(Icons.search_rounded, color: iconColor),
-            const SizedBox(width: 16),
+            SizedBox(width: 16.w),
             Text(
               "FIND YOUR NEXT PROJECT...",
               style: TextStyle(
                 color: hintColor,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.1,
               ),
             ),
             const Spacer(),
             Container(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.r),
               decoration: BoxDecoration(
                 color: context.appColors.secondaryColor.withAlpha(40),
                 shape: BoxShape.circle,
@@ -380,7 +380,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               child: Icon(
                 Icons.arrow_forward_rounded,
                 color: context.appColors.secondaryColor,
-                size: 20,
+                size: 20.r,
               ),
             ),
           ],
@@ -402,7 +402,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         Text(
           title.toUpperCase(),
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w900,
             color: textColor,
             letterSpacing: 1.2,
@@ -416,7 +416,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               style: TextStyle(
                 color: textColor.withAlpha(180),
                 fontWeight: FontWeight.w900,
-                fontSize: 12,
+                fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
             ),
@@ -424,105 +424,6 @@ class _ProviderHomePageState extends State<ProviderHomePage>
       ],
     );
   }
-
-  // Widget _buildServicesGrid(BuildContext context) {
-  //   final services = SuccessGetServicesState.services;
-  //   final displayServices = services.take(2).toList();
-
-  //   final icons = [
-  //     Icons.build_rounded,
-  //     Icons.cleaning_services_rounded,
-  //     Icons.electrical_services_rounded,
-  //     Icons.plumbing_rounded,
-  //     Icons.local_shipping_rounded,
-  //     Icons.home_repair_service_rounded,
-  //   ];
-
-  //   final cardColor = context.appColors.cardBackground;
-  //   final borderColor = context.appColors.glassBorder;
-  //   final textColor = context.appColors.primaryTextColor;
-
-  //   return GridView.builder(
-  //     shrinkWrap: true,
-  //     physics: const NeverScrollableScrollPhysics(),
-  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //       crossAxisCount: 2,
-  //       crossAxisSpacing: 16,
-  //       mainAxisSpacing: 16,
-  //       childAspectRatio: 1.3,
-  //     ),
-  //     itemCount: displayServices.length,
-  //     itemBuilder: (context, index) {
-  //       final service = displayServices[index];
-  //       final icon = icons[index % icons.length];
-
-  //       return GestureDetector(
-  //         onTap: () {
-  //           if (ValidUserSubscriptionState.isValid) {
-  //             context.read<ProviderBloc>().add(
-  //               NavigateProviderEvent(
-  //                 page: 1,
-  //                 widget: RequestsByServicePage(
-  //                   serviceId: service.id ?? '',
-  //                   serviceName: service.name ?? 'Service',
-  //                 ),
-  //               ),
-  //             );
-  //           } else {
-  //             showDialog(
-  //               context: context,
-  //               builder: (context) => const SubscribeDialogWidget(),
-  //             );
-  //           }
-  //         },
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             color: cardColor,
-  //             borderRadius: BorderRadius.circular(24),
-  //             border: Border.all(
-  //               color: borderColor,
-  //               width: 1.5,
-  //             ),
-  //           ),
-  //           child: Stack(
-  //             children: [
-
-  //               Padding(
-  //                 padding: EdgeInsets.all(20),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: [
-  //                     Container(
-  //                       padding: EdgeInsets.all(10),
-  //                       decoration: BoxDecoration(
-  //                         color: context.appColors.primaryColor.withAlpha(40),
-  //                         borderRadius: BorderRadius.circular(12),
-  //                       ),
-  //                       child: Icon(icon, color: context.appColors.primaryColor, size: 24),
-  //                     ),
-  //                     Text(
-  //                       (service.name ?? "SERVICE").toUpperCase(),
-  //                       style: TextStyle(
-  //                         fontSize: 14,
-  //                         fontWeight: FontWeight.w900,
-  //                         color: textColor,
-  //                         height: 1.2,
-  //                         letterSpacing: 0.8,
-  //                       ),
-  //                       maxLines: 2,
-  //                       overflow: TextOverflow.ellipsis,
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   Widget _buildDirectRequestsCard(BuildContext context) {
     final cardColor = context.appColors.cardBackground;
@@ -539,28 +440,28 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         );
       },
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
           color: cardColor,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: borderColor, width: 1.5),
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: borderColor, width: 1.5.r),
         ),
         child: Row(
           children: [
             Container(
-              width: 52,
-              height: 52,
+              width: 52.r,
+              height: 52.r,
               decoration: BoxDecoration(
                 color: context.appColors.primaryColor.withAlpha(40),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
                 Icons.handshake_rounded,
                 color: context.appColors.primaryColor,
-                size: 26,
+                size: 26.r,
               ),
             ),
-            const SizedBox(width: 20),
+            SizedBox(width: 20.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -568,17 +469,17 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   Text(
                     "DIRECT REQUESTS",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w900,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     "Job requests sent specifically to you",
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       color: textColor.withAlpha(150),
                     ),
                   ),
@@ -613,28 +514,28 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         }
       },
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
           color: cardColor,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: borderColor, width: 1.5),
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: borderColor, width: 1.5.r),
         ),
         child: Row(
           children: [
             Container(
-              width: 52,
-              height: 52,
+              width: 52.r,
+              height: 52.r,
               decoration: BoxDecoration(
                 color: context.appColors.primaryColor.withAlpha(40),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
                 Icons.location_searching_rounded,
                 color: context.appColors.primaryColor,
-                size: 26,
+                size: 26.r,
               ),
             ),
-            const SizedBox(width: 20),
+            SizedBox(width: 20.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -642,17 +543,17 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   Text(
                     "NEARBY OPPORTUNITIES",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w900,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     "Discover jobs in your location",
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       color: textColor.withAlpha(150),
                     ),
                   ),
@@ -677,28 +578,28 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         );
       },
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.r),
         decoration: BoxDecoration(
           color: cardColor,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: borderColor, width: 1.5),
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: borderColor, width: 1.5.r),
         ),
         child: Row(
           children: [
             Container(
-              width: 52,
-              height: 52,
+              width: 52.r,
+              height: 52.r,
               decoration: BoxDecoration(
                 color: context.appColors.primaryColor.withAlpha(40),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
                 Icons.account_balance_wallet_rounded,
                 color: context.appColors.primaryColor,
-                size: 26,
+                size: 26.r,
               ),
             ),
-            const SizedBox(width: 20),
+            SizedBox(width: 20.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -706,17 +607,17 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   Text(
                     "FINANCIAL WALLET",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w900,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Text(
                     "Track earnings & payouts",
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.sp,
                       color: textColor.withAlpha(150),
                     ),
                   ),

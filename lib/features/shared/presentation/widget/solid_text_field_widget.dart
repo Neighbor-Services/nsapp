@@ -87,27 +87,27 @@ class _SolidTextFieldState extends State<SolidTextField>
             widget.allCapsLabel ? widget.label!.toUpperCase() : widget.label!,
             style: TextStyle(
               color: labelColor,
-              fontSize: 13,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
         ],
         Container(
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
               color: _isFocused ? context.appColors.secondaryColor : borderColor,
-              width: _isFocused ? 1.5 : 1,
+              width: _isFocused ? 1.5.r : 1.r,
             ),
             boxShadow: _isFocused
                 ? [
                     BoxShadow(
                       color: context.appColors.secondaryColor.withAlpha(20),
-                      blurRadius: 10,
-                      spreadRadius: 1,
+                      blurRadius: 10.r,
+                      spreadRadius: 1.r,
                     ),
                   ]
                 : null,
@@ -123,15 +123,15 @@ class _SolidTextFieldState extends State<SolidTextField>
             onTap: widget.onTap,
             minLines: widget.isMultiLine ? 4 : 1,
             maxLines: widget.isMultiLine ? 6 : 1,
-            style: TextStyle(color: textColor, fontSize: 15),
+            style: TextStyle(color: textColor, fontSize: 15.sp),
             decoration: InputDecoration(
               hintText: widget.hintText,
-              hintStyle: TextStyle(color: hintColor, fontSize: 14),
+              hintStyle: TextStyle(color: hintColor, fontSize: 14.sp),
               prefixIcon: widget.prefixIcon != null
                   ? Icon(
                       widget.prefixIcon,
                       color: _isFocused ? context.appColors.secondaryColor : iconColor,
-                      size: 20,
+                      size: 20.r,
                     )
                   : null,
               suffixIcon: widget.obscureText
@@ -141,7 +141,7 @@ class _SolidTextFieldState extends State<SolidTextField>
                             ? Icons.visibility_off_rounded
                             : Icons.visibility_rounded,
                         color: iconColor,
-                        size: 20,
+                        size: 20.r,
                       ),
                       onPressed: () {
                         setState(() {
@@ -152,12 +152,12 @@ class _SolidTextFieldState extends State<SolidTextField>
                   : widget.suffixIcon,
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 18,
+                horizontal: 20.w,
+                vertical: 18.h,
               ),
               errorStyle:  TextStyle(
                 color: context.appColors.errorColor,
-                fontSize: 12,
+                fontSize: 12.sp,
               ),
             ),
           ),

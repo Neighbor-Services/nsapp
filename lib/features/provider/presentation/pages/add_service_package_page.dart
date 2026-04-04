@@ -62,19 +62,19 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
-            margin: EdgeInsets.all(8),
+            margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: context.appColors.glassBorder,
-                width: 1.5,
+                width: 1.5.r,
               ),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: context.appColors.primaryTextColor,
-              size: 18,
+              size: 18.r,
             ),
           ),
         ),
@@ -83,7 +83,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
           style: TextStyle(
             color: context.appColors.primaryTextColor,
             fontWeight: FontWeight.w900,
-            fontSize: 16,
+            fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
         ),
@@ -111,11 +111,11 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
           },
           builder: (context, state) {
             return SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(16, 100, 16, 16),
+              padding: EdgeInsets.fromLTRB(16.w, 100.h, 16.w, 16.h),
               child: Form(
                 key: _formKey,
                 child: SolidContainer(
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16.r),
                   child: Column(
                     children: [
                       SolidTextField(
@@ -124,7 +124,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                         prefixIcon: Icons.label_outline_rounded,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       SolidTextField(
                         controller: _priceController,
                         hintText: "Price (\u0024)",
@@ -132,7 +132,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                         keyboardType: TextInputType.number,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       SolidTextField(
                         controller: _descriptionController,
                         hintText: "Description",
@@ -140,14 +140,14 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                         isMultiLine: true,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       SolidTextField(
                         controller: _revisionsController,
                         hintText: "Revisions (Optional)",
                         prefixIcon: Icons.repeat_rounded,
                         keyboardType: TextInputType.number,
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       SolidTextField(
                         controller: _deliveryTimeController,
                         hintText: "Delivery Time (Days)",
@@ -155,7 +155,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                         keyboardType: TextInputType.number,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24.h),
                       SolidButton(
                         label: "ADD PACKAGE",
                         allCaps: true,

@@ -64,36 +64,36 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
             },
           ),
           Positioned(
-            top: 60,
-            left: 20,
+            top: 60.h,
+            left: 20.w,
             child: InkWell(
               onTap: () => Navigator.pop(context),
               child: SolidContainer(
-                padding: EdgeInsets.all(12),
-                borderRadius: BorderRadius.circular(12),
+                padding: EdgeInsets.all(12.r),
+                borderRadius: BorderRadius.circular(12.r),
                 borderColor: context.appColors.glassBorder,
-                borderWidth: 1.5,
+                borderWidth: 1.5.r,
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   color: context.appColors.primaryTextColor,
-                  size: 20,
+                  size: 20.r,
                 ),
               ),
             ),
           ),
           Positioned(
-            bottom: 40,
-            left: 20,
-            right: 20,
+            bottom: 40.h,
+            left: 20.w,
+            right: 20.w,
             child: SolidContainer(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(20.r),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
                           color: context.appColors.successColor.withAlpha(50),
                           shape: BoxShape.circle,
@@ -103,7 +103,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                           color: context.appColors.successColor,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                        Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +113,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
                                 fontWeight: FontWeight.w900,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -122,7 +122,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor.withAlpha(150),
                                 fontWeight: FontWeight.w900,
-                                fontSize: 9,
+                                fontSize: 9.sp,
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -131,7 +131,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   SolidButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -139,7 +139,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                     label: "I HAVE ARRIVED",
                     allCaps: true,
                     isPrimary: true,
-                    height: 50,
+                    height: 50.h,
                   ),
                 ],
               ),

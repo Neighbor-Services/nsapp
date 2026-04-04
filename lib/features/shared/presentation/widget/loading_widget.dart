@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/core/constants/app_theme_extension.dart';
-import 'package:nsapp/core/constants/dimension.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
+import 'package:nsapp/core/core.dart';
+import 'package:nsapp/core/utils/responsive_size.dart';
 
 class LoadingWidget extends StatefulWidget {
   const LoadingWidget({super.key});
@@ -32,22 +31,22 @@ class _LoadingWidgetState extends State<LoadingWidget>
   Widget build(BuildContext context) {
     return Container(
       width: size(context).width,
-      height: size(context).height - 330,
+      height: size(context).height - 330.h,
       decoration: BoxDecoration(
         color: Colors.black.withAlpha(40),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: context.appColors.glassBorder,
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: Center(
         child: SizedBox(
-          width: 100,
-          height: 100,
+          width: 100.r,
+          height: 100.r,
           child: RotationTransition(
             turns: Tween(begin: 0.0, end: 1.0).animate(controller),
-            child: Image.asset(logo2Assets, width: 100),
+            child: Image.asset(logo2Assets, width: 100.r),
           ),
         ),
       ),

@@ -105,20 +105,20 @@ class _SolidButtonState extends State<SolidButton>
         onTapCancel: widget.onPressed != null ? _handleTapCancel : null,
         onTap: widget.isLoading ? null : widget.onPressed,
         child: Container(
-          width: widget.width ?? double.infinity,
-          height: widget.height,
+          width: widget.width?.w ?? double.infinity,
+          height: widget.height.h,
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: borderColor, width: 1.2),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: borderColor, width: 1.2.r),
           ),
           child: Center(
             child: widget.isLoading
                 ? SizedBox(
-                    width: 24,
-                    height: 24,
+                    width: 24.r,
+                    height: 24.r,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
+                      strokeWidth: 2.5.r,
                       valueColor: AlwaysStoppedAnimation<Color>(textColor),
                     ),
                   )
@@ -127,17 +127,17 @@ class _SolidButtonState extends State<SolidButton>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (widget.icon != null) ...[
-                        Icon(widget.icon, color: textColor, size: 20),
-                        const SizedBox(width: 10),
+                        Icon(widget.icon, color: textColor, size: 20.r),
+                        SizedBox(width: 10.w),
                       ] else if (widget.imagePath != null) ...[
-                        Image.asset(widget.imagePath!, width: 20, height: 20),
-                        const SizedBox(width: 10),
+                        Image.asset(widget.imagePath!, width: 20.r, height: 20.r),
+                        SizedBox(width: 10.w),
                       ],
                       Text(
                         widget.allCaps ? widget.label.toUpperCase() : widget.label,
                         style: TextStyle(
                           color: textColor,
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.1,
                         ),

@@ -32,7 +32,7 @@ class SeekerDrawerWidget extends StatelessWidget {
     return Drawer(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      width: 280,
+      width: 280.w,
       child: Container(
         decoration: BoxDecoration(
           color: bgColor,
@@ -42,10 +42,10 @@ class SeekerDrawerWidget extends StatelessWidget {
           child: Column(
             children: [
               _buildHeader(context, isDark, textColor, secondaryTextColor),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Expanded(
                 child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   children: [
                     _buildDrawerItem(
                       context,
@@ -129,7 +129,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                       textColor: textColor,
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
                       child: Divider(
                         color: context.appColors.glassBorder,
                       ),
@@ -185,14 +185,14 @@ class SeekerDrawerWidget extends StatelessWidget {
   ) {
     final profile = SuccessGetProfileState.profile;
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(3),
+                padding: EdgeInsets.all(3.r),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
@@ -207,7 +207,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                   ],
                 ),
                 child: CircleAvatar(
-                  radius: 32,
+                  radius: 32.r,
                   backgroundColor: context.appColors.primaryTextColor,
                   backgroundImage:
                       (profile.profilePictureUrl != null &&
@@ -224,27 +224,27 @@ class SeekerDrawerWidget extends StatelessWidget {
               }, isDark),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Text(
             profile.firstName ?? "Seeker",
             style: TextStyle(
               color: textColor,
-              fontSize: 20,
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.5,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             profile.user?.email ?? "",
-            style: TextStyle(color: secondaryTextColor, fontSize: 12),
+            style: TextStyle(color: secondaryTextColor, fontSize: 12.sp),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
             decoration: BoxDecoration(
               color: context.appColors.secondaryColor.withAlpha(30),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
               border: Border.all(color: context.appColors.secondaryColor.withAlpha(50)),
             ),
             child:  Row(
@@ -252,15 +252,15 @@ class SeekerDrawerWidget extends StatelessWidget {
               children: [
                 Icon(
                   Icons.verified_user_rounded,
-                  size: 12,
+                  size: 12.r,
                   color: context.appColors.secondaryColor,
                 ),
-                SizedBox(width: 4),
+                SizedBox(width: 4.w),
                 Text(
                   "SEEKER",
                   style: TextStyle(
                     color: context.appColors.secondaryColor,
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1,
                   ),
@@ -283,16 +283,16 @@ class SeekerDrawerWidget extends StatelessWidget {
     required Color textColor,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.only(bottom: 8.0.h),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16.r),
               color: isSelected
                   ? context.appColors.glassBorder
                   : Colors.transparent,
@@ -309,16 +309,16 @@ class SeekerDrawerWidget extends StatelessWidget {
                   color: isSelected
                       ? context.appColors.primaryColor
                       : context.appColors.primaryTextColor,
-                  size: 22,
+                  size: 22.r,
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16.w),
                 Text(
                   title,
                   style: TextStyle(
                     color: isSelected
                         ? context.appColors.primaryColor
                         : context.appColors.primaryTextColor,
-                    fontSize: 15,
+                    fontSize: 15.sp,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   ),
                 ),
@@ -334,7 +334,7 @@ class SeekerDrawerWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(8.r),
         decoration: BoxDecoration(
           color: context.appColors.primaryColor.withAlpha(30),
           shape: BoxShape.circle,
@@ -345,7 +345,7 @@ class SeekerDrawerWidget extends StatelessWidget {
         child: Icon(
           icon,
           color: context.appColors.primaryColor,
-          size: 20,
+          size: 20.r,
         ),
       ),
     );
@@ -366,11 +366,11 @@ class SeekerDrawerWidget extends StatelessWidget {
               color: Colors.transparent,
               child: Center(
                 child: Container(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24.r),
                   width: size(context).width * 0.85,
-                  constraints: BoxConstraints(maxWidth: 400),
+                  constraints: BoxConstraints(maxWidth: 400.w),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20.r),
                     color: dialogBg,
                     border: Border.all(color: borderColor),
                     boxShadow: [
@@ -385,33 +385,33 @@ class SeekerDrawerWidget extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16.r),
                         decoration: BoxDecoration(
                           color: context.appColors.errorColor.withAlpha(30),
                           shape: BoxShape.circle,
                         ),
                         child:  Icon(
                           Icons.logout_rounded,
-                          size: 32,
+                          size: 32.r,
                           color: context.appColors.errorColor,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       Text(
                         "Logout",
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
                           color: textColor,
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                       CustomTextWidget(
                         text: "Are you sure you want to logout?",
                         textAlign: TextAlign.center,
                         color: subTextColor,
                       ),
-                      const SizedBox(height: 30),
+                      SizedBox(height: 30.h),
                       Row(
                         children: [
                           Expanded(
@@ -419,24 +419,24 @@ class SeekerDrawerWidget extends StatelessWidget {
                               onPressed: () => Get.back(),
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
-                                  vertical: 12,
+                                  vertical: 12.h,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(12.r),
                                   side: BorderSide(color: borderColor),
                                 ),
                               ),
                               child: Text(
                                 "Cancel",
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   color: subTextColor,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: 16.w),
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
@@ -458,17 +458,17 @@ class SeekerDrawerWidget extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.appColors.errorColor,
                                 padding: EdgeInsets.symmetric(
-                                  vertical: 12,
+                                  vertical: 12.h,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 elevation: 0,
                               ),
                               child: Text(
                                 "Logout",
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   color: context.appColors.errorColor,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -486,7 +486,7 @@ class SeekerDrawerWidget extends StatelessWidget {
         );
       },
       child: Container(
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
@@ -496,13 +496,13 @@ class SeekerDrawerWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.logout_rounded, color: context.appColors.errorColor, size: 20),
-            const SizedBox(width: 12),
+            Icon(Icons.logout_rounded, color: context.appColors.errorColor, size: 20.r),
+            SizedBox(width: 12.w),
             Text(
               "Logout",
               style: TextStyle(
                 color: context.appColors.primaryTextColor,
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),

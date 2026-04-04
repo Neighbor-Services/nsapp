@@ -75,7 +75,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 700),
+                  constraints: BoxConstraints(maxWidth: 700.w),
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Column(
@@ -84,8 +84,8 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         // Header
                         Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32 : 24,
-                            vertical: 24,
+                            horizontal: isLargeScreen ? 32.w : 24.w,
+                            vertical: 24.h,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,27 +97,27 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                       SeekerBackPressedEvent(),
                                     ),
                                     child: Container(
-                                      padding: EdgeInsets.all(12),
+                                      padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
                                         color: context.appColors.cardBackground,
-                                        borderRadius: BorderRadius.circular(14),
+                                        borderRadius: BorderRadius.circular(14.r),
                                         border: Border.all(
                                           color: context.appColors.glassBorder,
-                                          width: 1.5,
+                                          width: 1.5.r,
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.arrow_back_ios_new_rounded,
                                         color: iconColor,
-                                        size: 20,
+                                        size: 20.r,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  SizedBox(width: 16.w),
                                   Text(
                                     "FAVORITES",
                                     style: TextStyle(
-                                      fontSize: 24,
+                                      fontSize: 24.sp,
                                       fontWeight: FontWeight.w900,
                                       color: textColor,
                                       letterSpacing: 1.2,
@@ -125,13 +125,13 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: 12.h),
                               Padding(
-                                padding: EdgeInsets.only(left: 52),
+                                padding: EdgeInsets.only(left: 52.w),
                                 child: Text(
                                   "YOUR SAVED PROFESSIONALS",
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.w900,
                                     color: textColor.withAlpha(150),
                                     letterSpacing: 1.0,
@@ -152,9 +152,9 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   return ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     padding: EdgeInsets.only(
-                                      left: isLargeScreen ? 32 : 16,
-                                      right: isLargeScreen ? 32 : 16,
-                                      bottom: 32,
+                                      left: isLargeScreen ? 32.w : 16.w,
+                                      right: isLargeScreen ? 32.w : 16.w,
+                                      bottom: 32.h,
                                     ),
                                     itemCount: snapshot.data!.length,
                                     itemBuilder: (context, index) {
@@ -169,13 +169,13 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   return Center(
                                     child: SolidContainer(
                                       // Use SolidContainer for consistency
-                                      margin: EdgeInsets.all(24),
-                                      padding: EdgeInsets.all(20),
+                                      margin: EdgeInsets.all(24.r),
+                                      padding: EdgeInsets.all(20.r),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Container(
-                                            padding: EdgeInsets.all(20),
+                                            padding: EdgeInsets.all(20.r),
                                             decoration: BoxDecoration(
                                               color: context.appColors.errorColor.withAlpha(
                                                 30,
@@ -184,26 +184,26 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                             ),
                                             child: Icon(
                                               Icons.favorite_rounded,
-                                              size: 60,
+                                              size: 60.r,
                                               color: context.appColors.errorColor,
                                             ),
                                           ),
-                                          const SizedBox(height: 24),
+                                          SizedBox(height: 24.h),
                                           Text(
                                             "No favorites yet",
                                             style: TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 20.sp,
                                               fontWeight: FontWeight.w900,
                                               color: textColor,
                                               letterSpacing: 0.5,
                                             ),
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12.h),
                                           Text(
                                             "Save providers you like for quick access and priority booking.",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               color: secondaryTextColor,
                                               height: 1.5,
                                             ),
@@ -268,22 +268,22 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
           );
         },
         child: Container(
-          margin: EdgeInsets.only(bottom: 16),
+          margin: EdgeInsets.only(bottom: 16.h),
           child: SolidContainer(
-            padding: EdgeInsets.all(18),
+            padding: EdgeInsets.all(18.r),
             borderColor: context.appColors.glassBorder,
-            borderWidth: 1.5,
+            borderWidth: 1.5.r,
             child: Row(
               children: [
                 // Avatar
                 Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: borderColor, width: 2.5),
+                    border: Border.all(color: borderColor, width: 2.5.r),
                    
                   ),
                   child: CircleAvatar(
-                    radius: 36,
+                    radius: 36.r,
                     backgroundColor: Colors.white12,
                     backgroundImage:
                         (favorite.favoriteUser!.profilePictureUrl != null &&
@@ -298,7 +298,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         : const AssetImage(logoAssets) as ImageProvider,
                   ),
                 ),
-                const SizedBox(width: 18),
+                SizedBox(width: 18.w),
         
                 // Info
                 Expanded(
@@ -308,26 +308,26 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                       Text(
                         (favorite.favoriteUser!.firstName ?? "Provider").toUpperCase(),
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w900,
                           color: textColor,
                           letterSpacing: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6.h),
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
+                          horizontal: 10.w,
+                          vertical: 5.h,
                         ),
                         decoration: BoxDecoration(
                           color: context.appColors.surfaceBackground,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
                         child: Text(
                           getServiceName(favorite.favoriteUser!.service ?? favorite.favoriteUser!.catalogServiceName ?? "").toUpperCase(),
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 10.sp,
                             fontWeight: FontWeight.w900,
                             color: context.appColors.hintTextColor,
                             letterSpacing: 1.0,
@@ -356,7 +356,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                     );
                   },
                 ),
-                 const SizedBox(width: 8),
+                 SizedBox(width: 8.w),
                    
                     _buildActionButton(
                       icon: Icons.favorite_rounded,
@@ -385,16 +385,16 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(8.r),
         decoration: BoxDecoration(
           color: color.withAlpha(30),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(14.r),
           border: Border.all(
             color: color.withAlpha(50),
-            width: 1.5,
+            width: 1.5.r,
           ),
         ),
-        child: Icon(icon, color: color, size: 18),
+        child: Icon(icon, color: color, size: 18.r),
       ),
     );
   }

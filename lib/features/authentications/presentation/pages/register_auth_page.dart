@@ -117,11 +117,11 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(
-                    horizontal: isLargeScreen ? 40 : 24,
-                    vertical: isLargeScreen ? 40 : 0,
+                    horizontal: isLargeScreen ? 40.w : 24.w,
+                    vertical: isLargeScreen ? 40.h : 0,
                   ),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 450),
+                    constraints: BoxConstraints(maxWidth: 450.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: SlideTransition(
@@ -130,10 +130,10 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _buildHeader(),
-                            const SizedBox(height: 32),
+                            SizedBox(height: 32.h),
 
                             SolidContainer(
-                              padding: EdgeInsets.all(28),
+                              padding: EdgeInsets.all(28.r),
                               child: Form(
                                 key: key,
                                 child: Column(
@@ -156,7 +156,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     // Password Field
                                     SolidTextField(
                                       controller: passwordTextController,
@@ -174,7 +174,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         return null;
                                       },
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                     // Confirm Password Field
                                     SolidTextField(
                                       controller: confirmPasswordTextController,
@@ -193,9 +193,9 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         return null;
                                       },
                                     ),
-                                     const SizedBox(height: 16),
+                                     SizedBox(height: 16.h),
                                      _buildTermsCheckbox(),
-                                     const SizedBox(height: 32),
+                                     SizedBox(height: 32.h),
                                      // Sign Up Button
                                      SolidButton(
                                        label: "SIGN UP",
@@ -229,38 +229,38 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                         }
                                       },
                                     ),
-                                    const SizedBox(height: 24),
-                                    // Divider
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Divider(
-                                            color: context.appColors.glassBorder.withAlpha(80),
-                                            thickness: 1,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                          ),
-                                          child: Text(
-                                            "or",
-                                            style: TextStyle(
-                                              color: context.appColors.secondaryTextColor,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Divider(
-                                            color: context.appColors.glassBorder.withAlpha(80),
-                                            thickness: 1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 24),
+                                     SizedBox(height: 24.h),
+                                     // Divider
+                                     Row(
+                                       children: [
+                                         Expanded(
+                                           child: Divider(
+                                             color: context.appColors.glassBorder.withAlpha(80),
+                                             thickness: 1.r,
+                                           ),
+                                         ),
+                                         Padding(
+                                           padding: EdgeInsets.symmetric(
+                                             horizontal: 16.w,
+                                           ),
+                                           child: Text(
+                                             "or",
+                                             style: TextStyle(
+                                               color: context.appColors.secondaryTextColor,
+                                               fontSize: 14.sp,
+                                               fontWeight: FontWeight.w400,
+                                             ),
+                                           ),
+                                         ),
+                                         Expanded(
+                                           child: Divider(
+                                             color: context.appColors.glassBorder.withAlpha(80),
+                                             thickness: 1.r,
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                    SizedBox(height: 24.h),
                                     // Google Sign Up
                                     SolidButton(
                                       label: "SIGN IN WITH GOOGLE",
@@ -283,12 +283,12 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                          );
                                        },
                                     ),
-                                    const SizedBox(height: 24),
+                                    SizedBox(height: 24.h),
                                   ],
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
 
                             // Login Link
                             Row(
@@ -298,7 +298,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                   "Already have an account? ",
                                   style: TextStyle(
                                     color: context.appColors.secondaryTextColor,
-                                    fontSize: 14,
+                                    fontSize: 14.sp,
                                     letterSpacing: 0.3,
                                   ),
                                 ),
@@ -308,7 +308,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                     "Login",
                                     style: TextStyle(
                                       color: context.appColors.primaryTextColor,
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.3,
                                     ),
@@ -316,7 +316,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 40),
+                            SizedBox(height: 40.h),
                           ],
                         ),
                       ),
@@ -336,32 +336,32 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
       children: [
         // App Logo
         Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.r),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4.r),
           ),
           child: Image.asset(
             logo2Assets,
-            height: 60,
+            height: 60.h,
             fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(height: 32),
+        SizedBox(height: 32.h),
         Text(
           "CREATE ACCOUNT",
           style: TextStyle(
-            fontSize: 28,
+            fontSize: 28.sp,
             fontWeight: FontWeight.w900,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.5,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           "Sign up to get started with Neighbor Service",
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 14.sp,
             color: context.appColors.secondaryTextColor,
             letterSpacing: 0.5,
           ),
@@ -392,7 +392,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
             text: TextSpan(
               style: TextStyle(
                 color: context.appColors.secondaryTextColor,
-                fontSize: 12,
+                fontSize: 12.sp,
                 height: 1.5,
               ),
               children: [

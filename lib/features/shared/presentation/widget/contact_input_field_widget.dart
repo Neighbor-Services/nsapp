@@ -34,7 +34,7 @@ class ContactInputFieldWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomTextWidget(text: label!),
-          SizedBox(height: 10),
+          SizedBox(height: 10.h),
           TextFormField(
             validator: validator,
             controller: controller,
@@ -47,7 +47,7 @@ class ContactInputFieldWidget extends StatelessWidget {
               ),
               hintText: hintText,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
             keyboardType: keyboardType,

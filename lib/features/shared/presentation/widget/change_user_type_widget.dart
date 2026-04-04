@@ -73,30 +73,30 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                 children: [
                   Center(
                     child: Container(
-                      width: 40,
-                      height: 4,
-                      margin: EdgeInsets.only(bottom: 24),
+                      width: 40.w,
+                      height: 4.h,
+                      margin: EdgeInsets.only(bottom: 24.h),
                       decoration: BoxDecoration(
                         color: unselectedBorderColor,
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: BorderRadius.circular(2.r),
                       ),
                     ),
                   ),
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10.r),
                         decoration: BoxDecoration(
                           color: context.appColors.secondaryColor.withAlpha(30),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
                         child:  Icon(
                           Icons.swap_horiz_rounded,
                           color: context.appColors.secondaryColor,
-                          size: 24,
+                          size: 24.r,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +104,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                             Text(
                               "Change User Type",
                               style: TextStyle(
-                                fontSize: 22,
+                                fontSize: 22.sp,
                                 fontWeight: FontWeight.bold,
                                 color: textColor,
                                 letterSpacing: -0.5,
@@ -113,7 +113,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                             Text(
                               "Switching from ${SuccessGetProfileState.profile.userType?.toUpperCase()}",
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 13.sp,
                                 color: subtitleColor,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -123,7 +123,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32.h),
                   CustomSegmentedControl<String>(
                     buttonLables: const ["SEEKER", "PROVIDER"],
                     buttonValues: const ["SEEKER", "PROVIDER"],
@@ -155,9 +155,9 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     child: Column(
                       children: [
                         if (Helpers.isProvider(UserTypeProfileState.userType)) ...[
-                          const SizedBox(height: 32),
+                          SizedBox(height: 32.h),
                           _buildSectionLabel("Specialization", subtitleColor),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           GestureDetector(
                             onTap: () {
                               showServiceSelector(
@@ -181,12 +181,12 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 18,
+                                horizontal: 16.w,
+                                vertical: 18.h,
                               ),
                               decoration: BoxDecoration(
                                 color: context.appColors.glassBorder,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(16.r),
                                 border: Border.all(
                                   color: serviceType != null && serviceType != ""
                                       ? context.appColors.secondaryColor.withAlpha(100)
@@ -201,9 +201,9 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                             serviceType != ""
                                         ? context.appColors.secondaryColor
                                         : subtitleColor,
-                                    size: 20,
+                                    size: 20.r,
                                   ),
-                                  const SizedBox(width: 14),
+                                  SizedBox(width: 14.w),
                                   Expanded(
                                     child: Text(
                                       (serviceType == null || serviceType == "")
@@ -214,7 +214,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                                 serviceType != ""
                                             ? textColor
                                             : subtitleColor,
-                                        fontSize: 16,
+                                        fontSize: 16.sp,
                                         fontWeight: serviceType != null &&
                                                 serviceType != ""
                                             ? FontWeight.w600
@@ -231,7 +231,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                             ),
                           ),
                           if (OtherServiceSelectState.others) ...[
-                            const SizedBox(height: 20),
+                            SizedBox(height: 20.h),
                             Form(
                               key: formKey,
                               child: SolidTextField(
@@ -254,7 +254,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
                   SolidButton(
                     label: "Apply Changes",
                     isPrimary: true,
@@ -310,11 +310,11 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
 
   Widget _buildSectionLabel(String label, Color color) {
     return Padding(
-      padding: EdgeInsets.only(left: 4),
+      padding: EdgeInsets.only(left: 4.w),
       child: Text(
         label.toUpperCase(),
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 12.sp,
           fontWeight: FontWeight.bold,
           color: color.withAlpha(180),
           letterSpacing: 1.2,

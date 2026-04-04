@@ -83,13 +83,13 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 800),
+                    constraints: BoxConstraints(maxWidth: 800.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 24,
+                          horizontal: 20.w,
+                          vertical: 24.h,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,23 +97,23 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             Text(
                               "MY REQUESTS",
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: 24.sp,
                                 fontWeight: FontWeight.w900,
                                 color: context.appColors.primaryTextColor,
                                 letterSpacing: 1.2,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8.h),
                             Text(
                               "MANAGE YOUR SERVICE REQUESTS",
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 10.sp,
                                 fontWeight: FontWeight.w900,
                                 color: context.appColors.secondaryTextColor,
                                 letterSpacing: 1.0,
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: 24.h),
                             Expanded(child: _buildRequestList(context)),
                           ],
                         ),
@@ -137,30 +137,30 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
           if (snapshot.data!.isEmpty) {
             return Center(
               child: SolidContainer(
-                padding: EdgeInsets.all(40),
+                padding: EdgeInsets.all(40.r),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.assignment_outlined,
-                      size: 60,
+                      size: 60.r,
                       color: context.appColors.glassBorder,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     Text(
                       "NO REQUESTS FOUND",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w900,
                         color: context.appColors.glassBorder,
                         letterSpacing: 1.0,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
                       "Create a new request to get started",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         color: context.appColors.glassBorder,
                       ),
                     ),
@@ -219,24 +219,24 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
         },
         child: SolidContainer(
           padding: EdgeInsets.zero,
-          margin: EdgeInsets.only(bottom: 16),
-          borderRadius: BorderRadius.circular(20),
+          margin: EdgeInsets.only(bottom: 16.h),
+          borderRadius: BorderRadius.circular(20.r),
           child: Column(
             children: [
               Stack(
                 children: [
                   Container(
-                    height: 140,
+                    height: 140.h,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
+                        top: Radius.circular(20.r),
                       ),
                       color: Colors.black26,
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
+                        top: Radius.circular(20.r),
                       ),
                       child: (requestData.request?.withImage ?? false)
                           ? Image.network(
@@ -254,21 +254,21 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                     ),
                   ),
                   Container(
-                    height: 140,
+                    height: 140.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
+                        top: Radius.circular(20.r),
                       ),
                       
                     ),
                   ),
                   Positioned(
-                    top: 10,
-                    left: 10,
+                    top: 10.r,
+                    left: 10.r,
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                        horizontal: 12.w,
+                        vertical: 6.h,
                       ),
                       decoration: BoxDecoration(
                         color:
@@ -282,7 +282,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             : (requestData.request?.approved ?? false)
                             ? context.appColors.infoColor
                             : context.appColors.secondaryColor,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Text(
                         (requestData.request?.status ??
@@ -292,14 +292,14 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                         style: TextStyle(
                           color: context.appColors.primaryTextColor, // Keep white on orange badge
                           fontWeight: FontWeight.w900,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    top: 5,
-                    right: 5,
+                    top: 5.r,
+                    right: 5.r,
                     child: Theme(
                       data: Theme.of(context).copyWith(
                         cardColor: context.appColors.cardBackground,
@@ -309,21 +309,21 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                       ),
                       child: PopupMenuButton(
                         icon:  Container(
-                          padding: EdgeInsets.all(8),
+                          padding: EdgeInsets.all(8.r),
                           decoration: BoxDecoration(
                             color: context.appColors.cardBackground,
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(14.r),
                             border: Border.all(
                               color: context.appColors.glassBorder,
-                              width: 1.5,
+                              width: 1.5.r,
                             ),
                           ),
                           child: Icon(Icons.more_horiz, color: context.appColors.primaryTextColor)),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(15.r),
                           side: BorderSide(
                             color: context.appColors.glassBorder,
-                            width: 1.5,
+                            width: 1.5.r,
                           ),
                         ),
                         onSelected: (val) async {
@@ -413,17 +413,17 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                   color: Colors.transparent,
                                   child: Center(
                                     child: Container(
-                                      padding: EdgeInsets.all(24),
+                                      padding: EdgeInsets.all(24.r),
                                       width: size(context).width * 0.85,
                                       constraints: BoxConstraints(
-                                        maxWidth: 400,
+                                        maxWidth: 400.w,
                                       ),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(24),
+                                        borderRadius: BorderRadius.circular(24.r),
                                         color: context.appColors.cardBackground,
                                         border: Border.all(
                                           color: context.appColors.glassBorder,
-                                          width: 1.5,
+                                          width: 1.5.r,
                                         ),
                                       ),
                                       child: Column(
@@ -435,15 +435,15 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                               children: [
                                                 CustomTextWidget(
                                                   text: "FUND PROJECT",
-                                                  fontSize: 18,
+                                                  fontSize: 18.sp,
                                                   fontWeight: FontWeight.w900,
                                                   letterSpacing: 1.2,
                                                 ),
-                                                const SizedBox(height: 12),
+                                                SizedBox(height: 12.h),
                                                 CustomTextWidget(
                                                   text:
                                                       "Funds will be held in escrow.",
-                                                  fontSize: 13,
+                                                  fontSize: 13.sp,
                                                   color: Colors.white70,
                                                   textAlign: TextAlign.center,
                                                 ),
@@ -475,7 +475,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                   child: const Text("Cancel"),
                                                 ),
                                               ),
-                                              const SizedBox(width: 16),
+                                              SizedBox(width: 16.w),
                                               Expanded(
                                                 child: ElevatedButton(
                                                   onPressed: () async {
@@ -504,7 +504,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                            12,
+                                                            12.r,
                                                           ),
                                                     ),
                                                   ),
@@ -572,12 +572,12 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                           requestData.request?.service?.name?.toUpperCase() ??
                               "",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.w900,
                             color: context.appColors.primaryTextColor, // Keep white on image overlay
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h),
                         Text(
                           DateFormat("EEEE, MMM dd, yyyy").format(
                             DateTime.parse(
@@ -593,11 +593,11 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
                       requestData.request!.title!,
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 15.sp,
                         color: context.appColors.primaryTextColor,
                         fontWeight: FontWeight.w900,
                       ),
@@ -632,14 +632,14 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20, color: context.appColors.primaryTextColor),
-          const SizedBox(width: 12),
+          Icon(icon, size: 20.r, color: context.appColors.primaryTextColor),
+          SizedBox(width: 12.w),
           Text(
             text.toUpperCase(),
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontWeight: FontWeight.w500,
-              fontSize: 12,
+              fontSize: 12.sp,
               letterSpacing: 0.5,
             ),
           ),
@@ -650,24 +650,24 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
 
   Widget _buildInfoChip(IconData icon, String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
         color: context.appColors.primaryColor.withAlpha(40),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: context.appColors.primaryColor.withAlpha(40),
-          width: 1.5,
+          width: 1.5.r,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: context.appColors.primaryColor),
-          const SizedBox(width: 6),
+          Icon(icon, size: 14.r, color: context.appColors.primaryColor),
+          SizedBox(width: 6.w),
           Text(
             label.toUpperCase(),
             style: TextStyle(
-              fontSize: 10,
+              fontSize: 10.sp,
               fontWeight: FontWeight.w900,
               color: context.appColors.primaryColor,
               letterSpacing: 0.5,

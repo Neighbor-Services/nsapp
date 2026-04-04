@@ -99,7 +99,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700),
+                    constraints: BoxConstraints(maxWidth: 700.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
                       child: Column(
@@ -108,8 +108,8 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           // Header
                           Padding(
                             padding: EdgeInsets.symmetric(
-                              horizontal: isLargeScreen ? 32 : 20,
-                              vertical: 24,
+                              horizontal: isLargeScreen ? 32.w : 20.w,
+                              vertical: 24.h,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,17 +117,17 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 Text(
                                   "APPOINTMENTS",
                                   style: TextStyle(
-                                    fontSize: 24,
+                                    fontSize: 24.sp,
                                     fontWeight: FontWeight.w900,
                                     color: textColor,
                                     letterSpacing: 1.5,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: 4.h),
                                 Text(
                                   "MANAGE YOUR SCHEDULED MEETINGS",
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: FontWeight.w900,
                                     color: textColor.withAlpha(150),
                                     letterSpacing: 1.0,
@@ -184,7 +184,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
           }
 
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: isLargeScreen ? 32 : 16),
+            padding: EdgeInsets.symmetric(horizontal: isLargeScreen ? 32.w : 16.w),
             child: CalendarControllerProvider(
               controller: EventController()..addAll(events),
               child: SolidContainer(
@@ -215,17 +215,17 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   weekDayBuilder: (day) {
                     return Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
                       decoration: BoxDecoration(
                         color: context.appColors.cardBackground,
-                        border: Border.all(color: borderColor, width: 0.5),
+                        border: Border.all(color: borderColor, width: 0.5.r),
                       ),
                       child: Text(
                         ["M", "T", "W", "T", "F", "S", "S"][day],
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
                           fontWeight: FontWeight.w900,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                         ),
                       ),
                     );
@@ -242,7 +242,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                     headerTextStyle: TextStyle(
                       color: textColor,
                       fontWeight: FontWeight.w900,
-                      fontSize: 18,
+                      fontSize: 18.sp,
                       letterSpacing: 0.5,
                     ),
                     decoration: BoxDecoration(
@@ -288,14 +288,14 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
 
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(24),
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(24.r),
+            topRight: Radius.circular(24.r),
           ),
-          border: Border.all(color: borderColor, width: 1.5),
+          border: Border.all(color: borderColor, width: 1.5.r),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -304,15 +304,15 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
             children: [
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
+                  width: 40.w,
+                  height: 4.h,
                   decoration: BoxDecoration(
                     color: handleColor,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               if (SuccessGetAppointmentsState.appointments != null)
                 FutureBuilder<List<AppointmentData>>(
                   future: SuccessGetAppointmentsState.appointments,
@@ -329,13 +329,13 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               appt.status == 'COMPLETED')
                             Container(
                               width: double.infinity,
-                              margin: EdgeInsets.only(bottom: 12),
-                              padding: EdgeInsets.all(12),
+                              margin: EdgeInsets.only(bottom: 12.h),
+                              padding: EdgeInsets.all(12.r),
                               decoration: BoxDecoration(
                                 color: context.appColors.successColor.withAlpha(
                                   20,
                                 ),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(
                                   color: context.appColors.successColor
                                       .withAlpha(50),
@@ -346,16 +346,16 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                   Icon(
                                     Icons.check_circle_outline_rounded,
                                     color: context.appColors.successColor,
-                                    size: 20,
+                                    size: 20.r,
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12.w),
                                   Expanded(
                                     child: Text(
                                       "Project completed and funds released."
                                           .toUpperCase(),
                                       style: TextStyle(
                                         color: context.appColors.successColor,
-                                        fontSize: 11,
+                                        fontSize: 11.sp,
                                         fontWeight: FontWeight.w900,
                                         letterSpacing: 0.5,
                                       ),
@@ -374,20 +374,20 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               Row(
                 children: [
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: 48.r,
+                    height: 48.r,
                     decoration: BoxDecoration(
                       color: context.appColors.cardBackground,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(14.r),
                       border: Border.all(color: context.appColors.glassBorder),
                     ),
                     child: Icon(
                       Icons.calendar_month_rounded,
                       color: context.appColors.primaryColor,
-                      size: 24,
+                      size: 24.r,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -395,19 +395,19 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                         Text(
                           "SCHEDULED APPOINTMENT",
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.w900,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h),
                         Text(
                           DateFormat(
                             "EEEE, MMM dd, yyyy",
                           ).format(data[0].date.toLocal()),
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 13.sp,
                             color: secondaryTextColor,
                           ),
                         ),
@@ -416,7 +416,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
               _buildDetailRow(Icons.title_rounded, "Title", data[0].title),
               _buildDetailRow(
                 Icons.schedule_rounded,
@@ -430,7 +430,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   "Description",
                   data[0].description!,
                 ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               // Linked Request Details
               if (SuccessGetAppointmentsState.appointments != null)
                 FutureBuilder<List<AppointmentData>>(
@@ -449,15 +449,15 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Divider(height: 32),
+                          Divider(height: 32.h),
                           CustomTextWidget(
                             text: "LINKED REQUEST",
                             fontWeight: FontWeight.w900,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             color: context.appColors.secondaryTextColor,
                             letterSpacing: 1.0,
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h),
                           _buildDetailRow(
                             Icons.assignment_rounded,
                             "ORIGINAL TITLE",
@@ -481,7 +481,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               "REQ. DESCRIPTION",
                               req.description!,
                             ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h),
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton.icon(
@@ -516,13 +516,13 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               },
                               icon: Icon(
                                 Icons.open_in_new_rounded,
-                                size: 18,
+                                size: 18.r,
                                 color: context.appColors.primaryColor,
                               ),
                               label: Text(
                                 "VIEW FULL DETAILS",
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   fontWeight: FontWeight.w900,
                                   color: context.appColors.primaryColor,
                                   letterSpacing: 0.5,
@@ -530,7 +530,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               ),
                             ),
                           ),
-                          const Divider(height: 32),
+                          Divider(height: 32.h),
                         ],
                       );
                     } catch (e) {
@@ -538,7 +538,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                     }
                   },
                 ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24.h),
 
               // Escrow Actions
               if (SuccessGetAppointmentsState.appointments != null)
@@ -586,9 +586,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 color: context.appColors.successColor.withAlpha(40),
                 textColor: context.appColors.successColor,
                 borderColor: context.appColors.successColor.withAlpha(100),
-                height: 50,
+                height: 50.h,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               SolidButton(
                 onPressed: () {
                   Get.back();
@@ -600,9 +600,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 textColor: context.appColors.primaryColor,
                 borderColor: context.appColors.primaryColor.withAlpha(100),
-                height: 50,
+                height: 50.h,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               SolidButton(
                 onPressed: () async {
                   if (SuccessGetAppointmentsState.appointments != null) {
@@ -636,9 +636,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 color: context.appColors.warningColor.withAlpha(40),
                 textColor: context.appColors.warningColor,
                 borderColor: context.appColors.warningColor.withAlpha(100),
-                height: 50,
+                height: 50.h,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               SolidButton(
                 onPressed: () {
                   context.read<SeekerBloc>().add(
@@ -651,9 +651,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 color: context.appColors.errorColor.withAlpha(40),
                 textColor: context.appColors.errorColor,
                 borderColor: context.appColors.errorColor.withAlpha(100),
-                height: 50,
+                height: 50.h,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
             ],
           ),
         ),
@@ -669,20 +669,20 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     final valueColor = context.appColors.primaryTextColor;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 36.r,
+            height: 36.r,
             decoration: BoxDecoration(
               color: iconBg,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10.r),
             ),
-            child: Icon(icon, color: iconColor, size: 18),
+            child: Icon(icon, color: iconColor, size: 18.r),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,14 +690,14 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 Text(
                   label.toUpperCase(),
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w900,
                     color: labelColor,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(value, style: TextStyle(fontSize: 15, color: valueColor)),
+                SizedBox(height: 2.h),
+                Text(value, style: TextStyle(fontSize: 15.sp, color: valueColor)),
               ],
             ),
           ),

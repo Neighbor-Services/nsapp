@@ -85,25 +85,25 @@ class _GlassButtonState extends State<GlassButton>
         onTapCancel: widget.onPressed != null ? _handleTapCancel : null,
         onTap: widget.isLoading ? null : widget.onPressed,
         child: Container(
-          width: widget.width ?? double.infinity,
-          height: widget.height,
+          width: widget.width?.w ?? double.infinity,
+          height: widget.height.h,
           decoration: BoxDecoration(
             color: widget.isPrimary ? color : Colors.white.withAlpha(25),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
               color: widget.isPrimary
                   ? Colors.white.withAlpha(30)
                   : glassBorder,
-              width: 1.5,
+              width: 1.5.r,
             ),
             boxShadow: [
               BoxShadow(
                 color: (widget.isPrimary ? color : Colors.black).withAlpha(
                   _isPressed ? 60 : 40,
                 ),
-                blurRadius: _isPressed ? 10 : 15,
-                spreadRadius: 1,
-                offset: Offset(0, 4),
+                blurRadius: (_isPressed ? 10 : 15).r,
+                spreadRadius: 1.r,
+                offset: Offset(0, 4.h),
               ),
             ],
           ),
@@ -132,11 +132,11 @@ class _GlassButtonState extends State<GlassButton>
               // Button content
               Center(
                 child: widget.isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
+                    ? SizedBox(
+                        width: 24.r,
+                        height: 24.r,
                         child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
+                          strokeWidth: 2.5.r,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Colors.white,
                           ),
@@ -147,14 +147,14 @@ class _GlassButtonState extends State<GlassButton>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (widget.icon != null) ...[
-                            Icon(widget.icon, color: Colors.white, size: 20),
-                            const SizedBox(width: 10),
+                            Icon(widget.icon, color: Colors.white, size: 20.r),
+                            SizedBox(width: 10.w),
                           ],
                           Text(
                             widget.label,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.5,
                             ),
@@ -288,26 +288,26 @@ class _GlassSocialButtonState extends State<GlassSocialButton>
         onTapCancel: () => _controller.reverse(),
         onTap: widget.onPressed,
         child: Container(
-          width: widget.width ?? double.infinity,
-          height: widget.height,
+          width: widget.width?.w ?? double.infinity,
+          height: widget.height.h,
           decoration: BoxDecoration(
             color: context.appColors.glassBorder,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
               color: context.appColors.primaryTextColor,
-              width: 1.5,
+              width: 1.5.r,
             ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(widget.iconPath, width: 24, height: 24),
-              const SizedBox(width: 12),
+              Image.asset(widget.iconPath, width: 24.r, height: 24.r),
+              SizedBox(width: 12.w),
               Text(
                 widget.label,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),

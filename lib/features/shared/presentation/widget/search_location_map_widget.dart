@@ -24,14 +24,14 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
         return Column(
           children: [
             Container(
-              width: 50,
-              height: 5,
+              width: 50.w,
+              height: 5.h,
               decoration: BoxDecoration(
                 color: context.appColors.glassBorder,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
             Hero(
               tag: 'map_search',
               child: SolidTextField(
@@ -44,7 +44,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                 },
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             Expanded(
               child: SuccessPlacesState.places.isEmpty
                   ? Center(
@@ -53,10 +53,10 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                         children: [
                           Icon(
                             Icons.map_rounded,
-                            size: 60,
+                            size: 60.r,
                             color: context.appColors.glassBorder,
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h),
                           Text(
                             "Find your perfect location",
                             style: TextStyle(
@@ -84,21 +84,21 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                             );
                           },
                           child: Padding(
-                            padding: EdgeInsets.only(bottom: 12.0),
+                            padding: EdgeInsets.only(bottom: 12.0.h),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               decoration: BoxDecoration(
                                 color: context.appColors.cardBackground,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(20.r),
                                 border: Border.all(
                                   color: context.appColors.glassBorder,
-                                  width: 1,
+                                  width: 1.r,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: context.appColors.glassBorder,
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
+                                    blurRadius: 10.r,
+                                    offset: Offset(0, 4.h),
                                   ),
                                 ],
                               ),
@@ -116,7 +116,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                     Get.back();
                                   },
                                   leading: Container(
-                                    padding: EdgeInsets.all(12),
+                                    padding: EdgeInsets.all(12.r),
                                     decoration: BoxDecoration(
                                       color: context.appColors.primaryColor.withAlpha(40),
                                       shape: BoxShape.circle,
@@ -125,7 +125,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                     child:  Icon(
                                       Icons.location_on_rounded,
                                       color: context.appColors.primaryColor,
-                                      size: 20,
+                                      size: 20.r,
                                     ),
                                   ),
                                   title: Text(
@@ -133,7 +133,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                     style: TextStyle(
                                       color: context.appColors.primaryTextColor,
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                     ),
                                   ),
                                   subtitle: Text(
@@ -143,18 +143,18 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                         "",
                                     style: TextStyle(
                                       color: context.appColors.secondaryTextColor,
-                                      fontSize: 13,
+                                      fontSize: 13.sp,
                                       letterSpacing: 0.3,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
+                                    horizontal: 16.w,
+                                    vertical: 8.h,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(20.r),
                                   ),
                                 ),
                               ),

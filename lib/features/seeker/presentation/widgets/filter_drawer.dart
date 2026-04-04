@@ -22,7 +22,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
     return Drawer(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      width: 300,
+      width: 300.w,
       child: Container(
         decoration: BoxDecoration(
           color: Color(0xFF1E1E2E),
@@ -32,18 +32,18 @@ class _FilterDrawerState extends State<FilterDrawer> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(24.0.r),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       "Filter Results",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 22.sp,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
                       ),
@@ -51,21 +51,21 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8.r),
                         decoration: BoxDecoration(
                           color: Colors.white.withAlpha(15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.close_rounded,
                           color: Colors.white,
-                          size: 20,
+                          size: 20.r,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
                 _buildSectionHeader(
                   "Price Range",
                   "\$${_priceMin.round()} - \$${_priceMax.round()}",
@@ -84,7 +84,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     });
                   },
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
                 _buildSectionHeader(
                   "Minimum Rating",
                   "${_ratingMin.toStringAsFixed(1)}+ Stars",
@@ -102,39 +102,39 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     });
                   },
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
                 _buildSectionHeader(
                   "Location",
                   _city.isEmpty ? "All Cities" : _city,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 TextField(
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                  style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   decoration: InputDecoration(
                     hintText: "Enter city name...",
                     hintStyle: TextStyle(color: Colors.white.withAlpha(60)),
                     filled: true,
                     fillColor: Colors.white.withAlpha(10),
                     contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
+                      horizontal: 16.w,
+                      vertical: 16.h,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                       borderSide: BorderSide(color: Colors.white.withAlpha(20)),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                       borderSide: BorderSide(color: Colors.white.withAlpha(15)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                       borderSide: BorderSide(color: context.appColors.secondaryColor),
                     ),
                     prefixIcon: Icon(
                       Icons.location_on_rounded,
                       color: Colors.white.withAlpha(150),
-                      size: 20,
+                      size: 20.r,
                     ),
                   ),
                   onChanged: (val) => setState(() => _city = val),
@@ -142,13 +142,13 @@ class _FilterDrawerState extends State<FilterDrawer> {
                 const Spacer(),
                 SizedBox(
                   width: double.infinity,
-                  height: 56,
+                  height: 56.h,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.appColors.secondaryColor,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
                       elevation: 0,
                     ),
@@ -163,10 +163,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       );
                       Navigator.pop(context);
                     },
-                    child: const Text(
+                    child: Text(
                       "Apply Filters",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                       ),
@@ -189,7 +189,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
           title,
           style: TextStyle(
             color: Colors.white.withAlpha(200),
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -197,7 +197,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
           value,
           style: TextStyle(
             color: context.appColors.secondaryColor,
-            fontSize: 14,
+            fontSize: 14.sp,
             fontWeight: FontWeight.bold,
           ),
         ),

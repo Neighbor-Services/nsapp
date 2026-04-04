@@ -86,21 +86,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                 opacity: _fadeAnimation,
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 500),
+                    constraints: BoxConstraints(maxWidth: 500.w),
                     child: Column(
                       children: [
                         // App Bar
                         Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 16 : 8,
-                            vertical: 16,
+                            horizontal: isLargeScreen ? 16.w : 8.w,
+                            vertical: 16.h,
                           ),
                           child: Row(
                             children: [
                               GestureDetector(
                                 onTap: () => Get.back(),
                                 child: Container(
-                                  padding: EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
                                     color: context.appColors.cardBackground,
                                     shape: BoxShape.circle,
@@ -111,7 +111,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                   child: Icon(
                                     Icons.arrow_back_ios_new_rounded,
                                     color: context.appColors.primaryTextColor,
-                                    size: 18,
+                                    size: 18.r,
                                   ),
                                 ),
                               ),
@@ -122,14 +122,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                         Expanded(
                           child: SingleChildScrollView(
                             physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.symmetric(horizontal: 24),
+                            padding: EdgeInsets.symmetric(horizontal: 24.w),
                             child: Column(
                               children: [
-                                const SizedBox(height: 40),
+                                SizedBox(height: 40.h),
 
                                 // Glass Container
                                 SolidContainer(
-                                  padding: EdgeInsets.all(28),
+                                  padding: EdgeInsets.all(28.r),
                                   child: Form(
                                     key: formKey,
                                     child: Column(
@@ -137,24 +137,24 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                         Text(
                                           "RESET PASSWORD",
                                           style: TextStyle(
-                                            fontSize: 28,
+                                            fontSize: 28.sp,
                                             fontWeight: FontWeight.w900,
                                             color: context.appColors.primaryTextColor,
                                             letterSpacing: 1.2,
                                           ),
                                         ),
-                                        const SizedBox(height: 12),
+                                        SizedBox(height: 12.h),
                                         Text(
                                           "Enter your email and we'll send you a verification code to reset your password",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 14.sp,
                                             color: context.appColors.secondaryTextColor,
                                             height: 1.5,
                                             letterSpacing: 0.3,
                                           ),
                                         ),
-                                        const SizedBox(height: 32),
+                                        SizedBox(height: 32.h),
 
                                         SolidTextField(
                                           controller: emailTextController,
@@ -173,7 +173,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                             return null;
                                           },
                                         ),
-                                        const SizedBox(height: 32),
+                                        SizedBox(height: 32.h),
 
                                         SolidButton(
                                           label: "SEND VERIFICATION CODE",
@@ -198,7 +198,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 32),
+                                SizedBox(height: 32.h),
 
                                 // Back to login
                                 GestureDetector(
@@ -207,13 +207,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                     "Back to Login",
                                     style: TextStyle(
                                       color: context.appColors.secondaryTextColor,
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 0.5,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 40),
+                                SizedBox(height: 40.h),
                               ],
                             ),
                           ),

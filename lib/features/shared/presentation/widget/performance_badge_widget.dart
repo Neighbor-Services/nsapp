@@ -25,19 +25,19 @@ class PerformanceBadgeWidget extends StatelessWidget {
         );
       },
       child: Container(
-        padding: EdgeInsets.all(4),
+        padding: EdgeInsets.all(4.r),
         decoration: BoxDecoration(
           color: _getBadgeColor(context, badge.iconType).withAlpha(30),
           shape: BoxShape.circle,
           border: Border.all(
             color: _getBadgeColor(context, badge.iconType).withAlpha(80),
-            width: 1,
+            width: 1.r,
           ),
         ),
         child: Icon(
           _getBadgeIcon(badge.iconType),
           color: _getBadgeColor(context, badge.iconType),
-          size: size,
+          size: size.r,
         ),
       ),
     );

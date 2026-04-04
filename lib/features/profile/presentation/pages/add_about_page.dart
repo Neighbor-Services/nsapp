@@ -113,12 +113,12 @@ class _AddAboutPageState extends State<AddAboutPage> {
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 10,
+                      horizontal: 24.w,
+                      vertical: 10.h,
                     ),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 600),
+                        constraints: BoxConstraints(maxWidth: 600.w),
                         child: Form(
                           key: key,
                           child: Column(
@@ -131,17 +131,17 @@ class _AddAboutPageState extends State<AddAboutPage> {
                                 buttonColor,
                                 borderColor,
                               ),
-                              const SizedBox(height: 32),
+                              SizedBox(height: 32.h),
                               _buildFormSection(),
-                              const SizedBox(height: 24),
+                              SizedBox(height: 24.h),
                               _buildPortfolioImagesSection(
                                 context,
                                 isDark,
                                 textColor,
                               ),
-                              const SizedBox(height: 48),
+                              SizedBox(height: 48.h),
                               _buildSaveButton(context),
-                              const SizedBox(height: 100),
+                              SizedBox(height: 100.h),
                             ],
                           ),
                         ),
@@ -171,32 +171,32 @@ class _AddAboutPageState extends State<AddAboutPage> {
           onTap: () =>
               context.read<ProviderBloc>().add(ProviderBackPressedEvent()),
           child: Container(
-            padding: EdgeInsets.all(12),
+            padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
               color: buttonColor,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: borderColor),
             ),
             child: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: textColor,
-              size: 20,
+              size: 20.r,
             ),
           ),
         ),
-        const SizedBox(height: 32),
+        SizedBox(height: 32.h),
         CustomTextWidget(
           text: "PROFESSIONAL PORTFOLIO",
           fontWeight: FontWeight.w900,
-          fontSize: 22,
+          fontSize: 22.sp,
           color: textColor,
           letterSpacing: 1.5,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         CustomTextWidget(
           text:
               "TELL THE WORLD ABOUT YOUR BUSINESS AND SHOWCASE YOUR BEST WORK.",
-          fontSize: 10,
+          fontSize: 10.sp,
           fontWeight: FontWeight.w900,
           color: secondaryTextColor,
           letterSpacing: 1.0,
@@ -207,18 +207,18 @@ class _AddAboutPageState extends State<AddAboutPage> {
 
   Widget _buildFormSection() {
     return SolidContainer(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
            CustomTextWidget(
             text: "BUSINESS DETAILS",
-            fontSize: 12,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w900,
             color: context.appColors.secondaryColor,
             letterSpacing: 1.5,
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           SolidTextField(
             controller: companyNameController,
             hintText: "What's your business or company name?",
@@ -227,7 +227,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Company name is required" : null,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SolidTextField(
             controller: addressController,
             hintText: "Where is your business located?",
@@ -236,7 +236,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Address is required" : null,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SolidTextField(
             controller: specificationController,
             hintText: "e.g. House Cleaning, Web Development",
@@ -245,7 +245,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Specialization is required" : null,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SolidTextField(
             controller: experienceController,
             hintText: "Years of Experience (e.g. 5)",
@@ -255,28 +255,28 @@ class _AddAboutPageState extends State<AddAboutPage> {
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Experience is required" : null,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SolidTextField(
             controller: skillsController,
             hintText: "e.g. Cleaning, Repair, Cooking (comma separated)",
             label: "Skills",
             prefixIcon: Icons.handyman_rounded,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SolidTextField(
             controller: languagesController,
             hintText: "e.g. English, Spanish, French (comma separated)",
             label: "Languages",
             prefixIcon: Icons.translate_rounded,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SolidTextField(
             controller: educationController,
             hintText: "e.g. BSc in Computer Science, Certified Plumber",
             label: "Education / Certification",
             prefixIcon: Icons.school_rounded,
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           SolidTextField(
             controller: descriptionController,
             hintText: "Describe your experience and what you offer...",
@@ -297,7 +297,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
     Color textColor,
   ) {
     return SolidContainer(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.all(24.r),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -306,7 +306,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             children: [
                CustomTextWidget(
                 text: "SHOWCASE IMAGES",
-                fontSize: 12,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w900,
                 color: context.appColors.secondaryColor,
                 letterSpacing: 1.5,
@@ -322,7 +322,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
               final selectedImages = ImagesProfileState.images;
@@ -335,10 +335,10 @@ class _AddAboutPageState extends State<AddAboutPage> {
                   },
                   child: Container(
                     width: double.infinity,
-                    height: 120,
+                    height: 120.h,
                     decoration: BoxDecoration(
                       color: context.appColors.cardBackground,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(
                         color: context.appColors.glassBorder,
                         style: BorderStyle.solid,
@@ -350,14 +350,14 @@ class _AddAboutPageState extends State<AddAboutPage> {
                         Icon(
                           Icons.cloud_upload_outlined,
                           color: context.appColors.secondaryTextColor,
-                          size: 32,
+                          size: 32.r,
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8.h),
                         Text(
                           "Tap to upload work samples",
                           style: TextStyle(
                             color: context.appColors.secondaryTextColor,
-                            fontSize: 13,
+                            fontSize: 13.sp,
                           ),
                         ),
                       ],
@@ -367,27 +367,27 @@ class _AddAboutPageState extends State<AddAboutPage> {
               }
 
               return SizedBox(
-                height: 120,
+                height: 120.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: selectedImages.length,
-                  separatorBuilder: (c, i) => const SizedBox(width: 12),
+                  separatorBuilder: (c, i) => SizedBox(width: 12.w),
                   itemBuilder: (context, index) {
                     return Stack(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16.r),
                           child: Image.file(
                             File(selectedImages[index].path),
-                            width: 120,
-                            height: 120,
+                            width: 120.w,
+                            height: 120.h,
                             fit: BoxFit.cover,
                           ),
                         ),
                         Positioned(
-                          top: 4,
-                          right: 4,
+                          top: 4.h,
+                          right: 4.w,
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
@@ -395,15 +395,15 @@ class _AddAboutPageState extends State<AddAboutPage> {
                               });
                             },
                             child: Container(
-                              padding: EdgeInsets.all(4),
+                              padding: EdgeInsets.all(4.r),
                               decoration: BoxDecoration(
                                 color: Colors.black54,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.close,
                                 color: Colors.white,
-                                size: 14,
+                                size: 14.r,
                               ),
                             ),
                           ),
@@ -423,14 +423,14 @@ class _AddAboutPageState extends State<AddAboutPage> {
   Widget _buildSaveButton(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 58,
+      height: 58.h,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
             color: context.appColors.secondaryColor.withAlpha(60),
-            blurRadius: 20,
-            offset: Offset(0, 5),
+            blurRadius: 20.r,
+            offset: Offset(0, 5.h),
           ),
         ],
       ),
@@ -470,14 +470,14 @@ class _AddAboutPageState extends State<AddAboutPage> {
           foregroundColor: Colors.white,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
           ),
           elevation: 0,
         ),
-        child: const Text(
+        child: Text(
           "PUBLISH PORTFOLIO",
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.1,
           ),

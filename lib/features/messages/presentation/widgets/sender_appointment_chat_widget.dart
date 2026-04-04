@@ -39,7 +39,12 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     final popupTextColor = context.appColors.primaryTextColor;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 12, top: 4, right: 8, left: 40),
+      padding: EdgeInsets.only(
+        bottom: 12.h,
+        top: 4.h,
+        right: 8.w,
+        left: 40.w,
+      ),
       child: Align(
         alignment: Alignment.centerRight,
         child: GestureDetector(
@@ -51,27 +56,27 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.8,
                 ),
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: bubbleColor.withAlpha(10),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                    bottomLeft: Radius.circular(24),
-                    bottomRight: Radius.circular(6),
-                  ),
-                  border: Border.all(
-                    color: context.appColors.primaryColor,
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: bubbleColor.withAlpha(40),
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
+              padding: EdgeInsets.all(16.r),
+              decoration: BoxDecoration(
+                color: bubbleColor.withAlpha(10),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24.r),
+                  topRight: Radius.circular(24.r),
+                  bottomLeft: Radius.circular(24.r),
+                  bottomRight: Radius.circular(6.r),
                 ),
+                border: Border.all(
+                  color: context.appColors.primaryColor,
+                  width: 1.r,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: bubbleColor.withAlpha(40),
+                    blurRadius: 10.r,
+                    offset: Offset(0, 4.h),
+                  ),
+                ],
+              ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -81,7 +86,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(8),
+                              padding: EdgeInsets.all(8.r),
                               decoration: BoxDecoration(
                                 color: context.appColors.primaryColor,
                                 shape: BoxShape.circle,
@@ -89,16 +94,16 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                               child: Icon(
                                 Icons.calendar_today_rounded,
                                 color: Colors.white,
-                                size: 18,
+                                size: 18.r,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12.w),
                             Text(
                               "Appointment",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 letterSpacing: -0.2,
                               ),
                             ),
@@ -110,7 +115,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                             color: context.appColors.primaryTextColor,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(15.r),
                           ),
                           color: popupColor,
                           onSelected: (val) async {
@@ -154,10 +159,10 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                                 children: [
                                   Icon(
                                     Icons.add_to_drive_rounded,
-                                    size: 18,
+                                    size: 18.r,
                                     color: popupIconColor,
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: 10.w),
                                   Text(
                                     "Add to Calendar",
                                     style: TextStyle(color: popupTextColor),
@@ -170,15 +175,15 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Divider(color: context.appColors.primaryColor, height: 1),
+                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      child: Divider(color: context.appColors.primaryColor, height: 1.h),
                     ),
                     _buildInfoRow(
                       Icons.event_available_rounded,
                       DateFormat("EEEE, MMM dd, yyyy").format(appointmentDate),
                       context,
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     _buildInfoRow(
                       Icons.access_time_rounded,
                       DateFormat.jm().format(startTime),
@@ -186,14 +191,14 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                     ),
                     if (message.isNotEmpty) ...[
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(color: context.appColors.primaryColor, height: 1),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        child: Divider(color: context.appColors.primaryColor, height: 1.h),
                       ),
                       Text(
                         message,
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
-                          fontSize: 14,
+                          fontSize: 14.sp,
                           height: 1.5,
                         ),
                       ),
@@ -202,21 +207,21 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 4, right: 4),
+                padding: EdgeInsets.only(top: 4.h, right: 4.w),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.done_all_rounded,
-                      size: 14,
+                      size: 14.r,
                       color: timestampColor,
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4.w),
                     Text(
                       DateFormat("HH:mm").format(appointmentDate.toLocal()),
                       style: TextStyle(
                         color: timestampColor,
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -234,20 +239,20 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(6),
+          padding: EdgeInsets.all(6.r),
           decoration: BoxDecoration(
             color: context.appColors.primaryColor,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.r),
           ),
-          child: Icon(icon, color: Colors.white, size: 14),
+          child: Icon(icon, color: Colors.white, size: 14.r),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12.w),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
               color: context.appColors.primaryTextColor,
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
