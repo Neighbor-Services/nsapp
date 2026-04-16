@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -144,7 +145,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                                 ),
                               ),
                               Icon(
-                                Icons.location_on_rounded,
+                                FontAwesomeIcons.locationDot,
                                 size: 50.r,
                                 color: context.appColors.errorColor,
                               ),
@@ -193,7 +194,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.search_rounded,
+                              FontAwesomeIcons.magnifyingGlass,
                               color: context.appColors.secondaryTextColor,
                               size: 20.r,
                             ),
@@ -245,7 +246,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                             Border.all(color: context.appColors.glassBorder),
                       ),
                       child: Icon(
-                        Icons.my_location_rounded,
+                        FontAwesomeIcons.locationCrosshairs,
                         color: context.appColors.primaryTextColor,
                         size: 24.r,
                       ),
@@ -281,7 +282,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle_outline_rounded,
+              FaIcon(FontAwesomeIcons.circleCheck,
                   color: Colors.white, size: 24.r),
               SizedBox(width: 8.w),
               Text(
@@ -300,3 +301,5 @@ class _MapLocationPageState extends State<MapLocationPage> {
     );
   }
 }
+
+

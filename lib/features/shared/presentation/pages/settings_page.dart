@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -145,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage>
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: textColor,
                                     size: 20.r,
                                   ),
@@ -169,7 +170,7 @@ class _SettingsPageState extends State<SettingsPage>
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.dark_mode_rounded,
+                              icon: FontAwesomeIcons.moon,
                               iconColor: Colors.amber,
                               title: "Dark Mode",
                               subtitle: "Toggle between dark and light themes",
@@ -195,7 +196,7 @@ class _SettingsPageState extends State<SettingsPage>
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.fingerprint_rounded,
+                              icon: FontAwesomeIcons.fingerprint,
                               iconColor: Colors.purple,
                               title: "Use Biometric",
                               subtitle: "Unlock with fingerprint or face",
@@ -260,7 +261,7 @@ class _SettingsPageState extends State<SettingsPage>
                             _buildDivider(context),
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.lock_outline_rounded,
+                              icon: FontAwesomeIcons.lock,
                               iconColor: context.appColors.infoColor,
                               title: "Change Password",
                               subtitle: "Update your account password",
@@ -273,7 +274,7 @@ class _SettingsPageState extends State<SettingsPage>
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.payment_rounded,
+                              icon: FontAwesomeIcons.creditCard,
                               iconColor: context.appColors.successColor,
                               title: "Setup Payment",
                               subtitle: "Configure payment methods",
@@ -285,7 +286,7 @@ class _SettingsPageState extends State<SettingsPage>
                               _buildDivider(context),
                               _buildSettingsTile(
                                 context: context,
-                                icon: Icons.payments_outlined,
+                                icon: FontAwesomeIcons.creditCard,
                                 iconColor: context.appColors.warningColor,
                                 title: "Preferred Payment Method",
                                 subtitle: SuccessGetProfileState.profile
@@ -305,7 +306,7 @@ class _SettingsPageState extends State<SettingsPage>
                               _buildDivider(context),
                               _buildSettingsTile(
                                 context: context,
-                                icon: Icons.account_balance_outlined,
+                                icon: FontAwesomeIcons.buildingColumns,
                                 iconColor: Colors.teal,
                                 title: "Payment Account",
                                 subtitle: "Manage payout settings",
@@ -335,7 +336,7 @@ class _SettingsPageState extends State<SettingsPage>
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.gavel_rounded,
+                              icon: FontAwesomeIcons.gavel,
                               iconColor: Colors.deepOrange,
                               title: "Terms of Service",
                               subtitle: "Read our terms and conditions",
@@ -344,7 +345,7 @@ class _SettingsPageState extends State<SettingsPage>
                             _buildDivider(context),
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.privacy_tip_rounded,
+                              icon: FontAwesomeIcons.shieldHalved,
                               iconColor: Colors.teal,
                               title: "Privacy Policy",
                               subtitle: "Learn how we handle your data",
@@ -357,7 +358,7 @@ class _SettingsPageState extends State<SettingsPage>
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.swap_horiz_rounded,
+                              icon: FontAwesomeIcons.rightLeft,
                               iconColor: Colors.indigo,
                               title: "Change User Type",
                               subtitle: "Switch between seeker and provider",
@@ -380,7 +381,7 @@ class _SettingsPageState extends State<SettingsPage>
                             _buildDivider(context),
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.logout_rounded,
+                              icon: FontAwesomeIcons.rightFromBracket,
                               iconColor: context.appColors.errorColor,
                               title: "Logout",
                               subtitle: "Sign out of your account",
@@ -393,7 +394,7 @@ class _SettingsPageState extends State<SettingsPage>
                           _buildSettingsCard(context, [
                             _buildSettingsTile(
                               context: context,
-                              icon: Icons.delete_forever_rounded,
+                              icon: FontAwesomeIcons.trashCan,
                               iconColor: context.appColors.errorColor,
                               title: "Delete Account",
                               subtitle: "Permanently delete your account",
@@ -496,7 +497,7 @@ class _SettingsPageState extends State<SettingsPage>
               trailing
             else if (onTap != null)
               Icon(
-                Icons.chevron_right_rounded,
+                FontAwesomeIcons.chevronRight,
                 color: textColor.withAlpha(100),
               ),
           ],
@@ -656,7 +657,7 @@ class _SettingsPageState extends State<SettingsPage>
             SizedBox(height: 24.h),
             _buildPaymentOption(
               context: context,
-              icon: Icons.account_balance_wallet_rounded,
+              icon: FontAwesomeIcons.wallet,
               title: "In-App Payments",
               description: "Secure payments handled through the app",
               value: "IN_APP",
@@ -666,7 +667,7 @@ class _SettingsPageState extends State<SettingsPage>
             SizedBox(height: 16.h),
             _buildPaymentOption(
               context: context,
-              icon: Icons.handshake_rounded,
+              icon: FontAwesomeIcons.handshake,
               title: "On-Site Payments",
               description: "Direct payments from seekers at the service location",
               value: "ON_SITE",
@@ -750,7 +751,7 @@ class _SettingsPageState extends State<SettingsPage>
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle_rounded, color: context.appColors.primaryColor, size: 24.r),
+              FaIcon(FontAwesomeIcons.circleCheck, color: context.appColors.primaryColor, size: 24.r),
           ],
         ),
       ),
@@ -771,3 +772,4 @@ class _SettingsPageState extends State<SettingsPage>
     customAlert(context, AlertType.success, "Payment preference updated");
   }
 }
+

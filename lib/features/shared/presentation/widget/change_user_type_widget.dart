@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -91,7 +92,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child:  Icon(
-                          Icons.swap_horiz_rounded,
+                          FontAwesomeIcons.rightLeft,
                           color: context.appColors.secondaryColor,
                           size: 24.r,
                         ),
@@ -196,7 +197,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                               child: Row(
                                 children: [
                                   Icon(
-                                    Icons.work_rounded,
+                                    FontAwesomeIcons.briefcase,
                                     color: serviceType != null &&
                                             serviceType != ""
                                         ? context.appColors.secondaryColor
@@ -223,7 +224,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                     ),
                                   ),
                                   Icon(
-                                    Icons.keyboard_arrow_down_rounded,
+                                    FontAwesomeIcons.chevronDown,
                                     color: subtitleColor,
                                   ),
                                 ],
@@ -238,7 +239,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                 controller: serviceTextController,
                                 hintText: "e.g. Home Cleaning, Tutor",
                                 label: "Detail Your Service",
-                                prefixIcon: Icons.edit_note_rounded,
+                                prefixIcon: FontAwesomeIcons.penToSquare,
                                 validator: (val) {
                                   if (val!.isEmpty) {
                                     return "Service name is required";
@@ -323,3 +324,4 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
     );
   }
 }
+

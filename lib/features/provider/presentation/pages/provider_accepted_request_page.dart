@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -146,7 +147,7 @@ class _ProviderAcceptedRequestPageState
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Icon(
-                                                Icons.work_history_rounded,
+                                                FontAwesomeIcons.clockRotateLeft,
                                                 size: 64.r,
                                                 color: context.appColors.glassBorder,
                                               ),
@@ -280,7 +281,7 @@ class _ProviderAcceptedRequestPageState
                                 height: 140.h,
                                 color: context.appColors.primaryColor.withAlpha(50),
                                 child: Icon(
-                                  Icons.image_not_supported_rounded,
+                                  FontAwesomeIcons.image,
                                   color: context.appColors.primaryColor,
                                 ),
                               ),
@@ -290,7 +291,7 @@ class _ProviderAcceptedRequestPageState
                           height: 140.h,
                           color: context.appColors.primaryColor.withAlpha(50),
                           child: Icon(
-                            Icons.assignment_rounded,
+                            FontAwesomeIcons.fileLines,
                             color: context.appColors.primaryColor,
                             size: 40.r,
                           ),
@@ -348,7 +349,7 @@ class _ProviderAcceptedRequestPageState
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                         child: Icon(
-                          Icons.more_horiz_rounded,
+                          FontAwesomeIcons.ellipsis,
                           color: context.appColors.primaryTextColor,
                           size: 20.r,
                         ),
@@ -402,7 +403,7 @@ class _ProviderAcceptedRequestPageState
                     ),
                   ),
                   Icon(
-                    Icons.chevron_right_rounded,
+                    FontAwesomeIcons.chevronRight,
                     color: context.appColors.secondaryTextColor,
                   ),
                 ],
@@ -418,14 +419,14 @@ class _ProviderAcceptedRequestPageState
   IconData _getStatusIcon(bool isApproved, bool isAssignedToMe, String status) {
     // If assigned to me and in progress or done
     if (isAssignedToMe && isApproved) {
-      if (status == 'DONE') return Icons.check_circle_rounded;
-      if (status == 'IN_PROGRESS') return Icons.pending_actions_rounded;
-      return Icons.verified_rounded;
+      if (status == 'DONE') return FontAwesomeIcons.circleCheck;
+      if (status == 'IN_PROGRESS') return FontAwesomeIcons.clock;
+      return FontAwesomeIcons.circleCheck;
     }
     // If approved but not assigned to me
-    if (isApproved) return Icons.pending_rounded;
+    if (isApproved) return FontAwesomeIcons.ellipsis;
     // Waiting for approval
-    return Icons.hourglass_empty_rounded;
+    return FontAwesomeIcons.hourglass;
   }
 
   String _getStatusText(bool isApproved, bool isAssignedToMe, String status) {
@@ -566,33 +567,33 @@ class _ProviderAcceptedRequestPageState
     return [
       _buildMenuItem(
         1,
-        Icons.visibility_rounded,
+        FontAwesomeIcons.eye,
         "View Details",
         context.appColors.primaryTextColor
        
       ),
       _buildMenuItem(
         2,
-        Icons.chat_bubble_rounded,
+        FontAwesomeIcons.comment,
         "Chat",
         context.appColors.primaryTextColor
        
       ),
       _buildMenuItem(
         3,
-        Icons.calendar_month_rounded,
+        FontAwesomeIcons.calendar,
         "Schedule",
         context.appColors.primaryTextColor
       ),
       _buildMenuItem(
         4,
-        Icons.cancel_rounded,
+        FontAwesomeIcons.circleXmark,
         "Cancel",
         context.appColors.primaryTextColor
       ),
       _buildMenuItem(
         5,
-        Icons.directions_rounded,
+        FontAwesomeIcons.directions,
         "Directions",
         context.appColors.primaryTextColor
       ),
@@ -625,3 +626,5 @@ class _ProviderAcceptedRequestPageState
     );
   }
 }
+
+

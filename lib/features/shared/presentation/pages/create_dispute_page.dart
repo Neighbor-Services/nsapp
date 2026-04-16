@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -79,7 +80,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
               border: Border.all(color: context.appColors.glassBorder),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 18,
             ),
@@ -130,7 +131,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                               ),
                             ),
                             child:  Icon(
-                              Icons.gavel_rounded,
+                              FontAwesomeIcons.gavel,
                               color: context.appColors.warningColor,
                               size: 28,
                             ),
@@ -188,7 +189,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                             label: 'REASON FOR DISPUTE',
                             hintText: 'Enter reason',
                             allCapsLabel: true,
-                            prefixIcon: Icons.warning_amber_rounded,
+                            prefixIcon: FontAwesomeIcons.triangleExclamation,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a reason';
@@ -202,7 +203,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                             label: 'DESCRIPTION',
                             hintText: 'Describe the issue in detail',
                             allCapsLabel: true,
-                            prefixIcon: Icons.description_outlined,
+                            prefixIcon: FontAwesomeIcons.fileLines,
                             isMultiLine: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -222,7 +223,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.info_outline_rounded,
+                            FontAwesomeIcons.circleInfo,
                             color: context.appColors.infoColor.withAlpha(200),
                             size: 24,
                           ),
@@ -261,3 +262,5 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
     );
   }
 }
+
+

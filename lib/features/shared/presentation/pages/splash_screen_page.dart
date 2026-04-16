@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'dart:io' show Platform, exit;
 
@@ -141,7 +142,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.wifi_off_rounded,
+                                FontAwesomeIcons.wifi,
                                 color: context.appColors.errorColor,
                                 size: 40.r,
                               ),
@@ -391,3 +392,5 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     );
   }
 }
+
+

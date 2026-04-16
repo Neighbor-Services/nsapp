@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -107,7 +108,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                         ),
                                       ),
                                       child: Icon(
-                                        Icons.arrow_back_ios_new_rounded,
+                                        FontAwesomeIcons.chevronLeft,
                                         color: iconColor,
                                         size: 20.r,
                                       ),
@@ -183,7 +184,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                               shape: BoxShape.circle,
                                             ),
                                             child: Icon(
-                                              Icons.favorite_rounded,
+                                              FontAwesomeIcons.heart,
                                               size: 60.r,
                                               color: context.appColors.errorColor,
                                             ),
@@ -343,7 +344,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                      _buildActionButton(
-                  icon: Icons.chat_bubble_rounded,
+                  icon: FontAwesomeIcons.comment,
                   color: context.appColors.primaryColor,
                   onTap: () {
                     context.read<MessageBloc>().add(
@@ -359,7 +360,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                  SizedBox(width: 8.w),
                    
                     _buildActionButton(
-                      icon: Icons.favorite_rounded,
+                      icon: FontAwesomeIcons.heart,
                       color: context.appColors.errorColor,
                       onTap: () {
                         context.read<SeekerBloc>().add(
@@ -399,3 +400,4 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
     );
   }
 }
+

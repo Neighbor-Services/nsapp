@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -45,7 +46,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                     children: [
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.home_rounded,
+                        icon: FontAwesomeIcons.house,
                         isActive: NavigatorSeekerState.page == 1,
                         label: "Home",
                         onTap: () {
@@ -59,7 +60,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                       ),
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.notifications_rounded,
+                        icon: FontAwesomeIcons.bell,
                         isActive: NavigatorSeekerState.page == 2,
                         badgeCount: SuccessGetMyNotificationsState.unreadCount,
                         label: "Notifications",
@@ -75,7 +76,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                       _buildCenterButton(context),
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.chat_bubble_rounded,
+                        icon: FontAwesomeIcons.comment,
                         isActive: NavigatorSeekerState.page == 4,
                         label: "Chat",
                         badgeCount:
@@ -91,7 +92,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                       ),
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.favorite_rounded,
+                        icon: FontAwesomeIcons.heart,
                         label: "Favorites",
                         isActive: NavigatorSeekerState.page == 5,
                         onTap: () {
@@ -180,8 +181,10 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(Icons.add_rounded, size: 28.r, color: Colors.white),
+        child: FaIcon(FontAwesomeIcons.plus, size: 28.r, color: Colors.white),
       ),
     );
   }
 }
+
+

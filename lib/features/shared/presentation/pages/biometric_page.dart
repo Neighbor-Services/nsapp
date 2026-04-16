@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -125,7 +126,7 @@ class _BiometricPageState extends State<BiometricPage> {
                             shape: BoxShape.circle,
                             border: Border.all(color: glassBorderColor),
                           ),
-                          child: Icon(Icons.fingerprint,
+                          child: FaIcon(FontAwesomeIcons.fingerprint,
                               color: contentColor, size: 80.r),
                         ),
                         SizedBox(height: 30.h),
@@ -148,7 +149,7 @@ class _BiometricPageState extends State<BiometricPage> {
                         if (!_isAuthenticating)
                           TextButton.icon(
                             onPressed: auth,
-                            icon: Icon(Icons.lock_open, color: contentColor),
+                            icon: FaIcon(FontAwesomeIcons.lockOpen, color: contentColor),
                             label: Text(
                               "UNLOCK",
                               style: TextStyle(
@@ -182,3 +183,4 @@ class _BiometricPageState extends State<BiometricPage> {
     );
   }
 }
+

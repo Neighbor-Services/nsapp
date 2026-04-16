@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -57,7 +58,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                       hintText: "SEARCH REQUEST",
                       label: "SEARCH",
                       allCapsLabel: true,
-                      prefixIcon: Icons.search,
+                      prefixIcon: FontAwesomeIcons.magnifyingGlass,
                       onChanged: (value) {
                         setState(() {
                           searchedRequests = [];
@@ -284,7 +285,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                     (profile.profilePictureUrl == null ||
                                         profile.profilePictureUrl!.isEmpty)
                                     ? Icon(
-                                        Icons.person,
+                                        FontAwesomeIcons.user,
                                         size: 14.r,
                                         color: iconColor,
                                       )
@@ -311,7 +312,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                     Row(
                                       children: [
                                         Icon(
-                                          Icons.location_on,
+                                          FontAwesomeIcons.locationDot,
                                           size: 12.r,
                                           color: secondaryTextColor,
                                         ),
@@ -344,7 +345,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                   top: 8.h,
                   right: 8.w,
                   child: PopupMenuButton(
-                    icon: Icon(Icons.more_horiz_rounded, color: context.appColors.primaryTextColor),
+                    icon: FaIcon(FontAwesomeIcons.ellipsis, color: context.appColors.primaryTextColor),
                     color: context.appColors.primaryBackground,
                     surfaceTintColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -393,7 +394,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           child: Row(
                             children: [
                               Icon(
-                                Icons.remove_red_eye_rounded,
+                                FontAwesomeIcons.eye,
                                 color: popupTextColor,
                                 size: 20.r,
                               ),
@@ -415,7 +416,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           child: Row(
                             children: [
                               Icon(
-                                Icons.chat_bubble_outline_rounded,
+                                FontAwesomeIcons.comment,
                                 color: popupTextColor,
                                 size: 20.r,
                               ),
@@ -444,3 +445,5 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
     );
   }
 }
+
+

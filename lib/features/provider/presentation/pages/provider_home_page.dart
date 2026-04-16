@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -227,7 +228,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                         ),
                                         SizedBox(width: 8.w),
                                         Icon(
-                                          Icons.arrow_forward_ios_rounded,
+                                          FontAwesomeIcons.chevronRight,
                                           size: 10.r,
                                           color: context.appColors.primaryColor,
                                         ),
@@ -244,7 +245,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                               _buildDashboardStat(
                                 "Active Bids",
                                 bidsCount.toString(),
-                                Icons.gavel_rounded,
+                                FontAwesomeIcons.gavel,
                                 context.appColors.warningColor,
                               ),
                               SizedBox(width: 16.w),
@@ -252,7 +253,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                 "Avg Rating",
                                 profile.averageRating?.toStringAsFixed(1) ??
                                     "0.0",
-                                Icons.star_rounded,
+                                FontAwesomeIcons.star,
                                 Colors.yellow,
                               ),
                             ],
@@ -359,7 +360,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         ),
         child: Row(
           children: [
-            Icon(Icons.search_rounded, color: iconColor),
+            FaIcon(FontAwesomeIcons.magnifyingGlass, color: iconColor),
             SizedBox(width: 16.w),
             Text(
               "FIND YOUR NEXT PROJECT...",
@@ -378,7 +379,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.arrow_forward_rounded,
+                FontAwesomeIcons.arrowRight,
                 color: context.appColors.secondaryColor,
                 size: 20.r,
               ),
@@ -456,7 +457,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
-                Icons.handshake_rounded,
+                FontAwesomeIcons.handshake,
                 color: context.appColors.primaryColor,
                 size: 26.r,
               ),
@@ -530,7 +531,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
-                Icons.location_searching_rounded,
+                FontAwesomeIcons.locationCrosshairs,
                 color: context.appColors.primaryColor,
                 size: 26.r,
               ),
@@ -594,7 +595,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
-                Icons.account_balance_wallet_rounded,
+                FontAwesomeIcons.wallet,
                 color: context.appColors.primaryColor,
                 size: 26.r,
               ),
@@ -630,3 +631,4 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     );
   }
 }
+

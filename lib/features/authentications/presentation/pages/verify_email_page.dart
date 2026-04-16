@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -107,7 +108,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.verified_user_rounded,
+                                    FontAwesomeIcons.userShield,
                                     size: 50.r,
                                     color: context.appColors.primaryColor,
                                   ),
@@ -217,3 +218,4 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
     );
   }
 }
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -142,7 +143,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.assignment_outlined,
+                      FontAwesomeIcons.fileLines,
                       size: 60.r,
                       color: context.appColors.glassBorder,
                     ),
@@ -245,7 +246,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               errorBuilder: (context, error, stackTrace) =>
                                   const Center(
                                     child: Icon(
-                                      Icons.broken_image,
+                                      FontAwesomeIcons.image,
                                       color: Colors.white54,
                                     ),
                                   ),
@@ -318,7 +319,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               width: 1.5.r,
                             ),
                           ),
-                          child: Icon(Icons.more_horiz, color: context.appColors.primaryTextColor)),
+                          child: FaIcon(FontAwesomeIcons.ellipsis, color: context.appColors.primaryTextColor)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.r),
                           side: BorderSide(
@@ -526,31 +527,31 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                           _buildPopupMenuItem(
                             'view',
                             'VIEW DETAILS',
-                            Icons.visibility
+                            FontAwesomeIcons.eye
                             
                           ),
                           _buildPopupMenuItem(
                             'edit',
                             'EDIT',
-                            Icons.edit
+                            FontAwesomeIcons.penToSquare
                            
                           ),
                           _buildPopupMenuItem(
                             'delete',
                             'DELETE',
-                            Icons.delete
+                            FontAwesomeIcons.trashCan
                             
                           ),
                           _buildPopupMenuItem(
                             'done',
                             'MARK AS DONE',
-                            Icons.check_circle
+                            FontAwesomeIcons.circleCheck
                             
                           ),
                           _buildPopupMenuItem(
                             'pay',
                             'PAY PROVIDER',
-                            Icons.payment_outlined
+                            FontAwesomeIcons.creditCard
                            
                           ),
                         ],
@@ -606,7 +607,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                     Row(
                       children: [
                         _buildInfoChip(
-                          Icons.people_outline_rounded,
+                          FontAwesomeIcons.users,
                           "${requestData.request?.proposalsCount ?? 0} Proposals",
                          
                         ),
@@ -678,3 +679,5 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 }
+
+

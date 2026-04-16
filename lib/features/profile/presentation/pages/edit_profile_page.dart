@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
@@ -180,7 +181,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 20.r,
                                   ),
@@ -305,7 +306,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                             ],
                                           ),
                                           child: Icon(
-                                            Icons.camera_alt_rounded,
+                                            FontAwesomeIcons.camera,
                                             color: Colors.white,
                                             size: 18.r,
                                           ),
@@ -333,7 +334,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       hintText: "ENTER YOUR NAME",
                                       label: "FULL NAME",
                                       allCapsLabel: true,
-                                      prefixIcon: Icons.person_outline,
+                                      prefixIcon: FontAwesomeIcons.user,
                                       validator: (val) {
                                         final value = val ?? "";
                                         if (value.isEmpty) {
@@ -401,7 +402,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                             label: "LOCATION",
                                             allCapsLabel: true,
                                             prefixIcon:
-                                                Icons.location_on_outlined,
+                                                FontAwesomeIcons.locationDot,
                                             validator: (val) {
                                               if ((val ?? "").isEmpty) {
                                                 return "Location is required";
@@ -430,7 +431,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                   
                                                 ),
                                                 child: Icon(
-                                                  Icons.map_rounded,
+                                                  FontAwesomeIcons.map,
                                                   color: context.appColors.primaryColor,
                                                 ),
                                               ),
@@ -445,7 +446,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       hintText: "PHONE NUMBER",
                                       label: "PHONE NUMBER",
                                       allCapsLabel: true,
-                                      prefixIcon: Icons.phone_outlined,
+                                      prefixIcon: FontAwesomeIcons.phone,
                                       keyboardType: TextInputType.phone,
                                       validator: (val) {
                                         final value = val ?? "";
@@ -464,7 +465,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       hintText: "COUNTRY",
                                       label: "COUNTRY",
                                       allCapsLabel: true,
-                                      prefixIcon: Icons.public_rounded,
+                                      prefixIcon: FontAwesomeIcons.globe,
                                       validator: (val) {
                                         if ((val ?? "").isEmpty) {
                                           return "Country is required";
@@ -477,7 +478,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       controller: stateTextController,
                                       hintText: "State",
                                       label: "State",
-                                      prefixIcon: Icons.location_city_rounded,
+                                      prefixIcon: FontAwesomeIcons.building,
                                       validator: (val) {
                                         if ((val ?? "").isEmpty) {
                                           return "State is required";
@@ -490,7 +491,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       controller: zipCodeTextController,
                                       hintText: "Zip Code",
                                       label: "Zip Code",
-                                      prefixIcon: Icons.pin_drop_rounded,
+                                      prefixIcon: FontAwesomeIcons.mapPin,
                                     ),
                                     if (Helpers.isProvider(
                                       UserTypeProfileState.userType,
@@ -551,7 +552,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                           child: Row(
                                             children: [
                                               Icon(
-                                                Icons.workspace_premium_rounded,
+                                                FontAwesomeIcons.crown,
                                                 color: context.appColors.primaryColor
                                                     .withAlpha(180),
                                               ),
@@ -574,7 +575,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                 ),
                                               ),
                                               Icon(
-                                                Icons.unfold_more_rounded,
+                                                FontAwesomeIcons.upDown,
                                                 color: context.appColors.glassBorder,
                                                 size: 20.r,
                                               ),
@@ -589,7 +590,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                           hintText: "Specify service",
                                           label: "Specify Service",
                                           prefixIcon:
-                                              Icons.add_business_rounded,
+                                              FontAwesomeIcons.buildingCircleCheck,
                                           validator: (val) {
                                             if ((val ?? "").isEmpty) {
                                               return "Service specification is required";
@@ -727,7 +728,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               ),
             ),
             _buildSheetItem(
-              icon: Icons.photo_library_rounded,
+              icon: FontAwesomeIcons.images,
               label: "Choose from Gallery",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromGalleryEvent());
@@ -736,7 +737,7 @@ class _EditProfilePageState extends State<EditProfilePage>
             ),
             SizedBox(height: 12.h),
             _buildSheetItem(
-              icon: Icons.camera_alt_rounded,
+              icon: FontAwesomeIcons.camera,
               label: "Take a Photo",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromCameraEvent());
@@ -783,7 +784,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               ),
             ),
             const Spacer(),
-            Icon(Icons.arrow_forward_ios_rounded, color: arrowColor, size: 14.r),
+            FaIcon(FontAwesomeIcons.chevronRight, color: arrowColor, size: 14.r),
           ],
         ),
       ),
@@ -817,7 +818,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               ),
             ),
             _buildSheetItem(
-              icon: Icons.my_location_rounded,
+              icon: FontAwesomeIcons.locationCrosshairs,
               label: "Use Current Location",
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
@@ -844,7 +845,7 @@ class _EditProfilePageState extends State<EditProfilePage>
             ),
             SizedBox(height: 12.h),
             _buildSheetItem(
-              icon: Icons.map_rounded,
+              icon: FontAwesomeIcons.map,
               label: "Choose from Map",
               onTap: () {
                 context.read<s.SeekerBloc>().add(
@@ -923,3 +924,5 @@ class _EditProfilePageState extends State<EditProfilePage>
     }
   }
 }
+
+

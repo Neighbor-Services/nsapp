@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -115,7 +116,7 @@ class _ReportPageState extends State<ReportPage> {
                                           ],
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 20.r,
                                   ),
@@ -169,7 +170,7 @@ class _ReportPageState extends State<ReportPage> {
                                             dropdownColor:
                                                 context.appColors.cardBackground,
                                             icon: Icon(
-                                              Icons.keyboard_arrow_down,
+                                              FontAwesomeIcons.chevronDown,
                                               color: context
                                                   .appColors.primaryTextColor,
                                             ),
@@ -297,3 +298,4 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 }
+

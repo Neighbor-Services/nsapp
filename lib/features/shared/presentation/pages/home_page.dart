@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                 value: 2,
                 child: Row(
                   children: [
-                    Icon(Icons.logout, size: 30.r, color: context.appColors.errorColor),
+                    FaIcon(FontAwesomeIcons.rightFromBracket, size: 30.r, color: context.appColors.errorColor),
                     SizedBox(width: 10.w),
                     CustomTextWidget(
                       text: "LOGOUT",
@@ -114,3 +115,4 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+

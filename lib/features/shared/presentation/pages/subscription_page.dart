@@ -1,5 +1,6 @@
-// ignore_for_file: unused_local_variable
+﻿// ignore_for_file: unused_local_variable
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -131,7 +132,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                                     border: Border.all(color: borderColor),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: textColor,
                                     size: 20.r,
                                   ),
@@ -187,7 +188,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
             shape: BoxShape.circle,
            
           ),
-          child: Icon(Icons.check_rounded, color: Colors.white, size: 60.r),
+          child: FaIcon(FontAwesomeIcons.check, color: Colors.white, size: 60.r),
         ),
         SizedBox(height: 40.h),
         Text(
@@ -216,7 +217,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           child: Column(
             children: [
               Icon(
-                Icons.settings_suggest_rounded, 
+                FontAwesomeIcons.sliders, 
                 size: 40.r, 
                 color: context.appColors.primaryColor,
               ),
@@ -301,7 +302,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           return Column(
             children: [
               Icon(
-                Icons.workspace_premium_rounded,
+                FontAwesomeIcons.crown,
                 size: 60.r,
                 color: secondaryTextColor.withAlpha(220),
               ),
@@ -465,7 +466,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     return Column(
       children: [
         Icon(
-          Icons.sentiment_dissatisfied_rounded,
+          FontAwesomeIcons.faceFrown,
           size: 48.r,
           color: secondaryTextColor,
         ),
@@ -496,22 +497,22 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       case 'PLATINUM':
         primaryColor = Color(0xFF673AB7);
         gradientColors = [Color(0xFF673AB7), Color(0xFF9575CD)];
-        tierIcon = Icons.auto_awesome_rounded;
+        tierIcon = FontAwesomeIcons.wandMagicSparkles;
         break;
       case 'GOLD':
         primaryColor = Color(0xFFFFB300);
         gradientColors = [Color(0xFFFFB300), Color(0xFFFFD54F)];
-        tierIcon = Icons.workspace_premium_rounded;
+        tierIcon = FontAwesomeIcons.crown;
         break;
       case 'SILVER':
         primaryColor = Color(0xFF78909C);
         gradientColors = [Color(0xFF78909C), Color(0xFFB0BEC5)];
-        tierIcon = Icons.shield_rounded;
+        tierIcon = FontAwesomeIcons.shield;
         break;
       default:
         primaryColor = Color(0xFFFF6B35);
         gradientColors = [Color(0xFFFF6B35), Color(0xFFFF8E53)];
-        tierIcon = Icons.star_rounded;
+        tierIcon = FontAwesomeIcons.star;
     }
 
     String commissionText = "20% platform fee";
@@ -598,14 +599,14 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
             _buildBenefitItem(
               commissionText,
-              Icons.account_balance_wallet_rounded,
+              FontAwesomeIcons.wallet,
               false,
               textColor,
               secondaryTextColor,
             ),
             _buildBenefitItem(
               priorityText,
-              Icons.trending_up_rounded,
+              FontAwesomeIcons.arrowTrendUp,
               false,
               textColor,
               secondaryTextColor,
@@ -694,7 +695,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       child: Row(
         children: [
           Icon(
-            Icons.check_circle_outline_rounded,
+            FontAwesomeIcons.circleCheck,
             size: 16.r,
             color: isHighlighted
                 ? Colors.white70
@@ -720,7 +721,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   Widget _buildFailureView(Color textColor, Color secondaryTextColor) {
     return Column(
       children: [
-        Icon(Icons.error_outline_rounded, size: 60.r, color: secondaryTextColor),
+        FaIcon(FontAwesomeIcons.circleExclamation, size: 60.r, color: secondaryTextColor),
         SizedBox(height: 16.h),
         Text(
           "Failed to Load Plans",
@@ -758,3 +759,5 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     );
   }
 }
+
+

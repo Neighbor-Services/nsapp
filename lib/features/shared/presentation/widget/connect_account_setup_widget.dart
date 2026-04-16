@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -41,7 +42,7 @@ class ConnectAccountSetupWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: context.appColors.infoColor, size: 24.r),
+              FaIcon(FontAwesomeIcons.circleInfo, color: context.appColors.infoColor, size: 24.r),
               SizedBox(width: 12.w),
               Expanded(
                 child: Text(
@@ -66,3 +67,5 @@ class ConnectAccountSetupWidget extends StatelessWidget {
     );
   }
 }
+
+

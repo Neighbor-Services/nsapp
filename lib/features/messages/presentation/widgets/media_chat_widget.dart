@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -51,7 +52,7 @@ class MediaChatWidget extends StatelessWidget {
                     controller: messageController,
                     hintText: 'Type a message...',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.send, color: Colors.white, size: 20.r),
+                      icon: FaIcon(FontAwesomeIcons.paperPlane, color: Colors.white, size: 20.r),
                       onPressed: () async {
                         File image = File(MessageImageState.image!.path);
                         List<int> imageByte = await image.readAsBytes();
@@ -87,3 +88,4 @@ class MediaChatWidget extends StatelessWidget {
     );
   }
 }
+

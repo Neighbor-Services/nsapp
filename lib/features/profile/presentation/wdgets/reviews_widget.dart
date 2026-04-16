@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating/flutter_rating.dart';
@@ -248,7 +249,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                           },
                           backgroundColor: context.appColors.secondaryColor,
                           icon: const Icon(
-                            Icons.rate_review,
+                            FontAwesomeIcons.penToSquare,
                             color: Colors.white,
                           ),
                           label: const CustomTextWidget(
@@ -268,3 +269,4 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
     );
   }
 }
+

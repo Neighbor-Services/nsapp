@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -68,20 +69,20 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                       children: [
                         if (aboutData.about != null) ...[
                           _buildInfoSection(
-                            icon: Icons.location_on_rounded,
+                            icon: FontAwesomeIcons.locationDot,
                             title: "COMPANY ADDRESS",
                             content: aboutData.about?.address ?? "Not Set",
                           ),
                           SizedBox(height: 16.h),
                           _buildInfoSection(
-                            icon: Icons.business_center_rounded,
+                            icon: FontAwesomeIcons.briefcase,
                             title: "COMPANY SPECIFICATION",
                             content:
                                 aboutData.about?.specification ?? "Not Set",
                           ),
                           SizedBox(height: 16.h),
                           _buildInfoSection(
-                            icon: Icons.description_rounded,
+                            icon: FontAwesomeIcons.fileLines,
                             title: "COMPANY DESCRIPTION",
                             content: aboutData.about?.description ?? "Not Set",
                           ),
@@ -89,7 +90,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.experienceYears != null &&
                               (aboutData.about?.experienceYears ?? 0) > 0) ...[
                             _buildInfoSection(
-                              icon: Icons.timeline_rounded,
+                              icon: FontAwesomeIcons.timeline,
                               title: "EXPERIENCE",
                               content:
                                   "${aboutData.about!.experienceYears} Years",
@@ -99,7 +100,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.education != null &&
                               aboutData.about!.education!.isNotEmpty) ...[
                             _buildInfoSection(
-                              icon: Icons.school_rounded,
+                              icon: FontAwesomeIcons.graduationCap,
                               title: "EDUCATION",
                               content: aboutData.about?.education ?? "",
                             ),
@@ -108,10 +109,10 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.skills != null &&
                               aboutData.about!.skills!.isNotEmpty) ...[
                             _buildInfoSection(
-                              icon: Icons.handyman_rounded,
+                              icon: FontAwesomeIcons.hammer,
                               title: "SKILLS",
                               content: (aboutData.about!.skills as List).join(
-                                " • ",
+                                " â€¢ ",
                               ),
                             ),
                             SizedBox(height: 16.h),
@@ -119,10 +120,10 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.languages != null &&
                               aboutData.about!.languages!.isNotEmpty) ...[
                             _buildInfoSection(
-                              icon: Icons.translate_rounded,
+                              icon: FontAwesomeIcons.language,
                               title: "LANGUAGES",
                               content: (aboutData.about!.languages as List)
-                                  .join(" • "),
+                                  .join(" â€¢ "),
                             ),
                             SizedBox(height: 32.h),
                           ],
@@ -139,7 +140,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               Row(
                                 children: [
                                   Icon(
-                                    Icons.photo_library_rounded,
+                                    FontAwesomeIcons.images,
                                     color:
                                         context.appColors.primaryBackground,
                                     size: 20.r,
@@ -272,3 +273,5 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     );
   }
 }
+
+

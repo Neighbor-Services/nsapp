@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
@@ -129,7 +130,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                   controller: _searchController,
                   hintText: 'Search services...',
                   label: 'Search',
-                  prefixIcon: Icons.search_rounded,
+                  prefixIcon: FontAwesomeIcons.magnifyingGlass,
                   onChanged: _filterServices,
                 ),
               ],
@@ -142,7 +143,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.search_off_rounded,
+                          FontAwesomeIcons.magnifyingGlass,
                           size: 60.r,
                           color: context.appColors.glassBorder,
                         ),
@@ -193,8 +194,8 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                   children: [
                                     Icon(
                                       isExpanded
-                                          ? Icons.expand_more_rounded
-                                          : Icons.chevron_right_rounded,
+                                          ? FontAwesomeIcons.chevronDown
+                                          : FontAwesomeIcons.chevronRight,
                                       color: context.appColors.primaryTextColor,
                                     ),
                                     SizedBox(width: 12.w),
@@ -285,7 +286,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                                   BorderRadius.circular(12.r),
                                             ),
                                             child: Icon(
-                                              Icons.work_outline_rounded,
+                                              FontAwesomeIcons.briefcase,
                                               color: context.appColors.secondaryColor,
                                               size: 24.r,
                                             ),
@@ -328,7 +329,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                           ),
                                           if (isSelected)
                                              Icon(
-                                              Icons.check_circle_rounded,
+                                              FontAwesomeIcons.circleCheck,
                                               color: context.appColors.secondaryColor,
                                               size: 24.r,
                                             ),
@@ -377,7 +378,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     child: Icon(
-                                      Icons.add_circle_outline_rounded,
+                                      FontAwesomeIcons.circlePlus,
                                       color: context.appColors.primaryTextColor,
                                       size: 24.r,
                                     ),
@@ -406,3 +407,5 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
     );
   }
 }
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,7 +55,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,
             ),
@@ -164,7 +165,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.add_a_photo_rounded,
+                        FontAwesomeIcons.camera,
                         color: context.appColors.primaryTextColor,
                         size: 40.r,
                       ),
@@ -184,3 +185,4 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
     );
   }
 }
+

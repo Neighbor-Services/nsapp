@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -67,7 +68,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 16.r,
             ),
@@ -217,7 +218,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               ),
                                             ),
                                             child: Icon(
-                                              Icons.calendar_today_rounded,
+                                              FontAwesomeIcons.calendar,
                                               size: 16.r,
                                               color: context.appColors.primaryColor,
                                             ),
@@ -240,7 +241,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               CustomTextWidget(
                                                 text: appt.effectiveDate != null
                                                     ? DateFormat(
-                                                        "MMM dd, yyyy • h:mm a",
+                                                        "MMM dd, yyyy â€¢ h:mm a",
                                                       ).format(
                                                         appt.effectiveDate!
                                                             .toLocal(),
@@ -303,3 +304,5 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
     );
   }
 }
+
+

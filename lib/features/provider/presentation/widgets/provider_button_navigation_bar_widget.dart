@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -42,7 +43,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                     children: [
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.home_rounded,
+                        icon: FontAwesomeIcons.house,
                         label: 'Home',
                         isActive: NavigatorProviderState.page == 1,
                         onTap: () {
@@ -56,7 +57,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                       ),
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.notifications_rounded,
+                        icon: FontAwesomeIcons.bell,
                         label: 'Notifications',
                         isActive: NavigatorProviderState.page == 2,
                         badgeCount: SuccessGetMyNotificationsState.unreadCount,
@@ -72,7 +73,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                       _buildCenterButton(context),
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.chat_bubble_rounded,
+                        icon: FontAwesomeIcons.comment,
                         label: 'Chat',
                         isActive: NavigatorProviderState.page == 4,
                         badgeCount:
@@ -88,7 +89,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                       ),
                       _buildNavIcon(
                         context: context,
-                        icon: Icons.calendar_month_rounded,
+                        icon: FontAwesomeIcons.calendar,
                         label: 'Appointments',
                         isActive: NavigatorProviderState.page == 5,
                         onTap: () {
@@ -178,7 +179,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
         ),
         child: Center(
           child: Icon(
-            Icons.work_rounded,
+            FontAwesomeIcons.briefcase,
             size: 26.r,
             color: Colors.white,
           ),
@@ -187,3 +188,5 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -66,7 +67,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                           ),
                         ),
                         child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          FontAwesomeIcons.chevronLeft,
                           color: textColor,
                           size: 18.r,
                         ),
@@ -97,7 +98,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.add_rounded,
+                            FaIcon(FontAwesomeIcons.plus,
                                 color: Colors.white, size: 18.r),
                             SizedBox(width: 4.w),
                             Text(
@@ -175,7 +176,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                   ),
                 ),
                 child: Icon(
-                  Icons.gavel_rounded,
+                  FontAwesomeIcons.gavel,
                   color: context.appColors.warningColor,
                   size: 40.r,
                 ),
@@ -281,7 +282,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                           ),
                         ),
                         Icon(
-                          Icons.arrow_forward_ios_rounded,
+                          FontAwesomeIcons.chevronRight,
                           color: secondaryTextColor,
                           size: 14.r,
                         ),
@@ -312,7 +313,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                     Row(
                       children: [
                         Icon(
-                          Icons.access_time_rounded,
+                          FontAwesomeIcons.clock,
                           color: secondaryTextColor,
                           size: 14.r,
                         ),
@@ -351,3 +352,4 @@ class _DisputesListPageState extends State<DisputesListPage> {
   }
 
 }
+

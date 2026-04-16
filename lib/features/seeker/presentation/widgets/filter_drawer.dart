@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -57,7 +58,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.close_rounded,
+                          FontAwesomeIcons.xmark,
                           color: Colors.white,
                           size: 20.r,
                         ),
@@ -132,7 +133,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       borderSide: BorderSide(color: context.appColors.secondaryColor),
                     ),
                     prefixIcon: Icon(
-                      Icons.location_on_rounded,
+                      FontAwesomeIcons.locationDot,
                       color: Colors.white.withAlpha(150),
                       size: 20.r,
                     ),
@@ -205,3 +206,4 @@ class _FilterDrawerState extends State<FilterDrawer> {
     );
   }
 }
+

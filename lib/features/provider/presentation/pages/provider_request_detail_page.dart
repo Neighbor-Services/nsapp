@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -125,7 +126,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                       ),
                                     ),
                                     child: Icon(
-                                      Icons.arrow_back_ios_new_rounded,
+                                      FontAwesomeIcons.chevronLeft,
                                       color: context.appColors.primaryTextColor,
                                       size: 20.r,
                                     ),
@@ -161,7 +162,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                       borderRadius: BorderRadius.circular(14.r),
                                     ),
                                     child: Icon(
-                                      Icons.chat_bubble_rounded,
+                                      FontAwesomeIcons.comment,
                                       color: Colors.white,
                                       size: 20.r,
                                     ),
@@ -242,7 +243,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                             color: Colors.white.withAlpha(10),
                             child: Center(
                               child: Icon(
-                                Icons.image_not_supported_rounded,
+                                FontAwesomeIcons.image,
                                 color: Colors.white24,
                                 size: 50.r,
                               ),
@@ -397,7 +398,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
           Row(
             children: [
                Icon(
-                Icons.info_outline_rounded,
+                FontAwesomeIcons.circleInfo,
                 color: context.appColors.primaryColor,
                 size: 20.r,
               ),
@@ -491,19 +492,19 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     switch (status.toUpperCase()) {
       case 'DONE':
         color = context.appColors.infoColor;
-        icon = Icons.verified_rounded;
+        icon = FontAwesomeIcons.circleCheck;
         break;
       case 'IN_PROGRESS':
         color = context.appColors.warningColor;
-        icon = Icons.timelapse_rounded;
+        icon = FontAwesomeIcons.hourglass;
         break;
       case 'CANCELLED':
         color = context.appColors.errorColor;
-        icon = Icons.cancel_rounded;
+        icon = FontAwesomeIcons.circleXmark;
         break;
       default:
         color = context.appColors.successColor;
-        icon = Icons.new_releases_rounded;
+        icon = FontAwesomeIcons.certificate;
     }
 
     return Container(
@@ -532,3 +533,5 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     );
   }
 }
+
+

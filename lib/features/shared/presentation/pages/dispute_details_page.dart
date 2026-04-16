@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -40,7 +41,7 @@ class DisputeDetailsPage extends StatelessWidget {
               border: Border.all(color: context.appColors.glassBorder),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 18.r,
             ),
@@ -81,7 +82,7 @@ class DisputeDetailsPage extends StatelessWidget {
                               ),
                             ),
                             child: Icon(
-                              Icons.gavel_rounded,
+                              FontAwesomeIcons.gavel,
                               color: _getStatusColor(context, dispute.status),
                               size: 32.r,
                             ),
@@ -142,7 +143,7 @@ class DisputeDetailsPage extends StatelessWidget {
                     children: [
                       _buildInfoRow(
                         context,
-                        Icons.calendar_today_rounded,
+                        FontAwesomeIcons.calendar,
                         'Date Raised',
                         dispute.createdAt != null
                             ? DateFormat.yMMMMd().add_jm().format(
@@ -156,7 +157,7 @@ class DisputeDetailsPage extends StatelessWidget {
                       Divider(color: context.appColors.glassBorder, height: 24),
                       _buildInfoRow(
                         context,
-                        Icons.assignment_rounded,
+                        FontAwesomeIcons.fileLines,
                         'Appointment ID',
                         dispute.appointment ?? 'Global / General',
                         
@@ -296,3 +297,5 @@ class DisputeDetailsPage extends StatelessWidget {
     
   }
 }
+
+

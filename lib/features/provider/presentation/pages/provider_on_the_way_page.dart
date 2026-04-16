@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -74,7 +75,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                 borderColor: context.appColors.glassBorder,
                 borderWidth: 1.5.r,
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
                 ),
@@ -99,7 +100,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                           shape: BoxShape.circle,
                         ),
                         child:  Icon(
-                          Icons.navigation_rounded,
+                          FontAwesomeIcons.compass,
                           color: context.appColors.successColor,
                         ),
                       ),
@@ -150,3 +151,4 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
     );
   }
 }
+

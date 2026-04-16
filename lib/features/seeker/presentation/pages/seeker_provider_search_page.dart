@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -57,7 +58,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                       controller: searchController,
                       hintText: "SEARCH PROVIDERS",
                       allCapsLabel: true,
-                      prefixIcon: Icons.search,
+                      prefixIcon: FontAwesomeIcons.magnifyingGlass,
                       onChanged: (value) {
                         setState(() {
                           // Trigger rebuild for local search list
@@ -279,7 +280,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                   Row(
                     children: [
                       const Icon(
-                        Icons.location_on,
+                        FontAwesomeIcons.locationDot,
                         size: 12,
                         color: Colors.white70,
                       ),
@@ -321,7 +322,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                      Icons.star_rounded,
+                      FontAwesomeIcons.star,
                       color: Color(0xFFFFD700),
                       size: 14,
                     ),
@@ -367,7 +368,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                 ),
                 child: PopupMenuButton(
                   icon: const Icon(
-                    Icons.more_vert,
+                    FontAwesomeIcons.ellipsisVertical,
                     color: Colors.white70,
                     size: 20,
                   ),
@@ -384,7 +385,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.remove_red_eye_rounded,
+                              FontAwesomeIcons.eye,
                               color: iconColor,
                             ),
                             const SizedBox(width: 10),
@@ -405,7 +406,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.chat_bubble_outline_rounded,
+                              FontAwesomeIcons.comment,
                               color: iconColor,
                             ),
                             const SizedBox(width: 10),
@@ -447,7 +448,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
         borderRadius: BorderRadius.circular(50), // Circle
         backgroundColor: Colors.black.withAlpha(50),
         child: Icon(
-          isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+          isFav ? FontAwesomeIcons.heart : FontAwesomeIcons.heart,
           color: isFav ? context.appColors.errorColor : Colors.white,
           size: 18,
         ),
@@ -540,3 +541,5 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
     );
   }
 }
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -78,7 +79,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           ),
                         ),
                         child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          FontAwesomeIcons.chevronLeft,
                           color: textColor,
                           size: 20.r,
                         ),
@@ -140,7 +141,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Icons.search_off_rounded,
+                                    FontAwesomeIcons.magnifyingGlass,
                                     size: 80.r,
                                     color: secondaryTextColor.withAlpha(60),
                                   ),
@@ -276,7 +277,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                       if (profile.isIdentityVerified == true) ...[
                         SizedBox(width: 4.w),
                         Icon(
-                          Icons.verified_rounded,
+                          FontAwesomeIcons.circleCheck,
                           color: context.appColors.infoColor,
                           size: 16.r,
                         ),
@@ -296,7 +297,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                   SizedBox(height: 8.h),
                   Row(
                     children: [
-                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16.r),
+                      FaIcon(FontAwesomeIcons.star, color: context.appColors.secondaryColor, size: 16.r),
                       SizedBox(width: 4.w),
                       Text(
                         double.parse(
@@ -310,7 +311,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                       ),
                       SizedBox(width: 12.w),
                       Icon(
-                        Icons.location_on,
+                        FontAwesomeIcons.locationDot,
                         color: secondaryTextColor,
                         size: 16.r,
                       ),
@@ -333,7 +334,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
             ),
             // Arrow Icon
             Icon(
-              Icons.arrow_forward_ios_rounded,
+              FontAwesomeIcons.chevronRight,
               color: context.appColors.glassBorder,
               size: 18.r,
             ),
@@ -343,3 +344,5 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
     );
   }
 }
+
+

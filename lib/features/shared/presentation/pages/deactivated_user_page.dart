@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -50,7 +51,7 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            Icons.block,
+                            FontAwesomeIcons.ban,
                             color: context.appColors.errorColor,
                             size: 80.r,
                           ),
@@ -90,3 +91,4 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
     );
   }
 }
+

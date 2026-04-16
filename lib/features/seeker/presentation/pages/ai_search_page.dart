@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/di/injection_container.dart';
@@ -65,7 +66,7 @@ class _AISearchPageState extends State<AISearchPage> {
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 16.r,
             ),
@@ -90,7 +91,7 @@ class _AISearchPageState extends State<AISearchPage> {
                       Row(
                         children: [
                            Icon(
-                            Icons.auto_awesome,
+                            FontAwesomeIcons.wandMagicSparkles,
                             color: context.appColors.secondaryColor,
                             size: 24.r,
                           ),
@@ -113,7 +114,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             "DESCRIBE WHAT YOU NEED...",
                         label: "REQUIREMENTS",
                         allCapsLabel: true,
-                        prefixIcon: Icons.chat_bubble_outline_rounded,
+                        prefixIcon: FontAwesomeIcons.comment,
                         isMultiLine: true,
                       ),
                       SizedBox(height: 20.h),
@@ -153,7 +154,7 @@ class _AISearchPageState extends State<AISearchPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      Icons.search_off_rounded,
+                                      FontAwesomeIcons.magnifyingGlass,
                                       size: 64.r,
                                       color: Colors.white.withAlpha(60),
                                     ),
@@ -200,7 +201,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.error_outline_rounded,
+                                FontAwesomeIcons.circleExclamation,
                                 color: context.appColors.errorColor,
                                 size: 48.r,
                               ),
@@ -226,7 +227,7 @@ class _AISearchPageState extends State<AISearchPage> {
                                 return Transform.scale(
                                   scale: value,
                                   child: Icon(
-                                    Icons.auto_awesome,
+                                    FontAwesomeIcons.wandMagicSparkles,
                                     size: 80.r,
                                     color: context.appColors.secondaryColor.withAlpha(100),
                                   ),
@@ -259,3 +260,5 @@ class _AISearchPageState extends State<AISearchPage> {
     );
   }
 }
+
+

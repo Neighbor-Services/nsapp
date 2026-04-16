@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -46,7 +47,7 @@ class _AppointmentDetailBottomSheetState
     _selectedDate = widget.data.appointment?.effectiveDate;
     _scheduleController = TextEditingController(
       text: _selectedDate != null
-          ? DateFormat("EEEE, MMM dd, yyyy • h:mm a").format(_selectedDate!)
+          ? DateFormat("EEEE, MMM dd, yyyy â€¢ h:mm a").format(_selectedDate!)
           : "Date TBD",
     );
   }
@@ -195,7 +196,7 @@ class _AppointmentDetailBottomSheetState
             _buildInfoSection(
               context,
 
-              icon: Icons.calendar_today_rounded,
+              icon: FontAwesomeIcons.calendar,
               title: "Schedule",
               subtitle: _isEditing ? null : (_scheduleController.text),
               content: _isEditing
@@ -236,7 +237,7 @@ class _AppointmentDetailBottomSheetState
                                 time.minute,
                               );
                               _scheduleController.text = DateFormat(
-                                "EEEE, MMM dd, yyyy • h:mm a",
+                                "EEEE, MMM dd, yyyy â€¢ h:mm a",
                               ).format(_selectedDate!);
                             });
                           }
@@ -259,7 +260,7 @@ class _AppointmentDetailBottomSheetState
               child: _buildInfoSection(
                 context,
 
-                icon: Icons.person_outline_rounded,
+                icon: FontAwesomeIcons.user,
                 title: "Participant",
                 subtitle: user != null
                     ? (user.firstName ?? '').trim()
@@ -282,7 +283,7 @@ class _AppointmentDetailBottomSheetState
                   IconButton(
                     onPressed: () => setState(() => _isEditing = true),
                     icon: Icon(
-                      Icons.edit_note_rounded,
+                      FontAwesomeIcons.penToSquare,
                       color: context.appColors.hintTextColor,
                     ),
                   ),
@@ -326,7 +327,7 @@ class _AppointmentDetailBottomSheetState
               SizedBox(height: 16.h),
               _buildInfoSection(
                 context,
-                icon: Icons.assignment_rounded,
+                icon: FontAwesomeIcons.fileLines,
                 title: "Original Title",
                 subtitle: appt.serviceRequest?.title ?? "N/A",
               ),
@@ -372,7 +373,7 @@ class _AppointmentDetailBottomSheetState
                     }
                   },
                   icon: Icon(
-                    Icons.open_in_new_rounded,
+                    FontAwesomeIcons.arrowUpRightFromSquare,
                     size: 18.r,
                     color: context.appColors.primaryColor,
                   ),
@@ -505,3 +506,5 @@ class _AppointmentDetailBottomSheetState
     );
   }
 }
+
+

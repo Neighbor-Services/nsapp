@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -108,7 +109,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
                           width: double.infinity,
                           color: errorWidgetColor,
                           child: Icon(
-                            Icons.broken_image_outlined,
+                            FontAwesomeIcons.image,
                             size: 40.r,
                             color: iconColor,
                           ),
@@ -148,3 +149,5 @@ class ReceiverChatImageWidget extends StatelessWidget {
     );
   }
 }
+
+

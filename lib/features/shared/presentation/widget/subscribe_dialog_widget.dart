@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -33,7 +34,7 @@ class SubscribeDialogWidget extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child:  Icon(
-                  Icons.star_rounded,
+                  FontAwesomeIcons.star,
                   size: 40.r,
                   color: context.appColors.warningColor,
                 ),
@@ -112,3 +113,4 @@ class SubscribeDialogWidget extends StatelessWidget {
     );
   }
 }
+

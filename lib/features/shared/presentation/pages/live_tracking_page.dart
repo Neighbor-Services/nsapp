@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -101,7 +102,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                   ),
                 ),
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
                 ),
@@ -126,7 +127,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.delivery_dining_rounded,
+                          FontAwesomeIcons.motorcycle,
                           color: context.appColors.infoColor,
                           size: 24.r,
                         ),
@@ -169,3 +170,4 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
     );
   }
 }
+

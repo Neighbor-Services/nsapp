@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -109,7 +110,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 18.r,
                                   ),
@@ -161,7 +162,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                           label: "EMAIL",
                                           allCapsLabel: true,
                                           hintText: "Enter your email",
-                                          prefixIcon: Icons.email_rounded,
+                                          prefixIcon: FontAwesomeIcons.envelope,
                                           keyboardType:
                                               TextInputType.emailAddress,
                                           validator: (val) {
@@ -230,3 +231,5 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
     );
   }
 }
+
+

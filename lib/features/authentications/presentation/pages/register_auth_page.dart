@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -145,7 +146,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                       label: "EMAIL",
                                       allCapsLabel: true,
                                       hintText: "Enter your email",
-                                      prefixIcon: Icons.email_rounded,
+                                      prefixIcon: FontAwesomeIcons.envelope,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -163,7 +164,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                       label: "PASSWORD",
                                       allCapsLabel: true,
                                       hintText: "Create a password",
-                                      prefixIcon: Icons.lock_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -181,7 +182,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                       label: "CONFIRM PASSWORD",
                                       allCapsLabel: true,
                                       hintText: "Confirm your password",
-                                      prefixIcon: Icons.lock_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -424,3 +425,5 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
     );
   }
 }
+
+

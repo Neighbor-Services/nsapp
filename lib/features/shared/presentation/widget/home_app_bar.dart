@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -140,7 +141,7 @@ AppBar homeAppBar({
               shape: BoxShape.circle,
               border: Border.all(color: borderDecorColor),
             ),
-            child: Icon(Icons.grid_view_rounded, color: iconColor, size: 20.r),
+            child: FaIcon(FontAwesomeIcons.tableCells, color: iconColor, size: 20.r),
           ),
           options: actions!,
         ),
@@ -219,7 +220,7 @@ class PlatformPopupMenu extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              Icons.logout_rounded,
+                              FontAwesomeIcons.rightFromBracket,
                               size: 32.r,
                               color: context.appColors.errorColor,
                             ),
@@ -321,3 +322,4 @@ class PlatformPopupMenu extends StatelessWidget {
     );
   }
 }
+

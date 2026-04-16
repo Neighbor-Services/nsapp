@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -82,7 +83,7 @@ class _WalletPageState extends State<WalletPage> {
                     ],
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 16.r,
             ),
@@ -91,7 +92,7 @@ class _WalletPageState extends State<WalletPage> {
         actions: [
           IconButton(
             onPressed: () => context.read<SharedBloc>().add(GetMyWalletEvent()),
-            icon: Icon(Icons.refresh_rounded, color: context.appColors.primaryTextColor),
+            icon: FaIcon(FontAwesomeIcons.rotateRight, color: context.appColors.primaryTextColor),
           ),
         ],
       ),
@@ -182,7 +183,7 @@ class _WalletPageState extends State<WalletPage> {
                       Row(
                         children: [
                           Icon(
-                            Icons.history_rounded,
+                            FontAwesomeIcons.clockRotateLeft,
                             color: context.appColors.secondaryTextColor,
                             size: 20.r,
                           ),
@@ -209,7 +210,7 @@ class _WalletPageState extends State<WalletPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      Icons.receipt_long_rounded,
+                                      FontAwesomeIcons.fileInvoice,
                                       size: 64.r,
                                       color: context.appColors.secondaryTextColor.withAlpha(30),
                                     ),
@@ -263,8 +264,8 @@ class _WalletPageState extends State<WalletPage> {
                                           ),
                                           child: Icon(
                                             isCredit
-                                                ? Icons.call_received_rounded
-                                                : Icons.call_made_rounded,
+                                                ? FontAwesomeIcons.arrowDown
+                                                : FontAwesomeIcons.arrowUp,
                                             color: isCredit
                                                 ? context.appColors.successColor
                                                 : (isPayout
@@ -290,7 +291,7 @@ class _WalletPageState extends State<WalletPage> {
                                               CustomTextWidget(
                                                 text: tx.createdAt != null
                                                     ? DateFormat(
-                                                        "MMM dd, yyyy • h:mm a",
+                                                        "MMM dd, yyyy â€¢ h:mm a",
                                                       ).format(tx.createdAt!)
                                                     : "Date Unknown",
                                                 fontSize: 12.sp,
@@ -396,7 +397,7 @@ class _WalletPageState extends State<WalletPage> {
             SolidTextField(
               controller: amountController,
               hintText: "Amount (e.g. 50.00)",
-              prefixIcon: Icons.attach_money_rounded,
+              prefixIcon: FontAwesomeIcons.dollarSign,
               keyboardType: TextInputType.number,
             ),
           ],
@@ -522,3 +523,4 @@ class _WalletPageState extends State<WalletPage> {
     Future.delayed(const Duration(seconds: 5), () => subscription.cancel());
   }
 }
+

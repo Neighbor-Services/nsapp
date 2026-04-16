@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -125,7 +126,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                     ),
                                   ),
                                   child:  Icon(
-                                    Icons.chat_bubble_rounded,
+                                    FontAwesomeIcons.comment,
                                     color: context.appColors.secondaryColor,
                                     size: 22.r,
                                   ),
@@ -199,7 +200,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.chat_bubble_outline_rounded,
+                  FontAwesomeIcons.comment,
                   size: 64.r,
                   color: context.appColors.secondaryColor.withAlpha(150),
                 ),
@@ -372,7 +373,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                 )
               else
                 Icon(
-                  Icons.chevron_right_rounded,
+                  FontAwesomeIcons.chevronRight,
                   color: context.appColors.glassBorder,
                   size: 24.r,
                 ),
@@ -383,3 +384,5 @@ class _MyMessagesPageState extends State<MyMessagesPage>
     );
   }
 }
+
+

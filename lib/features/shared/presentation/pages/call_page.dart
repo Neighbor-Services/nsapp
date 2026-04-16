@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/services/rtc_service.dart';
@@ -108,7 +109,7 @@ class _CallPageState extends State<CallPage> {
     } else {
       return Container(
         color: Colors.grey[800],
-        child: const Icon(Icons.videocam_off, color: Colors.white, size: 32),
+        child: const FaIcon(FontAwesomeIcons.videoSlash, color: Colors.white, size: 32),
       );
     }
   }
@@ -151,7 +152,7 @@ class _CallPageState extends State<CallPage> {
                 });
                 RTCService.toggleMute(_muted);
               },
-              icon: _muted ? Icons.mic_off : Icons.mic,
+              icon: _muted ? FontAwesomeIcons.microphoneSlash : FontAwesomeIcons.microphone,
               color: _muted ? context.appColors.errorColor : Colors.white.withAlpha(50),
             ),
             const SizedBox(width: 20),
@@ -159,7 +160,7 @@ class _CallPageState extends State<CallPage> {
               onPressed: () {
                 if (mounted) Navigator.pop(context);
               },
-              icon: Icons.call_end,
+              icon: FontAwesomeIcons.phoneSlash,
               color: context.appColors.errorColor,
               size: 64,
             ),
@@ -171,7 +172,7 @@ class _CallPageState extends State<CallPage> {
                 });
                 RTCService.toggleCamera(_cameraOff);
               },
-              icon: _cameraOff ? Icons.videocam_off : Icons.videocam,
+              icon: _cameraOff ? FontAwesomeIcons.videoSlash : FontAwesomeIcons.video,
               color: _cameraOff ? context.appColors.errorColor : Colors.white.withAlpha(50),
             ),
             const SizedBox(width: 20),
@@ -179,7 +180,7 @@ class _CallPageState extends State<CallPage> {
               onPressed: () {
                 RTCService.switchCamera();
               },
-              icon: Icons.switch_camera_rounded,
+              icon: FontAwesomeIcons.cameraRotate,
               color: Colors.white.withAlpha(50),
             ),
           ],
@@ -211,3 +212,4 @@ extension AlignmentExtension on Alignment {
     return Align(alignment: this, child: child);
   }
 }
+

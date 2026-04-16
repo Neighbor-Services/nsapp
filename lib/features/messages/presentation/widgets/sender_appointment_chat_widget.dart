@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -92,7 +93,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.calendar_today_rounded,
+                                FontAwesomeIcons.calendar,
                                 color: Colors.white,
                                 size: 18.r,
                               ),
@@ -111,7 +112,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                         ),
                         PopupMenuButton(
                           icon: Icon(
-                            Icons.more_horiz_rounded,
+                            FontAwesomeIcons.ellipsis,
                             color: context.appColors.primaryTextColor,
                           ),
                           shape: RoundedRectangleBorder(
@@ -158,7 +159,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Icon(
-                                    Icons.add_to_drive_rounded,
+                                    FontAwesomeIcons.hardDrive,
                                     size: 18.r,
                                     color: popupIconColor,
                                   ),
@@ -179,13 +180,13 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                       child: Divider(color: context.appColors.primaryColor, height: 1.h),
                     ),
                     _buildInfoRow(
-                      Icons.event_available_rounded,
+                      FontAwesomeIcons.calendarCheck,
                       DateFormat("EEEE, MMM dd, yyyy").format(appointmentDate),
                       context,
                     ),
                     SizedBox(height: 10.h),
                     _buildInfoRow(
-                      Icons.access_time_rounded,
+                      FontAwesomeIcons.clock,
                       DateFormat.jm().format(startTime),
                       context,
                     ),
@@ -212,7 +213,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.done_all_rounded,
+                      FontAwesomeIcons.checkDouble,
                       size: 14.r,
                       color: timestampColor,
                     ),
@@ -261,3 +262,5 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     );
   }
 }
+
+

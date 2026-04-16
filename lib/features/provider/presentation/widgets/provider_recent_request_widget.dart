@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -126,7 +127,7 @@ class _ProviderRecentRequestWidgetState
                                           radius: 20,
                                           backgroundColor: context.appColors.glassBorder,
                                           child: Icon(
-                                            Icons.person,
+                                            FontAwesomeIcons.user,
                                             color: context.appColors.primaryTextColor,
                                             size: 20,
                                           ),
@@ -152,7 +153,7 @@ class _ProviderRecentRequestWidgetState
                                               Row(
                                                 children: [
                                                   Icon(
-                                                    Icons.location_on_rounded,
+                                                    FontAwesomeIcons.locationDot,
                                                     size: 12,
                                                     color: secondaryTextColor,
                                                   ),
@@ -262,3 +263,4 @@ class _ProviderRecentRequestWidgetState
     );
   }
 }
+

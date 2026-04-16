@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
@@ -86,7 +87,7 @@ class ProviderListItem extends StatelessWidget {
                   SizedBox(height: 8.h),
                   Row(
                     children: [
-                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16.r),
+                      FaIcon(FontAwesomeIcons.star, color: context.appColors.secondaryColor, size: 16.r),
                       SizedBox(width: 4.w),
                       CustomTextWidget(
                         text: (double.tryParse(profile.rating ?? "0") ?? 0.0)
@@ -102,7 +103,7 @@ class ProviderListItem extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Icon(
-                                Icons.location_on,
+                                FontAwesomeIcons.locationDot,
                                 size: 14.r,
                                 color: appGreyColor,
                               ),
@@ -131,3 +132,4 @@ class ProviderListItem extends StatelessWidget {
     );
   }
 }
+

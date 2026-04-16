@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,7 +48,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.broken_image,
+                            FontAwesomeIcons.image,
                             size: 100.r,
                             color: Colors.white.withAlpha(100),
                           ),
@@ -79,7 +80,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                       border: Border.all(color: Colors.white.withAlpha(30)),
                     ),
                     child: Icon(
-                      Icons.arrow_back,
+                      FontAwesomeIcons.arrowLeft,
                       color: Colors.white,
                       size: 24.r,
                     ),
@@ -93,3 +94,5 @@ class _ImageViewPageState extends State<ImageViewPage> {
     );
   }
 }
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -136,7 +137,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                 shape: BoxShape.circle,
                               ),
                               child:  Icon(
-                                Icons.error_outline_rounded,
+                                FontAwesomeIcons.circleExclamation,
                                 color: context.appColors.errorColor,
                                 size: 60.r,
                               ),
@@ -204,7 +205,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                         ),
                                       ),
                                       child: Icon(
-                                        Icons.arrow_back_ios_new_rounded,
+                                        FontAwesomeIcons.chevronLeft,
                                         color: textColor,
                                         size: 20.r,
                                       ),
@@ -245,7 +246,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                             ),
                                           ),
                                           child: Icon(
-                                            Icons.assignment_rounded,
+                                            FontAwesomeIcons.fileLines,
                                             color: context.appColors.primaryColor,
                                             size: 24.r,
                                           ),
@@ -524,7 +525,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                   shape: BoxShape.circle,
                 ),
                 child:  Icon(
-                  Icons.delete_forever_rounded,
+                  FontAwesomeIcons.trashCan,
                   color: context.appColors.errorColor,
                   size: 32.r,
                 ),
@@ -609,7 +610,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             color: menuIconBg,
             borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(Icons.more_horiz_rounded, color: iconColor, size: 20.r),
+          child: FaIcon(FontAwesomeIcons.ellipsis, color: iconColor, size: 20.r),
         ),
         onSelected: (val) {
           switch (val) {
@@ -672,7 +673,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 1,
               child: Row(
                 children: [
-                  Icon(Icons.edit_document, color: appBlueCardColor, size: 20.r),
+                  FaIcon(FontAwesomeIcons.penToSquare, color: appBlueCardColor, size: 20.r),
                   SizedBox(width: 12.w),
                   Text(
                     "EDIT",
@@ -690,7 +691,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 2,
               child: Row(
                 children: [
-                  Icon(Icons.delete, color: context.appColors.errorColor, size: 20.r),
+                  FaIcon(FontAwesomeIcons.trashCan, color: context.appColors.errorColor, size: 20.r),
                   SizedBox(width: 12.w),
                   Text(
                     "DELETE",
@@ -708,7 +709,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 3,
               child: Row(
                 children: [
-                  Icon(Icons.check_circle, color: context.appColors.successColor, size: 20.r),
+                  FaIcon(FontAwesomeIcons.circleCheck, color: context.appColors.successColor, size: 20.r),
                   SizedBox(width: 12.w),
                   Text(
                     "MARK AS DONE",
@@ -726,7 +727,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 4,
               child: Row(
                 children: [
-                  Icon(Icons.payment, color: context.appColors.secondaryColor, size: 20.r),
+                  FaIcon(FontAwesomeIcons.creditCard, color: context.appColors.secondaryColor, size: 20.r),
                   SizedBox(width: 12.w),
                   Text(
                     "FUND PROVIDER",
@@ -794,7 +795,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 Row(
                   children: [
                      Icon(
-                      Icons.star_rounded,
+                      FontAwesomeIcons.star,
                       color: context.appColors.warningColor,
                       size: 16.r,
                     ),
@@ -853,7 +854,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             borderRadius: BorderRadius.circular(10.r),
           ),
           child: Icon(
-            Icons.cancel_outlined,
+            FontAwesomeIcons.circleXmark,
             color: context.appColors.errorColor,
           ),
         ),
@@ -890,7 +891,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             borderRadius: BorderRadius.circular(10.r),
           ),
           child: Icon(
-            Icons.check_circle_outline,
+            FontAwesomeIcons.circleCheck,
             color: context.appColors.primaryColor,
           ),
         ),
@@ -927,7 +928,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           borderRadius: BorderRadius.circular(10.r),
         ),
         child: PopupMenuButton(
-          icon: Icon(Icons.more_vert_rounded, color: iconColor.withAlpha(160)),
+          icon: FaIcon(FontAwesomeIcons.ellipsisVertical, color: iconColor.withAlpha(160)),
           onSelected: (val) {
             final provider = acceptedProvider.provider;
             final userId = provider?.user?.id;
@@ -956,7 +957,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               child: Row(
                 children: [
                    Icon(
-                    Icons.remove_red_eye_rounded,
+                    FontAwesomeIcons.eye,
                     color: context.appColors.infoColor,
                     size: 20.r,
                   ),
@@ -978,7 +979,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               child: Row(
                 children: [
                    Icon(
-                    Icons.chat_bubble_rounded,
+                    FontAwesomeIcons.comment,
                     color: context.appColors.successColor,
                     size: 20.r,
                   ),
@@ -1149,3 +1150,5 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     );
   }
 }
+
+

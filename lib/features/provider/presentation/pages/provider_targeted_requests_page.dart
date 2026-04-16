@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -93,7 +94,7 @@ class _ProviderTargetedRequestsPageState
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,
             ),
@@ -178,7 +179,7 @@ class _ProviderTargetedRequestsPageState
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.handshake_rounded,
+                      FontAwesomeIcons.handshake,
                       size: 60.r,
                       color: context.appColors.glassBorder,
                     ),
@@ -399,7 +400,7 @@ class _ProviderTargetedRequestsPageState
                         Row(
                           children: [
                             Icon(
-                              Icons.calendar_today_rounded,
+                              FontAwesomeIcons.calendar,
                               size: 12.r,
                               color: context.appColors.secondaryTextColor,
                             ),
@@ -424,7 +425,7 @@ class _ProviderTargetedRequestsPageState
                 Padding(
                   padding: EdgeInsets.only(right: 16.w),
                   child: Icon(
-                    Icons.chevron_right_rounded,
+                    FontAwesomeIcons.chevronRight,
                     color: context.appColors.secondaryTextColor,
                   ),
                 ),
@@ -436,3 +437,5 @@ class _ProviderTargetedRequestsPageState
     );
   }
 }
+
+

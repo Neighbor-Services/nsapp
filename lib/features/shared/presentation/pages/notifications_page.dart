@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -103,7 +104,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 20.r,
                                   ),
@@ -167,7 +168,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                               shape: BoxShape.circle,
                                             ),
                                             child: Icon(
-                                              Icons.notifications_off_rounded,
+                                              FontAwesomeIcons.bellSlash,
                                               size: 50.r,
                                               color: context.appColors.glassBorder,
                                             ),
@@ -318,7 +319,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                         Row(
                           children: [
                             Icon(
-                              Icons.access_time_filled_rounded,
+                              FontAwesomeIcons.clock,
                               size: 12.r,
                               color: context.appColors.hintTextColor,
                             ),
@@ -348,16 +349,16 @@ class _NotificationsPageState extends State<NotificationsPage>
   IconData _getNotificationIcon(String? notificationType) {
     switch (notificationType?.toLowerCase()) {
       case "message":
-        return Icons.chat_bubble_rounded;
+        return FontAwesomeIcons.comment;
       case "proposal":
       case "request":
-        return Icons.assignment_rounded;
+        return FontAwesomeIcons.fileLines;
       case "appointment":
-        return Icons.calendar_month_rounded;
+        return FontAwesomeIcons.calendar;
       case "system":
-        return Icons.info_outline_rounded;
+        return FontAwesomeIcons.circleInfo;
       default:
-        return Icons.notifications_active_rounded;
+        return FontAwesomeIcons.bell;
     }
   }
 
@@ -707,3 +708,5 @@ class _NotificationsPageState extends State<NotificationsPage>
     }
   }
 }
+
+

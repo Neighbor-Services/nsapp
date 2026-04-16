@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -86,7 +87,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                               ),
                             ),
                             child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
+                              FontAwesomeIcons.chevronLeft,
                               color: textColor,
                               size: 20.r,
                             ),
@@ -148,7 +149,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.error_outline_rounded,
+              FontAwesomeIcons.circleExclamation,
               size: 56.r,
               color: subtitleColor,
             ),
@@ -173,7 +174,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                   GetLegalDocumentEvent(docType: _docType),
                 );
               },
-              icon: Icon(Icons.refresh_rounded, color: secondaryColor),
+              icon: FaIcon(FontAwesomeIcons.rotateRight, color: secondaryColor),
               label: Text(
                 'Retry',
                 style: TextStyle(color: secondaryColor),
@@ -191,7 +192,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.info_outline_rounded,
+              FontAwesomeIcons.circleInfo,
               size: 56.r,
               color: subtitleColor,
             ),
@@ -236,8 +237,8 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                   children: [
                     Icon(
                       _docType == 'TERMS'
-                          ? Icons.gavel_rounded
-                          : Icons.privacy_tip_rounded,
+                          ? FontAwesomeIcons.gavel
+                          : FontAwesomeIcons.shieldHalved,
                       color: secondaryColor,
                       size: 22.r,
                     ),
@@ -256,7 +257,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                           ),
                           SizedBox(height: 2.h),
                           Text(
-                            'Version ${doc.version}  •  Last updated ${_formatDate(doc.updatedAt)}',
+                            'Version ${doc.version}  â€¢  Last updated ${_formatDate(doc.updatedAt)}',
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: subtitleColor,
@@ -302,3 +303,5 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     return months[m];
   }
 }
+
+

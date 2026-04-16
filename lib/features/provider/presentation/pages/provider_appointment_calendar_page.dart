@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -240,7 +241,7 @@ class _ProviderAppointmentCalendarPageState
         ),
         child: Row(
           children: [
-            Icon(Icons.add_rounded, color: Colors.white, size: 20.r),
+            FaIcon(FontAwesomeIcons.plus, color: Colors.white, size: 20.r),
             SizedBox(width: 8.w),
             Text(
               "SCHEDULE",
@@ -420,16 +421,16 @@ class _ProviderAppointmentCalendarPageState
               letterSpacing: 1.0,
             ),
             SizedBox(height: 24.h),
-            _buildDetailRow(Icons.title_rounded, "TITLE", data.title, isDark),
+            _buildDetailRow(FontAwesomeIcons.heading, "TITLE", data.title, isDark),
             _buildDetailRow(
-              Icons.schedule_rounded,
+              FontAwesomeIcons.calendar,
               "TIME",
               data.startTime != null ? DateFormat.jm().format(data.startTime!.toLocal()) : '',
               isDark,
             ),
             if (data.description != null && data.description!.isNotEmpty)
               _buildDetailRow(
-                Icons.notes_rounded,
+                FontAwesomeIcons.noteSticky,
                 "DESCRIPTION",
                 data.description!,
                 isDark,
@@ -465,27 +466,27 @@ class _ProviderAppointmentCalendarPageState
                         ),
                         SizedBox(height: 16.h),
                         _buildDetailRow(
-                          Icons.assignment_rounded,
+                          FontAwesomeIcons.fileLines,
                           "ORIGINAL TITLE",
                           req.title ?? "N/A",
                           isDark,
                         ),
                         _buildDetailRow(
-                          Icons.category_rounded,
+                          FontAwesomeIcons.list,
                           "SERVICE",
                           req.service?.name ?? "N/A",
                           isDark,
                         ),
                         if (req.price != null)
                           _buildDetailRow(
-                            Icons.payments_rounded,
+                            FontAwesomeIcons.creditCard,
                             "REQUEST PRICE",
                             "\$${req.price}",
                             isDark,
                           ),
                         if (req.description != null && req.description!.isNotEmpty)
                            _buildDetailRow(
-                            Icons.description_rounded,
+                            FontAwesomeIcons.fileLines,
                             "REQ. DESCRIPTION",
                             req.description!,
                             isDark,
@@ -514,7 +515,7 @@ class _ProviderAppointmentCalendarPageState
                               );
                             },
                             icon: Icon(
-                              Icons.open_in_new_rounded,
+                              FontAwesomeIcons.arrowUpRightFromSquare,
                               size: 18.r,
                               color: context.appColors.primaryColor,
                             ),
@@ -566,7 +567,7 @@ class _ProviderAppointmentCalendarPageState
                             );
                             Get.back();
                           },
-                          icon: Icons.verified_rounded,
+                          icon: FontAwesomeIcons.circleCheck,
                           label: "Mark as Completed",
                           height: 55.h,
                         ),
@@ -584,7 +585,7 @@ class _ProviderAppointmentCalendarPageState
                 Get.back();
                 _handleAddToCalendar(data.event.toString());
               },
-              icon: Icons.event_available,
+              icon: FontAwesomeIcons.calendarCheck,
               label: "Add to Calendar",
               isPrimary: false,
               color: context.appColors.primaryTextColor,
@@ -624,7 +625,7 @@ class _ProviderAppointmentCalendarPageState
                   }
                 }
               },
-              icon: Icons.navigation_rounded,
+              icon: FontAwesomeIcons.compass,
               label: "On the Way",
               isPrimary: false,
               
@@ -978,7 +979,7 @@ class _ProviderAppointmentCalendarPageState
                 initialValue: selectedProposalId,
                 dropdownColor: context.appColors.primaryBackground,
                 icon: Icon(
-                  Icons.keyboard_arrow_down_rounded,
+                  FontAwesomeIcons.chevronDown,
                   color: context.appColors.secondaryTextColor,
                 ),
                 style: TextStyle(color: context.appColors.primaryTextColor),
@@ -1018,3 +1019,5 @@ class _ProviderAppointmentCalendarPageState
     );
   }
 }
+
+

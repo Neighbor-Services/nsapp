@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -112,7 +113,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                 ),
                               ),
                               child: Icon(
-                                Icons.arrow_back_ios_new_rounded,
+                                FontAwesomeIcons.chevronLeft,
                                 color: isDark ? Colors.white : Colors.black,
                                 size: 18.r,
                               ),
@@ -143,7 +144,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                 ),
                               ),
                               child: Icon(
-                                Icons.key_rounded,
+                                FontAwesomeIcons.key,
                                 size: 50.r,
                                 color: context.appColors.primaryColor,
                               ),
@@ -183,7 +184,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       label: "Verification Code",
                                       allCapsLabel: true,
                                       hintText: "Enter 4-digit OTP",
-                                      prefixIcon: Icons.pin_rounded,
+                                      prefixIcon: FontAwesomeIcons.thumbtack,
                                       keyboardType: TextInputType.number,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -201,7 +202,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       label: "New Password",
                                       allCapsLabel: true,
                                       hintText: "Enter new password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -219,7 +220,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       label: "Confirm Password",
                                       allCapsLabel: true,
                                       hintText: "Confirm new password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -270,3 +271,4 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
     );
   }
 }
+

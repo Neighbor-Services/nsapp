@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,7 +83,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       locController.text = request.address ?? "";
       selectedScheduledTime = request.scheduledTime;
       scheduledTimeController.text = selectedScheduledTime != null
-          ? DateFormat("MMM dd, yyyy • h:mm a").format(selectedScheduledTime!)
+          ? DateFormat("MMM dd, yyyy â€¢ h:mm a").format(selectedScheduledTime!)
           : "";
 
       // Update location if it exists
@@ -171,7 +172,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                               "Give your request a clear title",
                                           label: "Request Title",
                                           allCapsLabel: true,
-                                          prefixIcon: Icons.title_rounded,
+                                          prefixIcon: FontAwesomeIcons.heading,
                                           validator: (val) {
                                             if (val!.isEmpty) {
                                               return "Title is required";
@@ -192,7 +193,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                               "Describe your request in detail...",
                                           label: "Description",
                                           allCapsLabel: true,
-                                          prefixIcon: Icons.description_rounded,
+                                          prefixIcon: FontAwesomeIcons.fileLines,
                                           isMultiLine: true,
                                           validator: (val) {
                                             if (val!.isEmpty) {
@@ -260,7 +261,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                   ),
                 ),
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  FontAwesomeIcons.chevronLeft,
                   color: iconColor,
                   size: 20.r,
                 ),
@@ -337,7 +338,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         ),
         child: Row(
           children: [
-            Icon(Icons.category_rounded, color: iconColor, size: 20.r),
+            FaIcon(FontAwesomeIcons.list, color: iconColor, size: 20.r),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
@@ -351,7 +352,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 ),
               ),
             ),
-            Icon(Icons.arrow_drop_down_rounded, color: iconColor),
+            FaIcon(FontAwesomeIcons.chevronDown, color: iconColor),
           ],
         ),
       ),
@@ -367,7 +368,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             controller: locController,
             hintText: "Set your location",
             label: "Location",
-            prefixIcon: Icons.location_on_rounded,
+            prefixIcon: FontAwesomeIcons.locationDot,
             validator: (val) {
               if (val!.isEmpty) return "Location is required";
               return null;
@@ -390,7 +391,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 width: 1.5.r,
               ),
             ),
-            child: const Icon(Icons.my_location_rounded, color: Colors.white),
+            child: const FaIcon(FontAwesomeIcons.locationCrosshairs, color: Colors.white),
           ),
         ),
       ],
@@ -442,7 +443,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.close,
+                          FontAwesomeIcons.xmark,
                           color: Colors.white,
                           size: 18.r,
                         ),
@@ -463,7 +464,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                   errorBuilder: (context, error, stackTrace) {
                     return Center(
                       child: Icon(
-                        Icons.broken_image_rounded,
+                        FontAwesomeIcons.image,
                         color: errorIconColor,
                         size: 40.r,
                       ),
@@ -475,7 +476,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.add_photo_alternate_rounded,
+                    FontAwesomeIcons.image,
                     size: 40.r,
                     color: iconColor,
                   ),
@@ -526,7 +527,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 Expanded(
                   child: _buildPickerOption(
                     context,
-                    icon: Icons.photo_library_rounded,
+                    icon: FontAwesomeIcons.images,
                     label: "Gallery",
                     color: Color(0xFF5C6BC0),
                     onTap: () {
@@ -541,7 +542,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 Expanded(
                   child: _buildPickerOption(
                     context,
-                    icon: Icons.camera_alt_rounded,
+                    icon: FontAwesomeIcons.camera,
                     label: "Camera",
                     color: Color(0xFF7E57C2),
                     onTap: () {
@@ -651,7 +652,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
-                  Icons.my_location_rounded,
+                  FontAwesomeIcons.locationCrosshairs,
                   color: Color(0xFF5C6BC0),
                 ),
               ),
@@ -667,7 +668,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 style: TextStyle(color: subtitleColor, fontSize: 12.sp),
               ),
               trailing: Icon(
-                Icons.arrow_forward_ios_rounded,
+                FontAwesomeIcons.chevronRight,
                 color: arrowColor,
                 size: 16.r,
               ),
@@ -686,7 +687,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                   color: context.appColors.secondaryColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.map_rounded, color: context.appColors.secondaryColor),
+                child: FaIcon(FontAwesomeIcons.map, color: context.appColors.secondaryColor),
               ),
               title: Text(
                 "Select on Map",
@@ -700,7 +701,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 style: TextStyle(color: subtitleColor, fontSize: 12.sp),
               ),
               trailing: Icon(
-                Icons.arrow_forward_ios_rounded,
+                FontAwesomeIcons.chevronRight,
                 color: arrowColor,
                 size: 16.r,
               ),
@@ -717,7 +718,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       controller: scheduledTimeController,
       hintText: "When do you need this?",
       label: "Schedule",
-      prefixIcon: Icons.calendar_today_rounded,
+      prefixIcon: FontAwesomeIcons.calendar,
       readOnly: true,
       onTap: () async {
         final DateTime? pickedDate = await showDatePicker(
@@ -743,7 +744,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 pickedTime.minute,
               );
               scheduledTimeController.text = DateFormat(
-                "MMM dd, yyyy • h:mm a",
+                "MMM dd, yyyy â€¢ h:mm a",
               ).format(selectedScheduledTime!);
             });
           }
@@ -808,3 +809,5 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     context.read<SeekerBloc>().add(UpdateRequestEvent(request: updatedRequest));
   }
 }
+
+

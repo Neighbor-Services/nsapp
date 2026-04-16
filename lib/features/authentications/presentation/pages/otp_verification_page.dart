@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -111,7 +112,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.mark_email_read_rounded,
+                                    FontAwesomeIcons.envelopeCircleCheck,
                                     size: 50.r,
                                     color: context.appColors.primaryColor,
                                   ),
@@ -210,7 +211,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
-                                                Icons.refresh_rounded,
+                                                FontAwesomeIcons.rotateRight,
                                                 size: 18.r,
                                                 color: secondaryTextColor,
                                               ),
@@ -272,3 +273,4 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
     );
   }
 }
+

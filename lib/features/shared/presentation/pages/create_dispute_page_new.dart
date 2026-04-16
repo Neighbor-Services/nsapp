@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -111,7 +112,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
+                              FontAwesomeIcons.chevronLeft,
                               color: textColor,
                               size: 18.r,
                             ),
@@ -155,7 +156,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.gavel_rounded,
+                                    FontAwesomeIcons.gavel,
                                     color: context.appColors.primaryColor,
                                     size: 28.r,
                                   ),
@@ -222,7 +223,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                     child: Row(
                                       children: [
                                         Icon(
-                                          Icons.person_outline_rounded,
+                                          FontAwesomeIcons.user,
                                           color: secondaryTextColor,
                                           size: 20.r,
                                         ),
@@ -240,7 +241,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                           ),
                                         ),
                                         Icon(
-                                          Icons.arrow_forward_ios_rounded,
+                                          FontAwesomeIcons.chevronRight,
                                           color: secondaryTextColor,
                                           size: 16.r,
                                         ),
@@ -271,7 +272,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                 SolidTextField(
                                   controller: _reasonController,
                                   hintText: 'Reason for dispute',
-                                  prefixIcon: Icons.warning_amber_rounded,
+                                  prefixIcon: FontAwesomeIcons.triangleExclamation,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter a reason';
@@ -283,7 +284,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                 SolidTextField(
                                   controller: _descriptionController,
                                   hintText: 'Describe the issue in detail',
-                                  // prefixIcon: Icons.description_outlined,
+                                  // prefixIcon: FontAwesomeIcons.fileLines,
                                   isMultiLine: true,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -310,7 +311,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                             child: Row(
                               children: [
                                 Icon(
-                                  Icons.info_outline_rounded,
+                                  FontAwesomeIcons.circleInfo,
                                   color: context.appColors.warningColor.withAlpha(200),
                                   size: 24.r,
                                 ),
@@ -375,7 +376,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.chat_bubble_outline_rounded,
+                      FontAwesomeIcons.comment,
                       size: 48.r,
                       color: secondaryTextColor,
                     ),
@@ -444,7 +445,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                             : null,
                         child: (user?.profilePictureUrl == null ||
                                 user!.profilePictureUrl!.isEmpty)
-                            ? Icon(Icons.person, color: secondaryTextColor)
+                            ? FaIcon(FontAwesomeIcons.user, color: secondaryTextColor)
                             : null,
                       ),
                       title: Text(
@@ -465,7 +466,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                             )
                           : null,
                       trailing: Icon(
-                        Icons.arrow_forward_ios_rounded,
+                        FontAwesomeIcons.chevronRight,
                         color: secondaryTextColor,
                         size: 16.r,
                       ),
@@ -486,3 +487,5 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
     );
   }
 }
+
+

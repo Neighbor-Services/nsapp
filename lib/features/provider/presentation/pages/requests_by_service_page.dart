@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/request_data.dart';
@@ -80,7 +81,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                           ),
                         ),
                         child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          FontAwesomeIcons.chevronLeft,
                           color: backBtnIconColor,
                           size: 20.r,
                         ),
@@ -142,7 +143,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    Icons.search_off_rounded,
+                                    FontAwesomeIcons.magnifyingGlass,
                                     size: 80.r,
                                     color: secondaryTextColor.withAlpha(60),
                                   ),
@@ -264,7 +265,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
             SizedBox(height: 12.h),
             Row(
               children: [
-                Icon(Icons.location_on, color: locationIconColor, size: 16.r),
+                FaIcon(FontAwesomeIcons.locationDot, color: locationIconColor, size: 16.r),
                 SizedBox(width: 4.w),
                 Expanded(
                   child: Text(
@@ -276,7 +277,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                 ),
                 if (request.distance != null) ...[
                   SizedBox(width: 12.w),
-                  Icon(Icons.near_me, color: context.appColors.secondaryColor, size: 16.r),
+                  FaIcon(FontAwesomeIcons.locationArrow, color: context.appColors.secondaryColor, size: 16.r),
                   SizedBox(width: 4.w),
                   Text(
                     "${request.distance!.toStringAsFixed(1)} km",
@@ -295,7 +296,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
               Row(
                 children: [
                   Icon(
-                    Icons.people_outline,
+                    FontAwesomeIcons.users,
                     color: context.appColors.infoColor.withAlpha(200),
                     size: 16.r,
                   ),
@@ -354,3 +355,4 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     );
   }
 }
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -178,7 +179,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
               border: Border.all(color: borderColor),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 20.r,
             ),
@@ -223,7 +224,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: companyNameController,
             hintText: "What's your business or company name?",
             label: "Company / Business Name",
-            prefixIcon: Icons.business_rounded,
+            prefixIcon: FontAwesomeIcons.building,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Company name is required" : null,
           ),
@@ -232,7 +233,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: addressController,
             hintText: "Where is your business located?",
             label: "Company Address",
-            prefixIcon: Icons.location_on_rounded,
+            prefixIcon: FontAwesomeIcons.locationDot,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Address is required" : null,
           ),
@@ -241,7 +242,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: specificationController,
             hintText: "e.g. House Cleaning, Web Development",
             label: "Specialization",
-            prefixIcon: Icons.stars_rounded,
+            prefixIcon: FontAwesomeIcons.star,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Specialization is required" : null,
           ),
@@ -250,7 +251,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: experienceController,
             hintText: "Years of Experience (e.g. 5)",
             label: "Experience (Years)",
-            prefixIcon: Icons.timeline_rounded,
+            prefixIcon: FontAwesomeIcons.timeline,
             keyboardType: TextInputType.number,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Experience is required" : null,
@@ -260,28 +261,28 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: skillsController,
             hintText: "e.g. Cleaning, Repair, Cooking (comma separated)",
             label: "Skills",
-            prefixIcon: Icons.handyman_rounded,
+            prefixIcon: FontAwesomeIcons.hammer,
           ),
           SizedBox(height: 20.h),
           SolidTextField(
             controller: languagesController,
             hintText: "e.g. English, Spanish, French (comma separated)",
             label: "Languages",
-            prefixIcon: Icons.translate_rounded,
+            prefixIcon: FontAwesomeIcons.language,
           ),
           SizedBox(height: 20.h),
           SolidTextField(
             controller: educationController,
             hintText: "e.g. BSc in Computer Science, Certified Plumber",
             label: "Education / Certification",
-            prefixIcon: Icons.school_rounded,
+            prefixIcon: FontAwesomeIcons.graduationCap,
           ),
           SizedBox(height: 20.h),
           SolidTextField(
             controller: descriptionController,
             hintText: "Describe your experience and what you offer...",
             label: "Detailed Description",
-            prefixIcon: Icons.notes_rounded,
+            prefixIcon: FontAwesomeIcons.noteSticky,
             isMultiLine: true,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Description is required" : null,
@@ -317,7 +318,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                     SelectImagesFromGalleryEvent(),
                   );
                 },
-                icon: Icon(Icons.add_photo_alternate_rounded, color: textColor),
+                icon: FaIcon(FontAwesomeIcons.image, color: textColor),
                 tooltip: "Add Images",
               ),
             ],
@@ -348,7 +349,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.cloud_upload_outlined,
+                          FontAwesomeIcons.cloudArrowUp,
                           color: context.appColors.secondaryTextColor,
                           size: 32.r,
                         ),
@@ -401,7 +402,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.close,
+                                FontAwesomeIcons.xmark,
                                 color: Colors.white,
                                 size: 14.r,
                               ),
@@ -486,3 +487,5 @@ class _AddAboutPageState extends State<AddAboutPage> {
     );
   }
 }
+
+

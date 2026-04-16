@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -138,7 +139,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
           Row(
             children: [
               Icon(
-                Icons.auto_awesome_rounded,
+                FontAwesomeIcons.wandMagicSparkles,
                 color: context.appColors.primaryColor,
                 size: 22.r,
               ),
@@ -195,7 +196,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         ),
         child: Row(
           children: [
-            Icon(Icons.search_rounded, color: context.appColors.hintTextColor),
+            FaIcon(FontAwesomeIcons.magnifyingGlass, color: context.appColors.hintTextColor),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
@@ -215,7 +216,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                   NavigateSeekerEvent(page: 1, widget: const AISearchPage()),
                 );
               },
-              child:  Icon(Icons.auto_awesome, color: context.appColors.primaryColor),
+              child:  FaIcon(FontAwesomeIcons.wandMagicSparkles, color: context.appColors.primaryColor),
             ),
           ],
         ),
@@ -264,12 +265,12 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     final displayServices = services.take(2).toList();
 
     final icons = [
-      Icons.build_rounded,
-      Icons.cleaning_services_rounded,
-      Icons.electrical_services_rounded,
-      Icons.plumbing_rounded,
-      Icons.local_shipping_rounded,
-      Icons.home_repair_service_rounded,
+      FontAwesomeIcons.wrench,
+      FontAwesomeIcons.broom,
+      FontAwesomeIcons.plug,
+      FontAwesomeIcons.wrench,
+      FontAwesomeIcons.truck,
+      FontAwesomeIcons.toolbox,
     ];
 
     final cardColor = context.appColors.cardBackground;
@@ -401,7 +402,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                             borderRadius: BorderRadius.circular(14.r),
                           ),
                           child: Icon(
-                            Icons.pending_actions_rounded,
+                            FontAwesomeIcons.clock,
                             color: context.appColors.primaryColor,
                             size: 24.r,
                           ),
@@ -437,7 +438,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                             ],
                           ),
                         ),
-                        Icon(Icons.chevron_right_rounded, color: textColor),
+                        FaIcon(FontAwesomeIcons.chevronRight, color: textColor),
                       ],
                     ),
                   ),
@@ -450,3 +451,4 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     );
   }
 }
+

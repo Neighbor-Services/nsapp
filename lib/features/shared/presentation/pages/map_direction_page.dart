@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -143,7 +144,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.navigation_rounded,
+                          FontAwesomeIcons.compass,
                           color: context.appColors.primaryColor,
                           size: 24.r,
                         ),
@@ -180,9 +181,9 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildInfoItem(Icons.timer_outlined, "ETA", duration),
+                      _buildInfoItem(FontAwesomeIcons.clock, "ETA", duration),
                       _buildInfoItem(
-                        Icons.straighten_rounded,
+                        FontAwesomeIcons.ruler,
                         "Distance",
                         distance,
                       ),
@@ -201,7 +202,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
               child: SolidContainer(
                 padding: EdgeInsets.all(12.r),
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
                 ),
@@ -242,3 +243,4 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
     );
   }
 }
+

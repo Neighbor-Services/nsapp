@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -41,7 +42,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                           ),
                         ),
                         child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          FontAwesomeIcons.chevronLeft,
                           color: textColor,
                           size: 20.r,
                         ),
@@ -90,7 +91,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.search_off_rounded,
+                              FontAwesomeIcons.magnifyingGlass,
                               size: 64.r,
                               color: textColor.withAlpha(50),
                             ),
@@ -135,12 +136,12 @@ class SeekerAllServicesPage extends StatelessWidget {
     
 
     final icons = [
-      Icons.build_rounded,
-      Icons.cleaning_services_rounded,
-      Icons.electrical_services_rounded,
-      Icons.plumbing_rounded,
-      Icons.local_shipping_rounded,
-      Icons.home_repair_service_rounded,
+      FontAwesomeIcons.wrench,
+      FontAwesomeIcons.broom,
+      FontAwesomeIcons.plug,
+      FontAwesomeIcons.wrench,
+      FontAwesomeIcons.truck,
+      FontAwesomeIcons.toolbox,
     ];
 
     final icon = icons[index % icons.length];
@@ -212,3 +213,4 @@ class SeekerAllServicesPage extends StatelessWidget {
     );
   }
 }
+

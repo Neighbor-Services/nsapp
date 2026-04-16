@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -344,7 +345,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               child: Row(
                                 children: [
                                   Icon(
-                                    Icons.check_circle_outline_rounded,
+                                    FontAwesomeIcons.circleCheck,
                                     color: context.appColors.successColor,
                                     size: 20.r,
                                   ),
@@ -382,7 +383,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       border: Border.all(color: context.appColors.glassBorder),
                     ),
                     child: Icon(
-                      Icons.calendar_month_rounded,
+                      FontAwesomeIcons.calendar,
                       color: context.appColors.primaryColor,
                       size: 24.r,
                     ),
@@ -417,16 +418,16 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 ],
               ),
               SizedBox(height: 24.h),
-              _buildDetailRow(Icons.title_rounded, "Title", data[0].title),
+              _buildDetailRow(FontAwesomeIcons.heading, "Title", data[0].title),
               _buildDetailRow(
-                Icons.schedule_rounded,
+                FontAwesomeIcons.calendar,
                 "Time",
                 "${data[0].startTime != null ? DateFormat.jm().format(data[0].startTime!.toLocal()) : ''}",
               ),
               if (data[0].description != null &&
                   data[0].description!.isNotEmpty)
                 _buildDetailRow(
-                  Icons.notes_rounded,
+                  FontAwesomeIcons.noteSticky,
                   "Description",
                   data[0].description!,
                 ),
@@ -459,25 +460,25 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           ),
                           SizedBox(height: 16.h),
                           _buildDetailRow(
-                            Icons.assignment_rounded,
+                            FontAwesomeIcons.fileLines,
                             "ORIGINAL TITLE",
                             req.title ?? "N/A",
                           ),
                           _buildDetailRow(
-                            Icons.category_rounded,
+                            FontAwesomeIcons.list,
                             "SERVICE",
                             req.service?.name ?? "N/A",
                           ),
                           if (req.price != null)
                             _buildDetailRow(
-                              Icons.payments_rounded,
+                              FontAwesomeIcons.creditCard,
                               "REQUEST PRICE",
                               "\$${req.price}",
                             ),
                           if (req.description != null &&
                               req.description!.isNotEmpty)
                             _buildDetailRow(
-                              Icons.description_rounded,
+                              FontAwesomeIcons.fileLines,
                               "REQ. DESCRIPTION",
                               req.description!,
                             ),
@@ -515,7 +516,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 }
                               },
                               icon: Icon(
-                                Icons.open_in_new_rounded,
+                                FontAwesomeIcons.arrowUpRightFromSquare,
                                 size: 18.r,
                                 color: context.appColors.primaryColor,
                               ),
@@ -580,7 +581,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                     }
                   }
                 },
-                icon: Icons.location_on_rounded,
+                icon: FontAwesomeIcons.locationDot,
                 label: "TRACK PROVIDER",
                 isPrimary: true,
                 color: context.appColors.successColor.withAlpha(40),
@@ -594,7 +595,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   Get.back();
                   _handleAddToCalendar(data[0].event.toString());
                 },
-                icon: Icons.event_available,
+                icon: FontAwesomeIcons.calendarCheck,
                 label: "ADD TO CALENDAR",
                 isPrimary: true,
                 color: context.appColors.primaryColor.withAlpha(40),
@@ -706,3 +707,5 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     );
   }
 }
+
+

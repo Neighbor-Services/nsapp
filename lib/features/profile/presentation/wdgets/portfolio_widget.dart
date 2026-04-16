@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/constants/app_colors.dart';
@@ -101,7 +102,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.payments_rounded, color: appWhiteColor),
+                                  FaIcon(FontAwesomeIcons.creditCard, color: appWhiteColor),
                                   SizedBox(width: 8),
                                   CustomTextWidget(
                                     text: "PREFERRED PAYMENT METHOD",
@@ -131,7 +132,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.location_on, color: appWhiteColor),
+                                  FaIcon(FontAwesomeIcons.locationDot, color: appWhiteColor),
                                   SizedBox(width: 8),
                                   CustomTextWidget(
                                     text: "COMPANY ADDRESS",
@@ -159,7 +160,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.work, color: appWhiteColor),
+                                  FaIcon(FontAwesomeIcons.briefcase, color: appWhiteColor),
                                   SizedBox(width: 8),
                                   CustomTextWidget(
                                     text: "COMPANY SPECIFICATION",
@@ -189,7 +190,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(Icons.description, color: appWhiteColor),
+                                  FaIcon(FontAwesomeIcons.fileLines, color: appWhiteColor),
                                   SizedBox(width: 8),
                                   CustomTextWidget(
                                     text: "COMPANY DESCRIPTION",
@@ -270,3 +271,5 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     );
   }
 }
+
+

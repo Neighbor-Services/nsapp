@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -144,7 +145,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   context.read<SeekerBloc>().add(SeekerBackPressedEvent());
                 }
               },
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const FaIcon(FontAwesomeIcons.chevronLeft),
               color: iconColor,
               iconSize: 20.r,
             ),
@@ -222,13 +223,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildIconButton(
-          Icons.videocam_rounded,
+          FontAwesomeIcons.video,
           () => _handleCall(isVideo: true),
           iconColor,
         ),
         SizedBox(width: 8.w),
         _buildIconButton(
-          Icons.call_rounded,
+          FontAwesomeIcons.phone,
           () => _handleCall(isVideo: false),
           iconColor,
         ),
@@ -272,7 +273,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.chat_bubble_outline_rounded,
+                  FontAwesomeIcons.comment,
                   size: 64.r,
                   color: iconColor,
                 ),
@@ -498,13 +499,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildOptionButton(Icons.camera_alt_rounded, "Camera", () {
+                _buildOptionButton(FontAwesomeIcons.camera, "Camera", () {
                   Get.back();
                   context.read<MessageBloc>().add(
                     ChooseMessageImageFromCameraEvent(),
                   );
                 }, isDark),
-                _buildOptionButton(Icons.photo_library_rounded, "Gallery", () {
+                _buildOptionButton(FontAwesomeIcons.images, "Gallery", () {
                   Get.back();
                   context.read<MessageBloc>().add(
                     ChooseMessageImageFromGalleyEvent(),
@@ -616,7 +617,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 ),
                 SizedBox(height: 24.h),
                 _buildPickerRow(
-                  Icons.calendar_month_rounded,
+                  FontAwesomeIcons.calendar,
                   "Date",
                   DateFormat("EEEE, MMM dd").format(selectedDate),
                   () async {
@@ -634,7 +635,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 ),
                 SizedBox(height: 16.h),
                 _buildPickerRow(
-                  Icons.access_time_rounded,
+                  FontAwesomeIcons.clock,
                   "Start Time",
                   startTime.format(context),
                   () async {
@@ -726,7 +727,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               ],
             ),
             const Spacer(),
-            Icon(Icons.chevron_right_rounded, color: textColor.withAlpha(100)),
+            FaIcon(FontAwesomeIcons.chevronRight, color: textColor.withAlpha(100)),
           ],
         ),
       ),
@@ -769,3 +770,5 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     }
   }
 }
+
+

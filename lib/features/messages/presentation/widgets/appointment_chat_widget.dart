@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -124,7 +125,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
               controller: messageController,
               hintText: 'Add a message (optional)',
               suffixIcon: IconButton(
-                icon: Icon(Icons.send_rounded, color: context.appColors.secondaryColor),
+                icon: FaIcon(FontAwesomeIcons.paperPlane, color: context.appColors.secondaryColor),
                 onPressed: () async {
                   if (appointmentStartTime == null ||
                       appointmentDate == null) {
@@ -161,3 +162,4 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
     );
   }
 }
+

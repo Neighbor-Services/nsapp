@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -153,7 +154,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                         hintText: "Enter service name",
                                         label: "Specify Service",
                                         allCapsLabel: true,
-                                        prefixIcon: Icons.category_rounded,
+                                        prefixIcon: FontAwesomeIcons.list,
                                         validator: (val) => val!.isEmpty
                                             ? "Service is required"
                                             : (containSpecial(val)
@@ -166,7 +167,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                       controller: titleTextController,
                                       hintText: "What do you need help with?",
                                       label: "Request Title",
-                                      prefixIcon: Icons.title_rounded,
+                                      prefixIcon: FontAwesomeIcons.heading,
                                       validator: (val) => val!.isEmpty
                                           ? "Title is required"
                                           : (containSpecial(val)
@@ -183,7 +184,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                       hintText:
                                           "Describe your request in detail...",
                                       label: "Description",
-                                      prefixIcon: Icons.description_rounded,
+                                      prefixIcon: FontAwesomeIcons.fileLines,
                                       isMultiLine: true,
                                       validator: (val) => val!.isEmpty
                                           ? "Description is required"
@@ -194,7 +195,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                     SizedBox(height: 28.h),
                                     SolidButton(
                                       label: "CREATE REQUEST",
-                                      icon: Icons.send_rounded,
+                                      icon: FontAwesomeIcons.paperPlane,
                                       onPressed: () => _submitRequest(context),
                                     ),
                                   ],
@@ -293,7 +294,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             child: Row(
               children: [
                 Icon(
-                  Icons.category_rounded,
+                  FontAwesomeIcons.list,
                   color: context.appColors.glassBorder,
                   size: 20.r,
                 ),
@@ -310,7 +311,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                   ),
                 ),
                 Icon(
-                  Icons.arrow_drop_down_rounded,
+                  FontAwesomeIcons.chevronDown,
                   color: context.appColors.primaryColor,
                 ),
               ],
@@ -331,7 +332,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             hintText: "Set your location",
             label: "Location",
             allCapsLabel: true,
-            prefixIcon: Icons.location_on_rounded,
+            prefixIcon: FontAwesomeIcons.locationDot,
             validator: (val) => val!.isEmpty ? "Location is required" : null,
           ),
         ),
@@ -345,7 +346,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               color: context.appColors.primaryColor,
               borderRadius: BorderRadius.circular(16.r),
             ),
-            child: Icon(Icons.my_location_rounded, color: context.appColors.cardBackground),
+            child: FaIcon(FontAwesomeIcons.locationCrosshairs, color: context.appColors.cardBackground),
           ),
         ),
       ],
@@ -358,7 +359,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
       hintText: "When do you need this?",
       label: "Schedule",
       allCapsLabel: true,
-      prefixIcon: Icons.calendar_today_rounded,
+      prefixIcon: FontAwesomeIcons.calendar,
       readOnly: true,
       onTap: () async {
         DateTime? date = await showDatePicker(
@@ -394,7 +395,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 time.minute,
               );
               scheduledTimeController.text = DateFormat(
-                "MMM dd, yyyy • h:mm a",
+                "MMM dd, yyyy â€¢ h:mm a",
               ).format(selectedScheduledTime!);
             });
           }
@@ -451,7 +452,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
-                  Icons.location_on_rounded,
+                  FontAwesomeIcons.locationDot,
                   color: context.appColors.primaryColor,
                 ),
               ),
@@ -480,7 +481,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                   color: context.appColors.successColor.withAlpha(20),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.map_rounded, color: context.appColors.successColor),
+                child: FaIcon(FontAwesomeIcons.map, color: context.appColors.successColor),
               ),
               title: Text(
                 "Choose From Map",
@@ -519,7 +520,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.add_photo_alternate_rounded,
+                    FontAwesomeIcons.image,
                     size: 40.r,
                     color: context.appColors.hintTextColor,
                   ),
@@ -557,7 +558,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.close,
+                          FontAwesomeIcons.xmark,
                           color: context.appColors.primaryColor,
                           size: 18.r,
                         ),
@@ -598,7 +599,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               onTap: () =>
                   context.read<SeekerBloc>().add(SelectImageFromGalleryEvent()),
               leading: Icon(
-                Icons.photo_library_rounded,
+                FontAwesomeIcons.images,
                 color: context.appColors.primaryColor,
               ),
               title: Text(
@@ -609,7 +610,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             ListTile(
               onTap: () =>
                   context.read<SeekerBloc>().add(SelectImageFromCameraEvent()),
-              leading: Icon(Icons.camera_alt_rounded, color: context.appColors.primaryColor),
+              leading: FaIcon(FontAwesomeIcons.camera, color: context.appColors.primaryColor),
               title: Text(
                 "Take a Photo",
                 style: TextStyle(color: context.appColors.primaryTextColor),
@@ -662,3 +663,5 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     }
   }
 }
+
+

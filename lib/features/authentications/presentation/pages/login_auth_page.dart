@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -172,7 +173,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         label: "EMAIL",
                                         allCapsLabel: true,
                                         hintText: "Enter your email",
-                                        prefixIcon: Icons.email_rounded,
+                                        prefixIcon: FontAwesomeIcons.envelope,
                                         keyboardType: TextInputType.emailAddress,
                                         validator: (val) {
                                           if (val!.isEmpty) {
@@ -190,7 +191,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         label: "PASSWORD",
                                         allCapsLabel: true,
                                         hintText: "Enter your password",
-                                        prefixIcon: Icons.lock_rounded,
+                                        prefixIcon: FontAwesomeIcons.lock,
                                         obscureText: true,
                                         validator: (val) {
                                           if (val!.isEmpty) {
@@ -236,7 +237,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           child: Row(
                                             children: [
                                               Icon(
-                                                Icons.error_outline_rounded,
+                                                FontAwesomeIcons.circleExclamation,
                                                 color: context.appColors.errorColor,
                                                 size: 20.r,
                                               ),
@@ -351,7 +352,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       SolidButton(
                                         label: "SIGN IN WITH APPLE",
                                         allCaps: true,
-                                        icon: Icons.apple,
+                                        icon: FontAwesomeIcons.apple,
                                         textColor: Colors.white,
                                         isPrimary: false,
                                         onPressed: () {
@@ -512,3 +513,5 @@ class _LoginAuthPageState extends State<LoginAuthPage>
     );
   }
 }
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -110,7 +111,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                 ),
                               ),
                               child: Icon(
-                                Icons.arrow_back_ios_new_rounded,
+                                FontAwesomeIcons.chevronLeft,
                                 color: isDark ? Colors.white : Colors.black,
                                 size: 18.r,
                               ),
@@ -151,7 +152,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                 ),
                               ),
                               child: Icon(
-                                Icons.password_rounded,
+                                FontAwesomeIcons.asterisk,
                                 size: 50.r,
                                 color: context.appColors.primaryColor,
                               ),
@@ -181,7 +182,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                       label: "Current Password",
                                       allCapsLabel: true,
                                       hintText: "Enter your current password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -199,7 +200,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                       label: "New Password",
                                       allCapsLabel: true,
                                       hintText: "Enter new password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -217,7 +218,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                       label: "Confirm Password",
                                       allCapsLabel: true,
                                       hintText: "Confirm new password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -272,3 +273,4 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
     );
   }
 }
+

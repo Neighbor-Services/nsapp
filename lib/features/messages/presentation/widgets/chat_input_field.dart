@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -39,13 +40,13 @@ class ChatInputField extends StatelessWidget {
         SizedBox(width: 8.w),
         IconButton(
           onPressed: onImagePick,
-          icon: const Icon(Icons.add_photo_alternate_rounded),
+          icon: const FaIcon(FontAwesomeIcons.image),
           color: iconColor,
           tooltip: "Send Image",
         ),
         IconButton(
           onPressed: onSchedule,
-          icon: const Icon(Icons.calendar_today_rounded),
+          icon: const FaIcon(FontAwesomeIcons.calendar),
           color: iconColor,
           tooltip: "Schedule Appointment",
         ),
@@ -59,7 +60,7 @@ class ChatInputField extends StatelessWidget {
              
             ),
             child: Icon(
-              Icons.send_rounded,
+              FontAwesomeIcons.paperPlane,
               color: Colors.white,
               size: 20.r,
             ),
@@ -69,3 +70,5 @@ class ChatInputField extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -38,7 +39,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                 controller: locationTextController,
                 hintText: "Search for a location...",
                 label: "Search Location",
-                prefixIcon: Icons.search_rounded,
+                prefixIcon: FontAwesomeIcons.magnifyingGlass,
                 onChanged: (val) {
                   context.read<SharedBloc>().add(SearchPlacesEvent(input: val));
                 },
@@ -52,7 +53,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.map_rounded,
+                            FontAwesomeIcons.map,
                             size: 60.r,
                             color: context.appColors.glassBorder,
                           ),
@@ -123,7 +124,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                       
                                     ),
                                     child:  Icon(
-                                      Icons.location_on_rounded,
+                                      FontAwesomeIcons.locationDot,
                                       color: context.appColors.primaryColor,
                                       size: 20.r,
                                     ),
@@ -170,3 +171,5 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
     );
   }
 }
+
+

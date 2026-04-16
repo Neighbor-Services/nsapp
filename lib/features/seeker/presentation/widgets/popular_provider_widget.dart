@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -167,7 +168,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                             if (profile.isIdentityVerified ==
                                                 true)
                                                Icon(
-                                                Icons.verified_rounded,
+                                                FontAwesomeIcons.circleCheck,
                                                 color: context.appColors.primaryColor,
                                                 size: 16.r,
                                               ),
@@ -226,7 +227,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.star_rounded, color: Colors.yellow, size: 14.r),
+          FaIcon(FontAwesomeIcons.star, color: Colors.yellow, size: 14.r),
           SizedBox(width: 4.w),
           Text(
             double.parse(rating).toStringAsFixed(1),
@@ -268,7 +269,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           shape: BoxShape.circle,
         ),
         child: Icon(
-          isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+          isFavorite ? FontAwesomeIcons.heart : FontAwesomeIcons.heart,
           color: isFavorite ? context.appColors.errorColor : Colors.white,
           size: 18.r,
         ),
@@ -276,3 +277,5 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
     );
   }
 }
+
+

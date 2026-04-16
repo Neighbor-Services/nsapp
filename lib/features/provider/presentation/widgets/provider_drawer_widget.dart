@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -52,7 +53,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                   children: [
                     _buildDrawerItem(
                       context,
-                      icon: Icons.home_rounded,
+                      icon: FontAwesomeIcons.house,
                       title: "Home",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -69,7 +70,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                     ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.check_circle_outline_rounded,
+                      icon: FontAwesomeIcons.circleCheck,
                       title: "My Jobs",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -85,7 +86,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                     ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.view_list_rounded,
+                      icon: FontAwesomeIcons.listUl,
                       title: "Appointments",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -101,7 +102,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                     ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.subscriptions_rounded,
+                      icon: FontAwesomeIcons.video,
                       title: "Subscription",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -119,7 +120,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                         'ON_SITE')
                       _buildDrawerItem(
                         context,
-                        icon: Icons.account_balance_wallet_rounded,
+                        icon: FontAwesomeIcons.wallet,
                         title: "Wallet",
                         onTap: () {
                           context.read<ProviderBloc>().add(
@@ -135,7 +136,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                       ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.gavel_rounded,
+                      icon: FontAwesomeIcons.gavel,
                       title: "Disputes",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -157,7 +158,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                     ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.info_outline_rounded,
+                      icon: FontAwesomeIcons.circleInfo,
                       title: "Portfolio",
                       onTap: () {
                         context.read<ProfileBloc>().add(
@@ -176,7 +177,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                     ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.person_outline_rounded,
+                      icon: FontAwesomeIcons.user,
                       title: "About",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -192,7 +193,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                     ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.settings_rounded,
+                      icon: FontAwesomeIcons.gear,
                       title: "Settings",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -208,7 +209,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                     ),
                     _buildDrawerItem(
                       context,
-                      icon: Icons.report_problem_rounded,
+                      icon: FontAwesomeIcons.triangleExclamation,
                       title: "Report Issue",
                       onTap: () {
                         context.read<ProviderBloc>().add(
@@ -266,7 +267,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              _buildIconButton(context, Icons.edit_note_rounded, () {
+              _buildIconButton(context, FontAwesomeIcons.penToSquare, () {
                 Navigator.pop(context);
                 Get.toNamed("/edit-profile");
               }, isDark),
@@ -299,7 +300,7 @@ class ProviderDrawerWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.engineering_rounded,
+                  FontAwesomeIcons.helmetSafety,
                   size: 12.r,
                   color: context.appColors.primaryColor,
                 ),
@@ -431,7 +432,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.logout_rounded,
+                          FontAwesomeIcons.rightFromBracket,
                           size: 32.r,
                           color: context.appColors.errorColor,
                         ),
@@ -536,7 +537,7 @@ class ProviderDrawerWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.logout_rounded, color: context.appColors.errorColor, size: 20.r),
+            FaIcon(FontAwesomeIcons.rightFromBracket, color: context.appColors.errorColor, size: 20.r),
             SizedBox(width: 12.w),
             Text(
               "Logout",
@@ -552,3 +553,5 @@ class ProviderDrawerWidget extends StatelessWidget {
     );
   }
 }
+
+

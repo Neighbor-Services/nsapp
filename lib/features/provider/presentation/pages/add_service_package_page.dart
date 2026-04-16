@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/service_package.dart';
@@ -72,7 +73,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,
             ),
@@ -121,14 +122,14 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                       SolidTextField(
                         controller: _nameController,
                         hintText: "Package Name (e.g., Basic)",
-                        prefixIcon: Icons.label_outline_rounded,
+                        prefixIcon: FontAwesomeIcons.tag,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
                       SizedBox(height: 16.h),
                       SolidTextField(
                         controller: _priceController,
                         hintText: "Price (\u0024)",
-                        prefixIcon: Icons.attach_money_rounded,
+                        prefixIcon: FontAwesomeIcons.dollarSign,
                         keyboardType: TextInputType.number,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
@@ -136,7 +137,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                       SolidTextField(
                         controller: _descriptionController,
                         hintText: "Description",
-                        prefixIcon: Icons.description_outlined,
+                        prefixIcon: FontAwesomeIcons.fileLines,
                         isMultiLine: true,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
@@ -144,14 +145,14 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                       SolidTextField(
                         controller: _revisionsController,
                         hintText: "Revisions (Optional)",
-                        prefixIcon: Icons.repeat_rounded,
+                        prefixIcon: FontAwesomeIcons.repeat,
                         keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 16.h),
                       SolidTextField(
                         controller: _deliveryTimeController,
                         hintText: "Delivery Time (Days)",
-                        prefixIcon: Icons.timer_outlined,
+                        prefixIcon: FontAwesomeIcons.clock,
                         keyboardType: TextInputType.number,
                         validator: (val) => val!.isEmpty ? "Required" : null,
                       ),
@@ -173,3 +174,5 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
     );
   }
 }
+
+

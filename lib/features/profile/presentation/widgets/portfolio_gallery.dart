@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class PortfolioGallery extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.collections_rounded, color: titleColor, size: 20.r),
+                FaIcon(FontAwesomeIcons.images, color: titleColor, size: 20.r),
                 SizedBox(width: 12.w),
                 CustomTextWidget(
                   text: "Portfolio",
@@ -67,7 +68,7 @@ class PortfolioGallery extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.add_a_photo_rounded,
+                        FontAwesomeIcons.camera,
                         color: context.appColors.secondaryColor,
                         size: 16.r,
                       ),
@@ -94,7 +95,7 @@ class PortfolioGallery extends StatelessWidget {
             child: Column(
               children: [
                 Icon(
-                  Icons.photo_library_outlined,
+                  FontAwesomeIcons.images,
                   color: emptyIconColor,
                   size: 48.r,
                 ),
@@ -189,7 +190,7 @@ class PortfolioGallery extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                        Icon(
-                                        Icons.auto_awesome,
+                                        FontAwesomeIcons.wandMagicSparkles,
                                         size: 12.r,
                                         color: context.appColors.infoColor,
                                       ),
@@ -305,7 +306,7 @@ class PortfolioGallery extends StatelessWidget {
                               ),
                             ),
                             child: Icon(
-                              Icons.close_rounded,
+                              FontAwesomeIcons.xmark,
                               color: Colors.white,
                               size: 20.r,
                             ),
@@ -320,7 +321,7 @@ class PortfolioGallery extends StatelessWidget {
                    Row(
                     children: [
                       Icon(
-                        Icons.auto_awesome,
+                        FontAwesomeIcons.wandMagicSparkles,
                         color: context.appColors.infoColor,
                         size: 16.r,
                       ),
@@ -375,7 +376,7 @@ class PortfolioGallery extends StatelessWidget {
                 if (item.description != null) ...[
                   Row(
                     children: [
-                      Icon(Icons.notes_rounded, color: labelColor, size: 16.r),
+                      FaIcon(FontAwesomeIcons.noteSticky, color: labelColor, size: 16.r),
                       SizedBox(width: 8.w),
                       CustomTextWidget(
                         text: "AI DESCRIPTION",
@@ -416,3 +417,4 @@ class PortfolioGallery extends StatelessWidget {
     );
   }
 }
+

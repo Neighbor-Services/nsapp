@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
@@ -188,7 +189,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   ],
                                 ),
                                 child: Icon(
-                                  Icons.camera_alt_rounded,
+                                  FontAwesomeIcons.camera,
                                   color: Colors.white,
                                   size: 20.r,
                                 ),
@@ -220,7 +221,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                 controller: nameTextController,
                                 hintText: "Enter full name",
                                 label: "Full Name",
-                                prefixIcon: Icons.person_outline_rounded,
+                                prefixIcon: FontAwesomeIcons.user,
                                 validator: (val) {
                                   if (val!.isEmpty) {
                                     return "Name is required";
@@ -254,7 +255,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                 controller: dateOfBirthTextController,
                                 hintText: "Select birth date",
                                 label: "Date Of Birth",
-                                prefixIcon: Icons.calendar_today_outlined,
+                                prefixIcon: FontAwesomeIcons.calendar,
                                 readOnly: true,
                                 onTap: () => context.read<ProfileBloc>().add(
                                   SelectDateOfBirthEvent(context: context),
@@ -302,7 +303,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                       controller: locController,
                                       hintText: "Location address",
                                       label: "Location",
-                                      prefixIcon: Icons.location_on_outlined,
+                                      prefixIcon: FontAwesomeIcons.locationDot,
                                       validator: (val) {
                                         return null;
                                       },
@@ -329,7 +330,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                             
                                           ),
                                           child:  Icon(
-                                            Icons.my_location_rounded,
+                                            FontAwesomeIcons.locationCrosshairs,
                                             color: context.appColors.primaryColor,
                                           ),
                                         ),
@@ -347,7 +348,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                       controller: contactTextController,
                                       hintText: "023456789",
                                       label: "Phone Number",
-                                      prefixIcon: Icons.phone_outlined,
+                                      prefixIcon: FontAwesomeIcons.phone,
                                       keyboardType: TextInputType.phone,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -414,7 +415,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                     child: Row(
                                       children: [
                                         Icon(
-                                          Icons.work_outline_rounded,
+                                          FontAwesomeIcons.briefcase,
                                           color: context.appColors.primaryColor.withAlpha(
                                             200,
                                           ),
@@ -433,7 +434,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                           ),
                                         ),
                                         Icon(
-                                          Icons.unfold_more_rounded,
+                                          FontAwesomeIcons.upDown,
                                           color:
                                               context.appColors.secondaryTextColor,
                                           size: 20.r,
@@ -448,7 +449,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                     controller: serviceTextController,
                                     hintText: "Enter your custom service",
                                     label: "Custom Service",
-                                    prefixIcon: Icons.add_business_outlined,
+                                    prefixIcon: FontAwesomeIcons.buildingCircleCheck,
                                   ),
                                   ],
                                   SizedBox(height: 24.h),
@@ -610,7 +611,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               ),
             ),
             _buildSheetItem(
-              icon: Icons.photo_library_rounded,
+              icon: FontAwesomeIcons.images,
               label: "Choose from Gallery",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromGalleryEvent());
@@ -619,7 +620,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
             ),
             SizedBox(height: 16.h),
             _buildSheetItem(
-              icon: Icons.camera_alt_rounded,
+              icon: FontAwesomeIcons.camera,
               label: "Take a Photo",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromCameraEvent());
@@ -660,7 +661,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               ),
             ),
             _buildSheetItem(
-              icon: Icons.my_location_rounded,
+              icon: FontAwesomeIcons.locationCrosshairs,
               label: "Current Location",
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
@@ -687,7 +688,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
             ),
             SizedBox(height: 16.h),
             _buildSheetItem(
-              icon: Icons.map_rounded,
+              icon: FontAwesomeIcons.map,
               label: "Pick from Map",
               onTap: () {
                 context.read<s.SeekerBloc>().add(
@@ -738,7 +739,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               ),
             ),
             const Spacer(),
-            Icon(Icons.arrow_forward_ios_rounded, color: context.appColors.primaryColor, size: 16.r),
+            FaIcon(FontAwesomeIcons.chevronRight, color: context.appColors.primaryColor, size: 16.r),
           ],
         ),
       ),
@@ -760,3 +761,5 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
     );
   }
 }
+
+

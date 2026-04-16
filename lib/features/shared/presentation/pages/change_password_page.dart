@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -73,7 +74,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                 ),
                               ),
                               child: Icon(
-                                Icons.arrow_back_ios_new_rounded,
+                                FontAwesomeIcons.chevronLeft,
                                 color: textColor,
                                 size: 18.r,
                               ),
@@ -137,7 +138,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       controller: emailTextController,
                                       hintText: "Enter your email",
                                       label: "Email Address",
-                                      prefixIcon: Icons.email_outlined,
+                                      prefixIcon: FontAwesomeIcons.envelope,
                                       keyboardType: TextInputType.emailAddress,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -197,3 +198,5 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     );
   }
 }
+
+

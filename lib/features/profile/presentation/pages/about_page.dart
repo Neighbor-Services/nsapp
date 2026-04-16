@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:nsapp/core/core.dart';
@@ -110,7 +111,7 @@ class _AboutPageState extends State<AboutPage>
                                 ),
                               ),
                               child: Icon(
-                                Icons.arrow_back_ios_new_rounded,
+                                FontAwesomeIcons.chevronLeft,
                                 color: context.appColors.primaryTextColor,
                                 size: 16.r,
                               ),
@@ -131,7 +132,7 @@ class _AboutPageState extends State<AboutPage>
                                     borderRadius: BorderRadius.circular(20.r),
                                   ),
                                   child: Icon(
-                                    Icons.photo_library_outlined,
+                                    FontAwesomeIcons.images,
                                     size: 60.r,
                                     color: context.appColors.primaryColor,
                                   ),
@@ -206,7 +207,7 @@ class _AboutPageState extends State<AboutPage>
                                                 0.0,
                                             itemBuilder: (context, index) =>
                                                 const Icon(
-                                                  Icons.star,
+                                                  FontAwesomeIcons.star,
                                                   color: Colors.amber,
                                                 ),
                                             itemCount: 5,
@@ -235,7 +236,7 @@ class _AboutPageState extends State<AboutPage>
                               Expanded(
                                 child: _buildActionBtn(
                                   label: "CHAT",
-                                  icon: Icons.chat_bubble_outline_rounded,
+                                  icon: FontAwesomeIcons.comment,
                                   color: context.appColors.primaryColor,
                                   onTap: () {
                                     if (profile.user != null) {
@@ -273,7 +274,7 @@ class _AboutPageState extends State<AboutPage>
                               (!DashboardState.isProvider) ? Expanded(
                                 child: _buildActionBtn(
                                   label: "REQUEST SERVICE",
-                                  icon: Icons.assignment_outlined,
+                                  icon: FontAwesomeIcons.fileLines,
                                   color: Colors.transparent,
                                   isBorder: true,
                                   onTap: () {
@@ -366,7 +367,7 @@ class _AboutPageState extends State<AboutPage>
                     ),
                   ),
                   icon: Icon(
-                    Icons.rate_review_rounded,
+                    FontAwesomeIcons.penToSquare,
                     color: context.appColors.primaryColor,
                   ),
                   backgroundColor: context.appColors.primaryColor.withAlpha(40),
@@ -456,3 +457,5 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return false;
   }
 }
+
+

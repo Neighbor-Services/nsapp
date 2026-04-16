@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/performance_badge.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -46,15 +47,15 @@ class PerformanceBadgeWidget extends StatelessWidget {
   IconData _getBadgeIcon(String? type) {
     switch (type) {
       case 'bolt':
-        return Icons.bolt_rounded;
+        return FontAwesomeIcons.bolt;
       case 'star':
-        return Icons.stars_rounded;
+        return FontAwesomeIcons.star;
       case 'shield':
-        return Icons.verified_user_rounded;
+        return FontAwesomeIcons.userShield;
       case 'workspace_premium':
-        return Icons.workspace_premium_rounded;
+        return FontAwesomeIcons.crown;
       default:
-        return Icons.military_tech_rounded;
+        return FontAwesomeIcons.medal;
     }
   }
 
@@ -73,3 +74,4 @@ class PerformanceBadgeWidget extends StatelessWidget {
     }
   }
 }
+

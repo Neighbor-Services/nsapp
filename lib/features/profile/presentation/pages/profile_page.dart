@@ -1,3 +1,4 @@
+﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -131,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage>
                                           ),
                                         ),
                                         child: Icon(
-                                          Icons.arrow_back_ios_new_rounded,
+                                          FontAwesomeIcons.chevronLeft,
                                           color: context.appColors.primaryTextColor,
                                           size: 20.r,
                                         ),
@@ -150,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage>
                                           ),
                                         ),
                                         child: Icon(
-                                          Icons.edit_rounded,
+                                          FontAwesomeIcons.penToSquare,
                                           color: context.appColors.primaryTextColor,
                                           size: 20.r,
                                         ),
@@ -248,7 +249,7 @@ class _ProfilePageState extends State<ProfilePage>
             if (profile.isIdentityVerified == true) ...[
               SizedBox(width: 8.w),
                Icon(
-                Icons.verified_rounded,
+                FontAwesomeIcons.circleCheck,
                 color: context.appColors.infoColor,
                 size: 26.r,
               ),
@@ -282,8 +283,8 @@ class _ProfilePageState extends State<ProfilePage>
             children: [
               Icon(
                 isProvider
-                    ? Icons.business_center_rounded
-                    : Icons.person_rounded,
+                    ? FontAwesomeIcons.briefcase
+                    : FontAwesomeIcons.user,
                 size: 14.r,
                 color: isProvider
                     ? context.appColors.primaryColor
@@ -342,52 +343,52 @@ class _ProfilePageState extends State<ProfilePage>
           _buildInfoRow(
             "Email",
             profile.user?.email ?? "Not set",
-            Icons.email_rounded,
+            FontAwesomeIcons.envelope,
           ),
           _buildInfoRow(
             "Country",
             profile.country ?? "Not set",
-            Icons.public_rounded,
+            FontAwesomeIcons.globe,
           ),
           _buildInfoRow(
             "Phone",
             "(${profile.countryCode ?? ""}) ${profile.phone ?? ""}",
-            Icons.phone_rounded,
+            FontAwesomeIcons.phone,
           ),
           
           _buildInfoRow(
             "Address",
             profile.address ?? "Not set",
-            Icons.location_on_rounded,
+            FontAwesomeIcons.locationDot,
           ),
           _buildInfoRow(
             "Gender",
             profile.gender ?? "Not set",
-            Icons.person_rounded,
+            FontAwesomeIcons.user,
           ),
-          _buildInfoRow("State", profile.state ?? "Not set", Icons.map_rounded),
+          _buildInfoRow("State", profile.state ?? "Not set", FontAwesomeIcons.map),
           _buildInfoRow(
             "Service",
             getServiceName(profile.service ?? ""),
-            Icons.work_rounded,
+            FontAwesomeIcons.briefcase,
           ),
           _buildInfoRow(
             "Date of Birth",
             profile.dateOfBirth != null
                 ? DateFormat("dd/MM/yyyy").format(profile.dateOfBirth!)
                 : "Not set",
-            Icons.cake_rounded,
+            FontAwesomeIcons.cakeCandles,
           ),
           _buildInfoRow(
             "Zipcode",
             profile.zipCode ?? "Not set",
-            Icons.pin_drop_rounded,
+            FontAwesomeIcons.mapPin,
           ),
           if (Helpers.isProvider(profile.userType)) ...[
             _buildInfoRow(
               "Payment Preference",
               profile.preferredPaymentMode ?? "BOTH",
-              Icons.payments_rounded,
+              FontAwesomeIcons.creditCard,
             ),
             InkWell(
               onTap: () {
@@ -397,7 +398,7 @@ class _ProfilePageState extends State<ProfilePage>
               child: _buildInfoRow(
                 "Service Packages",
                 "Add New Package",
-                Icons.inventory_2_rounded,
+                FontAwesomeIcons.boxOpen,
               ),
             ),
             if (Helpers.isProvider(profile.userType) &&
@@ -408,7 +409,7 @@ class _ProfilePageState extends State<ProfilePage>
                 child: _buildInfoRow(
                   "Verification",
                   "Verify Identity",
-                  Icons.verified_user_rounded,
+                  FontAwesomeIcons.userShield,
                 ),
               ),
             ],
@@ -484,3 +485,5 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
 }
+
+
