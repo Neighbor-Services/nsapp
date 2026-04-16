@@ -46,14 +46,14 @@ class Responsive {
 
 extension ResponsiveSizeExtension on num {
   /// Responsive Width
-  double get w => this * Responsive.wScale;
+  double get w => this * 0.90; // Responsive.wScale;
 
   /// Responsive Height
-  double get h => this * Responsive.hScale;
+  double get h => this * 0.90; // Responsive.hScale;
 
   /// Responsive Font Size
-  double get sp => this * Responsive.textScale;
+  double get sp => this * 0.90; // Responsive.textScale;
 
   /// Responsive Radius
-  double get r => this * (Responsive.wScale < Responsive.hScale ? Responsive.wScale : Responsive.hScale);
+  double get r => this * 0.90; // (Responsive.wScale < Responsive.hScale ? Responsive.wScale : Responsive.hScale);
 }
