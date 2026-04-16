@@ -21,10 +21,10 @@ import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/core/constants/urls.dart';
+// import 'package:nsapp/core/constants/urls.dart';
 
-import 'package:nsapp/features/shared/presentation/pages/call_page.dart';
-import 'package:nsapp/core/services/consultation_service.dart';
+// import 'package:nsapp/features/shared/presentation/pages/call_page.dart';
+// import 'package:nsapp/core/services/consultation_service.dart';
 import 'package:nsapp/core/models/chat.dart';
 import '../widgets/chat_input_field.dart';
 import 'package:nsapp/core/core.dart';
@@ -216,34 +216,34 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildHeaderActions(BuildContext context) {
-    final iconColor = context.appColors.secondaryTextColor;
+  // Widget _buildHeaderActions(BuildContext context) {
+  //   final iconColor = context.appColors.secondaryTextColor;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildIconButton(
-          FontAwesomeIcons.video,
-          () => _handleCall(isVideo: true),
-          iconColor,
-        ),
-        SizedBox(width: 8.w),
-        _buildIconButton(
-          FontAwesomeIcons.phone,
-          () => _handleCall(isVideo: false),
-          iconColor,
-        ),
-      ],
-    );
-  }
+  //   return Row(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       _buildIconButton(
+  //         FontAwesomeIcons.video,
+  //         () => _handleCall(isVideo: true),
+  //         iconColor,
+  //       ),
+  //       SizedBox(width: 8.w),
+  //       _buildIconButton(
+  //         FontAwesomeIcons.phone,
+  //         () => _handleCall(isVideo: false),
+  //         iconColor,
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildIconButton(IconData icon, VoidCallback onTap, Color color) {
-    return IconButton(
-      onPressed: onTap,
-      icon: Icon(icon, color: context.appColors.primaryColor),
-      iconSize: 22.r,
-    );
-  }
+  // Widget _buildIconButton(IconData icon, VoidCallback onTap, Color color) {
+  //   return IconButton(
+  //     onPressed: onTap,
+  //     icon: Icon(icon, color: context.appColors.primaryColor),
+  //     iconSize: 22.r,
+  //   );
+  // }
 
   Widget _buildChatArea(BuildContext context, MessageState state) {
     final emptyTextColor = context.appColors.glassBorder;
@@ -395,54 +395,54 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _handleCall({required bool isVideo}) async {
-    final senderId = SuccessGetProfileState.profile.user?.id;
-    final receiverId = MessageReceiverState.profile.user?.id;
-    final snackBarBg = context.appColors.cardBackground;
-    final snackBarText = context.appColors.primaryTextColor;
+  // Future<void> _handleCall({required bool isVideo}) async {
+  //   final senderId = SuccessGetProfileState.profile.user?.id;
+  //   final receiverId = MessageReceiverState.profile.user?.id;
+  //   final snackBarBg = context.appColors.cardBackground;
+  //   final snackBarText = context.appColors.primaryTextColor;
 
-    if (senderId == null || receiverId == null) {
-      customAlert(context, AlertType.error, "User information missing");
-      return;
-    }
+  //   if (senderId == null || receiverId == null) {
+  //     customAlert(context, AlertType.error, "User information missing");
+  //     return;
+  //   }
 
-    final channelName = Helpers.createChatRoom(
-      sender: senderId,
-      receiver: receiverId,
-    );
+  //   final channelName = Helpers.createChatRoom(
+  //     sender: senderId,
+  //     receiver: receiverId,
+  //   );
 
-    Get.snackbar(
-      "Call Initiation",
-      "Joining ${isVideo ? 'Video' : 'Audio'} Call...",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: snackBarBg,
-      colorText: snackBarText,
-      duration: const Duration(seconds: 4),
-      margin: EdgeInsets.all(16.r),
-      borderRadius: 16.r,
-      mainButton: TextButton(
-        onPressed: () => Get.back(),
-        child: Text("Dismiss", style: TextStyle(color: snackBarText)),
-      ),
-    );
+  //   Get.snackbar(
+  //     "Call Initiation",
+  //     "Joining ${isVideo ? 'Video' : 'Audio'} Call...",
+  //     snackPosition: SnackPosition.BOTTOM,
+  //     backgroundColor: snackBarBg,
+  //     colorText: snackBarText,
+  //     duration: const Duration(seconds: 4),
+  //     margin: EdgeInsets.all(16.r),
+  //     borderRadius: 16.r,
+  //     mainButton: TextButton(
+  //       onPressed: () => Get.back(),
+  //       child: Text("Dismiss", style: TextStyle(color: snackBarText)),
+  //     ),
+  //   );
 
-    final tokenData = await ConsultationService.getRTCToken(
-      channelName: channelName,
-    );
+  //   final tokenData = await ConsultationService.getRTCToken(
+  //     channelName: channelName,
+  //   );
 
-    if (tokenData != null && tokenData['token'] != null) {
-      Get.to(
-        () => CallPage(
-          appId: tokenData['app_id'] ?? agoraAppId,
-          token: tokenData['token'],
-          channelName: channelName,
-          uid: DashboardState.isProvider ? 1 : 0,
-        ),
-      );
-    } else {
-      customAlert(context, AlertType.error, "Could not initiate call");
-    }
-  }
+  //   if (tokenData != null && tokenData['token'] != null) {
+  //     Get.to(
+  //       () => CallPage(
+  //         appId: tokenData['app_id'] ?? agoraAppId,
+  //         token: tokenData['token'],
+  //         channelName: channelName,
+  //         uid: DashboardState.isProvider ? 1 : 0,
+  //       ),
+  //     );
+  //   } else {
+  //     customAlert(context, AlertType.error, "Could not initiate call");
+  //   }
+  // }
 
   void _handleSendMessage() {
     final text = _messageController.text.trim();
