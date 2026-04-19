@@ -200,7 +200,7 @@ class PortfolioGallery extends StatelessWidget {
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 10.sp,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.bold,
                                           letterSpacing: 0.5,
                                         ),
                                       ),
@@ -330,7 +330,7 @@ class PortfolioGallery extends StatelessWidget {
                         text: "AI ANALYSIS TAGS",
                         color: context.appColors.infoColor,
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
                       ),
                     ],
@@ -382,7 +382,7 @@ class PortfolioGallery extends StatelessWidget {
                         text: "AI DESCRIPTION",
                         color: labelColor,
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
                       ),
                     ],
@@ -417,4 +417,6 @@ class PortfolioGallery extends StatelessWidget {
     );
   }
 }
+
+
 

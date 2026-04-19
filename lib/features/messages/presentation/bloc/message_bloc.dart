@@ -14,6 +14,8 @@ import 'package:nsapp/features/messages/domain/usecase/get_my_messages_use_case.
 import 'package:nsapp/features/messages/domain/usecase/reload_message_receiver_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/set_seen_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/update_message_use_case.dart';
+import 'package:nsapp/core/di/injection_container.dart';
+import 'package:nsapp/core/services/hive_service.dart';
 import 'package:web_socket_channel/io.dart';
 import '../../../../core/initialize/init.dart';
 
@@ -140,11 +142,25 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       emit(WithImageState());
     });
     on<GetMessagesEvent>((event, emit) async {
+      try {
+        final cached = sl<HiveService>()
+            .getBox(HiveService.messageBox)
+            .get('messages_${event.receiver}');
+        if (cached != null) {
+          SuccessGetMessageState.messages = Future.value(List<ChatMessage>.from(cached));
+          emit(SuccessGetMessageState());
+        }
+      } catch (e) {
+        // Ignore cache read errors at this stage
+      }
+
       final results = await getMessagesUseCase(event.receiver);
       results.fold(
         (l) {
-          SuccessGetMessageState.messages = Future.value([]);
-          emit(FailureGetMessageState());
+          if (SuccessGetMessageState.messages == null) {
+             SuccessGetMessageState.messages = Future.value([]);
+             emit(FailureGetMessageState());
+          }
         },
         (r) {
           SuccessGetMessageState.messages = Future.value(r);

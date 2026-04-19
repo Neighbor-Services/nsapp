@@ -57,7 +57,7 @@ class ProviderAllServicesPage extends StatelessWidget {
                             "SERVICE CATALOG",
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: context.appColors.primaryTextColor,
                               letterSpacing: 1.2,
                             ),
@@ -67,7 +67,7 @@ class ProviderAllServicesPage extends StatelessWidget {
                             "BROWSE ALL AVAILABLE SERVICE CATEGORIES",
                             style: TextStyle(
                               fontSize: 9.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: context.appColors.secondaryTextColor.withAlpha(150),
                               letterSpacing: 0.8,
                             ),
@@ -191,7 +191,7 @@ class ProviderAllServicesPage extends StatelessWidget {
                     (service.name ?? "Service").toUpperCase(),
                     style: TextStyle(
                       fontSize: 13.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: context.appColors.primaryTextColor,
                       height: 1.2,
                       letterSpacing: 0.5,
@@ -208,4 +208,6 @@ class ProviderAllServicesPage extends StatelessWidget {
     );
   }
 }
+
+
 

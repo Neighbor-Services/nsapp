@@ -113,7 +113,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               "YOU ARE ON THE WAY",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -122,7 +122,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               "YOUR LOCATION IS SHARED WITH THE SEEKER.",
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor.withAlpha(150),
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 fontSize: 9.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -151,4 +151,6 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
     );
   }
 }
+
+
 

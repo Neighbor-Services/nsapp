@@ -148,7 +148,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                   SizedBox(width: 12.w),
                                   CustomTextWidget(
                                     text: "PORTFOLIO",
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     fontSize: 18.sp,
                                     color:
                                         context.appColors.primaryBackground,
@@ -244,7 +244,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                   title,
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
                     letterSpacing: 0.5,
                   ),
@@ -273,5 +273,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     );
   }
 }
+
+
 
 

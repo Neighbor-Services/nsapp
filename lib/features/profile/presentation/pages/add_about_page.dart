@@ -188,7 +188,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
         SizedBox(height: 32.h),
         CustomTextWidget(
           text: "PROFESSIONAL PORTFOLIO",
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
           fontSize: 22.sp,
           color: textColor,
           letterSpacing: 1.5,
@@ -198,7 +198,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           text:
               "TELL THE WORLD ABOUT YOUR BUSINESS AND SHOWCASE YOUR BEST WORK.",
           fontSize: 10.sp,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
           color: secondaryTextColor,
           letterSpacing: 1.0,
         ),
@@ -215,7 +215,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
            CustomTextWidget(
             text: "BUSINESS DETAILS",
             fontSize: 12.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             color: context.appColors.secondaryColor,
             letterSpacing: 1.5,
           ),
@@ -308,7 +308,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                CustomTextWidget(
                 text: "SHOWCASE IMAGES",
                 fontSize: 12.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: context.appColors.secondaryColor,
                 letterSpacing: 1.5,
               ),
@@ -479,7 +479,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           "PUBLISH PORTFOLIO",
           style: TextStyle(
             fontSize: 16.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             letterSpacing: 1.1,
           ),
         ),
@@ -487,5 +487,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
     );
   }
 }
+
+
 
 

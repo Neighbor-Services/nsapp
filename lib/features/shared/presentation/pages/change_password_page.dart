@@ -84,7 +84,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             "CHANGE PASSWORD",
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 1.0,
                             ),
@@ -118,7 +118,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       "RESET PASSWORD",
                                       style: TextStyle(
                                         fontSize: 20.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         color: textColor,
                                         letterSpacing: 1.0,
                                       ),
@@ -197,5 +197,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     );
   }
 }
+
+
 
 

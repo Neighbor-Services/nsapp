@@ -225,7 +225,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           "NEW REQUEST",
           style: TextStyle(
             fontSize: 24.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.2,
           ),
@@ -235,7 +235,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           "TELL US WHAT SERVICE YOU NEED",
           style: TextStyle(
             fontSize: 10.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             color: context.appColors.secondaryTextColor,
             letterSpacing: 1.0,
           ),
@@ -253,7 +253,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           style: TextStyle(
             color: context.appColors.hintTextColor,
             fontSize: 10.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
           ),
         ),
@@ -663,5 +663,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     }
   }
 }
+
+
 
 

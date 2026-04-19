@@ -149,7 +149,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 style: TextStyle(
                   color: context.appColors.primaryTextColor,
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 2,
                 ),
               ),
@@ -160,7 +160,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
             "FIND THE BEST HELP IN SECONDS",
             style: TextStyle(
               fontSize: 18.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: context.appColors.primaryTextColor,
               height: 1.2,
               letterSpacing: 1.0,
@@ -204,7 +204,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 style: TextStyle(
                   color: context.appColors.hintTextColor,
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -238,7 +238,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
           title.toUpperCase(),
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             color: textColor,
             letterSpacing: 1.2,
           ),
@@ -250,7 +250,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
               "VIEW ALL",
               style: TextStyle(
                 color: textColor.withAlpha(180),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -333,7 +333,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                         (service.name ?? "SERVICE").toUpperCase(),
                         style: TextStyle(
                           fontSize: 14.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           color: textColor,
                           height: 1.2,
                           letterSpacing: 0.8,
@@ -417,7 +417,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                     .toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 15.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: textColor,
                                   letterSpacing: 0.5,
                                 ),
@@ -430,7 +430,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                     .toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 11.sp,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.bold,
                                   color: textColor.withAlpha(150),
                                   letterSpacing: 0.8,
                                 ),
@@ -451,4 +451,6 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     );
   }
 }
+
+
 

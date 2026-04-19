@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -7,6 +7,7 @@ import 'package:nsapp/features/authentications/presentation/bloc/authentication_
 import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/profile/presentation/pages/add_about_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_active_tasks_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -77,6 +78,22 @@ class ProviderDrawerWidget extends StatelessWidget {
                           NavigateProviderEvent(
                             page: NavigatorProviderState.page,
                             widget: ProviderAcceptedRequestPage(),
+                          ),
+                        );
+                        Navigator.pop(context);
+                      },
+                      isDark: isDark,
+                      textColor: textColor,
+                    ),
+                    _buildDrawerItem(
+                      context,
+                      icon: FontAwesomeIcons.briefcase,
+                      title: "Active Tasks",
+                      onTap: () {
+                        context.read<ProviderBloc>().add(
+                          NavigateProviderEvent(
+                            page: NavigatorProviderState.page,
+                            widget: const ProviderActiveTasksPage(),
                           ),
                         );
                         Navigator.pop(context);

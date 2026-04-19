@@ -139,7 +139,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                           "RESET PASSWORD",
                                           style: TextStyle(
                                             fontSize: 28.sp,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.bold,
                                             color: context.appColors.primaryTextColor,
                                             letterSpacing: 1.2,
                                           ),
@@ -231,5 +231,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
     );
   }
 }
+
+
 
 

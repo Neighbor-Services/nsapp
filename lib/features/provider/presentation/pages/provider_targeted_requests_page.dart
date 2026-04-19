@@ -104,7 +104,7 @@ class _ProviderTargetedRequestsPageState
           "DIRECT REQUESTS",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
@@ -327,7 +327,7 @@ class _ProviderTargetedRequestsPageState
                             "DIRECT",
                             style: TextStyle(
                               fontSize: 8.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: Colors.white,
                               letterSpacing: 0.5,
                             ),
@@ -353,7 +353,7 @@ class _ProviderTargetedRequestsPageState
                                 (data.user?.firstName ?? "User").toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 16.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   letterSpacing: 0.5,
                                   color: context.appColors.primaryTextColor,
                                 ),
@@ -437,5 +437,7 @@ class _ProviderTargetedRequestsPageState
     );
   }
 }
+
+
 
 

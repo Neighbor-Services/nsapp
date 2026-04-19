@@ -48,7 +48,7 @@ class _WalletPageState extends State<WalletPage> {
           "MY WALLET",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -134,7 +134,7 @@ class _WalletPageState extends State<WalletPage> {
                                 text: "TOTAL BALANCE",
                                 color: context.appColors.secondaryTextColor,
                                 fontSize: 15.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
                               ),
                               SizedBox(height: 12.h),
@@ -147,7 +147,7 @@ class _WalletPageState extends State<WalletPage> {
                                     style: TextStyle(
                                       color: context.appColors.primaryColor,
                                       fontSize: 42.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       letterSpacing: -0.5,
                                     ),
                                   );
@@ -191,7 +191,7 @@ class _WalletPageState extends State<WalletPage> {
                           CustomTextWidget(
                             text: "RECENT TRANSACTIONS",
                             fontSize: 14.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: context.appColors.primaryTextColor,
                             letterSpacing: 1.1,
                           ),
@@ -219,7 +219,7 @@ class _WalletPageState extends State<WalletPage> {
                                       text: "NO TRANSACTIONS YET",
                                       color: context.appColors.secondaryTextColor.withAlpha(100),
                                       fontSize: 12.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       letterSpacing: 1.0,
                                     ),
                                   ],
@@ -283,7 +283,7 @@ class _WalletPageState extends State<WalletPage> {
                                               CustomTextWidget(
                                                 text:
                                                     (tx.description ?? "Transaction").toUpperCase(),
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.bold,
                                                 fontSize: 14.sp,
                                                 color: context.appColors.primaryTextColor,
                                               ),
@@ -312,7 +312,7 @@ class _WalletPageState extends State<WalletPage> {
                                                     : (isPayout
                                                           ? context.appColors.warningColor
                                                           : context.appColors.errorColor),
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.bold,
                                                 fontSize: 16.sp,
                                               ),
                                             ),
@@ -378,7 +378,7 @@ class _WalletPageState extends State<WalletPage> {
           "WITHDRAW FUNDS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -409,7 +409,7 @@ class _WalletPageState extends State<WalletPage> {
               "CANCEL",
               style: TextStyle(
                 color: context.appColors.secondaryTextColor.withAlpha(150),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -474,7 +474,7 @@ class _WalletPageState extends State<WalletPage> {
                   "STRIPE CONNECT REQUIRED",
                   style: TextStyle(
                     color: textColor,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     fontSize: 18.sp,
                     letterSpacing: 1.2,
                   ),
@@ -523,4 +523,6 @@ class _WalletPageState extends State<WalletPage> {
     Future.delayed(const Duration(seconds: 5), () => subscription.cancel());
   }
 }
+
+
 

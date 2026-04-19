@@ -163,7 +163,7 @@ class _AppointmentDetailBottomSheetState
                         child: CustomTextWidget(
                           text: (appt.title ?? "Appointment Details").toUpperCase(),
                           fontSize: 20.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           color: contentColor,
                           letterSpacing: 1.0,
                         ),
@@ -180,7 +180,7 @@ class _AppointmentDetailBottomSheetState
                             widget.data.role!.toUpperCase(),
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: context.appColors.secondaryColor,
                               letterSpacing: 0.5,
                             ),
@@ -275,7 +275,7 @@ class _AppointmentDetailBottomSheetState
                 CustomTextWidget(
                   text: "DESCRIPTION",
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   color: contentColor,
                   letterSpacing: 0.5,
                 ),
@@ -319,7 +319,7 @@ class _AppointmentDetailBottomSheetState
               Divider(height: 48.h),
               CustomTextWidget(
                 text: "LINKED REQUEST",
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 fontSize: 14.sp,
                 color: context.appColors.secondaryTextColor,
                 letterSpacing: 1.0,
@@ -381,7 +381,7 @@ class _AppointmentDetailBottomSheetState
                     "VIEW FULL DETAILS",
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: context.appColors.primaryColor,
                       letterSpacing: 0.5,
                     ),
@@ -470,7 +470,7 @@ class _AppointmentDetailBottomSheetState
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -506,5 +506,7 @@ class _AppointmentDetailBottomSheetState
     );
   }
 }
+
+
 
 

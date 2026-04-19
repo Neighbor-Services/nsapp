@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:nsapp/core/core.dart';
 
 class AppointmentInputFieldWidget extends StatelessWidget {
@@ -44,7 +44,7 @@ class AppointmentInputFieldWidget extends StatelessWidget {
           labelStyle: TextStyle(
             color: labelColor,
             fontSize: 12.sp,
-            fontWeight: allCapsLabel ? FontWeight.w900 : FontWeight.normal,
+            fontWeight: allCapsLabel ? FontWeight.bold : FontWeight.normal,
             letterSpacing: allCapsLabel ? 0.5 : null,
           ),
           border: InputBorder.none,
@@ -58,3 +58,5 @@ class AppointmentInputFieldWidget extends StatelessWidget {
     );
   }
 }
+
+

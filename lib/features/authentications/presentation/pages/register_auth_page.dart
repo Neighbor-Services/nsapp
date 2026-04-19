@@ -353,7 +353,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
           "CREATE ACCOUNT",
           style: TextStyle(
             fontSize: 28.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.5,
           ),
@@ -425,5 +425,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
     );
   }
 }
+
+
 
 

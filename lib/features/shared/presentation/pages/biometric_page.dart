@@ -135,7 +135,7 @@ class _BiometricPageState extends State<BiometricPage> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: contentColor,
                             letterSpacing: 1.0,
                           ),
@@ -155,7 +155,7 @@ class _BiometricPageState extends State<BiometricPage> {
                               style: TextStyle(
                                 color: contentColor, 
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -183,4 +183,6 @@ class _BiometricPageState extends State<BiometricPage> {
     );
   }
 }
+
+
 

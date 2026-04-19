@@ -129,7 +129,7 @@ class _ReportPageState extends State<ReportPage> {
                                   "REPORT AN ISSUE",
                                   style: TextStyle(
                                     fontSize: 18.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     color: context.appColors.primaryTextColor,
                                     letterSpacing: 1.2,
                                   ),
@@ -143,7 +143,7 @@ class _ReportPageState extends State<ReportPage> {
                                   "HELP US IMPROVE BY REPORTING ANY ISSUES",
                                   style: TextStyle(
                                     fontSize: 10.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     color: context.appColors.secondaryTextColor,
                                     letterSpacing: 1.0,
                                   ),
@@ -260,7 +260,7 @@ class _ReportPageState extends State<ReportPage> {
                                           "SUBMIT REPORT",
                                           style: TextStyle(
                                             fontSize: 16.sp,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                             letterSpacing: 1.1,
                                           ),
@@ -291,11 +291,13 @@ class _ReportPageState extends State<ReportPage> {
       text.toUpperCase(),
       style: TextStyle(
         fontSize: 10.sp,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.bold,
         color: context.appColors.primaryTextColor,
         letterSpacing: 1.2,
       ),
     );
   }
 }
+
+
 

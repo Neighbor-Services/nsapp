@@ -246,7 +246,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               .toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: context.appColors.primaryColor,
                             letterSpacing: 0.5,
                           ),
@@ -263,7 +263,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             requestData.request?.title ?? "",
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 0.5,
                             ),
@@ -302,7 +302,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                           .toUpperCase(),
                                       style: TextStyle(
                                         fontSize: 12.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         color: textColor,
                                         letterSpacing: 0.5,
                                       ),
@@ -403,7 +403,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 "DETAILS",
                                 style: TextStyle(
                                   color: popupTextColor,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
@@ -425,7 +425,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 "CHAT",
                                 style: TextStyle(
                                   color: popupTextColor,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
@@ -445,5 +445,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
     );
   }
 }
+
+
 
 

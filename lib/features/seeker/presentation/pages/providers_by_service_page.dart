@@ -94,7 +94,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -104,7 +104,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             "AVAILABLE PROFESSIONALS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
                             ),
@@ -267,7 +267,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           (profile.firstName ?? "Provider").toUpperCase(),
                           style: TextStyle(
                             fontSize: 15.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
@@ -290,7 +290,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                     style: TextStyle(
                       color: secondaryTextColor,
                       fontSize: 10.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -306,7 +306,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 12.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       SizedBox(width: 12.w),
@@ -344,5 +344,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
     );
   }
 }
+
+
 
 

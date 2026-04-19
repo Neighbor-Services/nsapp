@@ -122,7 +122,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                             "CHANGE PASSWORD",
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: context.appColors.primaryTextColor,
                               letterSpacing: 1.0,
                             ),
@@ -273,4 +273,6 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
     );
   }
 }
+
+
 

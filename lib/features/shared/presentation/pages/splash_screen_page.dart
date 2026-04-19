@@ -332,7 +332,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                             'Neighbor Service',
                             style: TextStyle(
                               fontSize: 34.sp,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -392,5 +392,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     );
   }
 }
+
+
 
 

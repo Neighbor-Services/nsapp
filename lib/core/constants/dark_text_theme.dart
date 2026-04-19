@@ -1,81 +1,82 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+﻿import 'package:flutter/material.dart';
+
 import 'package:nsapp/core/core.dart';
 
 TextTheme darkTextTheme = TextTheme(
-  headlineSmall: GoogleFonts.roboto(
+  headlineSmall: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: appWhiteColor,
   ),
-  headlineMedium: GoogleFonts.roboto(
+  headlineMedium: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 16,
     fontWeight: FontWeight.w500,
     color: appWhiteColor,
   ),
-  headlineLarge: GoogleFonts.roboto(
+  headlineLarge: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 18,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.bold,
     color: appWhiteColor,
   ),
-  bodySmall: GoogleFonts.roboto(
+  bodySmall: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: appWhiteColor,
   ),
-  bodyMedium: GoogleFonts.roboto(
+  bodyMedium: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: appWhiteColor,
   ),
-  bodyLarge: GoogleFonts.roboto(
+  bodyLarge: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: appWhiteColor,
   ),
-  titleSmall: GoogleFonts.roboto(
+  titleSmall: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: appWhiteColor,
   ),
-  titleMedium: GoogleFonts.roboto(
+  titleMedium: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: appWhiteColor,
   ),
-  titleLarge: GoogleFonts.roboto(
+  titleLarge: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: appWhiteColor,
   ),
-  labelSmall: GoogleFonts.roboto(
+  labelSmall: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: appWhiteColor,
   ),
-  labelMedium: GoogleFonts.roboto(
+  labelMedium: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: appWhiteColor,
   ),
-  labelLarge: GoogleFonts.roboto(
+  labelLarge: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: appWhiteColor,
   ),
-  displaySmall: GoogleFonts.roboto(
+  displaySmall: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: appWhiteColor,
   ),
-  displayMedium: GoogleFonts.roboto(
+  displayMedium: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 16,
     fontWeight: FontWeight.w500,
     color: appWhiteColor,
   ),
-  displayLarge: GoogleFonts.roboto(
+  displayLarge: TextStyle(fontFamily: 'FuturaPT',
     fontSize: 18,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.bold,
     color: appWhiteColor,
   ),
 );
+

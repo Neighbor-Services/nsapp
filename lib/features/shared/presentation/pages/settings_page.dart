@@ -157,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage>
                                 "SETTINGS",
                                 style: TextStyle(
                                   fontSize: 18.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: textColor,
                                   letterSpacing: 1.2,
                                 ),
@@ -422,7 +422,7 @@ class _SettingsPageState extends State<SettingsPage>
         title.toUpperCase(),
         style: TextStyle(
           fontSize: 11.sp,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
           color: context.appColors.secondaryTextColor,
         ),
@@ -481,7 +481,7 @@ class _SettingsPageState extends State<SettingsPage>
                     title,
                     style: TextStyle(
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: textColor,
                     ),
                   ),
@@ -526,7 +526,7 @@ class _SettingsPageState extends State<SettingsPage>
           title: Text(
             "LOGOUT",
             style: TextStyle(
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: context.appColors.primaryTextColor,
               letterSpacing: 0.5,
             ),
@@ -580,7 +580,7 @@ class _SettingsPageState extends State<SettingsPage>
           title: Text(
             "DELETE ACCOUNT",
             style: TextStyle(
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: context.appColors.errorColor,
               letterSpacing: 0.5,
             ),
@@ -641,7 +641,7 @@ class _SettingsPageState extends State<SettingsPage>
               "PREFERRED PAYMENT METHOD",
               style: TextStyle(
                 fontSize: 18.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: context.appColors.primaryTextColor,
                 letterSpacing: 1.2,
               ),
@@ -734,7 +734,7 @@ class _SettingsPageState extends State<SettingsPage>
                     title,
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: context.appColors.primaryTextColor,
                       letterSpacing: 0.3,
                     ),
@@ -772,4 +772,6 @@ class _SettingsPageState extends State<SettingsPage>
     customAlert(context, AlertType.success, "Payment preference updated");
   }
 }
+
+
 

@@ -94,7 +94,6 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       emit(NavigatorProviderState());
     });
     on<GetRecentRequestEvent>((event, emit) async {
-      emit(LoadingProviderState());
       try {
         final profile = SuccessGetProfileState.profile;
         final catalogId = profile.catalogServiceId;
@@ -116,14 +115,15 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
             emit(FailureGetRecentRequestState());
           },
           (r) {
+            final filteredR = r.where((req) => req.request?.approved != true && req.request?.done != true).toList();
             if (event.page != null && event.page! > 1) {
               SuccessGetRecentRequestState.myRequests =
                   SuccessGetRecentRequestState.myRequests?.then(
-                    (value) => [...value, ...r],
+                    (value) => [...value, ...filteredR],
                   ) ??
-                  Future.value(r);
+                  Future.value(filteredR);
             } else {
-              SuccessGetRecentRequestState.myRequests = Future.value(r);
+              SuccessGetRecentRequestState.myRequests = Future.value(filteredR);
             }
             emit(SuccessGetRecentRequestState());
           },
@@ -135,7 +135,6 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       }
     }, transformer: sequential());
     on<GetAcceptedRequestEvent>((event, emit) async {
-      emit(LoadingProviderState());
       final results = await getAcceptedRequestUseCase(event);
       results.fold(
         (l) {
@@ -190,7 +189,6 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       });
     });
     on<GetAppointmentsEvent>((event, emit) async {
-      emit(LoadingProviderState());
       final results = await getAppointmentsUseCase(event);
       results.fold(
         (l) {
@@ -224,14 +222,15 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
             emit(FailureGetRequestsState());
           },
           (r) {
+            final filteredR = r.where((req) => req.request?.approved != true && req.request?.done != true).toList();
             if (event.page != null && event.page! > 1) {
               SuccessGetRequestsState.requests =
                   SuccessGetRequestsState.requests?.then(
-                    (value) => [...value, ...r],
+                    (value) => [...value, ...filteredR],
                   ) ??
-                  Future.value(r);
+                  Future.value(filteredR);
             } else {
-              SuccessGetRequestsState.requests = Future.value(r);
+              SuccessGetRequestsState.requests = Future.value(filteredR);
             }
             emit(SuccessGetRequestsState());
           },
@@ -265,14 +264,15 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
           emit(FailureGetTargetedRequestsState());
         },
         (r) {
+          final filteredR = r.where((req) => req.request?.approved != true && req.request?.done != true).toList();
           if (event.page != null && event.page! > 1) {
             SuccessGetTargetedRequestsState.requests =
                 SuccessGetTargetedRequestsState.requests?.then(
-                  (value) => [...value, ...r],
+                  (value) => [...value, ...filteredR],
                 ) ??
-                Future.value(r);
+                Future.value(filteredR);
           } else {
-            SuccessGetTargetedRequestsState.requests = Future.value(r);
+            SuccessGetTargetedRequestsState.requests = Future.value(filteredR);
           }
           emit(SuccessGetTargetedRequestsState());
         },
@@ -302,14 +302,15 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
           emit(FailureSearchRequestState());
         },
         (r) {
+          final filteredR = r.where((req) => req.request?.approved != true && req.request?.done != true).toList();
           if (event.page != null && event.page! > 1) {
             SuccessSearchRequestState.requests =
                 SuccessSearchRequestState.requests?.then(
-                  (value) => [...value, ...r],
+                  (value) => [...value, ...filteredR],
                 ) ??
-                Future.value(r);
+                Future.value(filteredR);
           } else {
-            SuccessSearchRequestState.requests = Future.value(r);
+            SuccessSearchRequestState.requests = Future.value(filteredR);
           }
           emit(SuccessSearchRequestState());
         },

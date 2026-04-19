@@ -143,7 +143,7 @@ class _ProviderRecentRequestWidgetState
                                                     "User",
                                                 style: TextStyle(
                                                   color: textColor,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                   letterSpacing: 0.5,
                                                 ),
@@ -221,7 +221,7 @@ class _ProviderRecentRequestWidgetState
         label.toUpperCase(),
         style: TextStyle(
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
           color: context.appColors.primaryTextColor,
           letterSpacing: 0.5,
         ),
@@ -255,7 +255,7 @@ class _ProviderRecentRequestWidgetState
         status.toUpperCase(),
         style: TextStyle(
           fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
           color: Colors.white,
           letterSpacing: 0.5,
         ),
@@ -263,4 +263,6 @@ class _ProviderRecentRequestWidgetState
     );
   }
 }
+
+
 

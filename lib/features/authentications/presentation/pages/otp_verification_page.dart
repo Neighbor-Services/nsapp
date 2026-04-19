@@ -128,7 +128,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                         "VERIFY EMAIL",
                                         style: TextStyle(
                                           fontSize: 22.sp,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.bold,
                                           color: textColor,
                                           letterSpacing: 1.2,
                                         ),
@@ -221,7 +221,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                                 style: TextStyle(
                                                   color: secondaryTextColor,
                                                   fontSize: 11.sp,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   letterSpacing: 1.0,
                                                 ),
                                               ),
@@ -273,4 +273,6 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
     );
   }
 }
+
+
 

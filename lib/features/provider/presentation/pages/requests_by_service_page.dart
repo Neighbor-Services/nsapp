@@ -96,7 +96,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
                               fontSize: 20.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -106,7 +106,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             "AVAILABLE REQUESTS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: secondaryTextColor,
                               letterSpacing: 0.5,
                             ),
@@ -244,7 +244,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                     request.title?.toUpperCase() ?? "UNTITLED REQUEST",
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: textColor,
                       letterSpacing: 0.5,
                     ),
@@ -347,7 +347,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
         status?.toUpperCase() ?? "OPEN",
         style: TextStyle(
           fontSize: 8.sp,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
           color: color,
           letterSpacing: 0.5,
         ),
@@ -355,4 +355,6 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     );
   }
 }
+
+
 

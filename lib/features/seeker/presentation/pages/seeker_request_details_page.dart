@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -216,7 +216,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                     "REQUEST DETAILS",
                                     style: TextStyle(
                                       fontSize: 18.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       color: textColor,
                                       letterSpacing: 1.2,
                                     ),
@@ -267,7 +267,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                 style: TextStyle(
                                                   color: textColor,
                                                   fontSize: 14,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
@@ -310,7 +310,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       style: TextStyle(
                                         color: textColor,
                                         fontSize: 16,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                       ),
                                     ),
@@ -405,7 +405,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                 "INTERESTED PROVIDERS",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: textColor,
                                   letterSpacing: 1.0,
                                 ),
@@ -418,6 +418,27 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                   if (snapshot.hasData) {
                                     List<RequestAcceptance> acceptedProviders =
                                         snapshot.data!;
+
+                                    // Check if any provider is approved
+                                    bool anyApproved = acceptedProviders.any((ap) {
+                                      var req = ap.acceptance?.request;
+                                      var usr = ap.provider?.user;
+                                      return (ap.acceptance?.isApproved == true) ||
+                                          (req?.approvedUser != null &&
+                                              req?.approvedUser == usr?.id);
+                                    });
+
+                                    // If any is approved, only show the approved one(s)
+                                    if (anyApproved) {
+                                      acceptedProviders = acceptedProviders.where((ap) {
+                                        var req = ap.acceptance?.request;
+                                        var usr = ap.provider?.user;
+                                        return (ap.acceptance?.isApproved == true) ||
+                                            (req?.approvedUser != null &&
+                                                req?.approvedUser == usr?.id);
+                                      }).toList();
+                                    }
+
                                     if (acceptedProviders.isNotEmpty) {
                                       return ListView.separated(
                                         shrinkWrap: true,
@@ -498,7 +519,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
   //       style: TextStyle(
   //         color: color,
   //         fontSize: 11,
-  //         fontWeight: FontWeight.w900,
+  //         fontWeight: FontWeight.bold,
   //         letterSpacing: 1.0,
   //       ),
   //     ),
@@ -679,7 +700,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "EDIT",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -697,7 +718,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "DELETE",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -715,7 +736,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "MARK AS DONE",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -733,7 +754,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "FUND PROVIDER",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -786,7 +807,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                   (provider?.firstName ?? "Unknown").toUpperCase(),
                   style: TextStyle(
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: textColor,
                     letterSpacing: 0.5,
                   ),
@@ -966,7 +987,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "ABOUT",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -988,7 +1009,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "CHAT",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -1057,7 +1078,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                         CustomTextWidget(
                           text: "FUND PROJECT & SECURE PROVIDER",
                           fontSize: 18.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           color: textColor,
                           letterSpacing: 0.5,
                         ),
@@ -1150,5 +1171,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     );
   }
 }
+
+
 
 

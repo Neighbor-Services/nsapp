@@ -23,7 +23,7 @@ class DisputeDetailsPage extends StatelessWidget {
           'DISPUTE DETAILS',
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -110,7 +110,7 @@ class DisputeDetailsPage extends StatelessWidget {
                               style: TextStyle(
                                 color: _getStatusColor(context, dispute.status),
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -124,7 +124,7 @@ class DisputeDetailsPage extends StatelessWidget {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 20.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -228,7 +228,7 @@ class DisputeDetailsPage extends StatelessWidget {
             style: TextStyle(
               color: color ?? secondaryTextColor,
               fontSize: 11.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
           ),
@@ -271,7 +271,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 style: TextStyle(
                   color: secondaryTextColor,
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -280,7 +280,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 style: TextStyle(
                   color: textColor,
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -297,5 +297,7 @@ class DisputeDetailsPage extends StatelessWidget {
     
   }
 }
+
+
 
 

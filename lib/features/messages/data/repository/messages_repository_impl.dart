@@ -20,25 +20,41 @@ class MessagesRepositoryImpl extends MessagesRepository {
     String receiver,
   ) async {
     try {
-      // 1. Fetch from remote
+      final cacheBox = hiveService.getBox(HiveService.messageBox);
+      final cacheKey = 'messages_$receiver';
+      final cached = cacheBox.get(cacheKey);
+      
+      List<ChatMessage> cachedMessages = [];
+      String? afterDate;
+
+      if (cached != null) {
+        cachedMessages = List<ChatMessage>.from(cached);
+        if (cachedMessages.isNotEmpty) {
+          final lastMsg = cachedMessages.last.message;
+          if (lastMsg != null && lastMsg.createdAt != null) {
+            afterDate = lastMsg.createdAt!.toUtc().toIso8601String();
+          }
+        }
+      }
+
+      // 1. Fetch NEW messages from remote
       final results = await messageRemoteDatasource.getMessages(
         receiver: receiver,
+        after: afterDate,
       );
 
       if (results != null) {
-        // 2. Update Cache
-        await hiveService
-            .getBox(HiveService.messageBox)
-            .put('messages_$receiver', results);
-        return Right(results);
+        // 2. Merge and Update Cache
+        if (results.isNotEmpty) {
+          cachedMessages.addAll(results);
+          await cacheBox.put(cacheKey, cachedMessages);
+        }
+        return Right(cachedMessages);
       }
 
-      // 3. Fallback to Cache
-      final cached = hiveService
-          .getBox(HiveService.messageBox)
-          .get('messages_$receiver');
-      if (cached != null) {
-        return Right(List<ChatMessage>.from(cached));
+      // 3. Fallback to Cache if remote fetch strictly fails without throwing
+      if (cachedMessages.isNotEmpty) {
+        return Right(cachedMessages);
       }
 
       return Left(

@@ -99,7 +99,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "MY REQUESTS",
                               style: TextStyle(
                                 fontSize: 24.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 color: context.appColors.primaryTextColor,
                                 letterSpacing: 1.2,
                               ),
@@ -109,7 +109,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "MANAGE YOUR SERVICE REQUESTS",
                               style: TextStyle(
                                 fontSize: 10.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 color: context.appColors.secondaryTextColor,
                                 letterSpacing: 1.0,
                               ),
@@ -152,7 +152,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                       "NO REQUESTS FOUND",
                       style: TextStyle(
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         color: context.appColors.glassBorder,
                         letterSpacing: 1.0,
                       ),
@@ -292,7 +292,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                 : "OPEN")),
                         style: TextStyle(
                           color: context.appColors.primaryTextColor, // Keep white on orange badge
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -437,7 +437,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                 CustomTextWidget(
                                                   text: "FUND PROJECT",
                                                   fontSize: 18.sp,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   letterSpacing: 1.2,
                                                 ),
                                                 SizedBox(height: 12.h),
@@ -574,7 +574,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "",
                           style: TextStyle(
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: context.appColors.primaryTextColor, // Keep white on image overlay
                           ),
                         ),
@@ -587,7 +587,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                           ).toUpperCase(),
                           style: TextStyle(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: context.appColors.hintTextColor,
                             letterSpacing: 0.5,
                           ),
@@ -600,7 +600,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                       style: TextStyle(
                         fontSize: 15.sp,
                         color: context.appColors.primaryTextColor,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -669,7 +669,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
             label.toUpperCase(),
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: context.appColors.primaryColor,
               letterSpacing: 0.5,
             ),
@@ -679,5 +679,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 }
+
+
 
 

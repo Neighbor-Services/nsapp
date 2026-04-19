@@ -45,7 +45,7 @@ class _ProviderAppointmentListPageState
           "MY APPOINTMENTS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -157,7 +157,7 @@ class _ProviderAppointmentListPageState
                                                 CustomTextWidget(
                                                   text: (appt.title ?? "No Title").toUpperCase(),
                                                   fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   color: textColor,
                                                   letterSpacing: 0.5,
                                                 ),
@@ -189,7 +189,7 @@ class _ProviderAppointmentListPageState
                                                           data.role!.toUpperCase(),
                                                           style: TextStyle(
                                                             fontSize: 8.sp,
-                                                            fontWeight: FontWeight.w900,
+                                                            fontWeight: FontWeight.bold,
                                                             color: context.appColors.primaryColor,
                                                           ),
                                                         ),
@@ -233,7 +233,7 @@ class _ProviderAppointmentListPageState
                                                   fontSize: 10.sp,
                                                   color: secondaryTextColor
                                                       .withAlpha(180),
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
@@ -298,11 +298,13 @@ class _ProviderAppointmentListPageState
         text: text.toUpperCase(),
         color: context.appColors.primaryColor,
         fontSize: 10.sp,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.bold,
         letterSpacing: 0.5,
       ),
     );
   }
 }
+
+
 
 

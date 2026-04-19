@@ -57,7 +57,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                             "SERVICE SELECTION",
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -67,7 +67,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                             "FIND THE BEST PROFESSIONALS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
                             ),
@@ -196,7 +196,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                     (service.name ?? "Service").toUpperCase(),
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: context.appColors.primaryTextColor,
                       letterSpacing: 0.5,
                       height: 1.2,
@@ -213,4 +213,6 @@ class SeekerAllServicesPage extends StatelessWidget {
     );
   }
 }
+
+
 

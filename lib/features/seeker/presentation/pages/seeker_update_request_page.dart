@@ -272,7 +272,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               "UPDATE REQUEST",
               style: TextStyle(
                 fontSize: 24.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: titleColor,
                 letterSpacing: 1.5,
               ),
@@ -286,7 +286,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             "REFINE YOUR PROJECT DETAILS",
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: subTitleColor,
               letterSpacing: 1.0,
             ),
@@ -348,7 +348,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 style: TextStyle(
                   color: selectedServiceName.isEmpty ? hintColor : textColor,
                   fontSize: 16.sp,
-                  fontWeight: selectedServiceName.isEmpty ? FontWeight.normal : FontWeight.w900,
+                  fontWeight: selectedServiceName.isEmpty ? FontWeight.normal : FontWeight.bold,
                 ),
               ),
             ),
@@ -766,7 +766,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         label.toUpperCase(),
         style: TextStyle(
           fontSize: 10.sp,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.bold,
           color: context.appColors.secondaryTextColor,
           letterSpacing: 1.2,
         ),
@@ -809,5 +809,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     context.read<SeekerBloc>().add(UpdateRequestEvent(request: updatedRequest));
   }
 }
+
+
 
 

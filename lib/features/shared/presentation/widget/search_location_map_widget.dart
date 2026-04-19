@@ -133,7 +133,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                     SuccessPlacesState.places[index].name,
                                     style: TextStyle(
                                       color: context.appColors.primaryTextColor,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 16.sp,
                                     ),
                                   ),
@@ -171,5 +171,6 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
     );
   }
 }
+
 
 

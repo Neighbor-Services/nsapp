@@ -129,7 +129,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                           "BROWSE REQUESTS",
                           style: TextStyle(
                             color: context.appColors.primaryTextColor,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             fontSize: 20.sp,
                             letterSpacing: 1.2,
                           ),
@@ -325,7 +325,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                                   (data.user?.firstName ?? "User").toUpperCase(),
                                   style: TextStyle(
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     letterSpacing: 0.5,
                                     color: context.appColors.primaryTextColor,
                                   ),
@@ -445,7 +445,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
   //       status.toUpperCase(),
   //       style: TextStyle(
   //         fontSize: 8,
-  //         fontWeight: FontWeight.w900,
+  //         fontWeight: FontWeight.bold,
   //         color: color,
   //         letterSpacing: 0.5,
   //       ),
@@ -453,5 +453,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
   //   );
   // }
 }
+
+
 
 

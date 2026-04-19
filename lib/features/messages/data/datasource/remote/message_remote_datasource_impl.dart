@@ -9,12 +9,16 @@ import '../../../../../core/models/chat.dart';
 
 class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
   @override
-  Future<List<ChatMessage>?> getMessages({required String receiver}) async {
+  Future<List<ChatMessage>?> getMessages({required String receiver, String? after}) async {
     try {
       List<ChatMessage> chats = [];
       final String token = await Helpers.getString("token");
+      String url = '$baseMessagesUrl/chat/messages/?conversation=$receiver';
+      if (after != null) {
+        url += '&after=$after';
+      }
       final response = await dio.get(
-        '$baseMessagesUrl/chat/messages/?conversation=$receiver',
+        url,
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 200) {

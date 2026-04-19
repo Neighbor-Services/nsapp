@@ -45,7 +45,7 @@ class _AISearchPageState extends State<AISearchPage> {
           "AI MAGIC MATCH",
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 22.sp,
             letterSpacing: 1.0,
           ),
@@ -100,7 +100,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             "AI ASSISTANT",
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: Colors.white,
                               letterSpacing: 1.5,
                             ),
@@ -164,7 +164,7 @@ class _AISearchPageState extends State<AISearchPage> {
                                       style: TextStyle(
                                         color: Colors.white.withAlpha(150),
                                         fontSize: 14.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         letterSpacing: 1.0,
                                       ),
                                     ),
@@ -241,7 +241,7 @@ class _AISearchPageState extends State<AISearchPage> {
                               style: TextStyle(
                                 color: Colors.white.withAlpha(150),
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: 1.2,
                                 height: 1.5,
                               ),
@@ -260,5 +260,7 @@ class _AISearchPageState extends State<AISearchPage> {
     );
   }
 }
+
+
 
 

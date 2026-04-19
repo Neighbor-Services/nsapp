@@ -241,7 +241,7 @@ class _ProfilePageState extends State<ProfilePage>
               profile.firstName ?? "USER",
               style: TextStyle(
                 fontSize: 28.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: textColor,
                 letterSpacing: -0.5,
               ),
@@ -295,7 +295,7 @@ class _ProfilePageState extends State<ProfilePage>
                 profile.userType?.toUpperCase() ?? "USER",
                 style: TextStyle(
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                   color: isProvider
                       ? context.appColors.primaryColor
@@ -352,7 +352,7 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           _buildInfoRow(
             "Phone",
-            "(${profile.countryCode ?? ""}) ${profile.phone ?? ""}",
+            profile.phone ?? "Not set",
             FontAwesomeIcons.phone,
           ),
           
@@ -454,7 +454,7 @@ class _ProfilePageState extends State<ProfilePage>
                     label.toUpperCase(),
                     style: TextStyle(
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: labelColor,
                       letterSpacing: 0.8,
                     ),
@@ -485,5 +485,7 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
 }
+
+
 
 

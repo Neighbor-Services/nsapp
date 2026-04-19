@@ -195,7 +195,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           "YOU'RE SUBSCRIBED!",
           style: TextStyle(
             fontSize: 24.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             color: textColor,
             letterSpacing: 1.2,
           ),
@@ -226,7 +226,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 "MANAGE SUBSCRIPTION",
                 style: TextStyle(
                   fontSize: 18.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   color: textColor,
                   letterSpacing: 0.5,
                 ),
@@ -260,7 +260,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                   child: const Text(
                     "CANCEL SUBSCRIPTION",
                     style: TextStyle(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -311,7 +311,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 "CHOOSE YOUR PLAN",
                 style: TextStyle(
                   fontSize: 24.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   color: textColor,
                   letterSpacing: 1.2,
                 ),
@@ -454,7 +454,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           label.toUpperCase(),
           style: TextStyle(
             color: isSelected ? Colors.white : secondaryTextColor,
-            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
             letterSpacing: 0.8,
           ),
         ),
@@ -567,7 +567,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               (plan.name ?? "Plan").toUpperCase(),
               style: TextStyle(
                 fontSize: 20.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: textColor,
                 letterSpacing: 1.1,
               ),
@@ -581,7 +581,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                   "\$${plan.price?.toInt() ?? 0}",
                   style: TextStyle(
                     fontSize: 32.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: textColor,
                   ),
                 ),
@@ -641,7 +641,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                   "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
                   style: TextStyle(
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: context.appColors.primaryColor,
                     letterSpacing: 1.0,
                   ),
@@ -675,7 +675,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
             text.toUpperCase(),
             style: TextStyle(
               fontSize: 12.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: textColor,
               letterSpacing: 0.5,
             ),
@@ -708,7 +708,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               style: TextStyle(
                 fontSize: 11.sp, 
                 color: secondaryTextColor,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
                 letterSpacing: 0.3,
               ),
             ),
@@ -759,5 +759,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     );
   }
 }
+
+
 
 

@@ -101,7 +101,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                                 : 'PRIVACY POLICY',
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -158,7 +158,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
               'Documents not available',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
                 color: textColor,
               ),
             ),
@@ -201,7 +201,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
               'No documents found',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
                 color: textColor,
               ),
             ),
@@ -250,7 +250,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                           Text(
                             doc.title,
                             style: TextStyle(
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
                               color: textColor,
                             ),
@@ -303,5 +303,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     return months[m];
   }
 }
+
+
 
 

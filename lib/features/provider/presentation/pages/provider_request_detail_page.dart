@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -137,7 +137,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                   "REQUEST DETAILS",
                                   style: TextStyle(
                                     fontSize: 18.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     color: context.appColors.primaryTextColor,
                                     letterSpacing: 1.2,
                                   ),
@@ -273,7 +273,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 2,
                     fontSize: 12.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -324,7 +324,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                       (user.firstName ?? "User").toUpperCase(),
                       style: TextStyle(
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         color: context.appColors.primaryTextColor,
                         letterSpacing: 0.5,
                       ),
@@ -354,7 +354,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                         (request.service?.name ?? "Service").toUpperCase(),
                         style: TextStyle(
                           fontSize: 10.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           color: context.appColors.primaryColor,
                           letterSpacing: 0.5,
                         ),
@@ -407,7 +407,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                 "REQUEST SUMMARY",
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                   color: context.appColors.secondaryTextColor,
                 ),
@@ -419,7 +419,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
             (request.title ?? "Service Request").toUpperCase(),
             style: TextStyle(
               fontSize: 18.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: context.appColors.primaryTextColor,
               letterSpacing: 0.5,
             ),
@@ -444,6 +444,19 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     bool isDark,
   ) {
     final isAccepted = IsRequestAcceptedState.accepted;
+    final isApproved = request.approved ?? false;
+
+    if (isApproved) {
+      final isAssignedToMe = request.approvedUser == SuccessGetProfileState.profile.user?.id;
+      return SolidButton(
+        label: isAssignedToMe ? "TASK ACTIVE" : "ASSIGNED TO ANOTHER",
+        allCaps: true,
+        textColor: Colors.white,
+        onPressed: () {},
+        color: context.appColors.hintTextColor,
+        height: 60.h,
+      );
+    }
 
     return SolidButton(
       label: isAccepted ? "CANCEL INTEREST" : "ACCEPT & PROPOSE",
@@ -523,7 +536,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
             status.toUpperCase(),
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: color,
               letterSpacing: 0.5,
             ),
@@ -533,5 +546,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     );
   }
 }
+
+
 
 

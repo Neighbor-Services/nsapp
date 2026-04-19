@@ -133,7 +133,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                           text:
                                               (review.from?.firstName ??
                                               "Anonymous").toUpperCase(),
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.bold,
                                           fontSize: 14.sp,
                                           color: context.appColors.primaryTextColor,
                                           letterSpacing: 0.5,
@@ -174,7 +174,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                 .toStringAsFixed(1),
                                             style: TextStyle(
                                               color: context.appColors.secondaryColor,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.bold,
                                               fontSize: 12.sp,
                                               letterSpacing: 0.5,
                                             ),
@@ -217,4 +217,6 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
     );
   }
 }
+
+
 

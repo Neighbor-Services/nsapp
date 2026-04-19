@@ -101,7 +101,7 @@ AppBar homeAppBar({
                 .toUpperCase(),
             style: TextStyle(
               color: titleColor,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               fontSize: 13.sp,
               letterSpacing: 1.0,
             ),
@@ -230,7 +230,7 @@ class PlatformPopupMenu extends StatelessWidget {
                             "LOGOUT",
                             style: TextStyle(
                               fontSize: 22.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.bold,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -261,7 +261,7 @@ class PlatformPopupMenu extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       color: subTextColor,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       letterSpacing: 1.0,
                                     ),
                                   ),
@@ -301,7 +301,7 @@ class PlatformPopupMenu extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       color: Colors.white,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       letterSpacing: 1.0,
                                     ),
                                   ),
@@ -322,4 +322,6 @@ class PlatformPopupMenu extends StatelessWidget {
     );
   }
 }
+
+
 

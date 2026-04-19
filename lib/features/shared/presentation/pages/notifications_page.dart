@@ -115,7 +115,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 "NOTIFICATIONS",
                                 style: TextStyle(
                                   fontSize: 18.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 1.2,
                                 ),
@@ -178,7 +178,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                             "NO NOTIFICATIONS YET",
                                             style: TextStyle(
                                               fontSize: 16.sp,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.bold,
                                               color: context.appColors.glassBorder,
                                               letterSpacing: 1.0,
                                             ),
@@ -286,7 +286,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 (notification.title ?? "").toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 14.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 0.5,
                                 ),
@@ -444,7 +444,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               (notificationData.notification!.title ?? "NOTIFICATION").toUpperCase(),
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: context.appColors.primaryTextColor,
                 letterSpacing: 1.0,
               ),
@@ -484,7 +484,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                     "VIEW DETAILS",
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       letterSpacing: 1.0,
                       color: Colors.white,
                     ),
@@ -511,7 +511,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                     style: TextStyle(
                       color: context.appColors.primaryTextColor,
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       letterSpacing: 1.0,
                     
                     ),
@@ -708,5 +708,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     }
   }
 }
+
+
 
 

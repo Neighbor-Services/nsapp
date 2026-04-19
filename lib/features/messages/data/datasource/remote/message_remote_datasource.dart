@@ -5,7 +5,7 @@ import '../../../../../core/models/chat.dart';
 
 abstract class MessageRemoteDatasource {
   Future<Profile?> reloadMessageReceiver(String user);
-  Future<List<ChatMessage>?> getMessages({required String receiver});
+  Future<List<ChatMessage>?> getMessages({required String receiver, String? after});
   Future<List<Chat>?> getMyMessages();
   Future<bool> updateMessage(Message message);
   Future<bool> deleteMessage(Message message);

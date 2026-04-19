@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                     CustomTextWidget(
                       text: "LOGOUT",
                       color: context.appColors.errorColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                     ),
                   ],
                 ),
@@ -115,4 +115,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
 

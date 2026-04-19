@@ -15,16 +15,16 @@ import '../../../messages/presentation/bloc/message_bloc.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/core/core.dart';
 
-class ProviderAcceptedRequestPage extends StatefulWidget {
-  const ProviderAcceptedRequestPage({super.key});
+class ProviderActiveTasksPage extends StatefulWidget {
+  const ProviderActiveTasksPage({super.key});
 
   @override
-  State<ProviderAcceptedRequestPage> createState() =>
-      _ProviderAcceptedRequestPageState();
+  State<ProviderActiveTasksPage> createState() =>
+      _ProviderActiveTasksPageState();
 }
 
-class _ProviderAcceptedRequestPageState
-    extends State<ProviderAcceptedRequestPage>
+class _ProviderActiveTasksPageState
+    extends State<ProviderActiveTasksPage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -87,29 +87,55 @@ class _ProviderAcceptedRequestPageState
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: isLargeScreen ? 32.w : 20.w,
-                            vertical: 24.h,
+                            vertical: 10.h,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
                             children: [
-                              Text(
-                                "ACCEPTED REQUESTS",
-                                style: TextStyle(
-                                  fontSize: 22.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor,
-                                  letterSpacing: 1.2,
+                              GestureDetector(
+                                onTap: () => context.read<ProviderBloc>().add(
+                                  ProviderBackPressedEvent(),
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all(12.r),
+                                  decoration: BoxDecoration(
+                                    color: context.appColors.cardBackground,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    border: Border.all(
+                                      color: context.appColors.glassBorder,
+                                      width: 1.5.r,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    FontAwesomeIcons.chevronLeft,
+                                    color: context.appColors.primaryTextColor,
+                                    size: 18.r,
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                "MANAGE YOUR ACTIVE PROJECTS AND PROGRESS",
-                                style: TextStyle(
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: secondaryTextColor,
-                                  letterSpacing: 0.8,
-                                ),
+                              SizedBox(width: 16.w),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "ACTIVE TASKS",
+                                    style: TextStyle(
+                                      fontSize: 22.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  Text(
+                                    "TASKS YOU HAVE BEEN APPROVED FOR",
+                                    style: TextStyle(
+                                      fontSize: 9.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: secondaryTextColor,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -119,7 +145,14 @@ class _ProviderAcceptedRequestPageState
                             future: SuccessGetAcceptRequestState.accepts,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                if (snapshot.data!.isEmpty) {
+                                // Filter for active tasks
+                                final activeTasks = snapshot.data!.where((r) {
+                                  final request = r.acceptance?.request;
+                                  return request?.approved == true &&
+                                         request?.approvedUser == SuccessGetProfileState.profile.user?.id;
+                                }).toList();
+
+                                if (activeTasks.isEmpty) {
                                   return Center(
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
@@ -147,14 +180,14 @@ class _ProviderAcceptedRequestPageState
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Icon(
-                                                FontAwesomeIcons.clockRotateLeft,
+                                                FontAwesomeIcons.briefcase,
                                                 size: 64.r,
                                                 color: context.appColors.glassBorder,
                                               ),
                                             ),
                                             SizedBox(height: 32.h),
                                             Text(
-                                              "No accepted requests",
+                                              "No active tasks",
                                               style: TextStyle(
                                                 fontSize: 22.sp,
                                                 fontWeight: FontWeight.bold,
@@ -164,7 +197,7 @@ class _ProviderAcceptedRequestPageState
                                             ),
                                             SizedBox(height: 12.h),
                                             Text(
-                                              "You haven't accepted any service requests yet.",
+                                              "You have no tasks approved for you yet.",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontSize: 15.sp,
@@ -184,11 +217,11 @@ class _ProviderAcceptedRequestPageState
                                     horizontal: isLargeScreen ? 32.w : 16.w,
                                     vertical: 8.h,
                                   ),
-                                  itemCount: snapshot.data!.length,
+                                  itemCount: activeTasks.length,
                                   itemBuilder: (context, index) {
                                     return _buildRequestCard(
                                       context,
-                                      snapshot.data![index],
+                                      activeTasks[index],
                                       index,
                                     );
                                   },
@@ -356,7 +389,7 @@ class _ProviderAcceptedRequestPageState
                       ),
                       onSelected: (val) =>
                           _handleMenuAction(context, val, requestAcceptance),
-                      itemBuilder: (context) => _buildMenuItems(isApproved),
+                      itemBuilder: (context) => _buildMenuItems(),
                     ),
                   ),
                 ),
@@ -489,8 +522,7 @@ class _ProviderAcceptedRequestPageState
         );
         break;
       case 4:
-        if (ra.acceptance?.request?.id == null) break;
-        _showCancelConfirmation(context, ra);
+        // Canceled option removed
         break;
       case 5:
         if (ra.acceptance?.request == null) break;
@@ -563,19 +595,21 @@ class _ProviderAcceptedRequestPageState
     );
   }
 
-  List<PopupMenuEntry<int>> _buildMenuItems(bool isApproved) {
-    List<PopupMenuEntry<int>> items = [
+  List<PopupMenuEntry<int>> _buildMenuItems() {
+    return [
       _buildMenuItem(
         1,
         FontAwesomeIcons.eye,
         "View Details",
         context.appColors.primaryTextColor
+       
       ),
       _buildMenuItem(
         2,
         FontAwesomeIcons.comment,
         "Chat",
         context.appColors.primaryTextColor
+       
       ),
       _buildMenuItem(
         3,
@@ -583,22 +617,13 @@ class _ProviderAcceptedRequestPageState
         "Schedule",
         context.appColors.primaryTextColor
       ),
-    ];
-    if (!isApproved) {
-      items.add(_buildMenuItem(
-        4,
-        FontAwesomeIcons.circleXmark,
-        "Cancel",
-        context.appColors.primaryTextColor
-      ));
-    }
-    items.add(_buildMenuItem(
+      _buildMenuItem(
         5,
         FontAwesomeIcons.directions,
         "Directions",
         context.appColors.primaryTextColor
-      ));
-    return items;
+      ),
+    ];
   }
 
   PopupMenuItem<int> _buildMenuItem(
@@ -627,7 +652,3 @@ class _ProviderAcceptedRequestPageState
     );
   }
 }
-
-
-
-

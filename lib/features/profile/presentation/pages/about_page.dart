@@ -173,7 +173,7 @@ class _AboutPageState extends State<AboutPage>
                                           color: context
                                               .appColors.primaryTextColor,
                                           fontSize: 22.sp,
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       Text(
@@ -325,7 +325,7 @@ class _AboutPageState extends State<AboutPage>
                         indicatorSize: TabBarIndicatorSize.label,
                         dividerColor: Colors.transparent,
                         labelStyle: TextStyle(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           fontSize: 16.sp,
                           letterSpacing: 0.5,
                         ),
@@ -417,7 +417,7 @@ class _AboutPageState extends State<AboutPage>
               label,
               style: TextStyle(
                 color: isBorder ? context.appColors.primaryColor : Colors.white,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 fontSize: 9.sp,
                 letterSpacing: 1.0,
               ),
@@ -457,5 +457,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return false;
   }
 }
+
+
 
 

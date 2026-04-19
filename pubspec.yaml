@@ -84,3 +84,16 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/
+
+  fonts:
+    - family: FuturaPT
+      fonts:
+        - asset: assets/fonts/FuturaPT-Light.ttf
+          weight: 300
+        - asset: assets/fonts/FuturaPT-Book.ttf
+          weight: 400
+        - asset: assets/fonts/FuturaPT-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/FuturaPT-Bold.ttf
+          weight: 700
+

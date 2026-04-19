@@ -119,7 +119,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                   "APPOINTMENTS",
                                   style: TextStyle(
                                     fontSize: 24.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     color: textColor,
                                     letterSpacing: 1.5,
                                   ),
@@ -129,7 +129,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                   "MANAGE YOUR SCHEDULED MEETINGS",
                                   style: TextStyle(
                                     fontSize: 10.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     color: textColor.withAlpha(150),
                                     letterSpacing: 1.0,
                                   ),
@@ -225,7 +225,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                         ["M", "T", "W", "T", "F", "S", "S"][day],
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -242,7 +242,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   headerStyle: HeaderStyle(
                     headerTextStyle: TextStyle(
                       color: textColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 18.sp,
                       letterSpacing: 0.5,
                     ),
@@ -357,7 +357,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                       style: TextStyle(
                                         color: context.appColors.successColor,
                                         fontSize: 11.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         letterSpacing: 0.5,
                                       ),
                                     ),
@@ -397,7 +397,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           "SCHEDULED APPOINTMENT",
                           style: TextStyle(
                             fontSize: 16.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
@@ -453,7 +453,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           Divider(height: 32.h),
                           CustomTextWidget(
                             text: "LINKED REQUEST",
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
                             color: context.appColors.secondaryTextColor,
                             letterSpacing: 1.0,
@@ -524,7 +524,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 "VIEW FULL DETAILS",
                                 style: TextStyle(
                                   fontSize: 12.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: context.appColors.primaryColor,
                                   letterSpacing: 0.5,
                                 ),
@@ -692,7 +692,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   label.toUpperCase(),
                   style: TextStyle(
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: labelColor,
                     letterSpacing: 0.5,
                   ),
@@ -707,5 +707,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     );
   }
 }
+
+
 
 

@@ -162,7 +162,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       "CREATE NEW PASSWORD",
                                       style: TextStyle(
                                         fontSize: 22.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         color: isDark ? Colors.white : Colors.black,
                                         letterSpacing: 1.0,
                                       ),
@@ -271,4 +271,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
     );
   }
 }
+
+
 

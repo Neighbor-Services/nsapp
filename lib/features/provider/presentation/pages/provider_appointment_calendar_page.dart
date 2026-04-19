@@ -157,7 +157,7 @@ class _ProviderAppointmentCalendarPageState
                                       "CALENDAR",
                                       style: TextStyle(
                                         fontSize: 22.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         color: textColor,
                                         letterSpacing: 1.2,
                                       ),
@@ -167,7 +167,7 @@ class _ProviderAppointmentCalendarPageState
                                       "MANAGE YOUR SCHEDULE",
                                       style: TextStyle(
                                         fontSize: 9.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         color: secondaryTextColor,
                                         letterSpacing: 0.8,
                                       ),
@@ -247,7 +247,7 @@ class _ProviderAppointmentCalendarPageState
               "SCHEDULE",
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -333,7 +333,7 @@ class _ProviderAppointmentCalendarPageState
                         ["M", "T", "W", "T", "F", "S", "S"][day],
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -364,7 +364,7 @@ class _ProviderAppointmentCalendarPageState
                   headerStyle: HeaderStyle(
                     headerTextStyle: TextStyle(
                       color: textColor,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       fontSize: 18.sp,
                       letterSpacing: 0.5,
                     ),
@@ -415,7 +415,7 @@ class _ProviderAppointmentCalendarPageState
             SizedBox(height: 12.h),
             CustomTextWidget(
               text: "APPOINTMENT DETAILS",
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               fontSize: 18.sp,
               color: textColor,
               letterSpacing: 1.0,
@@ -459,7 +459,7 @@ class _ProviderAppointmentCalendarPageState
                         Divider(height: 32.h),
                         CustomTextWidget(
                           text: "LINKED REQUEST",
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           fontSize: 14.sp,
                           color: context.appColors.secondaryTextColor,
                           letterSpacing: 1.0,
@@ -523,7 +523,7 @@ class _ProviderAppointmentCalendarPageState
                               "VIEW FULL DETAILS",
                                 style: TextStyle(
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 color: context.appColors.primaryColor,
                                 letterSpacing: 0.5,
                               ),
@@ -688,7 +688,7 @@ class _ProviderAppointmentCalendarPageState
                   label.toUpperCase(),
                   style: TextStyle(
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: labelColor,
                     letterSpacing: 0.8,
                   ),
@@ -743,7 +743,7 @@ class _ProviderAppointmentCalendarPageState
               "SCHEDULE APPOINTMENT",
               style: TextStyle(
                 fontSize: 22.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: textColor,
                 letterSpacing: 1.2,
               ),
@@ -1019,5 +1019,7 @@ class _ProviderAppointmentCalendarPageState
     );
   }
 }
+
+
 
 

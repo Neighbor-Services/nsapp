@@ -119,7 +119,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                     "FAVORITES",
                                     style: TextStyle(
                                       fontSize: 24.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       color: textColor,
                                       letterSpacing: 1.2,
                                     ),
@@ -133,7 +133,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   "YOUR SAVED PROFESSIONALS",
                                   style: TextStyle(
                                     fontSize: 12.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.bold,
                                     color: textColor.withAlpha(150),
                                     letterSpacing: 1.0,
                                   ),
@@ -194,7 +194,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                             "No favorites yet",
                                             style: TextStyle(
                                               fontSize: 20.sp,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.bold,
                                               color: textColor,
                                               letterSpacing: 0.5,
                                             ),
@@ -310,7 +310,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         (favorite.favoriteUser!.firstName ?? "Provider").toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           color: textColor,
                           letterSpacing: 1.2,
                         ),
@@ -329,7 +329,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                           getServiceName(favorite.favoriteUser!.service ?? favorite.favoriteUser!.catalogServiceName ?? "").toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: context.appColors.hintTextColor,
                             letterSpacing: 1.0,
                           ),
@@ -400,4 +400,6 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
     );
   }
 }
+
+
 

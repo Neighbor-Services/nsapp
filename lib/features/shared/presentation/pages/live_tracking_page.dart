@@ -142,7 +142,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                                   .toUpperCase(),
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -152,7 +152,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor,
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -170,4 +170,6 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
     );
   }
 }
+
+
 

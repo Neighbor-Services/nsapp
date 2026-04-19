@@ -65,7 +65,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
           "IDENTITY VERIFICATION",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
@@ -82,7 +82,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                   "VERIFY YOUR ACCOUNT",
                   style: TextStyle(
                     fontSize: 22.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 1.0,
                   ),
@@ -92,7 +92,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                   "UPLOAD A GOVERNMENT-ISSUED ID OR BUSINESS LICENSE TO RECEIVE YOUR VERIFICATION BADGE AND BUILD TRUST WITH SEEKERS.",
                   style: TextStyle(
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: context.appColors.secondaryTextColor,
                     height: 1.5,
                     letterSpacing: 0.5,
@@ -144,7 +144,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
           title.toUpperCase(),
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 14.sp,
             letterSpacing: 0.8,
           ),
@@ -185,4 +185,6 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
     );
   }
 }
+
+
 

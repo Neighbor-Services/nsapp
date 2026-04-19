@@ -158,7 +158,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                                 profile.firstName ?? "User",
                                                 style: TextStyle(
                                                   color: context.appColors.primaryTextColor,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 16.sp,
                                                   letterSpacing: 0.5,
                                                 ),
@@ -180,7 +180,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                           style: TextStyle(
                                             color: context.appColors.primaryTextColor,
                                             fontSize: 10.sp,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.bold,
                                             letterSpacing: 0.5,
                                           ),
                                           maxLines: 1,
@@ -233,7 +233,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
             double.parse(rating).toStringAsFixed(1),
             style: TextStyle(
               color: context.appColors.primaryTextColor,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               fontSize: 11.sp,
             ),
           ),
@@ -277,5 +277,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
     );
   }
 }
+
+
 
 

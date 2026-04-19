@@ -99,7 +99,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                       "MESSAGES",
                                       style: TextStyle(
                                         fontSize: 18.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         color: context.appColors.primaryTextColor,
                                         letterSpacing: 1.2,
                                       ),
@@ -144,7 +144,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                             "RECENT CHATS",
                             style: TextStyle(
                               fontSize: 12.sp,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.bold,
                               color: context.appColors.primaryTextColor,
                               letterSpacing: 2,
                             ),
@@ -209,7 +209,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                   "NO CONVERSATIONS YET",
                   style: TextStyle(
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 1.0,
                   ),
@@ -329,7 +329,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                         (chat.other!.firstName ?? "User").toUpperCase(),
                         style: TextStyle(
                           fontSize: 15.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           color: context.appColors.primaryTextColor,
                           letterSpacing: 0.5,
                         ),
@@ -367,7 +367,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 )
@@ -384,5 +384,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
     );
   }
 }
+
+
 
 

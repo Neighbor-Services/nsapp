@@ -31,7 +31,7 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
                   "HI, ${SuccessGetProfileState.profile.firstName?.toUpperCase() ?? ''}",
                   style: TextStyle(
                     fontSize: 22.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                     letterSpacing: 1.2,
                   ),
@@ -61,7 +61,7 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
                           "ACCOUNT DEACTIVATED",
                           style: TextStyle(
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: context.appColors.primaryTextColor,
                             letterSpacing: 1.2,
                           ),
@@ -72,7 +72,7 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 11.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             color: context.appColors.secondaryTextColor,
                             letterSpacing: 0.8,
                           ),
@@ -91,4 +91,6 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
     );
   }
 }
+
+
 

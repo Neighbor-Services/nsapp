@@ -77,7 +77,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                       'MY DISPUTES',
                       style: TextStyle(
                         color: textColor,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         fontSize: 18.sp,
                         letterSpacing: 1.2,
                       ),
@@ -105,7 +105,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                               'NEW',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 fontSize: 13.sp,
                                 letterSpacing: 1.0,
                               ),
@@ -187,7 +187,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                 style: TextStyle(
                   color: textColor,
                   fontSize: 18.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -198,7 +198,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                 style: TextStyle(
                   color: secondaryTextColor,
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -274,7 +274,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                                 style: TextStyle(
                                   color: context.appColors.primaryColor,
                                   fontSize: 11.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   letterSpacing: 0.8,
                                 ),
                               ),
@@ -294,7 +294,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                       style: TextStyle(
                         color: textColor,
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -335,7 +335,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                           style: TextStyle(
                             color: context.appColors.warningColor,
                             fontSize: 11.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -352,4 +352,6 @@ class _DisputesListPageState extends State<DisputesListPage> {
   }
 
 }
+
+
 

@@ -83,7 +83,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
           "ADD SERVICE PACKAGE",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
@@ -174,5 +174,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
     );
   }
 }
+
+
 
 

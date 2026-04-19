@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field
+﻿// ignore_for_file: unused_field
 
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/core.dart';
@@ -138,7 +138,7 @@ class _SolidButtonState extends State<SolidButton>
                         style: TextStyle(
                           color: textColor,
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 1.1,
                         ),
                       ),
@@ -150,3 +150,5 @@ class _SolidButtonState extends State<SolidButton>
     );
   }
 }
+
+

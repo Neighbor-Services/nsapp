@@ -176,7 +176,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                         color:
                                             context.appColors.primaryTextColor,
                                         fontSize: 12.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                         letterSpacing: 1.2,
                                       ),
                                     ),
@@ -187,7 +187,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                         color:
                                             context.appColors.primaryTextColor,
                                         fontSize: 32.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
@@ -221,7 +221,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                           style: TextStyle(
                                             color:
                                                 context.appColors.primaryColor,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 12.sp,
                                             letterSpacing: 1.0,
                                           ),
@@ -308,7 +308,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
                     fontSize: 15.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
@@ -316,7 +316,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
                     fontSize: 9.sp,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.bold,
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -367,7 +367,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               style: TextStyle(
                 color: hintColor,
                 fontSize: 14.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 letterSpacing: 1.1,
               ),
             ),
@@ -404,7 +404,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
           title.toUpperCase(),
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             color: textColor,
             letterSpacing: 1.2,
           ),
@@ -416,7 +416,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               "VIEW ALL",
               style: TextStyle(
                 color: textColor.withAlpha(180),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -471,7 +471,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "DIRECT REQUESTS",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -545,7 +545,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "NEARBY OPPORTUNITIES",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -609,7 +609,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "FINANCIAL WALLET",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -631,4 +631,6 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     );
   }
 }
+
+
 

@@ -45,7 +45,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
           "MY APPOINTMENTS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.bold,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -157,7 +157,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                 CustomTextWidget(
                                                   text: (appt.title ?? "No Title").toUpperCase(),
                                                   fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   color: textColor,
                                                   letterSpacing: 0.5,
                                                 ),
@@ -190,7 +190,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                           data.role!.toUpperCase(),
                                                           style: TextStyle(
                                                             fontSize: 8.sp,
-                                                            fontWeight: FontWeight.w900,
+                                                            fontWeight: FontWeight.bold,
                                                             color: context.appColors.secondaryColor,
                                                           ),
                                                         ),
@@ -233,7 +233,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                 style: TextStyle(
                                                   fontSize: 10.sp,
                                                   color: context.appColors.hintTextColor,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.bold,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
@@ -298,11 +298,13 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
         text: text.toUpperCase(),
         color: context.appColors.primaryColor,
         fontSize: 10.sp,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.bold,
         letterSpacing: 0.5,
       ),
     );
   }
 }
+
+
 
 

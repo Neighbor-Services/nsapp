@@ -192,7 +192,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                 "EDIT PROFESSIONAL PROFILE",
                                 style: TextStyle(
                                   fontSize: 24.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 0.5,
                                 ),
@@ -202,7 +202,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                 "KEEP YOUR PROFILE UPDATED TO BUILD TRUST",
                                 style: TextStyle(
                                   fontSize: 10.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.bold,
                                   color: context.appColors.secondaryTextColor,
                                   letterSpacing: 1.0,
                                 ),
@@ -661,7 +661,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                     "SAVE CHANGES",
                                     style: TextStyle(
                                       fontSize: 18.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.bold,
                                       letterSpacing: 1.0,
                                     ),
                                   ),
@@ -692,7 +692,7 @@ class _EditProfilePageState extends State<EditProfilePage>
             text.toUpperCase(),
             style: TextStyle(
               fontSize: 11.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.bold,
               color: context.appColors.primaryTextColor,
               letterSpacing: 0.8,
             ),
@@ -924,5 +924,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     }
   }
 }
+
+
 
 

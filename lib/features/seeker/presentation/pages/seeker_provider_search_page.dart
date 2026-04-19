@@ -249,7 +249,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                     (profile.firstName ?? "Unknown").toUpperCase(),
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
                       letterSpacing: 0.5,
                     ),
@@ -270,7 +270,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                       style: TextStyle(
                         fontSize: 9,
                         color: Colors.white,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -291,7 +291,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.white.withAlpha(200),
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
                             letterSpacing: 0.3,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -335,7 +335,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -393,7 +393,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                               "DETAILS",
                               style: TextStyle(
                                 fontSize: 13,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 color: textColor,
                                 letterSpacing: 0.5,
                               ),
@@ -414,7 +414,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                               "CHAT",
                               style: TextStyle(
                                 fontSize: 13,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.bold,
                                 color: textColor,
                                 letterSpacing: 0.5,
                               ),
@@ -541,5 +541,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
     );
   }
 }
+
+
 
 
