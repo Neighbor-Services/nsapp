@@ -36,6 +36,25 @@ class SeekerRepositoryImpl extends SeekerRepository {
   @override
   Future<Either<Failure, List<RequestData>>> myRequest() async {
     try {
+      final cached = hiveService
+          .getBox(HiveService.serviceRequestBox)
+          .get('my_requests');
+      if (cached != null) {
+        _syncMyRequests(); // background refresh
+        return Right(List<RequestData>.from(cached));
+      }
+      return await _syncMyRequests();
+    } catch (e) {
+      final cached = hiveService
+          .getBox(HiveService.serviceRequestBox)
+          .get('my_requests');
+      if (cached != null) return Right(List<RequestData>.from(cached));
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
+  Future<Either<Failure, List<RequestData>>> _syncMyRequests() async {
+    try {
       final results = await datasource.myRequest();
       if (results != null) {
         await hiveService
@@ -43,16 +62,8 @@ class SeekerRepositoryImpl extends SeekerRepository {
             .put('my_requests', results);
         return Right(results);
       }
-      final cached = hiveService
-          .getBox(HiveService.serviceRequestBox)
-          .get('my_requests');
-      if (cached != null) return Right(List<RequestData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     } catch (e) {
-      final cached = hiveService
-          .getBox(HiveService.serviceRequestBox)
-          .get('my_requests');
-      if (cached != null) return Right(List<RequestData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     }
   }
@@ -156,8 +167,30 @@ class SeekerRepositoryImpl extends SeekerRepository {
   @override
   Future<Either<Failure, List<Profile>>> getPopularProviders() async {
     try {
+      final cached = hiveService
+          .getBox(HiveService.settingsBox)
+          .get('popular_providers');
+      if (cached != null) {
+        _syncPopularProviders();
+        return Right(List<Profile>.from(cached));
+      }
+      return await _syncPopularProviders();
+    } catch (e) {
+      final cached = hiveService
+          .getBox(HiveService.settingsBox)
+          .get('popular_providers');
+      if (cached != null) return Right(List<Profile>.from(cached));
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
+  Future<Either<Failure, List<Profile>>> _syncPopularProviders() async {
+    try {
       final results = await datasource.getPopularProviders();
       if (results != null) {
+        await hiveService
+            .getBox(HiveService.settingsBox)
+            .put('popular_providers', results);
         return Right(results);
       }
       return Left(Failure(massege: "An error occurred"));
@@ -197,18 +230,14 @@ class SeekerRepositoryImpl extends SeekerRepository {
   @override
   Future<Either<Failure, List<Favorite>>> getMyFavorites() async {
     try {
-      final results = await datasource.getMyFavorites();
-      if (results != null) {
-        await hiveService
-            .getBox(HiveService.settingsBox)
-            .put('my_favorites', results);
-        return Right(results);
-      }
       final cached = hiveService
           .getBox(HiveService.settingsBox)
           .get('my_favorites');
-      if (cached != null) return Right(List<Favorite>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      if (cached != null) {
+        _syncFavorites();
+        return Right(List<Favorite>.from(cached));
+      }
+      return await _syncFavorites();
     } catch (e) {
       final cached = hiveService
           .getBox(HiveService.settingsBox)
@@ -218,8 +247,42 @@ class SeekerRepositoryImpl extends SeekerRepository {
     }
   }
 
+  Future<Either<Failure, List<Favorite>>> _syncFavorites() async {
+    try {
+      final results = await datasource.getMyFavorites();
+      if (results != null) {
+        await hiveService
+            .getBox(HiveService.settingsBox)
+            .put('my_favorites', results);
+        return Right(results);
+      }
+      return Left(Failure(massege: "An error occurred"));
+    } catch (e) {
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
   @override
   Future<Either<Failure, List<AppointmentData>>> getAppointments() async {
+    try {
+      final cached = hiveService
+          .getBox(HiveService.appointmentBox)
+          .get('seeker_appointments');
+      if (cached != null) {
+        _syncSeekerAppointments();
+        return Right(List<AppointmentData>.from(cached));
+      }
+      return await _syncSeekerAppointments();
+    } catch (e) {
+      final cached = hiveService
+          .getBox(HiveService.appointmentBox)
+          .get('seeker_appointments');
+      if (cached != null) return Right(List<AppointmentData>.from(cached));
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
+  Future<Either<Failure, List<AppointmentData>>> _syncSeekerAppointments() async {
     try {
       final results = await datasource.getAppointment();
       if (results != null) {
@@ -228,16 +291,8 @@ class SeekerRepositoryImpl extends SeekerRepository {
             .put('seeker_appointments', results);
         return Right(results);
       }
-      final cached = hiveService
-          .getBox(HiveService.appointmentBox)
-          .get('seeker_appointments');
-      if (cached != null) return Right(List<AppointmentData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     } catch (e) {
-      final cached = hiveService
-          .getBox(HiveService.appointmentBox)
-          .get('seeker_appointments');
-      if (cached != null) return Right(List<AppointmentData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     }
   }

@@ -33,6 +33,7 @@ import '../../../../core/models/request_acceptance.dart';
 import '../../../../core/helpers/helpers.dart';
 
 import 'package:nsapp/features/provider/domain/usecase/update_appointment_use_case.dart';
+import 'package:nsapp/features/provider/domain/usecase/verify_appointment_code_use_case.dart';
 
 part 'provider_event.dart';
 
@@ -55,6 +56,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
   final CompleteAppointmentUseCase completeAppointmentUseCase;
   final UpdateProviderAppointmentUseCase updateProviderAppointmentUseCase;
   final GetRequestDetailUseCase getRequestDetailUseCase;
+  final VerifyAppointmentCodeUseCase verifyAppointmentCodeUseCase;
 
   ProviderBloc(
     this.getRecentRequestUseCase,
@@ -73,8 +75,18 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     this.completeAppointmentUseCase,
     this.updateProviderAppointmentUseCase,
     this.getRequestDetailUseCase,
+    this.verifyAppointmentCodeUseCase,
   ) : super(ProviderInitial()) {
     on<ProviderEvent>((event, emit) {});
+    on<VerifyAppointmentCodeEvent>((event, emit) async {
+      emit(VerifyAppointmentCodeLoadingState());
+      final results = await verifyAppointmentCodeUseCase(event.appointmentId, event.code);
+      results.fold(
+        (l) => emit(FailureVerifyAppointmentCodeState()),
+        (r) => emit(SuccessVerifyAppointmentCodeState()),
+      );
+    });
+
     on<ReloadEvent>((event, emit) {
       emit(ReloadState());
     });

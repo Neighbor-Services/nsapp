@@ -12,10 +12,26 @@ import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/data/datasource/remote/provider_remote_datasource.dart';
 
+
 import '../../../../../core/constants/urls.dart';
 import '../../../../../core/helpers/helpers.dart';
 
 class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
+  @override
+  Future<bool> verifyAppointmentCode(String appointmentId, String code) async {
+    final token = await Helpers.getString("token");
+    final response = await dio.post(
+      "$baseUrl/interactions/appointments/$appointmentId/verify_code/",
+      data: {'code': code},
+      options: Options(headers: dioHeaders(token)),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Future<List<RequestData>?> getRecentRequest({
     double? lat,
@@ -25,6 +41,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     bool? targeted,
     String? catalogServiceId,
   }) async {
+    // Token fetched once — SharedPreferences read is synchronous after first load
+    // but calling it N times in a session still adds up.
     final token = await Helpers.getString("token");
     try {
       String url = "$baseRequestUrl/services/requests/";
@@ -38,9 +56,6 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         params['catalog_service'] = catalogServiceId;
         params['service'] = catalogServiceId;
       }
-
-      debugPrint("GET RECENT REQUEST - URL: $url");
-      debugPrint("GET RECENT REQUEST - PARAMS: $params");
 
       final response = await dio.get(
         url,
@@ -159,6 +174,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     final token = await Helpers.getString("token");
     try {
       final response = await dio.get(
+        // expand=request means Django should inline the full ServiceRequest
+        // object — no separate hydration calls needed.
         "$baseRequestUrl/services/proposals/?provider_me=true&expand=request",
         options: Options(headers: dioHeaders(token)),
       );
@@ -250,7 +267,6 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         options: Options(headers: dioHeaders(token)),
       );
       final data = await response;
-      print("Raw API Response data: ${data.data}");
       
       if (data.statusCode == 200) {
         List<AppointmentData> requests = [];

@@ -69,6 +69,7 @@ import 'package:nsapp/features/provider/domain/usecase/update_appointment_use_ca
     as provider_update_appt;
 import 'package:nsapp/features/provider/domain/usecase/get_request_detail_use_case.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/features/provider/domain/usecase/verify_appointment_code_use_case.dart';
 import 'package:nsapp/features/seeker/data/datasource/remote/seeker_remote_datasource.dart';
 import 'package:nsapp/features/seeker/data/datasource/remote/seeker_remote_datasource_impl.dart';
 import 'package:nsapp/features/seeker/data/repository/seeker_repository_impl.dart';
@@ -238,6 +239,7 @@ Future<void> init() async {
     () => provider_complete.CompleteAppointmentUseCase(sl()),
   );
   sl.registerLazySingleton(() => GetRequestDetailUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyAppointmentCodeUseCase(sl()));
 
   // Seeker
   sl.registerLazySingleton(() => CreateRequestUseCase(sl()));
@@ -331,7 +333,8 @@ Future<void> init() async {
       sl(),
       sl(),
       sl(),
-      sl(), // GetRequestDetailUseCase
+      sl(),
+      sl(),
     ),
   );
 

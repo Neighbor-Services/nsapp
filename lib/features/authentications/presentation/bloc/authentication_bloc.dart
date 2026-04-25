@@ -16,6 +16,7 @@ import 'package:nsapp/features/authentications/domain/usecase/send_email_verific
 import 'package:nsapp/features/authentications/domain/usecase/login_with_apple_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/delete_account_use_case.dart';
 import 'package:nsapp/core/services/background_notification_service.dart';
+import 'package:nsapp/core/services/device_token_service.dart';
 
 part 'authentication_event.dart';
 
@@ -79,6 +80,8 @@ class AuthenticationBloc
           await secureStorage.write(key: "email", value: event.email);
           await secureStorage.write(key: "password", value: event.password);
         }
+        // Register device token after login
+        await DeviceTokenService.tryRegisterStoredToken();
         emit(SuccessLoginAuthenticationState());
       } else {
         emit(FailureLoginAuthenticationState(message: message!));
@@ -126,7 +129,10 @@ class AuthenticationBloc
       final results = await loginWithGoogleUseCase.call(event);
       results.fold(
         (l) => emit(FailureLoginAuthenticationState()),
-        (r) => emit(SuccessLoginAuthenticationState()),
+        (r) async {
+          await DeviceTokenService.tryRegisterStoredToken();
+          emit(SuccessLoginAuthenticationState());
+        },
       );
     });
     on<VerifyEmailOtpEvent>((event, emit) async {
@@ -174,7 +180,10 @@ class AuthenticationBloc
       final results = await loginWithAppleUseCase.call();
       results.fold(
         (l) => emit(FailureLoginAuthenticationState()),
-        (r) => emit(SuccessLoginAuthenticationState()),
+        (r) async {
+          await DeviceTokenService.tryRegisterStoredToken();
+          emit(SuccessLoginAuthenticationState());
+        },
       );
     });
     on<DeleteAccountEvent>((event, emit) async {

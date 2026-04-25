@@ -17,10 +17,49 @@ class ProviderRepositoryImpl extends ProviderRepository {
   final HiveService hiveService;
 
   ProviderRepositoryImpl(this.datasource, this.hiveService);
+
+  @override
+  Future<Either<Failure, bool>> verifyAppointmentCode(String appointmentId, String code) async {
+    try {
+      final results = await datasource.verifyAppointmentCode(appointmentId, code);
+      if (results) {
+        return Right(results);
+      }
+      return Left(Failure(massege: "An error occurred"));
+    } catch (e) {
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
   @override
   Future<Either<Failure, List<RequestData>>> getRecentRequest({
     RequestSearchParams? params,
   }) async {
+    try {
+      // 1. Serve cache instantly while network loads (cache-first)
+      final cached = hiveService
+          .getBox(HiveService.serviceRequestBox)
+          .get('recent_requests');
+      if (cached != null) {
+        // Kick off network update in background without blocking
+        _refreshRecentRequests(params);
+        return Right(List<RequestData>.from(cached));
+      }
+
+      // 2. No cache yet — wait for network (first launch)
+      return await _refreshRecentRequests(params);
+    } catch (e) {
+      final cached = hiveService
+          .getBox(HiveService.serviceRequestBox)
+          .get('recent_requests');
+      if (cached != null) return Right(List<RequestData>.from(cached));
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
+  Future<Either<Failure, List<RequestData>>> _refreshRecentRequests(
+    RequestSearchParams? params,
+  ) async {
     try {
       var results = await datasource.getRecentRequest(
         lat: params?.lat,
@@ -32,16 +71,13 @@ class ProviderRepositoryImpl extends ProviderRepository {
       );
 
       if (results != null) {
-        // Local filtering fallback
         if (params?.catalogServiceId != null &&
             params!.catalogServiceId!.isNotEmpty) {
           final filterId = params.catalogServiceId!;
-          results = results.where((item) {
-            final itemServiceId = item.request?.serviceID;
-            return itemServiceId == filterId;
-          }).toList();
+          results = results
+              .where((item) => item.request?.serviceID == filterId)
+              .toList();
         }
-
         if (params == null || params.page == null || params.page == 1) {
           await hiveService
               .getBox(HiveService.serviceRequestBox)
@@ -49,16 +85,8 @@ class ProviderRepositoryImpl extends ProviderRepository {
         }
         return Right(results);
       }
-      final cached = hiveService
-          .getBox(HiveService.serviceRequestBox)
-          .get('recent_requests');
-      if (cached != null) return Right(List<RequestData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     } catch (e) {
-      final cached = hiveService
-          .getBox(HiveService.serviceRequestBox)
-          .get('recent_requests');
-      if (cached != null) return Right(List<RequestData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     }
   }
@@ -116,22 +144,10 @@ class ProviderRepositoryImpl extends ProviderRepository {
   @override
   Future<Either<Failure, List<RequestAcceptance>>> getAcceptedRequest() async {
     try {
+      // The datasource already requests expand=request from the server.
+      // No secondary per-item hydration loop needed.
       final results = await datasource.getAcceptedRequest();
       if (results != null) {
-        // Parallel fetch for full request details if they are missing titles
-        await Future.wait(results.map((ra) async {
-          if (ra.acceptance?.request != null &&
-              (ra.acceptance!.request!.title == null ||
-                  ra.acceptance!.request!.title!.isEmpty)) {
-            final fullRequest = await datasource.getRequestById(
-              id: ra.acceptance!.request!.id!,
-            );
-            if (fullRequest != null && fullRequest.request != null) {
-              ra.acceptance!.request = fullRequest.request;
-            }
-          }
-        }));
-
         await hiveService
             .getBox(HiveService.serviceRequestBox)
             .put('accepted_requests', results);
@@ -171,24 +187,35 @@ class ProviderRepositoryImpl extends ProviderRepository {
   @override
   Future<Either<Failure, List<AppointmentData>>> getAppointments() async {
     try {
+      // Serve cache instantly, sync network in background
+      final cached = hiveService
+          .getBox(HiveService.appointmentBox)
+          .get('provider_appointments');
+      if (cached != null) {
+        _syncAppointments(); // fire-and-forget background refresh
+        return Right(List<AppointmentData>.from(cached));
+      }
+      return await _syncAppointments();
+    } catch (e) {
+      final cached = hiveService
+          .getBox(HiveService.appointmentBox)
+          .get('provider_appointments');
+      if (cached != null) return Right(List<AppointmentData>.from(cached));
+      return Left(Failure(massege: "An error occurred"));
+    }
+  }
+
+  Future<Either<Failure, List<AppointmentData>>> _syncAppointments() async {
+    try {
       final results = await datasource.getAppointment();
-      print(results?.length);
       if (results != null) {
         await hiveService
             .getBox(HiveService.appointmentBox)
             .put('provider_appointments', results);
         return Right(results);
       }
-      final cached = hiveService
-          .getBox(HiveService.appointmentBox)
-          .get('provider_appointments');
-      if (cached != null) return Right(List<AppointmentData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     } catch (e) {
-      final cached = hiveService
-          .getBox(HiveService.appointmentBox)
-          .get('provider_appointments');
-      if (cached != null) return Right(List<AppointmentData>.from(cached));
       return Left(Failure(massege: "An error occurred"));
     }
   }

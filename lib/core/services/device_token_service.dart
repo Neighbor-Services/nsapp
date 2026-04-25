@@ -15,17 +15,31 @@ class DeviceTokenService {
     if (Platform.isIOS) {
        _channel.setMethodCallHandler((call) async {
         if (call.method == "onTokenReceived") {
-          final String token = call.arguments;
-          debugPrint("DEBUG [Dart]: Received APNs token from iOS: $token");
-          
-          // Save it locally first
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString("apns_token", token);
-          
-          await registerToken(token, 'IOS');
+          final String? token = call.arguments;
+          if (token != null) {
+            debugPrint("DEBUG [Dart]: Received APNs token from iOS (Push): $token");
+            await _handleTokenUpdate(token);
+          }
+        }
+      });
+
+      // Also pull the token immediately in case it was already generated
+      _channel.invokeMethod<String>("getLatestToken").then((token) async {
+        if (token != null && token.isNotEmpty) {
+          debugPrint("DEBUG [Dart]: Received APNs token from iOS (Pull): $token");
+          await _handleTokenUpdate(token);
         }
       });
     }
+  }
+
+  static Future<void> _handleTokenUpdate(String token) async {
+    // Save it locally first
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("apns_token", token);
+    
+    // Attempt registration if user is already logged in
+    await registerToken(token, 'IOS');
   }
 
   /// Attempts to register a previously saved token (called after login)

@@ -34,6 +34,7 @@ abstract class ProviderRepository {
     RequestSearchParams? params,
   });
   Future<Either<Failure, List<AppointmentData>>> getAppointments();
+  Future<Either<Failure, bool>> verifyAppointmentCode(String appointmentId, String code);
 
   Future<Either<Failure, bool>> cancelAppointment({required String id});
   Future<Either<Failure, bool>> updateAppointment({

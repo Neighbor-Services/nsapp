@@ -46,6 +46,8 @@ class Appointment {
   String? proposalId;
   @HiveField(22)
   Request? serviceRequest;
+  @HiveField(23)
+  String? secretCode;
 
   DateTime? get effectiveDate => appointmentDate;
 
@@ -111,6 +113,8 @@ class Appointment {
     if (json['service_request_details'] != null) {
       serviceRequest = Request.fromJson(json['service_request_details']);
     }
+    
+    secretCode = json['secret_code'] ?? json['secretCode'];
   }
 
   Map<String, dynamic> toJson() {
@@ -132,7 +136,9 @@ class Appointment {
     if (paymentIntentId != null) data['payment_intent_id'] = paymentIntentId;
     if (totalPrice != null) data['total_price'] = totalPrice;
     if (proposalId != null) data['proposal'] = proposalId;
+    if (secretCode != null) data['secret_code'] = secretCode;
     return data;
+
   }
 }
 

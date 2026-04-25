@@ -5,6 +5,9 @@ import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
+  static var tokenChannel: FlutterMethodChannel?
+  static var latestToken: String?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -31,19 +34,29 @@ import UserNotifications
         let tokenChannel = FlutterMethodChannel(name: "com.nsapp/notifications",
                                                   binaryMessenger: controller.binaryMessenger)
         AppDelegate.tokenChannel = tokenChannel
+        
+        tokenChannel.setMethodCallHandler({
+            (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+            if call.method == "getLatestToken" {
+                result(AppDelegate.latestToken)
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
+        })
     }
 
     return result
   }
-
-  static var tokenChannel: FlutterMethodChannel?
 
   override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
     let token = tokenParts.joined()
     debugPrint("DEBUG [iOS]: Native APNs Token: \(token)")
     
-    // Send token to Flutter
+    // Store token for future retrieval
+    AppDelegate.latestToken = token
+    
+    // Send token to Flutter immediately
     AppDelegate.tokenChannel?.invokeMethod("onTokenReceived", arguments: token)
     
     super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)

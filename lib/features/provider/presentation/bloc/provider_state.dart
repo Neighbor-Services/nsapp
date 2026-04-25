@@ -116,3 +116,7 @@ class SuccessUpdateAppointmentState extends ProviderState {}
 class FailureUpdateAppointmentState extends ProviderState {}
 
 class FailureCompleteAppointmentState extends ProviderState {}
+
+class VerifyAppointmentCodeLoadingState extends ProviderState {}
+class SuccessVerifyAppointmentCodeState extends ProviderState {}
+class FailureVerifyAppointmentCodeState extends ProviderState {}

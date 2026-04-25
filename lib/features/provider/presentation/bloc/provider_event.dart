@@ -153,3 +153,9 @@ class GetRequestDetailEvent extends ProviderEvent {
   final String id;
   GetRequestDetailEvent({required this.id});
 }
+
+class VerifyAppointmentCodeEvent extends ProviderEvent {
+  final String appointmentId;
+  final String code;
+  VerifyAppointmentCodeEvent({required this.appointmentId, required this.code});
+}

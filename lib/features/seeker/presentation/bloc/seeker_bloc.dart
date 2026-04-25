@@ -121,7 +121,6 @@ class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
     });
 
     on<GetMyRequestEvent>((event, emit) async {
-      emit(LoadingSeekerState());
       final results = await getMyRequestUseCase(event);
       results.fold(
         (l) {
@@ -266,7 +265,6 @@ class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
       });
     }, transformer: sequential());
     on<GetAppointmentsEvent>((event, emit) async {
-      emit(LoadingSeekerState());
       final results = await getSeekerAppointmentsUseCase(event);
       results.fold(
         (l) {
