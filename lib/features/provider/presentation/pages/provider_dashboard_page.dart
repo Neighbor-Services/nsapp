@@ -4,7 +4,6 @@ import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/widgets/provider_button_navigation_bar_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
 
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 
@@ -18,11 +17,12 @@ class ProviderDashboardPage extends StatefulWidget {
 }
 
 class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
-  Widget _currentWidget = const ProviderHomePage();
+  late Widget _currentWidget;
   final bool _canPop = true;
 
   @override
   void initState() {
+    _currentWidget = context.read<ProviderBloc>().currentWidget;
     context.read<SharedBloc>().add(GetServicesEvent());
     context.read<SharedBloc>().add(GetMyNotificationsEvent());
     context.read<MessageBloc>().add(GetMyMessagesEvent());

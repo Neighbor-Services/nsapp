@@ -55,7 +55,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.house,
                                 label: 'Home',
-                                isActive: (state is NavigatorProviderState) ? state.page == 1 : true,
+                                isActive: context.read<ProviderBloc>().currentPage == 1,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -71,7 +71,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
                                 label: 'Notifications',
-                                isActive: (state is NavigatorProviderState) ? state.page == 2 : false,
+                                isActive: context.read<ProviderBloc>().currentPage == 2,
                                 badgeCount: (sharedState is SuccessGetMyNotificationsState) ? sharedState.unreadCount : 0,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
@@ -89,7 +89,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
                                 label: 'Chat',
-                                isActive: (state is NavigatorProviderState) ? state.page == 4 : false,
+                                isActive: context.read<ProviderBloc>().currentPage == 4,
                                 badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
@@ -106,7 +106,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.calendar,
                                 label: 'Appointments',
-                                isActive: (state is NavigatorProviderState) ? state.page == 5 : false,
+                                isActive: context.read<ProviderBloc>().currentPage == 5,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(

@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -19,6 +18,7 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:image_picker/image_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import '../../../shared/presentation/bloc/shared_bloc.dart';
 
 class AddProfileAuthPage extends StatefulWidget {
@@ -33,6 +33,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
   late TextEditingController dateOfBirthTextController;
   late TextEditingController serviceTextController;
   late TextEditingController contactTextController;
+  late TextEditingController locController;
   
   String gender = "Male";
   String countryCode = "";
@@ -60,6 +61,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
     dateOfBirthTextController = TextEditingController();
     serviceTextController = TextEditingController();
     contactTextController = TextEditingController();
+    locController = TextEditingController();
     key = GlobalKey<FormState>();
     
     // Attempt to pre-fill from BLoC if available immediately
@@ -69,6 +71,16 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
     }
     
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameTextController.dispose();
+    dateOfBirthTextController.dispose();
+    serviceTextController.dispose();
+    contactTextController.dispose();
+    locController.dispose();
+    super.dispose();
   }
 
   @override
@@ -511,20 +523,21 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                 return;
                               }
 
+                              final userLoc = context.read<LocationBloc>().state.location;
                               Profile profile = Profile(
                                 firstName: nameTextController.text.trim(),
                                 lastName: nameTextController.text.trim(),
                                 phone: contactTextController.text.trim(),
-                                city: city,
+                                city: userLoc.city,
                                 rating: "0.0",
-                                country: country,
+                                country: userLoc.country,
                                 ratings: [],
                                 address: locController.text,
                                 gender: gender,
                                 dateOfBirth: _dob!,
                                 createdAt: DateTime.now(),
-                                zipCode: zipCode,
-                                state: countryState,
+                                zipCode: userLoc.zipCode,
+                                state: userLoc.state,
                                 countryCode: countryCode,
                                 updatedAt: DateTime.now(),
                                 service: _others ? serviceTextController.text.trim() : serviceType,
@@ -534,12 +547,12 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                 latitude: (locController.text.isNotEmpty)
                                     ? (_useMap && _mapLocation != null)
                                         ? _mapLocation!.latitude.toString()
-                                        : locationData.latitude.toString()
+                                        : userLoc.position.latitude.toString()
                                     : null,
                                 longitude: (locController.text.isNotEmpty)
                                     ? (_useMap && _mapLocation != null)
                                         ? _mapLocation!.longitude.toString()
-                                        : locationData.longitude.toString()
+                                        : userLoc.position.longitude.toString()
                                     : null,
                               );
 
@@ -555,7 +568,10 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   );
                                 }
                                 context.read<ProfileBloc>().add(
-                                  AddProfileEvent(profile: profile),
+                                  AddProfileEvent(
+                                    profile: profile,
+                                    profilePicturePath: _profilePicture?.path,
+                                  ),
                                 );
                               }
                             },
@@ -671,10 +687,11 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 context.read<s.SeekerBloc>().add(
                   s.ChangeLocationEvent(change: true),
                 );
-                final success = await Helpers.getLocation();
-                if (success) {
+                final userLocation = await Helpers.getLocation();
+                if (userLocation != null) {
                   if (mounted) {
-                    locController.text = myAddress;
+                    context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
+                    locController.text = userLocation.address;
                     Get.back();
                   }
                 } else {
@@ -700,7 +717,11 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 Get.back();
                 context.read<SharedBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
-                Get.toNamed("map-location");
+                Get.toNamed("map-location")?.then((result) {
+                  if (result != null && result is String) {
+                    locController.text = result;
+                  }
+                });
               },
             ),
             SizedBox(height: 24.h),

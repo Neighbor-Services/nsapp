@@ -123,6 +123,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_disputes_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_legal_document_use_case.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -400,6 +401,8 @@ Future<void> init() async {
       sl(), // GetLegalDocumentUseCase
     ),
   );
+
+  sl.registerFactory(() => LocationBloc());
 }
 
 

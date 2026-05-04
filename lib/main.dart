@@ -8,7 +8,6 @@ import 'package:nsapp/core/constants/app_light_theme.dart';
 import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/di/injection_container.dart' as di;
-import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/helpers/pages.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/utils/responsive_size.dart';
@@ -19,6 +18,7 @@ import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/core/services/local_notification_service.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -76,7 +76,6 @@ Future<void> main() async {
       // Initialize Native Notification Token Listener (iOS)
       DeviceTokenService.initialize();
 
-      Helpers.getLocation();
 
       // Request Notifications Permission
       await Permission.notification.request();
@@ -109,6 +108,9 @@ class NeighborServiceApp extends StatelessWidget {
         BlocProvider<MessageBloc>(create: (_) => di.sl<MessageBloc>()),
         BlocProvider<SeekerBloc>(create: (_) => di.sl<SeekerBloc>()),
         BlocProvider<ProviderBloc>(create: (_) => di.sl<ProviderBloc>()),
+        BlocProvider<LocationBloc>(
+          create: (_) => di.sl<LocationBloc>()..add(GetLocationEvent()),
+        ),
       ],
       child: BlocBuilder<SharedBloc, SharedState>(
         buildWhen: (previous, current) => current is ThemeModeState,

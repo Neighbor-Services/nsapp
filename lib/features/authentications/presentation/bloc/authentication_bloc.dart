@@ -200,6 +200,10 @@ class AuthenticationBloc
   AuthenticationState? fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String?;
     switch (type) {
+      case 'SuccessLoginAuthenticationState':
+        return SuccessLoginAuthenticationState();
+      case 'SuccessGoogleRegisterAuthenticationState':
+        return SuccessGoogleRegisterAuthenticationState();
       case 'SuccessSendEmailVerificationState':
         return SuccessSendEmailVerificationState();
       case 'SuccessRegisterAuthenticationState':
@@ -213,6 +217,12 @@ class AuthenticationBloc
 
   @override
   Map<String, dynamic>? toJson(AuthenticationState state) {
+    if (state is SuccessLoginAuthenticationState) {
+      return {'type': 'SuccessLoginAuthenticationState'};
+    }
+    if (state is SuccessGoogleRegisterAuthenticationState) {
+      return {'type': 'SuccessGoogleRegisterAuthenticationState'};
+    }
     if (state is SuccessSendEmailVerificationState) {
       return {'type': 'SuccessSendEmailVerificationState'};
     }

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -16,6 +15,7 @@ import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.da
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import '../../../shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerNewRequestPage extends StatefulWidget {
@@ -459,9 +459,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             ListTile(
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
-                final success = await Helpers.getLocation();
-                if (success) {
-                  locController.text = myAddress;
+                final userLocation = await Helpers.getLocation();
+                if (userLocation != null) {
+                  context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
+                  locController.text = userLocation.address;
                   Get.back();
                 } else {
                   Get.back();
@@ -500,7 +501,11 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 Get.back();
                 context.read<SharedBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
-                Get.toNamed("map-location");
+                Get.toNamed("map-location")?.then((result) {
+                  if (result != null && result is String) {
+                    locController.text = result;
+                  }
+                });
               },
               leading: Container(
                 padding: EdgeInsets.all(10.r),
@@ -659,10 +664,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
       address: locController.text.trim(),
       latitude: (sharedState is MapLocationState)
           ? sharedState.location.latitude
-          : locationData.latitude,
+          : context.read<LocationBloc>().state.location.position.latitude,
       longitude: (sharedState is MapLocationState)
           ? sharedState.location.longitude
-          : locationData.longitude,
+          : context.read<LocationBloc>().state.location.position.longitude,
       withImage: (state is ImageSeekerState && state.picture != null),
       targetProviderId: widget.targetProviderId,
       scheduledTime: selectedScheduledTime,

@@ -13,10 +13,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 import '../../../../core/helpers/helpers.dart';
-import '../../../../core/initialize/init.dart';
 import '../../../../core/models/profile.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart' as s;
 import '../../../shared/presentation/bloc/shared_bloc.dart';
+import '../../../shared/presentation/bloc/location/location_bloc.dart';
 import '../../../shared/presentation/widget/loading_view.dart';
 import '../bloc/profile_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -38,6 +38,7 @@ class _EditProfilePageState extends State<EditProfilePage>
   late TextEditingController stateTextController;
   late TextEditingController zipCodeTextController;
   late TextEditingController serviceTextController;
+  late TextEditingController locController;
   
   String gender = "MALE";
   String countryCode = "";
@@ -71,6 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     countryTextController = TextEditingController();
     stateTextController = TextEditingController();
     serviceTextController = TextEditingController();
+    locController = TextEditingController();
     key = GlobalKey<FormState>();
 
     // Initial load attempt if state is already success
@@ -133,6 +135,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     countryTextController.dispose();
     stateTextController.dispose();
     serviceTextController.dispose();
+    locController.dispose();
     _fadeController.dispose();
     super.dispose();
   }
@@ -736,10 +739,11 @@ class _EditProfilePageState extends State<EditProfilePage>
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
                 context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
-                final success = await Helpers.getLocation();
-                if (success) {
+                final userLocation = await Helpers.getLocation();
+                if (userLocation != null) {
                   if (mounted) {
-                    locController.text = myAddress;
+                    context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
+                    locController.text = userLocation.address;
                     Get.back();
                   }
                 } else {
@@ -759,7 +763,11 @@ class _EditProfilePageState extends State<EditProfilePage>
                 Get.back();
                 context.read<SharedBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
-                Get.toNamed("map-location");
+                Get.toNamed("map-location")?.then((result) {
+                  if (result != null && result is String) {
+                    locController.text = result;
+                  }
+                });
               },
             ),
             SizedBox(height: 20.h),

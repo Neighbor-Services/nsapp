@@ -21,9 +21,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
   SeekerRepositoryImpl(this.datasource, this.hiveService);
 
   @override
-  Future<Either<Failure, bool>> createRequest(Request request) async {
+  Future<Either<Failure, bool>> createRequest(Request request, {String? imagePath}) async {
     try {
-      final results = await datasource.createRequest(request);
+      final results = await datasource.createRequest(request, imagePath: imagePath);
       if (results) {
         return Right(results);
       }
@@ -152,9 +152,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> updateRequest(Request request) async {
+  Future<Either<Failure, bool>> updateRequest(Request request, {String? imagePath}) async {
     try {
-      final results = await datasource.updateRequest(request: request);
+      final results = await datasource.updateRequest(request: request, imagePath: imagePath);
       if (results) {
         return Right(results);
       }

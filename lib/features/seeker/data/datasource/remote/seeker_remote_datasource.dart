@@ -7,7 +7,7 @@ import 'package:nsapp/core/models/request_acceptance.dart';
 import '../../../../../core/models/request_data.dart';
 
 abstract class SeekerRemoteDatasource {
-  Future<bool> createRequest(Request request);
+  Future<bool> createRequest(Request request, {String? imagePath});
   Future<bool> rate(Rate rate);
   Future<List<RequestData>?> myRequest();
   Future<List<Profile>?> getPopularProviders();
@@ -20,7 +20,7 @@ abstract class SeekerRemoteDatasource {
   });
   Future<bool> cancelApproveRequest({required String requestId});
   Future<bool> deleteRequest({required String requestId});
-  Future<bool> updateRequest({required Request request});
+  Future<bool> updateRequest({required Request request, String? imagePath});
   Future<bool> markAsDone({required Request request});
   Future<bool> addToFavorite({required String uid});
   Future<bool> removeFromFavorite({required String id});

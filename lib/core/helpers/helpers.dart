@@ -9,6 +9,7 @@ import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_distance.dart';
 import 'package:nsapp/core/models/services_model.dart';
+import 'package:nsapp/core/models/user_location.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:dio/dio.dart';
 import '../models/subscription.dart';
@@ -162,10 +163,17 @@ class Helpers {
   static const _secureStorage = FlutterSecureStorage();
 
   static Future<gmd.DistanceValue> dis({
+    required double sourceLat,
+    required double sourceLng,
     required double lat,
     required double lng,
   }) async {
-    return LocationService.getDistance(lat: lat, lng: lng);
+    return LocationService.getDistance(
+      sourceLat: sourceLat,
+      sourceLng: sourceLng,
+      destLat: lat,
+      destLng: lng,
+    );
   }
 
   static bool isMyFavorite(String userID, [List<Favorite> favorites = const []]) {
@@ -191,12 +199,8 @@ class Helpers {
     return MediaUtils.selectImageFromCamera();
   }
 
-  static Future<bool> getLocation() async {
-    final success = await LocationService.getLocation();
-    if (success) {
-      locController.text = myAddress;
-    }
-    return success;
+  static Future<UserLocation?> getLocation() async {
+    return LocationService.getLocation();
   }
 
   static Future<String> getAddressFromMap(LatLng loc) async {
@@ -253,10 +257,18 @@ class Helpers {
 
   static Future<RequestDistance> getProfile(
     String uid, {
+    required double sourceLat,
+    required double sourceLng,
     required double lat,
     required double lng,
   }) async {
-    return LocationService.getProfileDistance(uid, lat: lat, lng: lng);
+    return LocationService.getProfileDistance(
+      uid,
+      sourceLat: sourceLat,
+      sourceLng: sourceLng,
+      lat: lat,
+      lng: lng,
+    );
   }
 
   static Future<String> getToken() async => getString("token");

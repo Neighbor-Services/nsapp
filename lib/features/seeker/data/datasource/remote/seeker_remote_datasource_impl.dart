@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/rate.dart';
@@ -19,7 +18,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
 
   SeekerRemoteDatasourceImpl(this._dio);
   @override
-  Future<bool> createRequest(Request request) async {
+  Future<bool> createRequest(Request request, {String? imagePath}) async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.post(
@@ -39,7 +38,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
             "$baseUrl/services/requests/image/",
             data: FormData.fromMap({
               "data": json.encode({"id": id}),
-              "image": await MultipartFile.fromFile(image!.path),
+              "image": await MultipartFile.fromFile(imagePath!),
             }),
             options: Options(headers: dioMultiPartHeaders(token)),
           );
@@ -239,7 +238,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   }
 
   @override
-  Future<bool> updateRequest({required Request request}) async {
+  Future<bool> updateRequest({required Request request, String? imagePath}) async {
     try {
       final token = await Helpers.getString("token");
       final updateData = request.toUpdateJson();
@@ -251,12 +250,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 200) {
-        if (request.withImage! && image != null) {
+        if (request.withImage! && imagePath != null) {
           final res = await _dio.patch(
             "$baseUrl/services/requests/image/",
             data: FormData.fromMap({
               "data": json.encode({"id": request.id}),
-              "image": await MultipartFile.fromFile(image!.path),
+              "image": await MultipartFile.fromFile(imagePath),
             }),
             options: Options(headers: dioMultiPartHeaders(token)),
           );

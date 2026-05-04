@@ -1,10 +1,11 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/services/tracking_service.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 
 class LiveTrackingPage extends StatefulWidget {
@@ -66,7 +67,10 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: LatLng(locationData.latitude, locationData.longitude),
+              target: LatLng(
+                context.read<LocationBloc>().state.location.position.latitude,
+                context.read<LocationBloc>().state.location.position.longitude,
+              ),
               zoom: 15,
             ),
             style: mapStyle,

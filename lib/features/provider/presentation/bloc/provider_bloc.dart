@@ -64,6 +64,10 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
   List<RequestData> _allRequests = [];
   List<RequestAcceptance> _myAcceptedRequests = [];
   List<AppointmentData> _appointments = [];
+  
+  // Getters for navigation state
+  Widget get currentWidget => _currentWidget;
+  int get currentPage => _currentPage;
 
   ProviderBloc(
     this.getRecentRequestUseCase,

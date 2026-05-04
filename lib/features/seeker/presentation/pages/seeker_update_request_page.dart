@@ -10,13 +10,13 @@ import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerUpdateRequestPage extends StatefulWidget {
@@ -647,9 +647,10 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             ListTile(
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
-                final success = await Helpers.getLocation();
-                if (success) {
-                  locController.text = myAddress;
+                final userLocation = await Helpers.getLocation();
+                if (userLocation != null) {
+                  context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
+                  locController.text = userLocation.address;
                   Get.back();
                 } else {
                   Get.back();
@@ -694,7 +695,11 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 Get.back();
                 context.read<SharedBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
-                Get.toNamed("map-location");
+                Get.toNamed("map-location")?.then((result) {
+                  if (result != null && result is String) {
+                    locController.text = result;
+                  }
+                });
               },
               leading: Container(
                 padding: EdgeInsets.all(12.r),
@@ -812,10 +817,10 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       scheduledTime: selectedScheduledTime,
       latitude: (sharedState is MapLocationState)
           ? sharedState.location.latitude
-          : locationData.latitude,
+          : context.read<LocationBloc>().state.location.position.latitude,
       longitude: (sharedState is MapLocationState)
           ? sharedState.location.longitude
-          : locationData.longitude,
+          : context.read<LocationBloc>().state.location.position.longitude,
       address: locController.text,
       status: originalRequest.status,
       done: originalRequest.done,

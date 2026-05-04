@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 
 import '../bloc/shared_bloc.dart';
+import '../bloc/location/location_bloc.dart';
 import '../widget/search_location_map_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -26,10 +26,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  CameraPosition initialCameraPosition = CameraPosition(
-    target: LatLng(locationData.latitude, locationData.longitude),
-    zoom: 15,
-  );
+  late CameraPosition initialCameraPosition;
   LatLng? pos;
 
   bool isMoving = false;
@@ -37,6 +34,11 @@ class _MapLocationPageState extends State<MapLocationPage> {
   @override
   void initState() {
     super.initState();
+    final location = context.read<LocationBloc>().state.location;
+    initialCameraPosition = CameraPosition(
+      target: LatLng(location.position.latitude, location.position.longitude),
+      zoom: 15,
+    );
     pos = initialCameraPosition.target;
   }
 
@@ -106,7 +108,6 @@ class _MapLocationPageState extends State<MapLocationPage> {
                     pos = position.target;
                     locationTextController.text =
                         await Helpers.getAddressFromMap(position.target);
-                    locController.text = locationTextController.text;
                   },
                   onTap: (position) {
                     context.read<SharedBloc>().add(
@@ -225,12 +226,13 @@ class _MapLocationPageState extends State<MapLocationPage> {
                   child: GestureDetector(
                     onTap: () async {
                       GoogleMapController con = await _controller.future;
+                      final location = context.read<LocationBloc>().state.location;
                       con.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
                             target: LatLng(
-                              locationData.latitude,
-                              locationData.longitude,
+                              location.position.latitude,
+                              location.position.longitude,
                             ),
                             zoom: 15,
                           ),
@@ -261,10 +263,17 @@ class _MapLocationPageState extends State<MapLocationPage> {
       floatingActionButton: GestureDetector(
         onTap: () async {
           if (pos != null) {
-            locationTextController.text = await Helpers.getAddressFromMap(pos!);
+            final userLocation = await LocationService.getUserLocationFromLatLng(pos!);
+            if (userLocation != null) {
+              if (mounted) {
+                context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
+                locationTextController.text = userLocation.address;
+              }
+            } else {
+              locationTextController.text = await Helpers.getAddressFromMap(pos!);
+            }
           }
-          locController.text = locationTextController.text;
-          Get.back();
+          Get.back(result: locationTextController.text);
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 16.h),

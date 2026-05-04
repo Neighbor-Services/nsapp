@@ -54,7 +54,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.house,
-                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 1 : true,
+                                isActive: context.read<SeekerBloc>().currentPage == 1,
                                 label: "Home",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
@@ -70,7 +70,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
-                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 2 : false,
+                                isActive: context.read<SeekerBloc>().currentPage == 2,
                                 badgeCount: (sharedState is SuccessGetMyNotificationsState) ? sharedState.unreadCount : 0,
                                 label: "Notifications",
                                 onTap: () {
@@ -88,7 +88,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
-                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 4 : false,
+                                isActive: context.read<SeekerBloc>().currentPage == 4,
                                 label: "Chat",
                                 badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
                                 onTap: () {
@@ -106,7 +106,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.heart,
                                 label: "Favorites",
-                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 5 : false,
+                                isActive: context.read<SeekerBloc>().currentPage == 5,
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
                                     NavigateSeekerEvent(

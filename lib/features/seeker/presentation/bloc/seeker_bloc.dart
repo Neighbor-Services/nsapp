@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/helpers/use_case.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -73,6 +74,10 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
   List<RequestData> _myRequests = [];
   List<Favorite> _myFavorites = [];
   List<AppointmentData> _appointments = [];
+  
+  // Getters for navigation state
+  Widget get currentWidget => _currentWidget;
+  int get currentPage => _currentPage;
 
   SeekerBloc(
     this.createRequestUseCase,
@@ -119,7 +124,10 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
 
     on<CreateRequestEvent>((event, emit) async {
       emit(LoadingSeekerState());
-      final results = await createRequestUseCase(event.request);
+      final results = await createRequestUseCase(RequestParams(
+        request: event.request,
+        imagePath: _selectedPicture?.path,
+      ));
       results.fold(
         (l) => emit(FailureCreateRequestState(message: l.message)),
         (r) => emit(SuccessCreateRequestState()),
@@ -196,7 +204,10 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
 
     on<UpdateRequestEvent>((event, emit) async {
       emit(LoadingSeekerState());
-      final results = await updateRequestUseCase(event.request);
+      final results = await updateRequestUseCase(RequestParams(
+        request: event.request,
+        imagePath: _selectedPicture?.path,
+      ));
       results.fold(
         (l) => emit(FailureUpdateRequestState(message: l.message)),
         (r) => emit(SuccessUpdateRequestState()),

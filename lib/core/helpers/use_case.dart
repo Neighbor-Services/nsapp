@@ -40,3 +40,9 @@ class ProfileParams extends Params {
 }
 
 
+class RequestParams extends Params {
+  final dynamic request;
+  final String? imagePath;
+
+  RequestParams({required this.request, this.imagePath});
+}

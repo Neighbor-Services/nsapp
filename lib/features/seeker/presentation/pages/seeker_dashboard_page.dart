@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/seeker_bottom_navigation_bar_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
@@ -14,9 +13,12 @@ class SeekerDashboardPage extends StatefulWidget {
 }
 
 class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
+  late Widget _currentWidget;
+
   @override
   void initState() {
     super.initState();
+    _currentWidget = context.read<SeekerBloc>().currentWidget;
     // Fetch initial counts for badges
     context.read<SharedBloc>().add(GetMyNotificationsEvent());
     context.read<MessageBloc>().add(GetMyMessagesEvent());
@@ -25,7 +27,13 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SeekerBloc, SeekerState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is NavigatorSeekerState) {
+          setState(() {
+            _currentWidget = state.widget;
+          });
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -35,7 +43,7 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
             onPopInvokedWithResult: (pop, oo) {
               context.read<SeekerBloc>().add(SeekerBackPressedEvent());
             },
-            child: (state is NavigatorSeekerState) ? state.widget : const SeekerHomePage(),
+            child: _currentWidget,
           ),
           bottomNavigationBar: SeekerBottomNavigationBarWidget(),
         );

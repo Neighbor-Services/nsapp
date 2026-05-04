@@ -10,8 +10,10 @@ class CreateRequestUseCase extends UseCase {
 
   @override
   Future<Either<Failure, bool>> call(params) async {
-    final results = await repository.createRequest(params);
-    return results.fold((l) => Left(l), (r) => Right(r));
+    if (params is RequestParams) {
+      return await repository.createRequest(params.request, imagePath: params.imagePath);
+    }
+    return await repository.createRequest(params);
   }
 }
 
