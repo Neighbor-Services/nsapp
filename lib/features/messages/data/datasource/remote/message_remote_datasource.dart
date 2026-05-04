@@ -11,3 +11,5 @@ abstract class MessageRemoteDatasource {
   Future<bool> deleteMessage(Message message);
   Future<bool> setSeen({required String messageID});
 }
+
+

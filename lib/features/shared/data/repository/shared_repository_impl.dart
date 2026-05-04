@@ -29,9 +29,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -49,13 +49,13 @@ class SharedRepositoryImpl extends SharedRepository {
           .getBox(HiveService.settingsBox)
           .get('my_notifications');
       if (cached != null) return Right(List<NotificationData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       final cached = hiveService
           .getBox(HiveService.settingsBox)
           .get('my_notifications');
       if (cached != null) return Right(List<NotificationData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -66,9 +66,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -79,9 +79,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -94,9 +94,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -114,13 +114,13 @@ class SharedRepositoryImpl extends SharedRepository {
           .getBox(HiveService.serviceRequestBox)
           .get('all_services');
       if (cached != null) return Right(List<Service>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       final cached = hiveService
           .getBox(HiveService.serviceRequestBox)
           .get('all_services');
       if (cached != null) return Right(List<Service>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -131,9 +131,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -144,9 +144,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -160,9 +160,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -173,9 +173,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -192,7 +192,7 @@ class SharedRepositoryImpl extends SharedRepository {
           .getBox(HiveService.settingsBox)
           .get('my_wallet');
       if (cached != null) return Right(cached as Wallet);
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -203,9 +203,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -233,9 +233,9 @@ class SharedRepositoryImpl extends SharedRepository {
             .toList();
         return Right(plans);
       }
-      return Left(Failure(massege: "Failed to load plans"));
+      return Left(Failure(message: "Failed to load plans"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -246,9 +246,9 @@ class SharedRepositoryImpl extends SharedRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -258,7 +258,7 @@ class SharedRepositoryImpl extends SharedRepository {
       final url = await datasource.getStripeDashboardLink();
       return Right(url);
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -271,9 +271,12 @@ class SharedRepositoryImpl extends SharedRepository {
       if (result != null) {
         return Right(result);
       }
-      return Left(Failure(massege: "Document not found"));
+      return Left(Failure(message: "Document not found"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 }
+
+
+

@@ -111,3 +111,5 @@ class RequestAdapter extends TypeAdapter<Request> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

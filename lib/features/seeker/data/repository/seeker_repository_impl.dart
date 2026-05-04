@@ -27,9 +27,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -49,7 +49,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
           .getBox(HiveService.serviceRequestBox)
           .get('my_requests');
       if (cached != null) return Right(List<RequestData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -62,9 +62,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
             .put('my_requests', results);
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -77,9 +77,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -98,9 +98,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -113,9 +113,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -130,9 +130,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -145,9 +145,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -158,9 +158,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -180,7 +180,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
           .getBox(HiveService.settingsBox)
           .get('popular_providers');
       if (cached != null) return Right(List<Profile>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -193,9 +193,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
             .put('popular_providers', results);
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -206,9 +206,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -221,9 +221,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -243,7 +243,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
           .getBox(HiveService.settingsBox)
           .get('my_favorites');
       if (cached != null) return Right(List<Favorite>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -256,9 +256,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
             .put('my_favorites', results);
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -278,7 +278,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
           .getBox(HiveService.appointmentBox)
           .get('seeker_appointments');
       if (cached != null) return Right(List<AppointmentData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -291,9 +291,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
             .put('seeker_appointments', results);
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -318,9 +318,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -331,9 +331,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -344,9 +344,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -357,10 +357,10 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (isSuccess) {
         return Right(true);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       debugPrint(e.toString());
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -375,10 +375,10 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (isSuccess) {
         return Right(true);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       debugPrint(e.toString());
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -395,9 +395,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -410,9 +410,12 @@ class SeekerRepositoryImpl extends SeekerRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 }
+
+
+

@@ -152,3 +152,5 @@ class PayoutRequestAdapter extends TypeAdapter<PayoutRequest> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

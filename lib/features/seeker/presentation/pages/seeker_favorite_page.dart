@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -119,7 +119,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                     "FAVORITES",
                                     style: TextStyle(
                                       fontSize: 24.sp,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                       color: textColor,
                                       letterSpacing: 1.2,
                                     ),
@@ -133,7 +133,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   "YOUR SAVED PROFESSIONALS",
                                   style: TextStyle(
                                     fontSize: 12.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: textColor.withAlpha(150),
                                     letterSpacing: 1.0,
                                   ),
@@ -145,79 +145,11 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
 
                         // Favorites List
                         Expanded(
-                          child: FutureBuilder<List<Favorite>>(
-                            future: SuccessGetMyFavoritesState.profiles,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.isNotEmpty) {
-                                  return ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    padding: EdgeInsets.only(
-                                      left: isLargeScreen ? 32.w : 16.w,
-                                      right: isLargeScreen ? 32.w : 16.w,
-                                      bottom: 32.h,
-                                    ),
-                                    itemCount: snapshot.data!.length,
-                                    itemBuilder: (context, index) {
-                                      return _buildFavoriteCard(
-                                        context,
-                                        snapshot.data![index],
-                                        index,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return Center(
-                                    child: SolidContainer(
-                                      // Use SolidContainer for consistency
-                                      margin: EdgeInsets.all(24.r),
-                                      padding: EdgeInsets.all(20.r),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(20.r),
-                                            decoration: BoxDecoration(
-                                              color: context.appColors.errorColor.withAlpha(
-                                                30,
-                                              ),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              FontAwesomeIcons.heart,
-                                              size: 60.r,
-                                              color: context.appColors.errorColor,
-                                            ),
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          Text(
-                                            "No favorites yet",
-                                            style: TextStyle(
-                                              fontSize: 20.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: textColor,
-                                              letterSpacing: 0.5,
-                                            ),
-                                          ),
-                                          SizedBox(height: 12.h),
-                                          Text(
-                                            "Save providers you like for quick access and priority booking.",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: secondaryTextColor,
-                                              height: 1.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                return const Center(child: LoadingWidget());
-                              }
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              context.read<SeekerBloc>().add(GetMyFavoritesEvent());
                             },
+                            child: _buildContent(context, state, isLargeScreen, textColor, secondaryTextColor),
                           ),
                         ),
                       ],
@@ -229,6 +161,104 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
           );
         },
       ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    SeekerState state,
+    bool isLargeScreen,
+    Color textColor,
+    Color secondaryTextColor,
+  ) {
+    if (state is SuccessGetMyFavoritesNoFutureState) {
+      if (state.profiles.isNotEmpty) {
+        return ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          padding: EdgeInsets.only(
+            left: isLargeScreen ? 32.w : 16.w,
+            right: isLargeScreen ? 32.w : 16.w,
+            bottom: 32.h,
+          ),
+          itemCount: state.profiles.length,
+          itemBuilder: (context, index) {
+            return _buildFavoriteCard(
+              context,
+              state.profiles[index],
+              index,
+            );
+          },
+        );
+      } else {
+        return _buildEmptyState(context, textColor, secondaryTextColor);
+      }
+    }
+
+    if (state is FailureGetMyFavoritesState) {
+      return Center(
+        child: Text(
+          state.message ?? "Failed to load favorites",
+          style: TextStyle(color: context.appColors.errorColor),
+        ),
+      );
+    }
+
+    return const Center(child: LoadingWidget());
+  }
+
+  Widget _buildEmptyState(BuildContext context, Color textColor, Color secondaryTextColor) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+        Center(
+          child: SolidContainer(
+            margin: EdgeInsets.all(24.r),
+            padding: EdgeInsets.all(20.r),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(20.r),
+                  decoration: BoxDecoration(
+                    color: context.appColors.errorColor.withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    FontAwesomeIcons.heart,
+                    size: 60.r,
+                    color: context.appColors.errorColor,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                Text(
+                  "No favorites yet",
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  "Save providers you like for quick access and priority booking.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: secondaryTextColor,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -310,7 +340,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         (favorite.favoriteUser!.firstName ?? "Provider").toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: textColor,
                           letterSpacing: 1.2,
                         ),
@@ -329,7 +359,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                           getServiceName(favorite.favoriteUser!.service ?? favorite.favoriteUser!.catalogServiceName ?? "").toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.hintTextColor,
                             letterSpacing: 1.0,
                           ),
@@ -400,6 +430,3 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
     );
   }
 }
-
-
-

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -33,8 +33,8 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
 
   Future<void> _fetchDirections() async {
     try {
-      final destinationLat = RequestDirectionState.request.latitude ?? 0.0;
-      final destinationLng = RequestDirectionState.request.longitude ?? 0.0;
+      final destinationLat = RequestDirectionState.lastRequest.latitude ?? 0.0;
+      final destinationLng = RequestDirectionState.lastRequest.longitude ?? 0.0;
 
       final results = await LocationService.getFullDirections(
         lat: destinationLat,
@@ -158,7 +158,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                               "Heading to Request Location",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                               ),
                             ),
@@ -233,7 +233,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
               value,
               style: TextStyle(
                 color: context.appColors.primaryTextColor,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 fontSize: 14.sp,
               ),
             ),
@@ -243,4 +243,3 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
     );
   }
 }
-

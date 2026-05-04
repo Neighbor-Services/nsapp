@@ -12,3 +12,5 @@ class GetLegalDocumentUseCase {
     return await repository.getLegalDocument(docType);
   }
 }
+
+

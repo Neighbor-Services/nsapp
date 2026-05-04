@@ -1,9 +1,8 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:nsapp/core/constants/dimension.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -35,7 +34,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                     minScale: 0.5,
                     maxScale: 5,
                     child: CachedNetworkImage(
-                      imageUrl: ViewImageState.url,
+                      imageUrl: ViewImageState.lastUrl,
                       fit: BoxFit.contain,
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) => Center(
@@ -94,5 +93,3 @@ class _ImageViewPageState extends State<ImageViewPage> {
     );
   }
 }
-
-

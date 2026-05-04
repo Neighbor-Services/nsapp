@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nsapp/core/utils/dio_interceptor.dart';
 import 'package:nsapp/core/services/hive_service.dart';
 import 'package:nsapp/core/services/notification_socket_service.dart';
 import 'package:nsapp/features/authentications/data/datasource/remote/authentication_remote_data_source.dart';
@@ -45,6 +46,8 @@ import 'package:nsapp/features/profile/domain/usecase/get_profile_use_case.dart'
 import 'package:nsapp/features/profile/domain/usecase/get_reviews_use_case.dart';
 import 'package:nsapp/features/profile/domain/usecase/update_device_token_use_case.dart';
 import 'package:nsapp/features/profile/domain/usecase/update_profile_use_case.dart';
+import 'package:nsapp/features/profile/domain/usecase/initiate_background_check_use_case.dart';
+import 'package:nsapp/features/profile/domain/usecase/get_audit_logs_use_case.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/data/datasource/remote/provider_remote_datasource.dart';
 import 'package:nsapp/features/provider/data/datasource/remote/provider_remote_datasource_impl.dart';
@@ -130,7 +133,16 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<SharedPreferencesWithCache>(() => prefs);
   sl.registerLazySingleton(() => const FlutterSecureStorage());
-  sl.registerLazySingleton(() => Dio());
+  sl.registerLazySingleton(() {
+    final dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+      ),
+    );
+    dio.interceptors.add(GlobalDioInterceptor());
+    return dio;
+  });
   // sl.registerLazySingleton(() => InternetConnectionCheckerPlus());
   sl.registerLazySingleton(() => NotificationSocketService());
 
@@ -213,6 +225,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => AddAboutUseCase(sl()));
   sl.registerLazySingleton(() => GetAboutUseCase(sl()));
   sl.registerLazySingleton(() => DeleteAboutUseCase(sl()));
+  sl.registerLazySingleton(() => InitiateBackgroundCheckUseCase(sl()));
+  sl.registerLazySingleton(() => GetAuditLogsUseCase(sl()));
 
   // Provider
   sl.registerLazySingleton(() => GetRequestsUseCase(sl()));
@@ -313,7 +327,7 @@ Future<void> init() async {
 
   sl.registerFactory(
     () =>
-        ProfileBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+        ProfileBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory(
@@ -387,3 +401,5 @@ Future<void> init() async {
     ),
   );
 }
+
+

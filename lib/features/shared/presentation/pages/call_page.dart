@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/services/rtc_service.dart';
@@ -212,4 +212,6 @@ extension AlignmentExtension on Alignment {
     return Align(alignment: this, child: child);
   }
 }
+
+
 

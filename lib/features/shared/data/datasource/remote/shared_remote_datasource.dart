@@ -32,3 +32,5 @@ abstract class SharedRemoteDatasource {
   Future<String> getStripeDashboardLink();
   Future<List<LegalDocument>?> getLegalDocument(String docType);
 }
+
+

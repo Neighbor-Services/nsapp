@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -139,7 +139,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
                 style: TextStyle(
                   color: timestampColor,
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -149,5 +149,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
     );
   }
 }
+
+
 
 

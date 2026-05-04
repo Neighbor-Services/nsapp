@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +45,7 @@ class PortfolioGallery extends StatelessWidget {
                 SizedBox(width: 12.w),
                 CustomTextWidget(
                   text: "Portfolio",
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   fontSize: 18.sp,
                   color: titleColor,
                   letterSpacing: 0.5,
@@ -77,7 +77,7 @@ class PortfolioGallery extends StatelessWidget {
                         "Add",
                         style: TextStyle(
                           color: context.appColors.secondaryColor,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -200,7 +200,7 @@ class PortfolioGallery extends StatelessWidget {
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 10.sp,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           letterSpacing: 0.5,
                                         ),
                                       ),
@@ -222,7 +222,7 @@ class PortfolioGallery extends StatelessWidget {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 11.sp,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w400,
                                 height: 1.3,
                               ),
                             ),
@@ -330,7 +330,7 @@ class PortfolioGallery extends StatelessWidget {
                         text: "AI ANALYSIS TAGS",
                         color: context.appColors.infoColor,
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 1.5,
                       ),
                     ],
@@ -362,7 +362,7 @@ class PortfolioGallery extends StatelessWidget {
                                   style: TextStyle(
                                     color: Colors.lightBlueAccent,
                                     fontSize: 12.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
@@ -382,7 +382,7 @@ class PortfolioGallery extends StatelessWidget {
                         text: "AI DESCRIPTION",
                         color: labelColor,
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 1.5,
                       ),
                     ],
@@ -417,6 +417,8 @@ class PortfolioGallery extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

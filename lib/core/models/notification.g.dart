@@ -97,3 +97,5 @@ class NotificationDataAdapter extends TypeAdapter<NotificationData> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

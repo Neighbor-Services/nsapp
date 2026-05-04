@@ -8,8 +8,6 @@ import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/profile/presentation/pages/add_about_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_active_tasks_page.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
@@ -34,230 +32,244 @@ class ProviderDrawerWidget extends StatelessWidget {
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.glassBorder;
 
-    return Drawer(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      width: 280.w,
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          border: Border(right: BorderSide(color: borderColor, width: 0.5.w)),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context, isDark, textColor, secondaryTextColor),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  children: [
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.house,
-                      title: "Home",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: 1,
-                            widget: ProviderHomePage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isSelected: NavigatorProviderState.page == 1,
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.circleCheck,
-                      title: "My Jobs",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: NavigatorProviderState.page,
-                            widget: ProviderAcceptedRequestPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.briefcase,
-                      title: "Active Tasks",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: NavigatorProviderState.page,
-                            widget: const ProviderActiveTasksPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.listUl,
-                      title: "Appointments",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: NavigatorProviderState.page,
-                            widget: const ProviderAppointmentListPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.video,
-                      title: "Subscription",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: NavigatorProviderState.page,
-                            widget: SubscriptionPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    if (SuccessGetProfileState.profile.preferredPaymentMode !=
-                        'ON_SITE')
-                      _buildDrawerItem(
-                        context,
-                        icon: FontAwesomeIcons.wallet,
-                        title: "Wallet",
-                        onTap: () {
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 1,
-                              widget: const WalletPage(),
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, profileState) {
+        final profile = (profileState is SuccessGetProfileState)
+            ? profileState.profile
+            : Profile();
+
+        return BlocBuilder<ProviderBloc, ProviderState>(
+          builder: (context, providerState) {
+            final currentPage = (providerState is NavigatorProviderState)
+                ? providerState.page
+                : 1;
+
+            return Drawer(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              width: 280.w,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  border: Border(right: BorderSide(color: borderColor, width: 0.5.w)),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      _buildHeader(context, profile, isDark, textColor, secondaryTextColor),
+                      SizedBox(height: 20.h),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          children: [
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.house,
+                              title: "Home",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: 1,
+                                    widget: const ProviderHomePage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isSelected: currentPage == 1,
+                              isDark: isDark,
+                              textColor: textColor,
                             ),
-                          );
-                          Navigator.pop(context);
-                        },
-                        isDark: isDark,
-                        textColor: textColor,
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.circleCheck,
+                              title: "My Jobs",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: currentPage,
+                                    widget: const ProviderAcceptedRequestPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.briefcase,
+                              title: "Active Tasks",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: currentPage,
+                                    widget: const ProviderActiveTasksPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.listUl,
+                              title: "Appointments",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: currentPage,
+                                    widget: const ProviderAppointmentListPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.video,
+                              title: "Subscription",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: currentPage,
+                                    widget: const SubscriptionPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            if (profile.preferredPaymentMode != 'ON_SITE')
+                              _buildDrawerItem(
+                                context,
+                                icon: FontAwesomeIcons.wallet,
+                                title: "Wallet",
+                                onTap: () {
+                                  context.read<ProviderBloc>().add(
+                                    NavigateProviderEvent(
+                                      page: 1,
+                                      widget: const WalletPage(),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                },
+                                isDark: isDark,
+                                textColor: textColor,
+                              ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.gavel,
+                              title: "Disputes",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: 1,
+                                    widget: const DisputesListPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Divider(
+                                color: context.appColors.glassBorder,
+                              ),
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.circleInfo,
+                              title: "Portfolio",
+                              onTap: () {
+                                context.read<ProfileBloc>().add(
+                                  AboutUserEvent(
+                                    userID: profile.user?.id ?? "",
+                                  ),
+                                );
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(page: 1, widget: const AboutPage()),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.user,
+                              title: "About",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: 1,
+                                    widget: const AddAboutPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.gear,
+                              title: "Settings",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: currentPage,
+                                    widget: const SettingsPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.triangleExclamation,
+                              title: "Report Issue",
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: currentPage,
+                                    widget: const ReportPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                          ],
+                        ),
                       ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.gavel,
-                      title: "Disputes",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: 1,
-                            widget: const DisputesListPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Divider(
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.circleInfo,
-                      title: "Portfolio",
-                      onTap: () {
-                        context.read<ProfileBloc>().add(
-                          AboutUserEvent(
-                            userID:
-                                SuccessGetProfileState.profile.user?.id ?? "",
-                          ),
-                        );
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(page: 1, widget: AboutPage()),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.user,
-                      title: "About",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: 1,
-                            widget: AddAboutPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.gear,
-                      title: "Settings",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: NavigatorProviderState.page,
-                            widget: SettingsPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.triangleExclamation,
-                      title: "Report Issue",
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: NavigatorProviderState.page,
-                            widget: ReportPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                  ],
+                      _buildFooter(context, isDark, textColor),
+                    ],
+                  ),
                 ),
               ),
-              _buildFooter(context, isDark, textColor),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _buildHeader(
     BuildContext context,
+    Profile profile,
     bool isDark,
     Color textColor,
     Color secondaryTextColor,
   ) {
-    final profile = SuccessGetProfileState.profile;
     return Container(
       padding: EdgeInsets.all(24.r),
       child: Column(
@@ -296,7 +308,7 @@ class ProviderDrawerWidget extends StatelessWidget {
             style: TextStyle(
               color: textColor,
               fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               letterSpacing: -0.5,
             ),
           ),
@@ -327,7 +339,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                   style: TextStyle(
                     color: context.appColors.primaryColor,
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 1,
                   ),
                 ),
@@ -385,7 +397,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                         ? context.appColors.primaryColor
                         : context.appColors.primaryTextColor,
                     fontSize: 15.sp,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                   ),
                 ),
               ],
@@ -432,7 +444,7 @@ class ProviderDrawerWidget extends StatelessWidget {
               child: Center(
                 child: Container(
                   padding: EdgeInsets.all(24.r),
-                  width: size(context).width * 0.85,
+                  width: MediaQuery.of(context).size.width * 0.85,
                   constraints: BoxConstraints(maxWidth: 400.w),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
@@ -459,7 +471,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                         "Logout",
                         style: TextStyle(
                           fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: textColor,
                         ),
                       ),
@@ -489,7 +501,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: subTextColor,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),
@@ -504,13 +516,6 @@ class ProviderDrawerWidget extends StatelessWidget {
                                 context.read<AuthenticationBloc>().add(
                                   LogoutAuthenticationEvent(),
                                 );
-                                SuccessGetProfileState.profile = Profile();
-                                NavigatorSeekerState.widget =
-                                    const SeekerHomePage();
-                                NavigatorSeekerState.page = 1;
-                                NavigatorProviderState.widget =
-                                    const ProviderHomePage();
-                                NavigatorProviderState.page = 1;
                                 Get.offAllNamed("/login");
                               },
                               style: ElevatedButton.styleFrom(
@@ -528,7 +533,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),
@@ -561,7 +566,7 @@ class ProviderDrawerWidget extends StatelessWidget {
               style: TextStyle(
                 color: context.appColors.primaryTextColor,
                 fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

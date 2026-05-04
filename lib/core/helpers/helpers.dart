@@ -9,8 +9,6 @@ import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_distance.dart';
 import 'package:nsapp/core/models/services_model.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:dio/dio.dart';
 import '../models/subscription.dart';
@@ -23,67 +21,23 @@ import 'package:nsapp/core/utils/media_utils.dart';
 import 'package:nsapp/core/utils/date_utils_helper.dart';
 import 'package:nsapp/core/core.dart';
 
+import 'package:nsapp/core/utils/validation_util.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 export 'package:nsapp/core/services/payment_service.dart';
 export 'package:nsapp/core/services/dialog_utils.dart';
 export 'package:nsapp/core/services/location_service.dart';
 export 'package:nsapp/core/utils/media_utils.dart';
 export 'package:nsapp/core/utils/date_utils_helper.dart';
-
-List<String> specialCharacters = [
-  "\"",
-  "'",
-  "`",
-  "@",
-  "#",
-  "\$",
-  "&",
-  "|",
-  "^",
-  "~",
-  "!",
-  "?",
-  ":",
-  ";",
-  ",",
-  ".",
-  "=",
-  "+",
-  "-",
-  "*",
-  "/",
-  "%",
-  ">",
-  "<",
-  ">=",
-  "<=",
-  "==",
-  "!=",
-  "&&",
-  "||",
-  "++",
-  "--",
-  "<<",
-  ">>",
-  "??",
-  "??=",
-  "[",
-  "]",
-  "{",
-  "}",
-  "(",
-  ")",
-];
+export 'package:nsapp/core/utils/validation_util.dart';
 
 bool containSpecial(String name) {
-  for (int i = 0; i < name.length; i++) {
-    if (specialCharacters.contains(name[i])) return true;
-  }
-  return false;
+  return ValidationUtil.validateName(name) != null;
 }
 
-String getServiceName(String id) {
+String getServiceName(String id, [List<Service> services = const []]) {
   if (id.isEmpty) return id;
-  for (var service in SuccessGetServicesState.services) {
+  for (var service in services) {
     if (service.id == id) return service.name ?? id;
   }
   return id;
@@ -197,13 +151,15 @@ allServicesWidget(List<Service> services, BuildContext context) {
       child: CustomTextWidget(
         text: service.name ?? "",
         color: context.appColors.primaryTextColor,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w400,
       ),
     );
   }).toList();
 }
 
 class Helpers {
+  static const _secureStorage = FlutterSecureStorage();
+
   static Future<gmd.DistanceValue> dis({
     required double lat,
     required double lng,
@@ -211,8 +167,8 @@ class Helpers {
     return LocationService.getDistance(lat: lat, lng: lng);
   }
 
-  static bool isMyFavorite(String userID) {
-    for (Favorite user in SuccessGetMyFavoritesNoFutureState.profiles) {
+  static bool isMyFavorite(String userID, [List<Favorite> favorites = const []]) {
+    for (Favorite user in favorites) {
       if (user.favoriteUser!.user!.id == userID) return true;
     }
     return false;
@@ -318,15 +274,19 @@ class Helpers {
     }
   }
 
-  static Future<void> createStripeCustomer() =>
-      PaymentService.createStripeCustomer();
+  static Future<void> createStripeCustomer({required String userId}) =>
+      PaymentService.createStripeCustomer(userId: userId);
   static Future<CustomerData> getCustomer({String? uid}) =>
       PaymentService.getCustomer(uid: uid);
   static Future<void> createCustomer() => PaymentService.createCustomer();
   static Future<void> updateCustomerEphemeral({
     required String ephKey,
     required String ephKeySecret,
-  }) async {}
+  }) async {
+    // This is typically handled by PaymentService.createCustomerEphemeral()
+    // but can be used for explicit updates if backend requires it.
+    await PaymentService.createCustomerEphemeral();
+  }
 
   static Future<bool> saveBool(String key, bool value) async {
     try {
@@ -340,8 +300,7 @@ class Helpers {
 
   static Future<bool> saveString(String key, String value) async {
     try {
-      sharedPreferences = await prefs;
-      await sharedPreferences!.setString(key, value);
+      await _secureStorage.write(key: key, value: value);
       return true;
     } catch (e) {
       return false;
@@ -350,8 +309,10 @@ class Helpers {
 
   static Future<bool> deletePref(String key) async {
     try {
+      // Still remove from sharedPreferences for backward compatibility
       sharedPreferences = await prefs;
       await sharedPreferences!.remove(key);
+      await _secureStorage.delete(key: key);
       return true;
     } catch (e) {
       return false;
@@ -369,8 +330,18 @@ class Helpers {
 
   static Future<String> getString(String key) async {
     try {
+      final secureValue = await _secureStorage.read(key: key);
+      if (secureValue != null && secureValue.isNotEmpty) {
+        return secureValue;
+      }
+      // Fallback for backward compatibility
       sharedPreferences = await prefs;
-      return sharedPreferences!.getString(key) ?? "";
+      final oldVal = sharedPreferences!.getString(key) ?? "";
+      if (oldVal.isNotEmpty) {
+        await saveString(key, oldVal);
+        await sharedPreferences!.remove(key);
+      }
+      return oldVal;
     } catch (e) {
       return "";
     }
@@ -451,9 +422,13 @@ class Payment {
       PaymentService.createMonthlySubscription(context);
   static Future<void> createYealySubscription(BuildContext context) async =>
       PaymentService.createYearlySubscription(context);
-  static Future<void> confirmPayment(BuildContext context) async {}
-  static Future<void> setUpStripeConnectAccount() async =>
-      PaymentService.setUpStripeConnectAccount();
+  static Future<void> confirmPayment(BuildContext context) async {
+    // Confirmation is now typically handled by the Stripe PaymentSheet.
+    // If we need manual confirmation, it would be a call to Stripe.instance.confirmPayment
+    debugPrint("DEBUG: confirmPayment called, assuming PaymentSheet flow.");
+  }
+  static Future<void> setUpStripeConnectAccount(BuildContext context) async =>
+      PaymentService.setUpStripeConnectAccount(context);
   static Future<AccountLink?> createAccountLink() async =>
       PaymentService.createAccountLink();
   static Future<void> payoutUser({
@@ -463,3 +438,5 @@ class Payment {
   }) async =>
       PaymentService.payoutUser(context: context, uid: uid, amount: amount);
 }
+
+

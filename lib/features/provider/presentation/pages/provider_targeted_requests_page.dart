@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -104,7 +104,7 @@ class _ProviderTargetedRequestsPageState
           "DIRECT REQUESTS",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
@@ -119,7 +119,7 @@ class _ProviderTargetedRequestsPageState
               isLoadingMore = false;
             });
             if (state is SuccessGetTargetedRequestsState) {
-              SuccessGetTargetedRequestsState.requests?.then((value) {
+              SuccessGetTargetedRequestsState.lastRequests?.then((value) {
                 if (value.length < (currentPage * 10)) {
                   setState(() {
                     hasReachedMax = true;
@@ -166,7 +166,7 @@ class _ProviderTargetedRequestsPageState
     bool isDark,
   ) {
     return FutureBuilder<List<RequestData>>(
-      future: SuccessGetTargetedRequestsState.requests,
+      future: SuccessGetTargetedRequestsState.lastRequests,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
@@ -188,7 +188,7 @@ class _ProviderTargetedRequestsPageState
                       "No direct requests",
                       style: TextStyle(
                         fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                         color: context.appColors.glassBorder,
                       ),
                     ),
@@ -327,7 +327,7 @@ class _ProviderTargetedRequestsPageState
                             "DIRECT",
                             style: TextStyle(
                               fontSize: 8.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: Colors.white,
                               letterSpacing: 0.5,
                             ),
@@ -353,7 +353,7 @@ class _ProviderTargetedRequestsPageState
                                 (data.user?.firstName ?? "User").toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 0.5,
                                   color: context.appColors.primaryTextColor,
                                 ),
@@ -382,7 +382,7 @@ class _ProviderTargetedRequestsPageState
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: context.appColors.primaryColor,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -437,6 +437,9 @@ class _ProviderTargetedRequestsPageState
     );
   }
 }
+
+
+
 
 
 

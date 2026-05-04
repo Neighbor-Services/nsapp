@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -119,7 +119,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                   "APPOINTMENTS",
                                   style: TextStyle(
                                     fontSize: 24.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: textColor,
                                     letterSpacing: 1.5,
                                   ),
@@ -129,7 +129,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                   "MANAGE YOUR SCHEDULED MEETINGS",
                                   style: TextStyle(
                                     fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: textColor.withAlpha(150),
                                     letterSpacing: 1.0,
                                   ),
@@ -160,7 +160,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     final borderColor = context.appColors.glassBorder;
 
     return FutureBuilder<List<AppointmentData>>(
-      future: SuccessGetAppointmentsState.appointments,
+      future: SuccessGetAppointmentsState.lastAppointments,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           events.clear();
@@ -225,7 +225,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                         ["M", "T", "W", "T", "F", "S", "S"][day],
                         style: TextStyle(
                           color: context.appColors.primaryTextColor,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -242,7 +242,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   headerStyle: HeaderStyle(
                     headerTextStyle: TextStyle(
                       color: textColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 18.sp,
                       letterSpacing: 0.5,
                     ),
@@ -265,7 +265,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
 
   void _handleAddToCalendar(String appointmentId) async {
     try {
-      final list = await SuccessGetAppointmentsState.appointments!;
+      final list = await SuccessGetAppointmentsState.lastAppointments!;
       final data = list.firstWhere(
         (element) => element.appointment?.id == appointmentId,
       );
@@ -314,9 +314,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 ),
               ),
               SizedBox(height: 24.h),
-              if (SuccessGetAppointmentsState.appointments != null)
+              if (SuccessGetAppointmentsState.lastAppointments != null)
                 FutureBuilder<List<AppointmentData>>(
-                  future: SuccessGetAppointmentsState.appointments,
+                  future: SuccessGetAppointmentsState.lastAppointments,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) return const SizedBox();
                     try {
@@ -357,7 +357,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                       style: TextStyle(
                                         color: context.appColors.successColor,
                                         fontSize: 11.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         letterSpacing: 0.5,
                                       ),
                                     ),
@@ -397,7 +397,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           "SCHEDULED APPOINTMENT",
                           style: TextStyle(
                             fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
@@ -422,7 +422,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               _buildDetailRow(
                 FontAwesomeIcons.calendar,
                 "Time",
-                "${data[0].startTime != null ? DateFormat.jm().format(data[0].startTime!.toLocal()) : ''}",
+                data[0].startTime != null ? DateFormat.jm().format(data[0].startTime!.toLocal()) : '',
               ),
               if (data[0].description != null &&
                   data[0].description!.isNotEmpty)
@@ -433,9 +433,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 ),
               SizedBox(height: 16.h),
               // Linked Request Details
-              if (SuccessGetAppointmentsState.appointments != null)
+              if (SuccessGetAppointmentsState.lastAppointments != null)
                 FutureBuilder<List<AppointmentData>>(
-                  future: SuccessGetAppointmentsState.appointments,
+                  future: SuccessGetAppointmentsState.lastAppointments,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) return const SizedBox();
                     try {
@@ -453,7 +453,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           Divider(height: 32.h),
                           CustomTextWidget(
                             text: "LINKED REQUEST",
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: 14.sp,
                             color: context.appColors.secondaryTextColor,
                             letterSpacing: 1.0,
@@ -494,8 +494,8 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 );
 
                                 if (req.userId ==
-                                    SuccessGetProfileState.profile.user?.id) {
-                                      SeekerRequestDetailState.request =
+                                    SuccessGetProfileState.lastProfile.user?.id) {
+                                      SeekerRequestDetailState.lastRequest =
                                       RequestData(
                                         request: req,
                                         user: appointmentData.user,
@@ -524,7 +524,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 "VIEW FULL DETAILS",
                                 style: TextStyle(
                                   fontSize: 12.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: context.appColors.primaryColor,
                                   letterSpacing: 0.5,
                                 ),
@@ -542,9 +542,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               SizedBox(height: 24.h),
 
               // Escrow Actions
-              if (SuccessGetAppointmentsState.appointments != null)
+              if (SuccessGetAppointmentsState.lastAppointments != null)
                 FutureBuilder<List<AppointmentData>>(
-                  future: SuccessGetAppointmentsState.appointments,
+                  future: SuccessGetAppointmentsState.lastAppointments,
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) return const SizedBox();
                     try {
@@ -557,10 +557,10 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
 
               SolidButton(
                 onPressed: () async {
-                  if (SuccessGetAppointmentsState.appointments != null) {
+                  if (SuccessGetAppointmentsState.lastAppointments != null) {
                     try {
                       final list =
-                          await SuccessGetAppointmentsState.appointments!;
+                          await SuccessGetAppointmentsState.lastAppointments!;
                       final appointmentData = list.firstWhere(
                         (element) =>
                             element.appointment?.id == data[0].event.toString(),
@@ -606,10 +606,10 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               SizedBox(height: 16.h),
               SolidButton(
                 onPressed: () async {
-                  if (SuccessGetAppointmentsState.appointments != null) {
+                  if (SuccessGetAppointmentsState.lastAppointments != null) {
                     try {
                       final list =
-                          await SuccessGetAppointmentsState.appointments!;
+                          await SuccessGetAppointmentsState.lastAppointments!;
                       final dataApp = list.firstWhere(
                         (element) => element.appointment?.id == data[0].event,
                       );
@@ -692,7 +692,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   label.toUpperCase(),
                   style: TextStyle(
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: labelColor,
                     letterSpacing: 0.5,
                   ),
@@ -707,6 +707,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     );
   }
 }
+
+
+
 
 
 

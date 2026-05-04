@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/performance_badge.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -74,4 +74,6 @@ class PerformanceBadgeWidget extends StatelessWidget {
     }
   }
 }
+
+
 

@@ -8,3 +8,4 @@ class SolidGradientContainerWidget extends StatelessWidget {
     return const Placeholder();
   }
 }
+

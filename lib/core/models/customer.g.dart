@@ -94,3 +94,5 @@ class CustomerDataAdapter extends TypeAdapter<CustomerData> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

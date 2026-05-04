@@ -458,7 +458,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 201) {
         Get.snackbar(
           "Success",
-          "Successfully rated ${ProviderToReviewState.profile.firstName}",
+          "Successfully rated ${ProviderToReviewState.lastProfile.firstName}",
         );
         return true;
       }
@@ -555,3 +555,5 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
     }
   }
 }
+
+

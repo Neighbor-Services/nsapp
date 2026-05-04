@@ -44,7 +44,7 @@ abstract class ProviderRepository {
     required String id,
     required double amount,
   });
-  Future<Either<Failure, bool>> isRequestAccepted({required String id});
+  Future<Either<Failure, bool>> isRequestAccepted({required String id, String? uid});
   Future<Either<Failure, bool>> addPortfolioItem({
     required File image,
     String description,
@@ -53,3 +53,5 @@ abstract class ProviderRepository {
     ServicePackage package,
   );
 }
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -84,7 +84,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             "CHANGE PASSWORD",
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.0,
                             ),
@@ -118,7 +118,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       "RESET PASSWORD",
                                       style: TextStyle(
                                         fontSize: 20.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         color: textColor,
                                         letterSpacing: 1.0,
                                       ),
@@ -155,7 +155,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       onPressed: () {
                                         if (emailTextController.text.trim() !=
                                             SuccessGetProfileState
-                                                .profile
+                                                .lastProfile
                                                 .user!
                                                 .email) {
                                           customAlert(
@@ -197,6 +197,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     );
   }
 }
+
+
 
 
 

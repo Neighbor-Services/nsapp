@@ -16,3 +16,4 @@ class AddToFavoriteUseCase extends UseCase{
   }
 
 }
+

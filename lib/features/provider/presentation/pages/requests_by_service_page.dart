@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/request_data.dart';
@@ -96,7 +96,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
                               fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -106,7 +106,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             "AVAILABLE REQUESTS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: secondaryTextColor,
                               letterSpacing: 0.5,
                             ),
@@ -128,7 +128,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
 
                     if (state is SuccessSearchRequestState) {
                       return FutureBuilder<List<RequestData>>(
-                        future: SuccessSearchRequestState.requests,
+                        future: SuccessSearchRequestState.lastRequests,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -244,7 +244,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                     request.title?.toUpperCase() ?? "UNTITLED REQUEST",
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 0.5,
                     ),
@@ -284,7 +284,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                     style: TextStyle(
                       color: context.appColors.secondaryColor,
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -347,7 +347,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
         status?.toUpperCase() ?? "OPEN",
         style: TextStyle(
           fontSize: 8.sp,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: color,
           letterSpacing: 0.5,
         ),
@@ -355,6 +355,9 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     );
   }
 }
+
+
+
 
 
 

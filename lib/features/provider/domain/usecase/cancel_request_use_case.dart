@@ -18,3 +18,5 @@ class CancelRequestUseCase extends UseCase<bool, dynamic> {
     return results.fold((l) => Left(l), (r) => Right(r));
   }
 }
+
+

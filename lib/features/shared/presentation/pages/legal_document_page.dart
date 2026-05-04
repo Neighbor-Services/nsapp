@@ -1,10 +1,11 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/core.dart';
 
 class LegalDocumentPage extends StatefulWidget {
@@ -101,7 +102,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                                 : 'PRIVACY POLICY',
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -138,8 +139,8 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     Color secondaryColor,
   ) {
     if (state is SharedLoadingState || state is SharedInitialState) {
-      return Center(
-        child: CircularProgressIndicator(color: secondaryColor),
+      return const Center(
+        child: LoadingWidget(),
       );
     }
 
@@ -158,7 +159,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
               'Documents not available',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: textColor,
               ),
             ),
@@ -185,7 +186,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
       );
     }
 
-    final List<LegalDocument> docs = SuccessGetLegalDocumentState.documents;
+    final List<LegalDocument> docs = SuccessGetLegalDocumentState.lastDocuments;
     if (docs.isEmpty) {
       return Center(
         child: Column(
@@ -201,7 +202,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
               'No documents found',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: textColor,
               ),
             ),
@@ -250,14 +251,14 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                           Text(
                             doc.title,
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               fontSize: 14.sp,
                               color: textColor,
                             ),
                           ),
                           SizedBox(height: 2.h),
                           Text(
-                            'Version ${doc.version}  â€¢  Last updated ${_formatDate(doc.updatedAt)}',
+                            'Version ${doc.version}  •  Last updated ${_formatDate(doc.updatedAt)}',
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: subtitleColor,
@@ -303,7 +304,3 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     return months[m];
   }
 }
-
-
-
-

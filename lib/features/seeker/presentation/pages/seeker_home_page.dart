@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -64,44 +64,53 @@ class _SeekerHomePageState extends State<SeekerHomePage>
               constraints: BoxConstraints(maxWidth: 800.w),
               child: FadeTransition(
                 opacity: _fadeAnimation,
-                child: ListView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isLargeScreen ? 32.w : 20.w,
-                    vertical: 20.h,
-                  ),
-                  children: [
-                    // AI-Powered Hero Section
-                    _buildHero(context, isLargeScreen),
-                    SizedBox(height: 32.h),
-
-                    // Active Request Section
-                    _buildActiveRequestSection(context),
-                    SizedBox(height: 32.h),
-
-                    // Popular Providers Section
-                    _buildSectionHeader(context, "Top Rated Professionals"),
-                    SizedBox(height: 16.h),
-                    SizedBox(height: 200.h, child: PopularProviderWidget()),
-                    SizedBox(height: 32.h),
-
-                    // Available Services Section
-                    _buildSectionHeader(
-                      context,
-                      "Explore Categories",
-                      onViewAll: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: 1,
-                            widget: const SeekerAllServicesPage(),
-                          ),
-                        );
-                      },
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<SharedBloc>().add(GetServicesEvent());
+                    context.read<SeekerBloc>().add(GetMyRequestEvent());
+                    await Future.delayed(const Duration(seconds: 1));
+                  },
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
                     ),
-                    SizedBox(height: 16.h),
-                    _buildServicesGrid(context),
-                    SizedBox(height: 40.h),
-                  ],
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isLargeScreen ? 32.w : 20.w,
+                      vertical: 20.h,
+                    ),
+                    children: [
+                      // AI-Powered Hero Section
+                      _buildHero(context, isLargeScreen),
+                      SizedBox(height: 32.h),
+
+                      // Active Request Section
+                      _buildActiveRequestSection(context),
+                      SizedBox(height: 32.h),
+
+                      // Popular Providers Section
+                      _buildSectionHeader(context, "Top Rated Professionals"),
+                      SizedBox(height: 16.h),
+                      SizedBox(height: 200.h, child: PopularProviderWidget()),
+                      SizedBox(height: 32.h),
+
+                      // Available Services Section
+                      _buildSectionHeader(
+                        context,
+                        "Explore Categories",
+                        onViewAll: () {
+                          context.read<SeekerBloc>().add(
+                            NavigateSeekerEvent(
+                              page: 1,
+                              widget: const SeekerAllServicesPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildServicesGrid(context),
+                      SizedBox(height: 40.h),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -149,7 +158,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 style: TextStyle(
                   color: context.appColors.primaryTextColor,
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 2,
                 ),
               ),
@@ -160,7 +169,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
             "FIND THE BEST HELP IN SECONDS",
             style: TextStyle(
               fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: context.appColors.primaryTextColor,
               height: 1.2,
               letterSpacing: 1.0,
@@ -204,7 +213,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 style: TextStyle(
                   color: context.appColors.hintTextColor,
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -238,7 +247,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
           title.toUpperCase(),
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: textColor,
             letterSpacing: 1.2,
           ),
@@ -250,7 +259,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
               "VIEW ALL",
               style: TextStyle(
                 color: textColor.withAlpha(180),
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -261,7 +270,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   }
 
   Widget _buildServicesGrid(BuildContext context) {
-    final services = SuccessGetServicesState.services;
+    final services = SuccessGetServicesState.lastServices;
     final displayServices = services.take(2).toList();
 
     final icons = [
@@ -333,7 +342,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                         (service.name ?? "SERVICE").toUpperCase(),
                         style: TextStyle(
                           fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: textColor,
                           height: 1.2,
                           letterSpacing: 0.8,
@@ -358,7 +367,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     return BlocBuilder<SeekerBloc, SeekerState>(
       builder: (context, state) {
         return FutureBuilder<List<RequestData>>(
-          future: SuccessGetMyRequestState.myRequests,
+          future: SuccessGetMyRequestState.lastMyRequests,
           builder: (context, snapshot) {
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const SizedBox.shrink();
@@ -417,7 +426,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                     .toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 15.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: textColor,
                                   letterSpacing: 0.5,
                                 ),
@@ -430,7 +439,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                     .toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 11.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: textColor.withAlpha(150),
                                   letterSpacing: 0.8,
                                 ),
@@ -451,6 +460,9 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     );
   }
 }
+
+
+
 
 
 

@@ -1,11 +1,12 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/pages/about_page.dart';
@@ -47,7 +48,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           width: size(context).width,
           decoration: BoxDecoration(),
           child: FutureBuilder<List<Profile>>(
-            future: SuccessPopularProvidersState.providers,
+            future: state is SuccessPopularProvidersState ? state.providers : Future.value(<Profile>[]),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isNotEmpty) {
@@ -61,7 +62,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
 
                       return GestureDetector(
                         onTap: () {
-                          PortfolioUserState.userId = profile.user!.id!;
+                          PortfolioUserState.lastUserId = profile.user!.id!; // legacy — will be removed when PortfolioUserState is fully eliminated
 
                           context.read<SeekerBloc>().add(
                             SetProviderToReviewEvent(
@@ -125,7 +126,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                 Positioned(
                                   top: 12.h,
                                   right: 12.w,
-                                  child: _buildFavoriteAction(profile),
+                                  child: _buildFavoriteAction(profile, state is SuccessGetMyFavoritesNoFutureState ? state.profiles : const []),
                                 ),
 
                                 Positioned(
@@ -158,7 +159,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                                 profile.firstName ?? "User",
                                                 style: TextStyle(
                                                   color: context.appColors.primaryTextColor,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w500,
                                                   fontSize: 16.sp,
                                                   letterSpacing: 0.5,
                                                 ),
@@ -180,7 +181,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                           style: TextStyle(
                                             color: context.appColors.primaryTextColor,
                                             fontSize: 10.sp,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w500,
                                             letterSpacing: 0.5,
                                           ),
                                           maxLines: 1,
@@ -204,7 +205,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                   );
                 }
               } else {
-                return const LoadingWidget();
+                return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
               }
             },
           ),
@@ -233,7 +234,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
             double.parse(rating).toStringAsFixed(1),
             style: TextStyle(
               color: context.appColors.primaryTextColor,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               fontSize: 11.sp,
             ),
           ),
@@ -242,15 +243,15 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
     );
   }
 
-  Widget _buildFavoriteAction(Profile profile) {
-    final bool isFavorite = Helpers.isMyFavorite(profile.user!.id!);
+  Widget _buildFavoriteAction(Profile profile, List<Favorite> favorites) {
+    final bool isFavorite = Helpers.isMyFavorite(profile.user!.id!, favorites);
     return GestureDetector(
       onTap: () {
         if (isFavorite) {
           String id = "";
-          for (var favorite in SuccessGetMyFavoritesNoFutureState.profiles) {
-            if (favorite.favoriteUser!.user!.id == profile.user!.id!) {
-              id = favorite.id!;
+          for (var favorite in favorites) {
+            if (favorite.favoriteUser?.user?.id == profile.user?.id) {
+              id = favorite.id ?? "";
               break;
             }
           }
@@ -277,6 +278,9 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
     );
   }
 }
+
+
+
 
 
 

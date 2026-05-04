@@ -36,3 +36,5 @@ abstract class SharedRepository {
   Future<Either<Failure, String>> getStripeDashboardLink();
   Future<Either<Failure, List<LegalDocument>>> getLegalDocument(String docType);
 }
+
+

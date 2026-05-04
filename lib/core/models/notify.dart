@@ -5,3 +5,5 @@ class Notify {
 
   Notify({required this.userId, required this.title, required this.body});
 }
+
+

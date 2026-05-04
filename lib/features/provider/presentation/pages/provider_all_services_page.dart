@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -8,124 +8,152 @@ import 'package:nsapp/features/provider/presentation/pages/requests_by_service_p
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
-class ProviderAllServicesPage extends StatelessWidget {
+class ProviderAllServicesPage extends StatefulWidget {
   const ProviderAllServicesPage({super.key});
+
+  @override
+  State<ProviderAllServicesPage> createState() => _ProviderAllServicesPageState();
+}
+
+class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
+  bool _isSubscriptionValid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      body: GradientBackground(
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: EdgeInsets.all(20.r),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        context.read<ProviderBloc>().add(
-                          ProviderBackPressedEvent(),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(12.r),
-                        decoration: BoxDecoration(
-                          color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(14.r),
-                          border: Border.all(
-                            color: context.appColors.glassBorder,
-                            width: 1.5.r,
-                          ),
-                        ),
-                        child: Icon(
-                          FontAwesomeIcons.chevronLeft,
-                          color: context.appColors.primaryTextColor,
-                          size: 20.r,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 16.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "SERVICE CATALOG",
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: context.appColors.primaryTextColor,
-                              letterSpacing: 1.2,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<SharedBloc, SharedState>(
+            listener: (context, state) {
+              if (state is ValidUserSubscriptionState) {
+                setState(() => _isSubscriptionValid = state.isValid);
+              }
+            },
+          ),
+        ],
+        child: GradientBackground(
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Header
+                Padding(
+                  padding: EdgeInsets.all(20.r),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          context.read<ProviderBloc>().add(
+                            ProviderBackPressedEvent(),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(12.r),
+                          decoration: BoxDecoration(
+                            color: context.appColors.cardBackground,
+                            borderRadius: BorderRadius.circular(14.r),
+                            border: Border.all(
+                              color: context.appColors.glassBorder,
+                              width: 1.5.r,
                             ),
                           ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            "BROWSE ALL AVAILABLE SERVICE CATEGORIES",
-                            style: TextStyle(
-                              fontSize: 9.sp,
-                              fontWeight: FontWeight.bold,
-                              color: context.appColors.secondaryTextColor.withAlpha(150),
-                              letterSpacing: 0.8,
-                            ),
+                          child: Icon(
+                            FontAwesomeIcons.chevronLeft,
+                            color: context.appColors.primaryTextColor,
+                            size: 20.r,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Services Grid
-              Expanded(
-                child: BlocBuilder<SharedBloc, SharedState>(
-                  builder: (context, state) {
-                    final services = SuccessGetServicesState.services;
-
-                    if (services.isEmpty) {
-                      return Center(
+                      SizedBox(width: 16.w),
+                      Expanded(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
-                              FontAwesomeIcons.list,
-                              size: 64.r,
-                              color: Colors.white.withAlpha(50),
+                            Text(
+                              "SERVICE CATALOG",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w500,
+                                color: context.appColors.primaryTextColor,
+                                letterSpacing: 1.2,
+                              ),
                             ),
-                            SizedBox(height: 16.h),
-                            const Text(
-                              "No services available",
-                              style: TextStyle(color: Colors.white70),
+                            SizedBox(height: 4.h),
+                            Text(
+                              "BROWSE ALL AVAILABLE SERVICE CATEGORIES",
+                              style: TextStyle(
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.w500,
+                                color: context.appColors.secondaryTextColor.withAlpha(150),
+                                letterSpacing: 0.8,
+                              ),
                             ),
                           ],
                         ),
-                      );
-                    }
-
-                    return GridView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 10.h,
                       ),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: isLargeScreen ? 3 : 2,
-                        crossAxisSpacing: 12.w,
-                        mainAxisSpacing: 12.h,
-                        childAspectRatio: 1.3,
-                      ),
-                      itemCount: services.length,
-                      itemBuilder: (context, index) {
-                        final service = services[index];
-                        return _buildServiceCard(context, service, index);
-                      },
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ),
-            ],
+
+                // Services Grid
+                Expanded(
+                  child: BlocBuilder<SharedBloc, SharedState>(
+                    builder: (context, state) {
+                      final services = (state is SuccessGetServicesState) 
+                          ? state.services 
+                          : (context.read<SharedBloc>().state is SuccessGetServicesState 
+                              ? (context.read<SharedBloc>().state as SuccessGetServicesState).services 
+                              : []);
+
+                      if (services.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                FontAwesomeIcons.list,
+                                size: 64.r,
+                                color: Colors.white.withAlpha(50),
+                              ),
+                              SizedBox(height: 16.h),
+                              const Text(
+                                "No services available",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return GridView.builder(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 10.h,
+                        ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isLargeScreen ? 3 : 2,
+                          crossAxisSpacing: 12.w,
+                          mainAxisSpacing: 12.h,
+                          childAspectRatio: 1.3,
+                        ),
+                        itemCount: services.length,
+                        itemBuilder: (context, index) {
+                          final service = services[index];
+                          return _buildServiceCard(context, service, index);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -133,8 +161,6 @@ class ProviderAllServicesPage extends StatelessWidget {
   }
 
   Widget _buildServiceCard(BuildContext context, dynamic service, int index) {
-   
-
     final icons = [
       FontAwesomeIcons.wrench,
       FontAwesomeIcons.broom,
@@ -147,7 +173,7 @@ class ProviderAllServicesPage extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if (ValidUserSubscriptionState.isValid) {
+        if (_isSubscriptionValid) {
           context.read<ProviderBloc>().add(
             NavigateProviderEvent(
               page: 1,
@@ -191,7 +217,7 @@ class ProviderAllServicesPage extends StatelessWidget {
                     (service.name ?? "Service").toUpperCase(),
                     style: TextStyle(
                       fontSize: 13.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: context.appColors.primaryTextColor,
                       height: 1.2,
                       letterSpacing: 0.5,
@@ -208,6 +234,5 @@ class ProviderAllServicesPage extends StatelessWidget {
     );
   }
 }
-
 
 

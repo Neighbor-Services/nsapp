@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -89,7 +89,7 @@ class _SolidTextFieldState extends State<SolidTextField>
             style: TextStyle(
               color: labelColor,
               fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.2,
             ),
           ),
@@ -167,6 +167,8 @@ class _SolidTextFieldState extends State<SolidTextField>
     );
   }
 }
+
+
 
 
 

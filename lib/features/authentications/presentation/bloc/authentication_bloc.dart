@@ -1,4 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/helpers/use_case.dart';
@@ -23,7 +23,7 @@ part 'authentication_event.dart';
 part 'authentication_state.dart';
 
 class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+    extends HydratedBloc<AuthenticationEvent, AuthenticationState> {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
   final LogoutUseCase logoutUseCase;
@@ -67,7 +67,7 @@ class AuthenticationBloc
       results.fold(
         (l) {
           isSuccess = false;
-          message = l.massege ?? "Email or password is incorrect";
+          message = l.message ?? "Email or password is incorrect";
         },
         (r) {
           isSuccess = true;
@@ -195,4 +195,37 @@ class AuthenticationBloc
       );
     });
   }
+
+  @override
+  AuthenticationState? fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as String?;
+    switch (type) {
+      case 'SuccessSendEmailVerificationState':
+        return SuccessSendEmailVerificationState();
+      case 'SuccessRegisterAuthenticationState':
+        return SuccessRegisterAuthenticationState();
+      case 'FailureLoginAuthenticationState':
+        return FailureLoginAuthenticationState(message: json['message'] ?? "");
+      default:
+        return InitialAuthenticationState();
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(AuthenticationState state) {
+    if (state is SuccessSendEmailVerificationState) {
+      return {'type': 'SuccessSendEmailVerificationState'};
+    }
+    if (state is SuccessRegisterAuthenticationState) {
+      return {'type': 'SuccessRegisterAuthenticationState'};
+    }
+    if (state is FailureLoginAuthenticationState) {
+      return {'type': 'FailureLoginAuthenticationState', 'message': state.message};
+    }
+    return {'type': 'InitialAuthenticationState'};
+  }
 }
+
+
+
+

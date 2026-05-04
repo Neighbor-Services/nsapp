@@ -48,3 +48,5 @@ class PerformanceBadgeAdapter extends TypeAdapter<PerformanceBadge> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

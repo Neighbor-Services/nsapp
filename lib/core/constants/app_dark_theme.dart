@@ -44,3 +44,5 @@ ThemeData seekerDarkTheme = providerDarkTheme.copyWith(
   secondaryHeaderColor: appOrangeColor2,
   primaryColorLight: appLightBlueCard,
 );
+
+

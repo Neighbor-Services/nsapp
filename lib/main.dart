@@ -23,44 +23,73 @@ import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "assets/.env");
 
-  // Stripe Setup
-  Stripe.publishableKey = stripePublishableKey;
-  Stripe.merchantIdentifier = "merchant.flutter.stripe.test";
-  Stripe.urlScheme = 'flutterstripe';
-  await Stripe.instance.applySettings();
+  // Firebase Setup
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint("Firebase initialization failed: $e");
+  }
 
-  // Dio Setup
-  dio.options.baseUrl = baseUrl;
+  // HydratedBloc Setup
+  final storage = await HydratedStorage.build(
+    storageDirectory: await getApplicationDocumentsDirectory(),
+  );
+  HydratedBloc.storage = storage;
 
-  // Dependency Injection Init
-  await di.init();
+  // Sentry Setup
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.get('SENTRY_DSN', fallback: '');
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () async {
+      // Stripe Setup
+      Stripe.publishableKey = stripePublishableKey;
+      Stripe.merchantIdentifier = "merchant.flutter.stripe.test";
+      Stripe.urlScheme = 'flutterstripe';
+      await Stripe.instance.applySettings();
 
-  // Local Notifications Init
-  await LocalNotificationService.initialize();
+      // Dio Setup
+      dio.options.baseUrl = baseUrl;
 
-  // Background Service Init (Android only)
-  await BackgroundNotificationService.initializeService();
+      // Dependency Injection Init
+      await di.init();
 
-  // Foreground WebSocket (works on both Android and iOS)
-  // Connects if user is already logged in (e.g. app restart)
-  BackgroundNotificationService.connectForeground();
+      // Local Notifications Init
+      await LocalNotificationService.initialize();
 
-  // Initialize Native Notification Token Listener (iOS)
-  DeviceTokenService.initialize();
+      // Background Service Init (Android only)
+      await BackgroundNotificationService.initializeService();
 
-  // Location Permission (Delegated to Helpers/LocationService)
-  // If requestPermission exists in Helpers, call it. Otherwise getLocation checks permissions.
-  // Using getLocation calls init logic.
-  Helpers.getLocation();
+      // Foreground WebSocket
+      BackgroundNotificationService.connectForeground();
 
-  // Request Notifications Permission
-  await Permission.notification.request();
+      // Initialize Native Notification Token Listener (iOS)
+      DeviceTokenService.initialize();
 
-  runApp(const NeighborServiceApp());
+      Helpers.getLocation();
+
+      // Request Notifications Permission
+      await Permission.notification.request();
+
+      runApp(
+        SentryScreenshotWidget(
+          child: SentryUserInteractionWidget(
+            child: const NeighborServiceApp(),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class NeighborServiceApp extends StatelessWidget {
@@ -83,12 +112,12 @@ class NeighborServiceApp extends StatelessWidget {
       ],
       child: BlocBuilder<SharedBloc, SharedState>(
         buildWhen: (previous, current) => current is ThemeModeState,
-        builder: (context, snapshot) {
+        builder: (context, state) {
           return GetMaterialApp(
             title: "Neighbor Service App",
             theme: providerLightTheme,
             darkTheme: providerDarkTheme,
-            themeMode: ThemeModeState.themeMode,
+            themeMode: state.themeMode,
             initialRoute: "/",
             getPages: pages,
             debugShowCheckedModeBanner: false,
@@ -107,3 +136,5 @@ class NeighborServiceApp extends StatelessWidget {
     );
   }
 }
+
+

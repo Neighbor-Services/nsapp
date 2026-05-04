@@ -25,9 +25,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -53,7 +53,7 @@ class ProviderRepositoryImpl extends ProviderRepository {
           .getBox(HiveService.serviceRequestBox)
           .get('recent_requests');
       if (cached != null) return Right(List<RequestData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -85,9 +85,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
         }
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -104,9 +104,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -123,9 +123,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -137,7 +137,7 @@ class ProviderRepositoryImpl extends ProviderRepository {
       final results = await datasource.reloadProfile(request: requestId);
       return Right(results);
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -157,13 +157,13 @@ class ProviderRepositoryImpl extends ProviderRepository {
           .getBox(HiveService.serviceRequestBox)
           .get('accepted_requests');
       if (cached != null) return Right(List<RequestAcceptance>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       final cached = hiveService
           .getBox(HiveService.serviceRequestBox)
           .get('accepted_requests');
       if (cached != null) return Right(List<RequestAcceptance>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -180,7 +180,7 @@ class ProviderRepositoryImpl extends ProviderRepository {
       }
       return Right(results);
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -201,7 +201,7 @@ class ProviderRepositoryImpl extends ProviderRepository {
           .getBox(HiveService.appointmentBox)
           .get('provider_appointments');
       if (cached != null) return Right(List<AppointmentData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -214,9 +214,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
             .put('provider_appointments', results);
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -254,13 +254,13 @@ class ProviderRepositoryImpl extends ProviderRepository {
           .getBox(HiveService.serviceRequestBox)
           .get('all_requests');
       if (cached != null) return Right(List<RequestData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       final cached = hiveService
           .getBox(HiveService.serviceRequestBox)
           .get('all_requests');
       if (cached != null) return Right(List<RequestData>.from(cached));
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -280,9 +280,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -295,9 +295,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "Not found"));
+      return Left(Failure(message: "Not found"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -308,10 +308,10 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (isSuccess) {
         return Right(true);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       debugPrint(e.toString());
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -326,10 +326,10 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (isSuccess) {
         return Right(true);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       debugPrint(e.toString());
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -346,23 +346,23 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> isRequestAccepted({required String id}) async {
+  Future<Either<Failure, bool>> isRequestAccepted({required String id, String? uid}) async {
     try {
-      final isSuccess = await datasource.isRequestAccepted(requestID: id);
+      final isSuccess = await datasource.isRequestAccepted(requestID: id, uid: uid);
       if (isSuccess) {
         return Right(isSuccess);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
       debugPrint(e.toString());
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -379,9 +379,9 @@ class ProviderRepositoryImpl extends ProviderRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -393,7 +393,10 @@ class ProviderRepositoryImpl extends ProviderRepository {
       final result = await datasource.addServicePackage(package);
       return Right(result);
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -45,7 +45,7 @@ class _ProviderAppointmentListPageState
           "MY APPOINTMENTS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -101,168 +101,170 @@ class _ProviderAppointmentListPageState
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: FutureBuilder<List<AppointmentData>>(
-                      future: SuccessGetAppointmentsState.appointments,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: LoadingWidget());
-                        }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return Center(
-                            child: EmptyWidget(
-                              message: "No appointments found",
-                              height: 200.h,
-                            ),
-                          );
-                        }
+                    child: state is SuccessGetAppointmentsState 
+                      ? FutureBuilder<List<AppointmentData>>(
+                        future: state.appointments,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: LoadingWidget());
+                          }
+                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return Center(
+                              child: EmptyWidget(
+                                message: "No appointments found",
+                                height: 200.h,
+                              ),
+                            );
+                          }
 
-                        final appointments = snapshot.data!;
-                        return ListView.separated(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: appointments.length,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(height: 16.h),
-                          itemBuilder: (context, index) {
-                            final data = appointments[index];
-                            final appt = data.appointment;
-                            if (appt == null) return const SizedBox.shrink();
+                          final appointments = snapshot.data!;
+                          return ListView.separated(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: appointments.length,
+                            separatorBuilder: (context, index) =>
+                                SizedBox(height: 16.h),
+                            itemBuilder: (context, index) {
+                              final data = appointments[index];
+                              final appt = data.appointment;
+                              if (appt == null) return const SizedBox.shrink();
 
-                            return Container(
-                              margin: EdgeInsets.only(bottom: 0),
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  Get.bottomSheet(
-                                    AppointmentDetailBottomSheet(data: data),
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                  );
-                                },
-                                child: SolidContainer(
-                                  padding: EdgeInsets.all(20.r),
-                                  borderColor: context.appColors.glassBorder,
-                                  borderWidth: 1.5.r,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Column(
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 0),
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () {
+                                    Get.bottomSheet(
+                                      AppointmentDetailBottomSheet(data: data),
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                    );
+                                  },
+                                  child: SolidContainer(
+                                    padding: EdgeInsets.all(20.r),
+                                    borderColor: context.appColors.glassBorder,
+                                    borderWidth: 1.5.r,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  CustomTextWidget(
+                                                    text: (appt.title ?? "No Title").toUpperCase(),
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: textColor,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                  SizedBox(height: 4.h),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .person_outline_rounded,
+                                                        size: 14.r,
+                                                        color: secondaryTextColor,
+                                                      ),
+                                                      SizedBox(width: 6.w),
+                                                      CustomTextWidget(
+                                                        text:
+                                                            (data.user?.firstName ?? '').trim(),
+                                                        fontSize: 12.sp,
+                                                        color: secondaryTextColor,
+                                                      ),
+                                                      if (data.role != null) ...[
+                                                        SizedBox(width: 12.w),
+                                                        Container(
+                                                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                                                          decoration: BoxDecoration(
+                                                            color: context.appColors.primaryColor.withAlpha(30),
+                                                            borderRadius: BorderRadius.circular(6.r),
+                                                          ),
+                                                          child: Text(
+                                                            data.role!.toUpperCase(),
+                                                            style: TextStyle(
+                                                              fontSize: 8.sp,
+                                                              fontWeight: FontWeight.w500,
+                                                              color: context.appColors.primaryColor,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            _buildStatusBadge(appt, context),
+                                          ],
+                                        ),
+                                        SizedBox(height: 16.h),
+                                        Divider(color: dividerColor, height: 1.h),
+                                        SizedBox(height: 16.h),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(8.r),
+                                              decoration: BoxDecoration(
+                                                color: iconBgColor,
+                                                borderRadius: BorderRadius.circular(
+                                                  10.r,
+                                                ),
+                                              ),
+                                              child: Icon(
+                                                FontAwesomeIcons.calendar,
+                                                size: 16.r,
+                                                color: context.appColors.secondaryColor,
+                                              ),
+                                            ),
+                                            SizedBox(width: 12.w),
+                                            Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                CustomTextWidget(
-                                                  text: (appt.title ?? "No Title").toUpperCase(),
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: textColor,
-                                                  letterSpacing: 0.5,
+                                                Text(
+                                                  "SCHEDULED FOR",
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    color: secondaryTextColor
+                                                        .withAlpha(180),
+                                                    fontWeight: FontWeight.w500,
+                                                    letterSpacing: 0.5,
+                                                  ),
                                                 ),
-                                                SizedBox(height: 4.h),
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons
-                                                          .person_outline_rounded,
-                                                      size: 14.r,
-                                                      color: secondaryTextColor,
-                                                    ),
-                                                    SizedBox(width: 6.w),
-                                                    CustomTextWidget(
-                                                      text:
-                                                          (data.user?.firstName ?? '').trim(),
-                                                      fontSize: 12.sp,
-                                                      color: secondaryTextColor,
-                                                    ),
-                                                    if (data.role != null) ...[
-                                                      SizedBox(width: 12.w),
-                                                      Container(
-                                                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                                                        decoration: BoxDecoration(
-                                                          color: context.appColors.primaryColor.withAlpha(30),
-                                                          borderRadius: BorderRadius.circular(6.r),
-                                                        ),
-                                                        child: Text(
-                                                          data.role!.toUpperCase(),
-                                                          style: TextStyle(
-                                                            fontSize: 8.sp,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: context.appColors.primaryColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ],
+                                                SizedBox(height: 2.h),
+                                                CustomTextWidget(
+                                                  text: appt.effectiveDate != null
+                                                      ? DateFormat(
+                                                          "MMM dd, yyyy • h:mm a",
+                                                        ).format(
+                                                          appt.effectiveDate!
+                                                              .toLocal(),
+                                                        )
+                                                      : "Date TBD",
+                                                  fontSize: 14.sp,
+                                                  color: textColor.withAlpha(220),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                          _buildStatusBadge(appt, context),
-                                        ],
-                                      ),
-                                      SizedBox(height: 16.h),
-                                      Divider(color: dividerColor, height: 1.h),
-                                      SizedBox(height: 16.h),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(8.r),
-                                            decoration: BoxDecoration(
-                                              color: iconBgColor,
-                                              borderRadius: BorderRadius.circular(
-                                                10.r,
-                                              ),
-                                            ),
-                                            child: Icon(
-                                              FontAwesomeIcons.calendar,
-                                              size: 16.r,
-                                              color: context.appColors.secondaryColor,
-                                            ),
-                                          ),
-                                          SizedBox(width: 12.w),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "SCHEDULED FOR",
-                                                style: TextStyle(
-                                                  fontSize: 10.sp,
-                                                  color: secondaryTextColor
-                                                      .withAlpha(180),
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 0.5,
-                                                ),
-                                              ),
-                                              SizedBox(height: 2.h),
-                                              CustomTextWidget(
-                                                text: appt.effectiveDate != null
-                                                    ? DateFormat(
-                                                        "MMM dd, yyyy â€¢ h:mm a",
-                                                      ).format(
-                                                        appt.effectiveDate!
-                                                            .toLocal(),
-                                                      )
-                                                    : "Date TBD",
-                                                fontSize: 14.sp,
-                                                color: textColor.withAlpha(220),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                              );
+                            },
+                          );
+                        },
+                      )
+                    : const SizedBox.shrink(),
                   ),
                 ),
               ),
@@ -298,13 +300,11 @@ class _ProviderAppointmentListPageState
         text: text.toUpperCase(),
         color: context.appColors.primaryColor,
         fontSize: 10.sp,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
       ),
     );
   }
 }
-
-
 
 

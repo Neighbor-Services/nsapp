@@ -84,3 +84,5 @@ class MessageAdapter extends TypeAdapter<Message> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

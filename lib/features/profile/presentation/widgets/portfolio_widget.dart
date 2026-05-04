@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -10,6 +10,7 @@ import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/profile/presentation/widgets/portfolio_gallery.dart';
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class PortfolioWidget extends StatefulWidget {
@@ -22,10 +23,14 @@ class PortfolioWidget extends StatefulWidget {
 class _PortfolioWidgetState extends State<PortfolioWidget> {
   @override
   void initState() {
-    context.read<ProfileBloc>().add(
-      GetAboutEvent(user: PortfolioUserState.userId),
-    );
     super.initState();
+    final seekerState = context.read<SeekerBloc>().state;
+    final userId = seekerState is ProviderToReviewState
+        ? (seekerState.providerUserId ?? '')
+        : '';
+    context.read<ProfileBloc>().add(
+      GetAboutEvent(user: userId),
+    );
   }
 
   @override
@@ -33,8 +38,12 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is PortfolioUserState) {
+          final seekerState = context.read<SeekerBloc>().state;
+          final userId = seekerState is ProviderToReviewState
+              ? (seekerState.providerUserId ?? '')
+              : '';
           context.read<ProfileBloc>().add(
-            GetAboutEvent(user: PortfolioUserState.userId),
+            GetAboutEvent(user: userId),
           );
           setState(() {});
         }
@@ -43,9 +52,13 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
+            final seekerState = context.read<SeekerBloc>().state;
+            final userId = seekerState is ProviderToReviewState
+                ? (seekerState.providerUserId ?? '')
+                : '';
             return FutureBuilder<Profile?>(
-              future: (PortfolioUserState.userId.isNotEmpty)
-                  ? Helpers.getSeekerProfile(PortfolioUserState.userId)
+              future: userId.isNotEmpty
+                  ? Helpers.getSeekerProfile(userId)
                   : Future.value(null),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -55,7 +68,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                 final profile = snapshot.data;
 
                 return FutureBuilder<AboutData>(
-                  future: SuccessGetAboutStreamState.about,
+                  future: state is SuccessGetAboutStreamState ? state.about : null,
                   builder: (context, aboutSnapshot) {
                     if (!aboutSnapshot.hasData && profile == null) {
                       return const LoadingWidget();
@@ -112,7 +125,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               icon: FontAwesomeIcons.hammer,
                               title: "SKILLS",
                               content: (aboutData.about!.skills as List).join(
-                                " â€¢ ",
+                                " • ",
                               ),
                             ),
                             SizedBox(height: 16.h),
@@ -123,7 +136,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               icon: FontAwesomeIcons.language,
                               title: "LANGUAGES",
                               content: (aboutData.about!.languages as List)
-                                  .join(" â€¢ "),
+                                  .join(" • "),
                             ),
                             SizedBox(height: 32.h),
                           ],
@@ -148,7 +161,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                   SizedBox(width: 12.w),
                                   CustomTextWidget(
                                     text: "PORTFOLIO",
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: 18.sp,
                                     color:
                                         context.appColors.primaryBackground,
@@ -244,7 +257,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                   title,
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     fontSize: 14.sp,
                     letterSpacing: 0.5,
                   ),
@@ -264,7 +277,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               height: 1.5,
             ),
           ),
@@ -273,7 +286,5 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     );
   }
 }
-
-
 
 

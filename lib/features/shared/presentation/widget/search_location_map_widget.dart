@@ -1,8 +1,9 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/core/models/map_places.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 
@@ -22,6 +23,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
     return BlocConsumer<SharedBloc, SharedState>(
       listener: (context, state) {},
       builder: (context, state) {
+        final places = state is SuccessPlacesState ? state.places : <MapPlaces>[];
         return Column(
           children: [
             Container(
@@ -47,7 +49,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
             ),
             SizedBox(height: 20.h),
             Expanded(
-              child: SuccessPlacesState.places.isEmpty
+              child: places.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -70,7 +72,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                     )
                   : ListView.builder(
                       physics: const BouncingScrollPhysics(),
-                      itemCount: SuccessPlacesState.places.length,
+                      itemCount: places.length,
                       itemBuilder: (context, index) {
                         return TweenAnimationBuilder<double>(
                           duration: Duration(milliseconds: 300 + (index * 50)),
@@ -109,9 +111,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                   onTap: () {
                                     context.read<SharedBloc>().add(
                                       SearchPlaceEvent(
-                                        placeId: SuccessPlacesState
-                                            .places[index]
-                                            .placeId!,
+                                        placeId: places[index].placeId!,
                                       ),
                                     );
                                     Get.back();
@@ -121,27 +121,23 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                     decoration: BoxDecoration(
                                       color: context.appColors.primaryColor.withAlpha(40),
                                       shape: BoxShape.circle,
-                                      
                                     ),
-                                    child:  Icon(
+                                    child: Icon(
                                       FontAwesomeIcons.locationDot,
                                       color: context.appColors.primaryColor,
                                       size: 20.r,
                                     ),
                                   ),
                                   title: Text(
-                                    SuccessPlacesState.places[index].name,
+                                    places[index].name,
                                     style: TextStyle(
                                       color: context.appColors.primaryTextColor,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                       fontSize: 16.sp,
                                     ),
                                   ),
                                   subtitle: Text(
-                                    SuccessPlacesState
-                                            .places[index]
-                                            .description ??
-                                        "",
+                                    places[index].description ?? "",
                                     style: TextStyle(
                                       color: context.appColors.secondaryTextColor,
                                       fontSize: 13.sp,
@@ -171,6 +167,5 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
     );
   }
 }
-
 
 

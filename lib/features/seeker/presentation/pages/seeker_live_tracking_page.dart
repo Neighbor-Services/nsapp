@@ -3,12 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/services/tracking_service.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
-import 'package:get/get.dart';
-
 class SeekerLiveTrackingPage extends StatefulWidget {
   final String appointmentId;
   final LatLng jobLocation;
@@ -175,7 +171,7 @@ class _SeekerLiveTrackingPageState extends State<SeekerLiveTrackingPage> {
                                   : "WAITING FOR SIGNAL...",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -186,7 +182,7 @@ class _SeekerLiveTrackingPageState extends State<SeekerLiveTrackingPage> {
                                   : "PROVIDER HAS NOT STARTED SHARING LOCATION.",
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 9.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -205,3 +201,5 @@ class _SeekerLiveTrackingPageState extends State<SeekerLiveTrackingPage> {
     );
   }
 }
+
+

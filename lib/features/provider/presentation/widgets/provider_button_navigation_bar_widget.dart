@@ -55,7 +55,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.house,
                                 label: 'Home',
-                                isActive: NavigatorProviderState.page == 1,
+                                isActive: NavigatorProviderState.lastPage == 1,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -71,8 +71,8 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
                                 label: 'Notifications',
-                                isActive: NavigatorProviderState.page == 2,
-                                badgeCount: SuccessGetMyNotificationsState.unreadCount,
+                                isActive: NavigatorProviderState.lastPage == 2,
+                                badgeCount: SuccessGetMyNotificationsState.lastUnreadCount,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -89,9 +89,9 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
                                 label: 'Chat',
-                                isActive: NavigatorProviderState.page == 4,
+                                isActive: NavigatorProviderState.lastPage == 4,
                                 badgeCount:
-                                    SuccessGetMyMessagesState.unreadMessageCount,
+                                    SuccessGetMyMessagesState.lastUnreadMessageCount,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -107,7 +107,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.calendar,
                                 label: 'Appointments',
-                                isActive: NavigatorProviderState.page == 5,
+                                isActive: NavigatorProviderState.lastPage == 5,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -155,7 +155,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w500),
           ),
           backgroundColor: context.appColors.errorColor,
           child: Column(
@@ -221,3 +221,5 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
     );
   }
 }
+
+

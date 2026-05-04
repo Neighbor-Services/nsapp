@@ -10,3 +10,5 @@ class VerifyAppointmentCodeUseCase {
     return await repository.verifyAppointmentCode(appointmentId, code);
   }
 }
+
+

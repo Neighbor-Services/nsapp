@@ -11,3 +11,5 @@ class GetStripeDashboardLinkUseCase {
     return await repository.getStripeDashboardLink();
   }
 }
+
+

@@ -14,3 +14,5 @@ class UpdateSeekerAppointmentUseCase extends UseCase<bool, Appointment> {
     return await repository.updateAppointment(appointment: params);
   }
 }
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,7 +48,8 @@ class _ReportPageState extends State<ReportPage> {
           if (state is SuccessAddReportState) {
             customAlert(context, AlertType.success, "Report Sent Successfully");
             Future.delayed(const Duration(seconds: 3), () {
-              if (DashboardState.isProvider) {
+              final sharedState = context.read<SharedBloc>().state;
+              if (sharedState.isProvider) {
                 context.read<ProviderBloc>().add(
                   NavigateProviderEvent(
                     page: 1,
@@ -66,6 +67,8 @@ class _ReportPageState extends State<ReportPage> {
           }
         },
         builder: (context, state) {
+          final isProvider = state.isProvider;
+
           return LoadingView(
             isLoading: (state is SharedLoadingState),
             child: SizedBox.expand(
@@ -87,7 +90,7 @@ class _ReportPageState extends State<ReportPage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  if (DashboardState.isProvider) {
+                                  if (isProvider) {
                                     context.read<ProviderBloc>().add(
                                       ProviderBackPressedEvent(),
                                     );
@@ -129,7 +132,7 @@ class _ReportPageState extends State<ReportPage> {
                                   "REPORT AN ISSUE",
                                   style: TextStyle(
                                     fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: context.appColors.primaryTextColor,
                                     letterSpacing: 1.2,
                                   ),
@@ -143,7 +146,7 @@ class _ReportPageState extends State<ReportPage> {
                                   "HELP US IMPROVE BY REPORTING ANY ISSUES",
                                   style: TextStyle(
                                     fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: context.appColors.secondaryTextColor,
                                     letterSpacing: 1.0,
                                   ),
@@ -260,7 +263,7 @@ class _ReportPageState extends State<ReportPage> {
                                           "SUBMIT REPORT",
                                           style: TextStyle(
                                             fontSize: 16.sp,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w500,
                                             color: Colors.white,
                                             letterSpacing: 1.1,
                                           ),
@@ -291,13 +294,12 @@ class _ReportPageState extends State<ReportPage> {
       text.toUpperCase(),
       style: TextStyle(
         fontSize: 10.sp,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w500,
         color: context.appColors.primaryTextColor,
         letterSpacing: 1.2,
       ),
     );
   }
 }
-
 
 

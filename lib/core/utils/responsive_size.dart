@@ -4,8 +4,6 @@ class Responsive {
   static late MediaQueryData _mediaQueryData;
   static late double screenWidth;
   static late double screenHeight;
-  static late double _blockSizeHorizontal;
-  static late double _blockSizeVertical;
 
   static late double _safeAreaHorizontal;
   static late double _safeAreaVertical;
@@ -24,9 +22,6 @@ class Responsive {
     _mediaQueryData = MediaQuery.of(context);
     screenWidth = _mediaQueryData.size.width;
     screenHeight = _mediaQueryData.size.height;
-    
-    _blockSizeHorizontal = screenWidth / 100;
-    _blockSizeVertical = screenHeight / 100;
 
     _safeAreaHorizontal = _mediaQueryData.padding.left + _mediaQueryData.padding.right;
     _safeAreaVertical = _mediaQueryData.padding.top + _mediaQueryData.padding.bottom;
@@ -46,14 +41,16 @@ class Responsive {
 
 extension ResponsiveSizeExtension on num {
   /// Responsive Width
-  double get w => this * 0.90; // Responsive.wScale;
+  double get w => this * Responsive.wScale;
 
   /// Responsive Height
-  double get h => this * 0.90; // Responsive.hScale;
+  double get h => this * Responsive.hScale;
 
   /// Responsive Font Size
-  double get sp => this * 0.90; // Responsive.textScale;
+  double get sp => this * 0.85;
 
   /// Responsive Radius
-  double get r => this * 0.90; // (Responsive.wScale < Responsive.hScale ? Responsive.wScale : Responsive.hScale);
+  double get r => this * (Responsive.wScale < Responsive.hScale ? Responsive.wScale : Responsive.hScale);
 }
+
+

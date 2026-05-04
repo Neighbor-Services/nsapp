@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -162,7 +162,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       "CREATE NEW PASSWORD",
                                       style: TextStyle(
                                         fontSize: 22.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         color: isDark ? Colors.white : Colors.black,
                                         letterSpacing: 1.0,
                                       ),
@@ -271,6 +271,8 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
     );
   }
 }
+
+
 
 
 

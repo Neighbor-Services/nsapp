@@ -20,3 +20,5 @@ class RequestSearchParams extends Params {
     this.catalogServiceId,
   });
 }
+
+

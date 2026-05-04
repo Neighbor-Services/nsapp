@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 const String domaineUrl = "https://neighborservice.com";
 const String baseUrl = "$domaineUrl/api/v1";
 const String baseRequestUrl = baseUrl;
@@ -16,6 +18,8 @@ Map<String, dynamic> dioMultiPartHeaders(String token) => {
   "Authorization": "Bearer $token",
 };
 
-// Agora Configuration (Fetched from backend, this is a placeholder/fallback)
-const String agoraAppId = "b0896e1d349345b2bda08c7ad32dc112";
+// Agora Configuration
+final String agoraAppId = dotenv.env["AGORA_APP_ID"] ?? "";
+
+
 

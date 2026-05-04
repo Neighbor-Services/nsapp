@@ -1,6 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/initialize/init.dart';
@@ -17,11 +17,15 @@ import 'package:nsapp/features/profile/domain/usecase/get_profile_use_case.dart'
 import 'package:nsapp/features/profile/domain/usecase/get_reviews_use_case.dart';
 import 'package:nsapp/features/profile/domain/usecase/update_device_token_use_case.dart';
 import 'package:nsapp/features/profile/domain/usecase/update_profile_use_case.dart';
+import 'package:nsapp/features/profile/domain/usecase/initiate_background_check_use_case.dart';
+import 'package:nsapp/features/profile/domain/usecase/get_audit_logs_use_case.dart';
+import 'package:nsapp/core/helpers/use_case.dart';
+import 'package:nsapp/core/models/audit_log.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
 
-class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
+class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
   final AddProfileUseCase addProfileUseCase;
   final GetProfileUseCase getProfileUseCase;
   final GetProfileStreamUseCase getProfileStreamUseCase;
@@ -32,6 +36,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final GetReviewsUseCase getReviewsUseCase;
   final UpdateDeviceTokenUseCase updateDeviceTokenUseCase;
   final DeleteAboutUseCase deleteAboutUseCase;
+  final InitiateBackgroundCheckUseCase initiateBackgroundCheckUseCase;
+  final GetAuditLogsUseCase getAuditLogsUseCase;
+
+  Profile? _cachedProfile;
 
   ProfileBloc(
     this.addProfileUseCase,
@@ -44,54 +52,53 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     this.getReviewsUseCase,
     this.updateDeviceTokenUseCase,
     this.deleteAboutUseCase,
+    this.initiateBackgroundCheckUseCase,
+    this.getAuditLogsUseCase,
   ) : super(InitialProfileState()) {
     on<SelectDateOfBirthEvent>((event, emit) async {
       final date = await Helpers.selectBirthDate(event.context);
       if (date != null) {
-        DateOfBirthProfileState.dob = date;
+        emit(DateOfBirthProfileState(dob: date));
       }
-      emit(DateOfBirthProfileState());
     });
+    
     on<SelectImageFromGalleryEvent>((event, emit) async {
       await Helpers.selectImageFromGallery();
       if (image != null) {
-        ImageProfileState.profilePicture = image;
+        emit(ImageProfileState(profilePicture: image));
       }
-      emit(ImageProfileState());
     });
 
     on<AboutUserEvent>((event, emit) async {
-      PortfolioUserState.userId = event.userID;
-      emit(PortfolioUserState());
+      emit(PortfolioUserState(userId: event.userID));
     });
 
     on<SelectImagesFromGalleryEvent>((event, emit) async {
       await Helpers.selectImagesFromGallery();
       if (images != null && images!.isNotEmpty) {
-        ImagesProfileState.images = images;
+        emit(ImagesProfileState(images: images));
       }
-      emit(ImagesProfileState());
     });
+
     on<SelectImageFromCameraEvent>((event, emit) async {
       await Helpers.selectImageFromCamera();
       if (image != null) {
-        ImageProfileState.profilePicture = image;
+        emit(ImageProfileState(profilePicture: image));
       }
-      emit(ImageProfileState());
     });
+
     on<SetUserTypeEvent>((event, emit) async {
-      UserTypeProfileState.userType = event.userType;
-      emit(UserTypeProfileState());
+      emit(UserTypeProfileState(userType: event.userType));
     });
+
     on<AddProfileEvent>((event, emit) async {
       emit(LoadingProfileState());
-      // Ensure global image variable is set for upload
-      if (ImageProfileState.profilePicture != null) {
-        image = ImageProfileState.profilePicture;
+      if (event.profilePicturePath != null) {
+        image = XFile(event.profilePicturePath!);
       }
       final results = await addProfileUseCase.call(event.profile);
       results.fold(
-        (failure) => emit(FailureCreateProfileState()),
+        (failure) => emit(FailureCreateProfileState(message: failure.message ?? 'Failed to create profile')),
         (success) => emit(SuccessCreateProfileState()),
       );
     });
@@ -99,7 +106,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateTokenEvent>((event, emit) async {
       final results = await updateDeviceTokenUseCase.call(event);
       results.fold(
-        (failure) => emit(FailureUpdateTokenState()),
+        (failure) => emit(FailureUpdateTokenState(message: failure.message ?? 'Failed to update token')),
         (success) => emit(SuccessUpdateTokenState()),
       );
     });
@@ -108,87 +115,147 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(LoadingProfileState());
       final results = await addReviewUseCase.call(event.review);
       results.fold(
-        (failure) => emit(FailureAddReviewState()),
+        (failure) => emit(FailureAddReviewState(message: failure.message ?? 'Failed to add review')),
         (success) => emit(SuccessAddReviewState()),
       );
     });
+
     on<AddAboutEvent>((event, emit) async {
       emit(LoadingProfileState());
       final results = await addAboutUseCase.call(event.about);
       results.fold(
-        (failure) => emit(FailureAddAboutState()),
+        (failure) => emit(FailureAddAboutState(message: failure.message ?? 'Failed to add about')),
         (success) => emit(SuccessAddAboutState()),
       );
     });
+
     on<DeleteAboutUserEvent>((event, emit) async {
       emit(LoadingProfileState());
       final results = await deleteAboutUseCase.call(event.id);
       results.fold(
-        (failure) => emit(FailureDeleteAboutState()),
+        (failure) => emit(FailureDeleteAboutState(message: failure.message ?? 'Failed to delete about')),
         (success) => emit(SuccessDeleteAboutState()),
       );
     });
+
     on<UpdateProfileEvent>((event, emit) async {
       emit(LoadingProfileState());
-      // Ensure global image variable is set for upload
-      if (ImageProfileState.profilePicture != null) {
-        image = ImageProfileState.profilePicture;
+      if (event.profilePicturePath != null) {
+        image = XFile(event.profilePicturePath!);
       }
       final results = await updateProfileUseCase.call(event.profile);
       results.fold(
-        (failure) => emit(FailureUpdateProfileState()),
-        (success) => emit(SuccessUpdateProfileState()),
+        (failure) => emit(FailureUpdateProfileState(message: failure.message ?? 'Failed to update profile')),
+        (success) {
+          _cachedProfile = event.profile;
+          emit(SuccessUpdateProfileState());
+        },
       );
     });
+
     on<GetProfileStreamEvent>((event, emit) async {
       final results = await getProfileStreamUseCase.call(event);
-      results.fold((failure) => emit(FailureGetProfileStreamState()), (
-        success,
-      ) {
-        SuccessGetProfileStreamState.profile = Future.value(success);
-        emit(SuccessGetProfileStreamState());
-      });
+      results.fold(
+        (failure) => emit(FailureGetProfileStreamState(message: failure.message ?? 'Failed to fetch profile')),
+        (success) {
+          _cachedProfile = success;
+          emit(SuccessGetProfileStreamState(profile: Future.value(success)));
+        },
+      );
     }, transformer: sequential());
+
     on<GetProfileEvent>((event, emit) async {
       final results = await getProfileStreamUseCase.call(event);
-
-      results.fold((failure) => emit(FailureGetProfileState()), (success) {
-        SuccessGetProfileState.profile = success;
-        emit(SuccessGetProfileState());
-      });
+      results.fold(
+        (failure) => emit(FailureGetProfileState(message: failure.message ?? 'Failed to fetch profile')),
+        (success) {
+          _cachedProfile = success;
+          emit(SuccessGetProfileState(profile: success));
+        },
+      );
     });
 
     on<GetAboutEvent>((event, emit) async {
       final results = await getAboutUseCase.call(event.user);
       results.fold(
         (failure) {
-          SuccessGetAboutStreamState.about = Future.value(AboutData());
-          emit(FailureGetAboutState());
+          emit(FailureGetAboutState(message: failure.message ?? 'Failed to fetch about info'));
         },
         (success) {
-          SuccessGetAboutStreamState.about = Future.value(success);
-
-          emit(SuccessGetAboutStreamState());
+          emit(SuccessGetAboutStreamState(about: Future.value(success)));
         },
       );
     }, transformer: sequential());
+
     on<GetReviewsEvent>((event, emit) async {
       final results = await getReviewsUseCase.call(event.user);
       results.fold(
         (failure) {
-          SuccessGetReviewStreamState.reviews = Future.value([]);
-          emit(FailureGetReviewsStreamState());
+          emit(FailureGetReviewsStreamState(message: failure.message ?? 'Failed to fetch reviews'));
         },
         (success) {
-          SuccessGetReviewStreamState.reviews = Future.value(success);
-
-          emit(SuccessGetReviewStreamState());
+          emit(SuccessGetReviewStreamState(reviews: Future.value(success)));
         },
       );
     }, transformer: sequential());
+
     on<ChooseOtherServiceEvent>((event, emit) {
-      OtherServiceSelectState.others = event.others;
-      emit(OtherServiceSelectState());
+      emit(OtherServiceSelectState(others: event.others));
+    });
+
+    on<InitiateBackgroundCheckEvent>((event, emit) async {
+      emit(LoadingProfileState());
+      final results = await initiateBackgroundCheckUseCase.call(
+          BackgroundCheckParams(paymentIntentId: event.paymentIntentId));
+      results.fold(
+        (failure) => emit(FailureInitiateBackgroundCheckState(
+            message: failure.message ?? 'Failed to initiate background check')),
+        (success) {
+          if (success != null && success.isNotEmpty) {
+            emit(SuccessInitiateBackgroundCheckState(url: success));
+          } else {
+            emit(FailureInitiateBackgroundCheckState(
+                message: 'Invalid response from server'));
+          }
+        },
+      );
+    });
+
+    on<GetAuditLogsEvent>((event, emit) async {
+      emit(LoadingProfileState());
+      final results = await getAuditLogsUseCase.call(NoParams());
+      results.fold(
+        (failure) => emit(FailureGetAuditLogsState(
+            message: failure.message ?? 'Failed to fetch audit logs')),
+        (success) => emit(SuccessGetAuditLogsState(logs: success)),
+      );
+    });
+
+    on<LogoutProfileEvent>((event, emit) {
+      _cachedProfile = null;
+      emit(InitialProfileState());
     });
   }
+
+  @override
+  ProfileState? fromJson(Map<String, dynamic> json) {
+    try {
+      if (json.containsKey('profile')) {
+        _cachedProfile = Profile.fromJson(json['profile']);
+        return SuccessGetProfileState(profile: _cachedProfile!);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  @override
+  Map<String, dynamic>? toJson(ProfileState state) {
+    if (_cachedProfile != null) {
+      return {'profile': _cachedProfile!.toJson()};
+    }
+    return null;
+  }
 }
+
+
+

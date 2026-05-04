@@ -7,30 +7,24 @@ class InitialProfileState extends ProfileState {}
 class LoadingProfileState extends ProfileState {}
 
 class DateOfBirthProfileState extends ProfileState {
-  static DateTime dob = DateTime.now().subtract(Duration(days: (365 * 18)));
+  final DateTime dob;
+  DateOfBirthProfileState({required this.dob});
 }
 
 class ImageProfileState extends ProfileState {
-  static XFile? profilePicture;
+  final XFile? profilePicture;
+  ImageProfileState({this.profilePicture});
 }
 
 class ImagesProfileState extends ProfileState {
-  static List<XFile>? images;
+  final List<XFile>? images;
+  ImagesProfileState({this.images});
 }
 
 class UserTypeProfileState extends ProfileState {
-  static String userType = 'provider';
+  final String userType;
+  UserTypeProfileState({required this.userType});
 }
-
-class FailureCreateProfileState extends ProfileState {}
-
-class FailureUpdateProfileState extends ProfileState {}
-
-class FailureAddAboutState extends ProfileState {}
-
-class FailureDeleteAboutState extends ProfileState {}
-
-class FailureAddReviewState extends ProfileState {}
 
 class SuccessCreateProfileState extends ProfileState {}
 
@@ -45,35 +39,112 @@ class SuccessUpdateProfileState extends ProfileState {}
 class SuccessUpdateTokenState extends ProfileState {}
 
 class SuccessGetProfileState extends ProfileState {
-  static Profile profile = Profile();
+  static Profile lastProfile = Profile();
+  final Profile profile;
+  SuccessGetProfileState({required this.profile}) {
+    SuccessGetProfileState.lastProfile = profile;
+  }
 }
 
 class SuccessGetProfileStreamState extends ProfileState {
-  static Future<Profile>? profile;
+  final Future<Profile> profile;
+  SuccessGetProfileStreamState({required this.profile});
 }
 
 class SuccessGetAboutStreamState extends ProfileState {
-  static Future<AboutData>? about;
+  final Future<AboutData> about;
+  SuccessGetAboutStreamState({required this.about});
 }
 
 class SuccessGetReviewStreamState extends ProfileState {
-  static Future<List<ReviewData>>? reviews;
+  final Future<List<ReviewData>> reviews;
+  SuccessGetReviewStreamState({required this.reviews});
 }
 
-class FailureGetProfileState extends ProfileState {}
+class SuccessGetAuditLogsState extends ProfileState {
+  final List<AuditLog> logs;
+  SuccessGetAuditLogsState({required this.logs});
+}
 
-class FailureGetProfileStreamState extends ProfileState {}
+class FailureGetAuditLogsState extends ProfileState {
+  final String message;
+  FailureGetAuditLogsState({required this.message});
+}
 
-class FailureUpdateTokenState extends ProfileState {}
+class FailureGetProfileState extends ProfileState {
+  final String message;
+  FailureGetProfileState({required this.message});
+}
 
-class FailureGetAboutState extends ProfileState {}
+class FailureGetProfileStreamState extends ProfileState {
+  final String message;
+  FailureGetProfileStreamState({required this.message});
+}
 
-class FailureGetReviewsStreamState extends ProfileState {}
+class FailureUpdateTokenState extends ProfileState {
+  final String message;
+  FailureUpdateTokenState({required this.message});
+}
+
+class FailureGetAboutState extends ProfileState {
+  final String message;
+  FailureGetAboutState({required this.message});
+}
+
+class FailureGetReviewsStreamState extends ProfileState {
+  final String message;
+  FailureGetReviewsStreamState({required this.message});
+}
+
+class FailureCreateProfileState extends ProfileState {
+  final String message;
+  FailureCreateProfileState({required this.message});
+}
+
+class FailureUpdateProfileState extends ProfileState {
+  final String message;
+  FailureUpdateProfileState({required this.message});
+}
+
+class FailureAddAboutState extends ProfileState {
+  final String message;
+  FailureAddAboutState({required this.message});
+}
+
+class FailureDeleteAboutState extends ProfileState {
+  final String message;
+  FailureDeleteAboutState({required this.message});
+}
+
+class FailureAddReviewState extends ProfileState {
+  final String message;
+  FailureAddReviewState({required this.message});
+}
 
 class PortfolioUserState extends ProfileState {
-  static String userId = "";
+  static String lastUserId = "";
+  final String userId;
+  PortfolioUserState({required this.userId}) {
+    PortfolioUserState.lastUserId = userId;
+  }
 }
 
 class OtherServiceSelectState extends ProfileState {
-  static bool others = false;
+  static bool lastOthers = false;
+  final bool others;
+  OtherServiceSelectState({required this.others}) {
+    OtherServiceSelectState.lastOthers = others;
+  }
 }
+
+class SuccessInitiateBackgroundCheckState extends ProfileState {
+  final String url;
+  SuccessInitiateBackgroundCheckState({required this.url});
+}
+
+class FailureInitiateBackgroundCheckState extends ProfileState {
+  final String message;
+  FailureInitiateBackgroundCheckState({required this.message});
+}
+
+

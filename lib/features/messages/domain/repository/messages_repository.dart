@@ -13,3 +13,5 @@ abstract class MessagesRepository {
   Future<Either<Failure, bool>> updateMessage(Message message);
   Future<Either<Failure, bool>> setSeen(String messageID);
 }
+
+

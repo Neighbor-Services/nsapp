@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SetupWebviewPage extends StatefulWidget {
@@ -15,6 +15,11 @@ class _SetupWebviewPageState extends State<SetupWebviewPage> {
   
   @override
   void initState() {
+    super.initState();
+    // URL is passed as a route argument when navigating to this page.
+    // e.g., Get.toNamed('/stripe-account', arguments: accountLink.url)
+    final String? url = Get.arguments as String?;
+    
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -33,10 +38,13 @@ class _SetupWebviewPageState extends State<SetupWebviewPage> {
             return NavigationDecision.navigate;
           },
         ),
-      )
-      ..loadRequest(Uri.parse(SuccessConnectAccountState.accountLink!.url));
-    super.initState();
+      );
+    
+    if (url != null && url.isNotEmpty) {
+      controller.loadRequest(Uri.parse(url));
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,3 +52,5 @@ class _SetupWebviewPageState extends State<SetupWebviewPage> {
     );
   }
 }
+
+

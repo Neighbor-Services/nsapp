@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:nsapp/core/di/injection_container.dart';
 
 Position locationData = Position(
   longitude: 12.5433,
@@ -26,7 +27,7 @@ String zipCode = "";
 IOWebSocketChannel? channel;
 XFile? image;
 
-Dio dio = Dio();
+Dio get dio => sl<Dio>();
 
 List<XFile>? images;
 
@@ -41,3 +42,5 @@ final Future<SharedPreferencesWithCache> prefs =
     SharedPreferencesWithCache.create(
       cacheOptions: const SharedPreferencesWithCacheOptions(),
     );
+
+

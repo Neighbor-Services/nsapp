@@ -15,7 +15,7 @@ import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widge
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import '../../../shared/presentation/bloc/shared_bloc.dart';
-import '../../../shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
 class ProviderRequestDetailPage extends StatefulWidget {
   const ProviderRequestDetailPage({super.key});
@@ -29,15 +29,33 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  bool _isAccepted = false;
+  bool _isSubscriptionValid = false;
 
   @override
   void initState() {
     super.initState();
+    
+    final profileState = context.read<ProfileBloc>().state;
+    String? uid;
+    if (profileState is SuccessGetProfileState) {
+      uid = profileState.profile.user?.id;
+    }
+
+    final providerState = context.read<ProviderBloc>().state;
+    String? requestId = "";
+    if (providerState is SuccessGetRequestDetailState) {
+      requestId = providerState.request.request?.id;
+    }
+
     context.read<ProviderBloc>().add(
       IsRequestAcceptedEvent(
-        id: RequestDetailState.requestData.request?.id ?? "",
+        id: requestId ?? "",
+        uid: uid,
       ),
     );
+
+    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
 
     _fadeController = AnimationController(
       vsync: this,
@@ -60,8 +78,12 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final request = RequestDetailState.requestData.request;
-    final user = RequestDetailState.requestData.user;
+    final providerState = context.read<ProviderBloc>().state;
+    if (providerState is! SuccessGetRequestDetailState) {
+      return const Scaffold(body: Center(child: Text("Request not found")));
+    }
+    final request = providerState.request.request;
+    final user = providerState.request.user;
 
     if (request == null || user == null) {
       return const Scaffold(body: Center(child: Text("Request not found")));
@@ -70,136 +92,156 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      body: BlocConsumer<ProviderBloc, ProviderState>(
-        listener: (context, state) {
-          if (state is SuccessRequestAcceptState) {
-            customAlert(context, AlertType.success, "Request Accepted");
-            setState(() {});
-            context.read<ProviderBloc>().add(
-              IsRequestAcceptedEvent(id: request.id ?? ""),
-            );
-          }
-          if (state is SuccessRequestCancelState) {
-            customAlert(context, AlertType.success, "Request Canceled");
-            setState(() {});
-            context.read<ProviderBloc>().add(
-              IsRequestAcceptedEvent(id: request.id ?? ""),
-            );
-          }
-        },
-        builder: (context, state) {
-          return LoadingView(
-            isLoading: (state is LoadingProviderState),
-            child: GradientBackground(
-              child: SafeArea(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700.w),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isLargeScreen ? 32.w : 16.w,
-                          vertical: 20.h,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Header
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    context.read<ProviderBloc>().add(
-                                      ProviderBackPressedEvent(),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(12.r),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(14.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
-                                        width: 1.5.r,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ProviderBloc, ProviderState>(
+            listener: (context, state) {
+              if (state is SuccessRequestAcceptState) {
+                customAlert(context, AlertType.success, "Request Accepted");
+                _refreshStatus(request.id ?? "");
+              } else if (state is SuccessRequestCancelState) {
+                customAlert(context, AlertType.success, "Request Canceled");
+                _refreshStatus(request.id ?? "");
+              } else if (state is IsRequestAcceptedState) {
+                setState(() => _isAccepted = state.accepted);
+              }
+            },
+          ),
+          BlocListener<SharedBloc, SharedState>(
+            listener: (context, state) {
+              if (state is ValidUserSubscriptionState) {
+                setState(() => _isSubscriptionValid = state.isValid);
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ProviderBloc, ProviderState>(
+          builder: (context, state) {
+            return LoadingView(
+              isLoading: (state is LoadingProviderState),
+              child: GradientBackground(
+                child: SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 700.w),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isLargeScreen ? 32.w : 16.w,
+                            vertical: 20.h,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Header
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      context.read<ProviderBloc>().add(
+                                        ProviderBackPressedEvent(),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(14.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
                                       ),
                                     ),
-                                    child: Icon(
-                                      FontAwesomeIcons.chevronLeft,
+                                  ),
+                                  SizedBox(width: 16.w),
+                                  Text(
+                                    "REQUEST DETAILS",
+                                    style: TextStyle(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.w500,
                                       color: context.appColors.primaryTextColor,
-                                      size: 20.r,
+                                      letterSpacing: 1.2,
                                     ),
                                   ),
-                                ),
-                                SizedBox(width: 16.w),
-                                Text(
-                                  "REQUEST DETAILS",
-                                  style: TextStyle(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: context.appColors.primaryTextColor,
-                                    letterSpacing: 1.2,
-                                  ),
-                                ),
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    context.read<MessageBloc>().add(
-                                      SetMessageReceiverEvent(profile: user),
-                                    );
-                                    context.read<ProviderBloc>().add(
-                                      NavigateProviderEvent(
-                                        page: 4,
-                                        widget: const ChatPage(),
+                                  const Spacer(),
+                                  GestureDetector(
+                                    onTap: () {
+                                      context.read<MessageBloc>().add(
+                                        SetMessageReceiverEvent(profile: user),
+                                      );
+                                      context.read<ProviderBloc>().add(
+                                        NavigateProviderEvent(
+                                          page: 4,
+                                          widget: const ChatPage(),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.primaryColor,
+                                        borderRadius: BorderRadius.circular(14.r),
                                       ),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(12.r),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(14.r),
-                                    ),
-                                    child: Icon(
-                                      FontAwesomeIcons.comment,
-                                      color: Colors.white,
-                                      size: 20.r,
+                                      child: Icon(
+                                        FontAwesomeIcons.comment,
+                                        color: Colors.white,
+                                        size: 20.r,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 28.h),
+                                ],
+                              ),
+                              SizedBox(height: 28.h),
 
-                            // Image Card
-                            _buildImageCard(request, isDark),
-                            SizedBox(height: 24.h),
+                              // Image Card
+                              _buildImageCard(request, isDark),
+                              SizedBox(height: 24.h),
 
-                            // User Info Card
-                            _buildUserInfoCard(user, request, isDark),
-                            SizedBox(height: 20.h),
+                              // User Info Card
+                              _buildUserInfoCard(user, request, isDark),
+                              SizedBox(height: 20.h),
 
-                            // Request Details Card
-                            _buildRequestDetailsCard(request, isDark),
-                            SizedBox(height: 32.h),
+                              // Request Details Card
+                              _buildRequestDetailsCard(request, isDark),
+                              SizedBox(height: 32.h),
 
-                            // Action Button
-                            _buildActionButton(context, request, isDark),
-                            SizedBox(height: 40.h),
-                          ],
+                              // Action Button
+                              _buildActionButton(context, request, isDark),
+                              SizedBox(height: 40.h),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
+
+  void _refreshStatus(String requestId) {
+    final profileState = context.read<ProfileBloc>().state;
+    String? uid;
+    if (profileState is SuccessGetProfileState) {
+      uid = profileState.profile.user?.id;
+    }
+    context.read<ProviderBloc>().add(
+      IsRequestAcceptedEvent(id: requestId, uid: uid),
+    );
+  }
+
 
   Widget _buildImageCard(dynamic request, bool isDark) {
     bool hasImage = request.withImage ?? false;
@@ -236,7 +278,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                             if (loadingProgress == null) return child;
                             return Container(
                               color: Colors.white.withAlpha(10),
-                              child: const Center(child: LoadingWidget()),
+                              child: const SkeletonWidget(width: double.infinity, height: 280, borderRadius: 28),
                             );
                           },
                           errorBuilder: (context, _, __) => Container(
@@ -246,24 +288,13 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                 FontAwesomeIcons.image,
                                 color: Colors.white24,
                                 size: 50.r,
-                              ),
+                               ),
                             ),
                           ),
                         ),
                       ),
                     )
                   : Image.asset(logoAssets, fit: BoxFit.cover),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 120.h,
-                decoration: BoxDecoration(
-                 
-                ),
-              ),
             ),
             if (!hasImage)
               Center(
@@ -273,7 +304,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 2,
                     fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -298,7 +329,6 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
         children: [
           Container(
             decoration: BoxDecoration(
-              
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white.withAlpha(40), width: 2.r),
             ),
@@ -324,7 +354,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                       (user.firstName ?? "User").toUpperCase(),
                       style: TextStyle(
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: context.appColors.primaryTextColor,
                         letterSpacing: 0.5,
                       ),
@@ -354,7 +384,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                         (request.service?.name ?? "Service").toUpperCase(),
                         style: TextStyle(
                           fontSize: 10.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: context.appColors.primaryColor,
                           letterSpacing: 0.5,
                         ),
@@ -407,7 +437,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                 "REQUEST SUMMARY",
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1.2,
                   color: context.appColors.secondaryTextColor,
                 ),
@@ -419,7 +449,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
             (request.title ?? "Service Request").toUpperCase(),
             style: TextStyle(
               fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: context.appColors.primaryTextColor,
               letterSpacing: 0.5,
             ),
@@ -443,11 +473,16 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     dynamic request,
     bool isDark,
   ) {
-    final isAccepted = IsRequestAcceptedState.accepted;
     final isApproved = request.approved ?? false;
 
     if (isApproved) {
-      final isAssignedToMe = request.approvedUser == SuccessGetProfileState.profile.user?.id;
+      final profileState = context.read<ProfileBloc>().state;
+      String? myId;
+      if (profileState is SuccessGetProfileState) {
+        myId = profileState.profile.user?.id;
+      }
+
+      final isAssignedToMe = request.approvedUser == myId;
       return SolidButton(
         label: isAssignedToMe ? "TASK ACTIVE" : "ASSIGNED TO ANOTHER",
         allCaps: true,
@@ -459,24 +494,30 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     }
 
     return SolidButton(
-      label: isAccepted ? "CANCEL INTEREST" : "ACCEPT & PROPOSE",
+      label: _isAccepted ? "CANCEL INTEREST" : "ACCEPT & PROPOSE",
       allCaps: true,
       textColor: Colors.white,
-      onPressed: () => isAccepted
+      onPressed: () => _isAccepted
           ? _cancelRequest(context, request)
           : _acceptRequest(context, request),
-      isPrimary: !isAccepted,
+      isPrimary: !_isAccepted,
       height: 60.h,
     );
   }
 
   void _acceptRequest(BuildContext context, dynamic request) {
-    if (ValidUserSubscriptionState.isValid) {
+    if (_isSubscriptionValid) {
+      final profileState = context.read<ProfileBloc>().state;
+      String? myId;
+      if (profileState is SuccessGetProfileState) {
+        myId = profileState.profile.user?.id;
+      }
+
       context.read<ProviderBloc>().add(
         RequestAcceptEvent(
           requestAccept: RequestAccept(
             serviceRequestId: request.id ?? "",
-            uid: SuccessGetProfileState.profile.user?.id ?? "",
+            uid: myId ?? "",
           ),
         ),
       );
@@ -489,11 +530,17 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   }
 
   void _cancelRequest(BuildContext context, dynamic request) {
+    final profileState = context.read<ProfileBloc>().state;
+    String? myId;
+    if (profileState is SuccessGetProfileState) {
+      myId = profileState.profile.user?.id;
+    }
+
     context.read<ProviderBloc>().add(
       CancelRequestAcceptEvent(
         requestAccept: RequestAccept(
           serviceRequestId: request.id ?? "",
-          uid: SuccessGetProfileState.profile.user?.id ?? "",
+          uid: myId ?? "",
         ),
       ),
     );
@@ -536,7 +583,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
             status.toUpperCase(),
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: color,
               letterSpacing: 0.5,
             ),
@@ -546,7 +593,5 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     );
   }
 }
-
-
 
 

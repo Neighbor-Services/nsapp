@@ -19,7 +19,7 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
 import '../../../shared/presentation/bloc/shared_bloc.dart';
 import '../../../shared/presentation/widget/custom_text_widget.dart';
@@ -41,7 +41,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
 
   @override
   void initState() {
-    final requestId = SeekerRequestDetailState.request.request?.id ?? "";
+    final requestId = ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : "");
     context.read<SeekerBloc>().add(ReloadRequestEvent(request: requestId));
     context.read<SeekerBloc>().add(
       GetAcceptedUsersSeekerEvent(request: requestId),
@@ -66,7 +66,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessDeleteRequestState) {
                 context.read<SeekerBloc>().add(
                   NavigateSeekerEvent(
-                    page: NavigatorSeekerState.page,
+                    page: NavigatorSeekerState.lastPage,
                     widget: SeekerRequestPage(),
                   ),
                 );
@@ -82,7 +82,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: SeekerRequestDetailState.request.request?.id ?? "",
+                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
                   ),
                 );
                 customAlert(
@@ -94,7 +94,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is FailureApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: SeekerRequestDetailState.request.request?.id ?? "",
+                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
                   ),
                 );
                 customAlert(context, AlertType.error, "Unable to Approve");
@@ -102,7 +102,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessCancelApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: SeekerRequestDetailState.request.request?.id ?? "",
+                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
                   ),
                 );
                 customAlert(
@@ -114,7 +114,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is FailureCancelApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: SeekerRequestDetailState.request.request?.id ?? "",
+                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
                   ),
                 );
               }
@@ -123,7 +123,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               return LoadingView(
                 isLoading: (state is LoadingSeekerState),
                 child: FutureBuilder<RequestData>(
-                  future: SuccessReloadRequestState.request,
+                  future: SuccessReloadRequestState.lastRequest,
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Center(
@@ -148,7 +148,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                               style: TextStyle(
                                 color: textColor,
                                 fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             SizedBox(height: 16.h),
@@ -159,7 +159,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                   ReloadRequestEvent(
                                     request:
                                         SeekerRequestDetailState
-                                            .request
+                                            .lastRequest
                                             .request
                                             ?.id ??
                                         "",
@@ -216,7 +216,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                     "REQUEST DETAILS",
                                     style: TextStyle(
                                       fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                       color: textColor,
                                       letterSpacing: 1.2,
                                     ),
@@ -267,7 +267,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                 style: TextStyle(
                                                   color: textColor,
                                                   fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w500,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
@@ -289,7 +289,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                     : "",
                                                 style: TextStyle(
                                                   fontSize: 13.sp,
-                                                  fontWeight: FontWeight.w500,
+                                                  fontWeight: FontWeight.w400,
                                                   color: context.appColors.hintTextColor,
                                                 ),
                                               ),
@@ -310,7 +310,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       style: TextStyle(
                                         color: textColor,
                                         fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         letterSpacing: 0.5,
                                       ),
                                     ),
@@ -377,8 +377,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                                 return Container(
                                                   height: 350.h,
                                                   color: buttonColor,
-                                                  child: const Center(
-                                                    child: LoadingWidget(),
+                                                    child: const Center(
+                                                      child: SkeletonWidget(width: double.infinity, height: 350, borderRadius: 24),
                                                   ),
                                                 );
                                               },
@@ -405,7 +405,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                 "INTERESTED PROVIDERS",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: textColor,
                                   letterSpacing: 1.0,
                                 ),
@@ -413,7 +413,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                               const SizedBox(height: 16),
 
                               FutureBuilder<List<RequestAcceptance>>(
-                                future: SuccessAcceptedUsersState.users,
+                                future: SuccessAcceptedUsersState.lastUsers,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     List<RequestAcceptance> acceptedProviders =
@@ -467,7 +467,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       );
                                     }
                                   }
-                                  return const Center(child: LoadingWidget());
+                                  return const ListSkeletonLoader();
                                 },
                               ),
                             ],
@@ -475,7 +475,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                         ),
                       );
                     } else {
-                      return const Center(child: LoadingWidget());
+                      return const ListSkeletonLoader();
                     }
                   },
                 ),
@@ -519,7 +519,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
   //       style: TextStyle(
   //         color: color,
   //         fontSize: 11,
-  //         fontWeight: FontWeight.bold,
+  //         fontWeight: FontWeight.w500,
   //         letterSpacing: 1.0,
   //       ),
   //     ),
@@ -556,7 +556,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 "Delete Request?",
                 style: TextStyle(
                   fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: textColor,
                 ),
               ),
@@ -700,7 +700,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "EDIT",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -718,7 +718,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "DELETE",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -736,7 +736,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "MARK AS DONE",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -754,7 +754,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "FUND PROVIDER",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -807,7 +807,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                   (provider?.firstName ?? "Unknown").toUpperCase(),
                   style: TextStyle(
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: textColor,
                     letterSpacing: 0.5,
                   ),
@@ -861,7 +861,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     if (isApproved) {
       return IconButton(
         onPressed: () {
-          final requestId = SeekerRequestDetailState.request.request?.id;
+          final requestId = SeekerRequestDetailState.lastRequest.request?.id;
           if (requestId != null) {
             context.read<SeekerBloc>().add(
               CancelApprovedRequestEvent(request: requestId),
@@ -889,7 +889,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
       }
       return IconButton(
         onPressed: () {
-          final requestId = SeekerRequestDetailState.request.request?.id;
+          final requestId = SeekerRequestDetailState.lastRequest.request?.id;
           final proposalId = acceptedProvider.acceptance?.id;
           final userId = user?.id ?? provider?.id ?? "unknown";
 
@@ -987,7 +987,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "ABOUT",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -1009,7 +1009,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     "CHAT",
                     style: TextStyle(
                       color: iconColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       fontSize: 12.sp,
                       letterSpacing: 0.5,
                     ),
@@ -1078,7 +1078,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                         CustomTextWidget(
                           text: "FUND PROJECT & SECURE PROVIDER",
                           fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: textColor,
                           letterSpacing: 0.5,
                         ),
@@ -1126,7 +1126,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             style: TextStyle(
                               fontSize: 16.sp,
                               color: textColor.withAlpha(200),
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -1171,6 +1171,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     );
   }
 }
+
+
+
+
 
 
 

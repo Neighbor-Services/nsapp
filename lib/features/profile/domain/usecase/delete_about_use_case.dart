@@ -18,7 +18,10 @@ class DeleteAboutUseCase extends UseCase {
         (success) => Right(success),
       );
     } on Exception {
-      return Left(Failure(massege: 'Failed to add profile'));
+      return Left(Failure(message: 'Failed to add profile'));
     }
   }
 }
+
+
+

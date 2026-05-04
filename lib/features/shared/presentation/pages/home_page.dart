@@ -1,8 +1,9 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_dashboard_page.dart';
 import 'package:nsapp/features/provider/presentation/widgets/provider_drawer_widget.dart';
@@ -24,17 +25,23 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    Helpers.createStripeCustomer();
+    super.initState();
+    final profile = SuccessGetProfileState.lastProfile;
+    if (profile.user?.id != null) {
+      Helpers.createStripeCustomer(userId: profile.user!.id!);
+    }
 
     context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
     context.read<SharedBloc>().add(ConnectNotificationSocketEvent());
     context.read<SharedBloc>().add(GetTokenEvent());
-    if (Helpers.isProvider(SuccessGetProfileState.profile.userType)) {
-      context.read<SharedBloc>().add(SharedBlocReloadEvent("PROVIDER"));
-      context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
-    }
-    super.initState();
     
+    final profileState = context.read<ProfileBloc>().state;
+    if (profileState is SuccessGetProfileState) {
+      if (Helpers.isProvider(profileState.profile.userType)) {
+        context.read<SharedBloc>().add(SharedBlocReloadEvent("PROVIDER"));
+        context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
+      }
+    }
   }
 
   @override
@@ -48,34 +55,32 @@ class _HomePageState extends State<HomePage> {
           appBar: homeAppBar(
             context: context,
             color: context.appColors.surfaceBackground,
-            title: DashboardState.isProvider ? 'PROVIDER' : 'SEEKER',
+            title: state.isProvider ? 'PROVIDER' : 'SEEKER',
             actions: [
               PopupMenuItem(
                 value: 1,
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 15.r,
-                      backgroundImage:
-                          (SuccessGetProfileState.profile.profilePictureUrl !=
-                                  null &&
-                              SuccessGetProfileState
-                                  .profile
-                                  .profilePictureUrl!
-                                  .isNotEmpty &&
-                              !SuccessGetProfileState.profile.profilePictureUrl!
-                                  .startsWith("file:///"))
-                          ? NetworkImage(
-                              SuccessGetProfileState.profile.profilePictureUrl!,
-                            )
-                          : AssetImage(logo2Assets) as ImageProvider,
-                    ),
-                    const SizedBox(width: 10),
-                    CustomTextWidget(
-                      text: SuccessGetProfileState.profile.firstName ?? "",
-                      color: context.appColors.primaryTextColor,
-                    ),
-                  ],
+                child: BlocBuilder<ProfileBloc, ProfileState>(
+                  builder: (context, profileState) {
+                    final profile = profileState is SuccessGetProfileState ? profileState.profile : Profile();
+                    return Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 15.r,
+                          backgroundImage:
+                              (profile.profilePictureUrl != null &&
+                                  profile.profilePictureUrl!.isNotEmpty &&
+                                  !profile.profilePictureUrl!.startsWith("file:///"))
+                              ? NetworkImage(profile.profilePictureUrl!)
+                              : AssetImage(logo2Assets) as ImageProvider,
+                        ),
+                        const SizedBox(width: 10),
+                        CustomTextWidget(
+                          text: profile.firstName ?? "",
+                          color: context.appColors.primaryTextColor,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               PopupMenuItem(
@@ -87,25 +92,25 @@ class _HomePageState extends State<HomePage> {
                     CustomTextWidget(
                       text: "LOGOUT",
                       color: context.appColors.errorColor,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   ],
                 ),
               ),
             ],
-            value: DashboardState.isProvider,
+            value: state.isProvider,
             onToggle: (val) {
               context.read<SharedBloc>().add(
                 ToggleDashboardEvent(isProvider: val),
               );
             },
           ),
-          drawer: (DashboardState.isProvider)
+          drawer: state.isProvider
               ? ProviderDrawerWidget()
               : SeekerDrawerWidget(),
           body: SafeArea(
             child: Center(
-              child: (DashboardState.isProvider)
+              child: state.isProvider
                   ? ProviderDashboardPage()
                   : SeekerDashboardPage(),
             ),
@@ -115,6 +120,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
 
 

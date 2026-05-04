@@ -9,8 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
- 
   cupertino_icons: ^1.0.8
   flutter_bloc:
   calendar_view:
@@ -40,7 +41,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   internet_connection_checker_plus:
   shared_preferences:
-  url_launcher:
+  url_launcher: ^6.3.2
   google_maps_widget:
   webview_flutter:
   flutter_inappwebview:
@@ -64,6 +65,10 @@ dependencies:
   http: ^1.6.0
   objective_c: ^9.3.0
   sign_in_with_apple: ^7.0.1
+  hydrated_bloc: ^9.1.5
+  sentry_flutter: ^8.2.0
+  firebase_core: ^3.1.0
+  firebase_messaging: ^15.0.0
 
 dev_dependencies:
   flutter_test:
@@ -80,12 +85,12 @@ flutter_launcher_icons:
     image_path: "assets/images/logo2.png"
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/images/
     - assets/icons/
     - assets/
-
   fonts:
     - family: FuturaPT
       fonts:
@@ -97,4 +102,3 @@ flutter:
           weight: 500
         - asset: assets/fonts/FuturaPT-Bold.ttf
           weight: 700
-

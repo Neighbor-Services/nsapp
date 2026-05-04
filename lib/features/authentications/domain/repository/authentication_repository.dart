@@ -20,3 +20,5 @@ abstract class AuthenticationRepository {
   Future<Either<Failure, bool>> loginWithApple();
   Future<Either<Failure, bool>> deleteAccount();
 }
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -128,7 +128,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                         "VERIFY EMAIL",
                                         style: TextStyle(
                                           fontSize: 22.sp,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           color: textColor,
                                           letterSpacing: 1.2,
                                         ),
@@ -163,7 +163,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                         cursorColor: textColor,
                                         textStyle: TextStyle(
                                           fontSize: fieldWidth > 40.w ? 24.sp : 18.sp,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           color: textColor,
                                         ),
                                         margin: EdgeInsets.only(
@@ -221,7 +221,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                                 style: TextStyle(
                                                   color: secondaryTextColor,
                                                   fontSize: 11.sp,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w500,
                                                   letterSpacing: 1.0,
                                                 ),
                                               ),
@@ -273,6 +273,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
     );
   }
 }
+
+
 
 
 

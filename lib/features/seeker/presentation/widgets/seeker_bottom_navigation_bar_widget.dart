@@ -54,7 +54,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.house,
-                                isActive: NavigatorSeekerState.page == 1,
+                                isActive: NavigatorSeekerState.lastPage == 1,
                                 label: "Home",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
@@ -70,8 +70,8 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
-                                isActive: NavigatorSeekerState.page == 2,
-                                badgeCount: SuccessGetMyNotificationsState.unreadCount,
+                                isActive: NavigatorSeekerState.lastPage == 2,
+                                badgeCount: SuccessGetMyNotificationsState.lastUnreadCount,
                                 label: "Notifications",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
@@ -88,10 +88,10 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
-                                isActive: NavigatorSeekerState.page == 4,
+                                isActive: NavigatorSeekerState.lastPage == 4,
                                 label: "Chat",
                                 badgeCount:
-                                    SuccessGetMyMessagesState.unreadMessageCount,
+                                    SuccessGetMyMessagesState.lastUnreadMessageCount,
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
                                     NavigateSeekerEvent(
@@ -107,7 +107,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.heart,
                                 label: "Favorites",
-                                isActive: NavigatorSeekerState.page == 5,
+                                isActive: NavigatorSeekerState.lastPage == 5,
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
                                     NavigateSeekerEvent(
@@ -155,7 +155,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w500),
           ),
           backgroundColor: context.appColors.errorColor,
           child: Column(
@@ -221,3 +221,5 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
     );
   }
 }
+
+

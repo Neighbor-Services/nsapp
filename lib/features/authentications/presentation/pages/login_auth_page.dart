@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -88,14 +88,17 @@ class _LoginAuthPageState extends State<LoginAuthPage>
           BlocListener<ProfileBloc, ProfileState>(
             listener: (context, state) {
               if (state is SuccessGetProfileState) {
-                if (SuccessGetProfileState.profile.phone != null &&
-                    SuccessGetProfileState.profile.phone!.isNotEmpty) {
-                  if (Helpers.isProvider(SuccessGetProfileState.profile.userType)) {
-                    context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
+                final profile = state.profile;
+                if (profile.phone != null &&
+                    profile.phone!.isNotEmpty) {
+                  bool isProvider = Helpers.isProvider(profile.userType);
+                  context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: isProvider));
+                  
+                  if (isProvider && profile.isIdentityVerified != true) {
+                    Get.offAllNamed("/pending-verification");
                   } else {
-                    context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: false));
+                    Get.offAllNamed("/home");
                   }
-                  Get.offAllNamed("/home");
                 } else {
                   Get.offAllNamed("/add-profile");
                 }
@@ -175,14 +178,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         hintText: "Enter your email",
                                         prefixIcon: FontAwesomeIcons.envelope,
                                         keyboardType: TextInputType.emailAddress,
-                                        validator: (val) {
-                                          if (val!.isEmpty) {
-                                            return "Email is required";
-                                          } else if (!val.isEmail) {
-                                            return "Invalid email format";
-                                          }
-                                          return null;
-                                        },
+                                        validator: ValidationUtil.validateEmail,
                                       ),
                                       SizedBox(height: 24.h),
                                       // Password Field
@@ -193,14 +189,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         hintText: "Enter your password",
                                         prefixIcon: FontAwesomeIcons.lock,
                                         obscureText: true,
-                                        validator: (val) {
-                                          if (val!.isEmpty) {
-                                            return "Password is required";
-                                          } else if (val.length < 6) {
-                                            return "Password must be at least 6 characters";
-                                          }
-                                          return null;
-                                        },
+                                        validator: ValidationUtil.validatePassword,
                                       ),
                                       // Forgot Password
                                       SizedBox(height: 12.h),
@@ -214,7 +203,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                             style: TextStyle(
                                               color: context.appColors.secondaryTextColor,
                                               fontSize: 14.sp,
-                                              fontWeight: FontWeight.w500,
+                                              fontWeight: FontWeight.w400,
                                             ),
                                           ),
                                         ),
@@ -248,7 +237,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                                   style: TextStyle(
                                                     color: context.appColors.errorColor,
                                                     fontSize: 13.sp,
-                                                    fontWeight: FontWeight.w500,
+                                                    fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
                                               ),
@@ -397,7 +386,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       style: TextStyle(
                                         color: context.appColors.primaryTextColor,
                                         fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         letterSpacing: 0.3,
                                       ),
                                     ),
@@ -441,7 +430,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
           "WELCOME BACK",
           style: TextStyle(
             fontSize: 28.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.5,
           ),
@@ -490,7 +479,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   text: "Terms and Conditions",
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => Get.toNamed('/legal', arguments: 'TERMS'),
@@ -500,7 +489,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   text: "Privacy Policy",
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => Get.toNamed('/legal', arguments: 'PRIVACY'),
@@ -513,6 +502,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
     );
   }
 }
+
+
 
 
 

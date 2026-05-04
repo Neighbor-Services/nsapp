@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
@@ -122,7 +122,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
                     fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -205,7 +205,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                         style: TextStyle(
                                           color: context.appColors.primaryTextColor,
                                           fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
@@ -223,7 +223,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                         style: TextStyle(
                                           color: context.appColors.primaryTextColor,
                                           fontSize: 12.sp,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
@@ -303,8 +303,8 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                                     color: context.appColors.primaryTextColor,
                                                     fontSize: 16.sp,
                                                     fontWeight: isSelected
-                                                        ? FontWeight.bold
-                                                        : FontWeight.w600,
+                                                        ? FontWeight.w500
+                                                        : FontWeight.w400,
                                                   ),
                                                 ),
                                                 if (service.description !=
@@ -390,7 +390,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                       style: TextStyle(
                                         color: context.appColors.primaryTextColor,
                                         fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                   ),
@@ -407,5 +407,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
     );
   }
 }
+
+
 
 

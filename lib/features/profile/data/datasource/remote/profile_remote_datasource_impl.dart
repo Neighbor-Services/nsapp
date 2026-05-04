@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
 import 'package:dio/dio.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -8,10 +7,32 @@ import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
-
+import 'package:nsapp/core/models/audit_log.dart';
 import 'profile_remote_datasource.dart';
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
+  @override
+  Future<List<AuditLog>> getAuditLogs() async {
+    final token = await Helpers.getString("token");
+    try {
+      final response = await dio.get(
+        "$baseUrl/api/audit/", // Endpoint from backend viewset
+        options: Options(headers: dioHeaders(token)),
+      );
+
+      if (response.statusCode == 200) {
+        final List results = response.data is List 
+            ? response.data 
+            : (response.data['results'] ?? []);
+        return results.map((e) => AuditLog.fromJson(e)).toList();
+      }
+      return [];
+    } catch (e) {
+      debugPrint("GET AUDIT LOGS ERROR: $e");
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> addProfile(Profile profile) async {
     try {
@@ -302,4 +323,27 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return false;
     }
   }
+
+  @override
+  Future<String?> initiateBackgroundCheck(String paymentIntentId) async {
+    final token = await Helpers.getString("token");
+    try {
+      final response = await dio.post(
+        "$baseUrl/moderation/background-checks/initiate/",
+        data: json.encode({"payment_intent_id": paymentIntentId}),
+        options: Options(headers: dioHeaders(token)),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data['invitation_url'];
+      }
+      return null;
+    } catch (e) {
+      if (e is DioException) {
+        debugPrint("BG CHECK INIT ERROR: ${e.response?.data}");
+      }
+      return null;
+    }
+  }
 }
+
+

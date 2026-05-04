@@ -18,3 +18,5 @@ class ChangePasswordUseCase extends UseCase {
     return results.fold((l) => Left(l), (r) => Right(r));
   }
 }
+
+

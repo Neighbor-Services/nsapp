@@ -179,7 +179,7 @@ class _AppointmentDetailBottomSheetState
                     style: TextStyle(
                       color: contentColor,
                       fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                     decoration: InputDecoration(
                       hintText: "Enter title",
@@ -199,7 +199,7 @@ class _AppointmentDetailBottomSheetState
                         child: CustomTextWidget(
                           text: (appt.title ?? "Appointment Details").toUpperCase(),
                           fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: contentColor,
                           letterSpacing: 1.0,
                         ),
@@ -216,7 +216,7 @@ class _AppointmentDetailBottomSheetState
                             widget.data.role!.toUpperCase(),
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: context.appColors.secondaryColor,
                               letterSpacing: 0.5,
                             ),
@@ -320,7 +320,7 @@ class _AppointmentDetailBottomSheetState
                       "VERIFICATION CODE",
                       style: TextStyle(
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: context.appColors.primaryColor,
                         letterSpacing: 1.5,
                       ),
@@ -330,7 +330,7 @@ class _AppointmentDetailBottomSheetState
                       appt.secretCode!,
                       style: TextStyle(
                         fontSize: 32.sp,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         letterSpacing: 8.0,
                         color: contentColor,
                       ),
@@ -341,7 +341,7 @@ class _AppointmentDetailBottomSheetState
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: secondaryTextColor,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -385,7 +385,7 @@ class _AppointmentDetailBottomSheetState
                       "VERIFY START",
                       style: TextStyle(
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: context.appColors.secondaryColor,
                         letterSpacing: 1.5,
                       ),
@@ -398,7 +398,7 @@ class _AppointmentDetailBottomSheetState
                       textCapitalization: TextCapitalization.characters,
                       style: TextStyle(
                         fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 6.0,
                         color: contentColor,
                       ),
@@ -463,7 +463,7 @@ class _AppointmentDetailBottomSheetState
                       "SERVICE VERIFIED",
                       style: TextStyle(
                         fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: Colors.green,
                         letterSpacing: 0.5,
                       ),
@@ -480,7 +480,7 @@ class _AppointmentDetailBottomSheetState
                 CustomTextWidget(
                   text: "DESCRIPTION",
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: contentColor,
                   letterSpacing: 0.5,
                 ),
@@ -524,7 +524,7 @@ class _AppointmentDetailBottomSheetState
               Divider(height: 48.h),
               CustomTextWidget(
                 text: "LINKED REQUEST",
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 fontSize: 14.sp,
                 color: context.appColors.secondaryTextColor,
                 letterSpacing: 1.0,
@@ -544,7 +544,12 @@ class _AppointmentDetailBottomSheetState
                     final req = appt.serviceRequest;
                     Get.back();
                     if (req == null) return;
-                    if (req.userId == SuccessGetProfileState.profile.user?.id && !DashboardState.isProvider) {
+                    final sharedState = context.read<SharedBloc>().state;
+                    final profileState = context.read<ProfileBloc>().state;
+                    final isProvider = sharedState.isProvider;
+                    final profile = profileState is SuccessGetProfileState ? profileState.profile : null;
+
+                    if (req.userId == profile?.user?.id && !isProvider) {
                       final requestData = RequestData(
                         request: req,
                         user: widget.data.user,
@@ -558,7 +563,7 @@ class _AppointmentDetailBottomSheetState
                           widget: const SeekerRequestDetailsPage(),
                         ),
                       );  
-                    } else if (DashboardState.isProvider) {
+                    } else if (isProvider) {
                       final requestData = RequestData(
                         request: req,
                         user: widget.data.user,
@@ -586,7 +591,7 @@ class _AppointmentDetailBottomSheetState
                     "VIEW FULL DETAILS",
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: context.appColors.primaryColor,
                       letterSpacing: 0.5,
                     ),
@@ -694,7 +699,7 @@ class _AppointmentDetailBottomSheetState
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -705,7 +710,7 @@ class _AppointmentDetailBottomSheetState
                   CustomTextWidget(
                     text: subtitle ?? "",
                     fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     color: contentColor,
                   ),
               ],
@@ -721,7 +726,7 @@ class _AppointmentDetailBottomSheetState
               child: CustomTextWidget(
                 text: trailing,
                 fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: contentColor,
               ),
             ),
@@ -730,6 +735,8 @@ class _AppointmentDetailBottomSheetState
     );
   }
 }
+
+
 
 
 

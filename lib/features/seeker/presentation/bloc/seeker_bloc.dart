@@ -1,6 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/initialize/init.dart';
@@ -34,13 +34,12 @@ import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import '../../../../core/models/visited_pages.dart';
 import 'package:nsapp/features/seeker/domain/usecase/match_providers_use_case.dart';
 import 'package:nsapp/features/seeker/domain/usecase/complete_appointment_use_case.dart';
-
 import 'package:nsapp/features/seeker/domain/usecase/update_appointment_use_case.dart';
 
 part 'seeker_event.dart';
 part 'seeker_state.dart';
 
-class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
+class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
   final CreateRequestUseCase createRequestUseCase;
   final GetMyRequestUseCase getMyRequestUseCase;
   final GetAcceptedUsersUseCase getAcceptedUsersUseCase;
@@ -61,6 +60,16 @@ class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
   final MatchProvidersUseCase matchProvidersUseCase;
   final CompleteAppointmentUseCase completeAppointmentUseCase;
   final UpdateSeekerAppointmentUseCase updateSeekerAppointmentUseCase;
+
+  // Local storage for navigation and data
+  Widget _currentWidget = const SeekerHomePage();
+  int _currentPage = 1;
+  final List<VisitedPages> _visitedPages = [];
+  XFile? _selectedPicture;
+  
+  List<RequestData> _myRequests = [];
+  List<Favorite> _myFavorites = [];
+  List<AppointmentData> _appointments = [];
 
   SeekerBloc(
     this.createRequestUseCase,
@@ -84,38 +93,41 @@ class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
     this.completeAppointmentUseCase,
     this.updateSeekerAppointmentUseCase,
   ) : super(InitialSeekerState()) {
+    
     on<NavigateSeekerEvent>((event, emit) {
-      SeekerVisitedPagesState.pages.add(
+      _visitedPages.add(
         VisitedPages(
-          widget: NavigatorSeekerState.widget,
-          page: NavigatorSeekerState.page,
+          widget: _currentWidget,
+          page: _currentPage,
         ),
       );
-      NavigatorSeekerState.page = event.page;
-      NavigatorSeekerState.widget = event.widget;
-      emit(NavigatorSeekerState());
+      _currentPage = event.page;
+      _currentWidget = event.widget;
+      emit(NavigatorSeekerState(widget: _currentWidget, page: _currentPage));
     });
+
     on<RequestPriceEvent>((event, emit) {
-      RequestPriceState.fixedPrice = event.fixedPrice;
-      emit(RequestPriceState());
+      emit(RequestPriceState(fixedPrice: event.fixedPrice));
     });
+
     on<ChangeLocationEvent>((event, emit) {
-      RequestLocationChangeState.change = event.change;
-      emit(RequestLocationChangeState());
+      emit(RequestLocationChangeState(change: event.change));
     });
+
     on<CreateRequestEvent>((event, emit) async {
       emit(LoadingSeekerState());
       final results = await createRequestUseCase(event.request);
       results.fold(
-        (l) => emit(FailureCreateRequestState()),
+        (l) => emit(FailureCreateRequestState(message: l.message)),
         (r) => emit(SuccessCreateRequestState()),
       );
     });
+
     on<MarkAsDoneEvent>((event, emit) async {
       emit(LoadingSeekerState());
       final results = await markAsDoneUseCase(event.request);
       results.fold(
-        (l) => emit(FailureMarkAsDoneState()),
+        (l) => emit(FailureMarkAsDoneState(message: l.message)),
         (r) => emit(SuccessMarkAsDoneState()),
       );
     });
@@ -123,232 +135,209 @@ class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
     on<GetMyRequestEvent>((event, emit) async {
       final results = await getMyRequestUseCase(event);
       results.fold(
-        (l) {
-          SuccessGetMyRequestState.myRequests = Future.value([]);
-          emit(FailureCreateRequestState());
-        },
+        (l) => emit(FailureCreateRequestState(message: l.message)),
         (r) {
-          SuccessGetMyRequestState.myRequests = Future.value(r);
-          emit(SuccessGetMyRequestState());
+          _myRequests = r;
+          emit(SuccessGetMyRequestState(myRequests: Future.value(r)));
         },
       );
     }, transformer: sequential());
+
     on<SelectImageFromGalleryEvent>((event, emit) async {
       await Helpers.selectImageFromGallery();
-      if (image != null) {
-        ImageSeekerState.picture = image;
-      }
-      emit(ImageSeekerState());
+      _selectedPicture = image;
+      emit(ImageSeekerState(picture: _selectedPicture));
     });
+
     on<SelectImageFromCameraEvent>((event, emit) async {
       await Helpers.selectImageFromCamera();
-      if (image != null) {
-        ImageSeekerState.picture = image;
-      }
-      emit(ImageSeekerState());
+      _selectedPicture = image;
+      emit(ImageSeekerState(picture: _selectedPicture));
     });
+
     on<SeekerRequestDetailEvent>((event, emit) {
-      SeekerRequestDetailState.request = event.request;
-      emit(SeekerRequestDetailState());
+      emit(SeekerRequestDetailState(request: event.request));
     });
+
     on<GetAcceptedUsersSeekerEvent>((event, emit) async {
       final results = await getAcceptedUsersUseCase(event.request);
       results.fold(
-        (l) {
-          SuccessAcceptedUsersState.users = Future.error(
-            "Failed to load providers",
-          );
-          emit(FailureAcceptedUserstState());
-        },
-        (r) {
-          SuccessAcceptedUsersState.users = Future.value(r);
-          emit(SuccessAcceptedUsersState());
-        },
+        (l) => emit(FailureAcceptedUserstState(message: l.message)),
+        (r) => emit(SuccessAcceptedUsersState(users: Future.value(r))),
       );
     }, transformer: sequential());
 
     on<ReloadRequestEvent>((event, emit) async {
       final results = await reloadRequestUseCase(event.request);
       results.fold(
-        (l) {
-          SuccessReloadRequestState.request = Future.error(
-            "Failed to load request",
-          );
-          emit(FailureReloadRequestState());
-        },
-        (r) {
-          SuccessReloadRequestState.request = Future.value(r);
-          emit(SuccessReloadRequestState());
-        },
+        (l) => emit(FailureReloadRequestState(message: l.message)),
+        (r) => emit(SuccessReloadRequestState(request: Future.value(r))),
       );
     }, transformer: sequential());
+
     on<ApprovedRequestEvent>((event, emit) async {
       emit(LoadingSeekerState());
       final results = await approveProviderUseCase(event.requestAccept);
       results.fold(
-        (l) => emit(FailureApprovedProviderState()),
+        (l) => emit(FailureApprovedProviderState(message: l.message)),
         (r) => emit(SuccessApprovedProviderState()),
       );
     });
+
     on<DeleteRequestEvent>((event, emit) async {
       emit(LoadingSeekerState());
       final results = await deleteRequestUseCase(event.request);
       results.fold(
-        (l) => emit(FailureDeleteRequestState()),
+        (l) => emit(FailureDeleteRequestState(message: l.message)),
         (r) => emit(SuccessDeleteRequestState()),
       );
     });
+
     on<UpdateRequestEvent>((event, emit) async {
       emit(LoadingSeekerState());
       final results = await updateRequestUseCase(event.request);
       results.fold(
-        (l) => emit(FailureUpdateRequestState()),
+        (l) => emit(FailureUpdateRequestState(message: l.message)),
         (r) => emit(SuccessUpdateRequestState()),
       );
     });
+
     on<GetPopularProvidersEvent>((event, emit) async {
       final results = await getPopularProviderRequestUseCase(event);
       results.fold(
-        (l) {
-          SuccessPopularProvidersState.providers = Future.value([]);
-          emit(FailurePopularProviderState());
-        },
-        (r) {
-          SuccessPopularProvidersState.providers = Future.value(r);
-          emit(SuccessPopularProvidersState());
-        },
+        (l) => emit(FailurePopularProviderState(message: l.message)),
+        (r) => emit(SuccessPopularProvidersState(providers: Future.value(r))),
       );
     }, transformer: sequential());
 
     on<AddToFavoriteEvent>((event, emit) async {
       final results = await addToFavoriteUseCase(event.userId);
-      results.fold((l) => emit(FailureAddToFavoriteState()), (r) {
-        add(GetMyFavoritesEvent());
-        emit(SuccessAddToFavoriteState());
-      });
+      results.fold(
+        (l) => emit(FailureAddToFavoriteState(message: l.message)),
+        (r) {
+          add(GetMyFavoritesEvent());
+          emit(SuccessAddToFavoriteState());
+        },
+      );
     });
+
     on<RemoveFromFavoriteEvent>((event, emit) async {
       final results = await removeFromFavoriteUseCase(event.userId);
-      results.fold((l) => emit(FailureRemoveFromFavoriteState()), (r) {
-        add(GetMyFavoritesEvent());
-        emit(SuccessRemoveFromFavoriteState());
-      });
+      results.fold(
+        (l) => emit(FailureRemoveFromFavoriteState(message: l.message)),
+        (r) {
+          add(GetMyFavoritesEvent());
+          emit(SuccessRemoveFromFavoriteState());
+        },
+      );
     });
 
     on<GetMyFavoritesEvent>((event, emit) async {
       final results = await getMyFavoritesUseCase(event);
       results.fold(
-        (l) {
-          SuccessGetMyFavoritesNoFutureState.profiles = [];
-          SuccessGetMyFavoritesState.profiles = Future.value([]);
-          emit(FailureGetMyFavoritesState());
-        },
+        (l) => emit(FailureGetMyFavoritesState(message: l.message)),
         (r) {
-          SuccessGetMyFavoritesNoFutureState.profiles = r;
-          SuccessGetMyFavoritesState.profiles = Future.value(r);
-          emit(SuccessGetMyFavoritesState());
+          _myFavorites = r;
+          emit(SuccessGetMyFavoritesNoFutureState(profiles: r));
         },
       );
     }, transformer: sequential());
+
     on<SeekerBackPressedEvent>((event, emit) {
-      if (SeekerVisitedPagesState.pages.isNotEmpty) {
-        NavigatorSeekerState.page = SeekerVisitedPagesState.pages.last.page;
-        NavigatorSeekerState.widget = SeekerVisitedPagesState.pages.last.widget;
-        SeekerVisitedPagesState.pages.removeLast();
-        emit(SeekerVisitedPagesState());
+      if (_visitedPages.isNotEmpty) {
+        final last = _visitedPages.removeLast();
+        _currentPage = last.page;
+        _currentWidget = last.widget;
+        emit(NavigatorSeekerState(widget: _currentWidget, page: _currentPage));
       }
     });
+
     on<CancelApprovedRequestEvent>((event, emit) async {
       final results = await cancelApprovedRequestUseCase(event.request);
-      results.fold((l) => emit(FailureCancelApprovedProviderState()), (r) {
-        emit(SuccessCancelApprovedProviderState());
-      });
+      results.fold(
+        (l) => emit(FailureCancelApprovedProviderState(message: l.message)),
+        (r) => emit(SuccessCancelApprovedProviderState()),
+      );
     }, transformer: sequential());
+
     on<GetAppointmentsEvent>((event, emit) async {
       final results = await getSeekerAppointmentsUseCase(event);
       results.fold(
-        (l) {
-          SuccessGetAppointmentsState.appointments = Future.value([]);
-          emit(FailureGetAppointmentState());
-        },
+        (l) => emit(FailureGetAppointmentState(message: l.message)),
         (r) {
-          SuccessGetAppointmentsState.appointments = Future.value(r);
-          emit(SuccessGetAppointmentsState());
+          _appointments = r;
+          emit(SuccessGetAppointmentsState(appointments: Future.value(r)));
         },
       );
     }, transformer: sequential());
+
     on<SearchProviderEvent>((event, emit) async {
-      final params = SearchProviderParams(
+      final results = await searchProviderUseCase(SearchProviderParams(
         ratingMin: event.ratingMin,
         priceMin: event.priceMin,
         priceMax: event.priceMax,
         categoryName: event.categoryName,
         serviceName: event.serviceName,
         city: event.city,
-      );
-      final results = await searchProviderUseCase(params);
+      ));
       results.fold(
-        (l) {
-          SuccessSearchProviderState.providers = Future.value([]);
-          emit(FailureSearchProviderState());
-        },
-        (r) {
-          SuccessSearchProviderState.providers = Future.value(r);
-          emit(SuccessSearchProviderState());
-        },
+        (l) => emit(FailureSearchProviderState(message: l.message)),
+        (r) => emit(SuccessSearchProviderState(providers: Future.value(r))),
       );
     }, transformer: sequential());
+
     on<SearchEvent>((event, emit) {
-      SearchingState.isSearching = event.isSearching;
-      emit(SearchingState());
+      emit(SearchingState(isSearching: event.isSearching));
     });
+
     on<ReviewProviderEvent>((event, emit) {
-      ReviewProviderState.canReview = event.canWriteReview;
-      emit(ReviewProviderState());
+      emit(ReviewProviderState(canReview: event.canWriteReview));
     });
+
     on<SetRatingValueEvent>((event, emit) {
-      RatingValueState.rate = event.rate;
-      emit(RatingValueState());
+      emit(RatingValueState(rate: event.rate));
     });
-    on<SetProviderToReviewEvent>((event, emit) async {
-      ProviderToReviewState.profile = event.provider;
-      ProviderToReviewState.providerUserId =
-          event.providerUserId ?? event.provider.user?.id;
-      emit(ProviderToReviewState());
+
+    on<SetProviderToReviewEvent>((event, emit) {
+      emit(ProviderToReviewState(
+        profile: event.provider,
+        providerUserId: event.providerUserId ?? event.provider.user?.id,
+      ));
     });
+
     on<RateEvent>((event, emit) async {
       final results = await rateProviderUseCase(event.rate);
-      results.fold((l) => emit(FailureRateState()), (r) {
-        emit(SuccessRateState());
-      });
+      results.fold(
+        (l) => emit(FailureRateState(message: l.message)),
+        (r) => emit(SuccessRateState()),
+      );
     });
-    on<ClearImageEvent>((event, emit) async {
-      ImageSeekerState.picture = null;
+
+    on<ClearImageEvent>((event, emit) {
+      _selectedPicture = null;
       emit(ClearImageState());
     });
+
     on<CancelAppointmentEvent>((event, emit) async {
       emit(LoadingSeekerState());
       final results = await cancelAppointmentUseCase(event.id);
       results.fold(
-        (l) => emit(FailureCancelAppointmentState()),
+        (l) => emit(FailureCancelAppointmentState(message: l.message)),
         (r) => emit(SuccessCancelAppointmentState()),
       );
     });
+
     on<ChooseOtherServiceEvent>((event, emit) {
-      OtherServiceSelectState.others = event.other;
-      emit(OtherServiceSelectState());
+      emit(OtherServiceSelectState(others: event.other));
     });
-    on<SeekerReloadEvent>((event, emit) async {
-      emit(LoadingSeekerState());
-    });
+
     on<MatchProvidersEvent>((event, emit) async {
       emit(LoadingSeekerState());
-      final results = await matchProvidersUseCase(
-        description: event.description,
+      final results = await matchProvidersUseCase(description: event.description);
+      results.fold(
+        (l) => emit(FailureMatchProvidersState(message: l.message)),
+        (r) => emit(SuccessMatchProvidersState(Future.value(r))),
       );
-      results.fold((l) => emit(FailureMatchProvidersState()), (r) {
-        emit(SuccessMatchProvidersState(Future.value(r)));
-      });
     });
 
     on<CompleteAppointmentEvent>((event, emit) async {
@@ -357,17 +346,54 @@ class SeekerBloc extends Bloc<SeekerEvent, SeekerState> {
         CompleteAppointmentParams(id: event.id, amount: event.amount),
       );
       results.fold(
-        (l) => emit(FailureCompleteAppointmentState()),
+        (l) => emit(FailureCompleteAppointmentState(message: l.message)),
         (r) => emit(SuccessCompleteAppointmentState()),
       );
     });
+
     on<UpdateSeekerAppointmentEvent>((event, emit) async {
       emit(LoadingSeekerState());
       final results = await updateSeekerAppointmentUseCase(event.appointment);
       results.fold(
-        (l) => emit(FailureUpdateAppointmentState()),
+        (l) => emit(FailureUpdateAppointmentState(message: l.message)),
         (r) => emit(SuccessUpdateAppointmentState()),
       );
     });
   }
+
+  @override
+  SeekerState? fromJson(Map<String, dynamic> json) {
+    try {
+      if (json.containsKey('myRequests')) {
+        _myRequests = (json['myRequests'] as List)
+            .map((e) => RequestData.fromJson(e))
+            .toList();
+      }
+      if (json.containsKey('myFavorites')) {
+        _myFavorites = (json['myFavorites'] as List)
+            .map((e) => Favorite.fromJson(e))
+            .toList();
+      }
+      if (json.containsKey('appointments')) {
+        _appointments = (json['appointments'] as List)
+            .map((e) => AppointmentData.fromJson(e))
+            .toList();
+      }
+      return SuccessGetMyRequestState(myRequests: Future.value(_myRequests));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(SeekerState state) {
+    return {
+      'myRequests': _myRequests.map((e) => e.toJson()).toList(),
+      'myFavorites': _myFavorites.map((e) => e.toJson()).toList(),
+      'appointments': _appointments.map((e) => e.toJson()).toList(),
+    };
+  }
 }
+
+
+

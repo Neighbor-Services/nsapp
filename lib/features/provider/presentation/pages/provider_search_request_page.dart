@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -94,18 +94,18 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                     SizedBox(
                       height: size(context).height - 200.h,
                       child: FutureBuilder<List<RequestData>>(
-                        future: SuccessSearchRequestState.requests,
+                        future: state is SuccessSearchRequestState ? state.requests : null,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             if (snapshot.data!.isNotEmpty) {
                               if (requests.isEmpty) requests = snapshot.data!;
 
-                              final displayList = SearchingState.isSearching
+                              final displayList = searchController.text.isNotEmpty
                                   ? searchedRequests
                                   : snapshot.data!;
 
                               if (displayList.isEmpty &&
-                                  SearchingState.isSearching) {
+                                  searchController.text.isNotEmpty) {
                                 return Center(
                                   child: SolidContainer(
                                     padding: EdgeInsets.all(24.r),
@@ -130,7 +130,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 itemCount: displayList.length,
                                 itemBuilder: (context, index) {
                                   RequestData requestD = displayList[index];
-                                  if (SearchingState.isSearching) {
+                                  if (searchController.text.isNotEmpty) {
                                     search = searchedRequests[index];
                                   }
 
@@ -167,10 +167,10 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               );
                             }
                           } else if (snapshot.hasError) {
-                            return const Center(
+                            return  Center(
                               child: Text(
                                 "Error loading requests",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: context.appColors.secondaryTextColor),
                               ),
                             );
                           } else {
@@ -246,7 +246,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               .toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.primaryColor,
                             letterSpacing: 0.5,
                           ),
@@ -263,7 +263,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             requestData.request?.title ?? "",
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 0.5,
                             ),
@@ -302,7 +302,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                           .toUpperCase(),
                                       style: TextStyle(
                                         fontSize: 12.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         color: textColor,
                                         letterSpacing: 0.5,
                                       ),
@@ -403,7 +403,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 "DETAILS",
                                 style: TextStyle(
                                   color: popupTextColor,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
@@ -425,7 +425,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 "CHAT",
                                 style: TextStyle(
                                   color: popupTextColor,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
@@ -445,6 +445,8 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
     );
   }
 }
+
+
 
 
 

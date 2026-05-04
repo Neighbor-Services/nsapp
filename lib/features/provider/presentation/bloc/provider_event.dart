@@ -119,8 +119,9 @@ class CancelAppointmentEvent extends ProviderEvent {
 
 class IsRequestAcceptedEvent extends ProviderEvent {
   final String id;
+  final String? uid;
 
-  IsRequestAcceptedEvent({required this.id});
+  IsRequestAcceptedEvent({required this.id, this.uid});
 }
 
 class AddPortfolioItemEvent extends ProviderEvent {
@@ -159,3 +160,5 @@ class VerifyAppointmentCodeEvent extends ProviderEvent {
   final String code;
   VerifyAppointmentCodeEvent({required this.appointmentId, required this.code});
 }
+
+

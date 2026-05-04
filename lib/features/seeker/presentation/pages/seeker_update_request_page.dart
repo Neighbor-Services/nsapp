@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +71,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _fadeController.forward();
 
-    final request = SeekerRequestDetailState.request.request;
+    final request = SeekerRequestDetailState.lastRequest.request;
 
     if (request != null) {
       serviceType = request.service?.id ?? "";
@@ -83,16 +83,16 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       locController.text = request.address ?? "";
       selectedScheduledTime = request.scheduledTime;
       scheduledTimeController.text = selectedScheduledTime != null
-          ? DateFormat("MMM dd, yyyy â€¢ h:mm a").format(selectedScheduledTime!)
+          ? DateFormat("MMM dd, yyyy • h:mm a").format(selectedScheduledTime!)
           : "";
 
       // Update location if it exists
       if (request.latitude != null && request.longitude != null) {
-        MapLocationState.location = LatLng(
+        MapLocationState.lastLocation = LatLng(
           request.latitude!,
           request.longitude!,
         );
-        MapLocationState.address = request.address ?? "";
+        MapLocationState.lastAddress = request.address ?? "";
       }
     }
 
@@ -104,7 +104,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
     // final textColor = context.appColors.primaryTextColor;
-    final request = SeekerRequestDetailState.request.request;
+    final request = SeekerRequestDetailState.lastRequest.request;
 
     return Scaffold(
       body: BlocConsumer<SeekerBloc, SeekerState>(
@@ -129,8 +129,8 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         builder: (context, state) {
           return BlocBuilder<SharedBloc, SharedState>(
             builder: (context, sharedState) {
-              if (UseMapState.useMap) {
-                locController.text = MapLocationState.address;
+              if (UseMapState.lastUseMap) {
+                locController.text = MapLocationState.lastAddress;
               }
               return LoadingView(
                 isLoading: state is LoadingSeekerState,
@@ -272,7 +272,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               "UPDATE REQUEST",
               style: TextStyle(
                 fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: titleColor,
                 letterSpacing: 1.5,
               ),
@@ -286,7 +286,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             "REFINE YOUR PROJECT DETAILS",
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: subTitleColor,
               letterSpacing: 1.0,
             ),
@@ -307,7 +307,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       onTap: () {
         showServiceSelector(
           context: context,
-          services: SuccessGetServicesState.services,
+          services: SuccessGetServicesState.lastServices,
           selectedServiceId: serviceType,
           onServiceSelected: (id, name) {
             setState(() {
@@ -348,7 +348,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 style: TextStyle(
                   color: selectedServiceName.isEmpty ? hintColor : textColor,
                   fontSize: 16.sp,
-                  fontWeight: selectedServiceName.isEmpty ? FontWeight.normal : FontWeight.bold,
+                  fontWeight: selectedServiceName.isEmpty ? FontWeight.normal : FontWeight.w500,
                 ),
               ),
             ),
@@ -418,13 +418,13 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             width: 1.5.r,
           ),
         ),
-        child: ImageSeekerState.picture != null
+        child: ImageSeekerState.lastPicture != null
             ? Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.r),
                     child: Image.file(
-                      File(ImageSeekerState.picture!.path),
+                      File(ImageSeekerState.lastPicture!.path),
                       width: double.infinity,
                       height: 140.h,
                       fit: BoxFit.cover,
@@ -588,7 +588,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               label,
               style: TextStyle(
                 color: textColor,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w400,
                 fontSize: 16.sp,
               ),
             ),
@@ -660,7 +660,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 "Use Current Location",
                 style: TextStyle(
                   color: titleColor,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               subtitle: Text(
@@ -693,7 +693,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 "Select on Map",
                 style: TextStyle(
                   color: titleColor,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               subtitle: Text(
@@ -744,7 +744,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 pickedTime.minute,
               );
               scheduledTimeController.text = DateFormat(
-                "MMM dd, yyyy â€¢ h:mm a",
+                "MMM dd, yyyy • h:mm a",
               ).format(selectedScheduledTime!);
             });
           }
@@ -766,7 +766,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         label.toUpperCase(),
         style: TextStyle(
           fontSize: 10.sp,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: context.appColors.secondaryTextColor,
           letterSpacing: 1.2,
         ),
@@ -780,7 +780,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       return;
     }
 
-    final originalRequest = SeekerRequestDetailState.request.request;
+    final originalRequest = SeekerRequestDetailState.lastRequest.request;
     if (originalRequest == null) return;
 
     final updatedRequest = Request(
@@ -791,24 +791,26 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       service: Service(id: serviceType, name: selectedServiceName),
       serviceID: serviceType,
       scheduledTime: selectedScheduledTime,
-      latitude: UseMapState.useMap
-          ? MapLocationState.location.latitude
+      latitude: UseMapState.lastUseMap
+          ? MapLocationState.lastLocation.latitude
           : locationData.latitude,
-      longitude: UseMapState.useMap
-          ? MapLocationState.location.longitude
+      longitude: UseMapState.lastUseMap
+          ? MapLocationState.lastLocation.longitude
           : locationData.longitude,
       address: locController.text,
       status: originalRequest.status,
       done: originalRequest.done,
       version: originalRequest.version,
       withImage:
-          ImageSeekerState.picture != null ||
+          ImageSeekerState.lastPicture != null ||
           (originalRequest.withImage ?? false),
     );
 
     context.read<SeekerBloc>().add(UpdateRequestEvent(request: updatedRequest));
   }
 }
+
+
 
 
 

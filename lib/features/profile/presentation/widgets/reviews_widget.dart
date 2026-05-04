@@ -1,10 +1,11 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -22,10 +23,14 @@ class ReviewsWidget extends StatefulWidget {
 class _ReviewsWidgetState extends State<ReviewsWidget> {
   @override
   void initState() {
-    context.read<ProfileBloc>().add(
-      GetReviewsEvent(user: PortfolioUserState.userId),
-    );
     super.initState();
+    final seekerState = context.read<SeekerBloc>().state;
+    final userId = seekerState is ProviderToReviewState
+        ? (seekerState.providerUserId ?? '')
+        : '';
+    context.read<ProfileBloc>().add(
+      GetReviewsEvent(user: userId),
+    );
   }
 
   @override
@@ -33,8 +38,12 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is SuccessAddReviewState) {
+          final seekerState = context.read<SeekerBloc>().state;
+          final userId = seekerState is ProviderToReviewState
+              ? (seekerState.providerUserId ?? '')
+              : '';
           context.read<ProfileBloc>().add(
-            GetReviewsEvent(user: PortfolioUserState.userId),
+            GetReviewsEvent(user: userId),
           );
           Get.snackbar(
             "Success",
@@ -52,8 +61,12 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
           );
         }
         if (state is PortfolioUserState) {
+          final seekerState = context.read<SeekerBloc>().state;
+          final userId = seekerState is ProviderToReviewState
+              ? (seekerState.providerUserId ?? '')
+              : '';
           context.read<ProfileBloc>().add(
-            GetReviewsEvent(user: PortfolioUserState.userId),
+            GetReviewsEvent(user: userId),
           );
           setState(() {});
         }
@@ -64,7 +77,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
           child: Stack(
             children: [
               FutureBuilder<List<ReviewData>>(
-                future: SuccessGetReviewStreamState.reviews,
+                future: state is SuccessGetReviewStreamState ? state.reviews : null,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const LoadingWidget();
@@ -133,7 +146,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                           text:
                                               (review.from?.firstName ??
                                               "Anonymous").toUpperCase(),
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           fontSize: 14.sp,
                                           color: context.appColors.primaryTextColor,
                                           letterSpacing: 0.5,
@@ -174,7 +187,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                 .toStringAsFixed(1),
                                             style: TextStyle(
                                               color: context.appColors.secondaryColor,
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w500,
                                               fontSize: 12.sp,
                                               letterSpacing: 0.5,
                                             ),
@@ -217,6 +230,5 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
     );
   }
 }
-
 
 

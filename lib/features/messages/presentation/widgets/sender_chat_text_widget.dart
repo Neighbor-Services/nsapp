@@ -76,7 +76,7 @@ class SenderChatTextWidget extends StatelessWidget {
                   style: TextStyle(
                     color: timestampColor,
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -88,3 +88,5 @@ class SenderChatTextWidget extends StatelessWidget {
     );
   }
 }
+
+

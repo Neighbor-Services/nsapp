@@ -1,6 +1,7 @@
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
+import 'package:nsapp/core/models/audit_log.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<bool> addProfile(Profile profile);
@@ -15,4 +16,8 @@ abstract class ProfileRemoteDataSource {
   Future<AboutData?> getAboutStream(String userId);
   Future<bool> deleteAboutStream(String id);
   Future<List<ReviewData>?> getReviews(String user);
+  Future<String?> initiateBackgroundCheck(String paymentIntentId);
+  Future<List<AuditLog>> getAuditLogs();
 }
+
+

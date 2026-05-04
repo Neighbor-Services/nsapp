@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +31,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
   late Animation<double> _fadeAnimation;
   late TextEditingController amountController;
   late GlobalKey<FormState> formKey;
+  bool _isFunding = false;
 
   @override
   void initState() {
@@ -99,7 +100,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "MY REQUESTS",
                               style: TextStyle(
                                 fontSize: 24.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 color: context.appColors.primaryTextColor,
                                 letterSpacing: 1.2,
                               ),
@@ -109,7 +110,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "MANAGE YOUR SERVICE REQUESTS",
                               style: TextStyle(
                                 fontSize: 10.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 color: context.appColors.secondaryTextColor,
                                 letterSpacing: 1.0,
                               ),
@@ -132,7 +133,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
 
   Widget _buildRequestList(BuildContext context) {
     return FutureBuilder<List<RequestData>>(
-      future: SuccessGetMyRequestState.myRequests,
+      future: SuccessGetMyRequestState.lastMyRequests,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
@@ -152,7 +153,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                       "NO REQUESTS FOUND",
                       style: TextStyle(
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: context.appColors.glassBorder,
                         letterSpacing: 1.0,
                       ),
@@ -170,20 +171,25 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
               ),
             );
           }
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return _buildRequestCard(
-                context,
-                snapshot.data![index],
-                index
-               
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<SeekerBloc>().add(GetMyRequestEvent());
+              await Future.delayed(const Duration(seconds: 1));
             },
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return _buildRequestCard(
+                  context,
+                  snapshot.data![index],
+                  index
+                );
+              },
+            ),
           );
         } else {
-          return const Center(child: LoadingWidget());
+          return const LoadingWidget();
         }
       },
     );
@@ -292,7 +298,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                 : "OPEN")),
                         style: TextStyle(
                           color: context.appColors.primaryTextColor, // Keep white on orange badge
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -437,7 +443,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                 CustomTextWidget(
                                                   text: "FUND PROJECT",
                                                   fontSize: 18.sp,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w500,
                                                   letterSpacing: 1.2,
                                                 ),
                                                 SizedBox(height: 12.h),
@@ -479,26 +485,39 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                               SizedBox(width: 16.w),
                                               Expanded(
                                                 child: ElevatedButton(
-                                                  onPressed: () async {
-                                                    if (formKey.currentState!
-                                                        .validate()) {
-                                                      Navigator.pop(context);
-                                                      await PaymentService.fundAppointment(
-                                                        appointmentId:
-                                                            requestData
-                                                                .request!
-                                                                .appointmentId!,
-                                                        amount: amountController
-                                                            .text,
-                                                        context: context,
-                                                      );
-                                                      context
-                                                          .read<SeekerBloc>()
-                                                          .add(
-                                                            GetMyRequestEvent(),
-                                                          );
-                                                    }
-                                                  },
+                                                  onPressed: _isFunding
+                                                      ? null
+                                                      : () async {
+                                                          if (formKey.currentState!
+                                                              .validate()) {
+                                                            setState(() {
+                                                              _isFunding = true;
+                                                            });
+                                                            final success = await PaymentService.fundAppointment(
+                                                              appointmentId:
+                                                                  requestData
+                                                                      .request!
+                                                                      .appointmentId!,
+                                                              amount: amountController
+                                                                  .text,
+                                                              context: context,
+                                                            );
+                                                            
+                                                            if (mounted) {
+                                                              setState(() {
+                                                                _isFunding = false;
+                                                              });
+                                                              if (success) {
+                                                                Navigator.pop(context);
+                                                                context
+                                                                    .read<SeekerBloc>()
+                                                                    .add(
+                                                                      GetMyRequestEvent(),
+                                                                    );
+                                                              }
+                                                            }
+                                                          }
+                                                        },
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
                                                         context.appColors.secondaryColor,
@@ -509,7 +528,16 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                           ),
                                                     ),
                                                   ),
-                                                  child: const Text("Fund Now"),
+                                                  child: _isFunding
+                                                      ? SizedBox(
+                                                          height: 20.h,
+                                                          width: 20.h,
+                                                          child: CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            color: context.appColors.cardBackground,
+                                                          ),
+                                                        )
+                                                      : const Text("Fund Now"),
                                                 ),
                                               ),
                                             ],
@@ -574,7 +602,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "",
                           style: TextStyle(
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.primaryTextColor, // Keep white on image overlay
                           ),
                         ),
@@ -587,7 +615,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                           ).toUpperCase(),
                           style: TextStyle(
                             fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.hintTextColor,
                             letterSpacing: 0.5,
                           ),
@@ -600,7 +628,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                       style: TextStyle(
                         fontSize: 15.sp,
                         color: context.appColors.primaryTextColor,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -639,7 +667,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
             text.toUpperCase(),
             style: TextStyle(
               color: context.appColors.primaryTextColor,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               fontSize: 12.sp,
               letterSpacing: 0.5,
             ),
@@ -669,7 +697,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
             label.toUpperCase(),
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: context.appColors.primaryColor,
               letterSpacing: 0.5,
             ),
@@ -679,6 +707,9 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 }
+
+
+
 
 
 

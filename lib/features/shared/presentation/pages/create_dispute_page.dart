@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -62,7 +62,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
           'RAISE DISPUTE',
           style: TextStyle(
             color: textColor, 
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 18,
             letterSpacing: 1.2,
           ),
@@ -145,7 +145,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                                   'RAISE A DISPUTE',
                                   style: TextStyle(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: textColor,
                                     letterSpacing: 0.5,
                                   ),
@@ -178,7 +178,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                             'DISPUTE DETAILS',
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.0,
                             ),
@@ -262,6 +262,8 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
     );
   }
 }
+
+
 
 
 

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -139,7 +139,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                           "RESET PASSWORD",
                                           style: TextStyle(
                                             fontSize: 28.sp,
-                                            fontWeight: FontWeight.bold,
+                                            fontWeight: FontWeight.w500,
                                             color: context.appColors.primaryTextColor,
                                             letterSpacing: 1.2,
                                           ),
@@ -209,7 +209,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                     style: TextStyle(
                                       color: context.appColors.secondaryTextColor,
                                       fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w400,
                                       letterSpacing: 0.5,
                                     ),
                                   ),
@@ -231,6 +231,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
     );
   }
 }
+
+
 
 
 

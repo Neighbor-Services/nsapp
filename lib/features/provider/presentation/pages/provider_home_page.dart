@@ -1,9 +1,7 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
-// import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
-// import 'package:nsapp/features/provider/presentation/pages/provider_all_services_page.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_more_requests_page.dart';
@@ -29,6 +27,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  bool _isSubscriptionValid = false;
 
   @override
   void initState() {
@@ -37,6 +36,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
     context.read<SharedBloc>().add(GetServicesEvent());
     context.read<SharedBloc>().add(GetMyWalletEvent());
+    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
 
     _fadeController = AnimationController(
       vsync: this,
@@ -60,81 +60,76 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      body: BlocConsumer<ProviderBloc, ProviderState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          return GradientBackground(
-            child: SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 800.w),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isLargeScreen ? 32.w : 20.w,
-                        vertical: 20.h,
-                      ),
-                      children: [
-                        SizedBox(height: 24.h),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<SharedBloc, SharedState>(
+            listener: (context, state) {
+              if (state is ValidUserSubscriptionState) {
+                setState(() => _isSubscriptionValid = state.isValid);
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, profileState) {
+            final profile = (profileState is SuccessGetProfileState)
+                ? profileState.profile
+                : null;
 
-                        // Performance Dashboard (Replaced Search Hero)
-                        _buildDashboard(context, isLargeScreen),
-                        SizedBox(height: 32.h),
-
-                        // Search Bar (Minimalist)
-                        _buildSearchBar(context),
-                        SizedBox(height: 32.h),
-
-                        // Recent Requests Section
-                        _buildSectionHeader(context, "Recent Requests"),
-                        SizedBox(height: 16.h),
-                        SizedBox(
-                          height: 250.h,
-                          child: const ProviderRecentRequestWidget(),
+            return GradientBackground(
+              child: SafeArea(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 800.w),
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: ListView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isLargeScreen ? 32.w : 20.w,
+                          vertical: 20.h,
                         ),
-                        SizedBox(height: 32.h),
+                        children: [
+                          SizedBox(height: 24.h),
 
-                        // // Service Categories Section
-                        // _buildSectionHeader(
-                        //   context,
-                        //   "Your Services",
-                        //   onViewAll: () {
-                        //     context.read<ProviderBloc>().add(
-                        //       NavigateProviderEvent(
-                        //         page: 1,
-                        //         widget: const ProviderAllServicesPage(),
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
-                        // const SizedBox(height: 16),
-                        // _buildServicesGrid(context),
-                        // const SizedBox(height: 32),
-                        _buildSectionHeader(context, "Explore More"),
-                        SizedBox(height: 16.h),
-                        _buildDirectRequestsCard(context),
-                        SizedBox(height: 16.h),
-                        _buildExploreCard(context),
-                        SizedBox(height: 16.h),
-                        if (SuccessGetProfileState
-                                .profile
-                                .preferredPaymentMode !=
-                            'ON_SITE') ...[
-                          _buildWalletCard(context),
+                          // Performance Dashboard
+                          _buildDashboard(context, isLargeScreen),
                           SizedBox(height: 32.h),
-                        ],
 
-                        SizedBox(height: 40.h),
-                      ],
+                          // Search Bar
+                          _buildSearchBar(context),
+                          SizedBox(height: 32.h),
+
+                          // Recent Requests Section
+                          _buildSectionHeader(context, "Recent Requests"),
+                          SizedBox(height: 16.h),
+                          SizedBox(
+                            height: 250.h,
+                            child: const ProviderRecentRequestWidget(),
+                          ),
+                          SizedBox(height: 32.h),
+
+                          _buildSectionHeader(context, "Explore More"),
+                          SizedBox(height: 16.h),
+                          _buildDirectRequestsCard(context),
+                          SizedBox(height: 16.h),
+                          _buildExploreCard(context),
+                          SizedBox(height: 16.h),
+                          if (profile?.preferredPaymentMode != 'ON_SITE') ...[
+                            _buildWalletCard(context),
+                            SizedBox(height: 32.h),
+                          ],
+
+                          SizedBox(height: 40.h),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -146,15 +141,21 @@ class _ProviderHomePageState extends State<ProviderHomePage>
           builder: (context, profileState) {
             return BlocBuilder<ProviderBloc, ProviderState>(
               builder: (context, providerState) {
-                final wallet = SuccessGetMyWalletState.wallet;
-                final profile = SuccessGetProfileState.profile;
+                final wallet = (sharedState is SuccessGetMyWalletState)
+                    ? sharedState.wallet
+                    : null;
+                final profile = (profileState is SuccessGetProfileState)
+                    ? profileState.profile
+                    : null;
+
+                if (profile == null) return const SizedBox.shrink();
 
                 return FutureBuilder<List<RequestAcceptance>>(
-                  future: SuccessGetAcceptRequestState.accepts,
+                  future: (providerState is SuccessGetAcceptRequestState)
+                      ? providerState.accepts
+                      : Future.value([]),
                   builder: (context, snapshot) {
-                    final bidsCount = snapshot.hasData
-                        ? snapshot.data!.length
-                        : 0;
+                    final bidsCount = snapshot.hasData ? snapshot.data!.length : 0;
 
                     return SolidContainer(
                       padding: EdgeInsets.all(24.r),
@@ -173,10 +174,9 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                     Text(
                                       "TOTAL BALANCE",
                                       style: TextStyle(
-                                        color:
-                                            context.appColors.primaryTextColor,
+                                        color: context.appColors.primaryTextColor,
                                         fontSize: 12.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         letterSpacing: 1.2,
                                       ),
                                     ),
@@ -184,10 +184,9 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                     Text(
                                       "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
                                       style: TextStyle(
-                                        color:
-                                            context.appColors.primaryTextColor,
+                                        color: context.appColors.primaryTextColor,
                                         fontSize: 32.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -219,9 +218,8 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                         Text(
                                           "WALLET",
                                           style: TextStyle(
-                                            color:
-                                                context.appColors.primaryColor,
-                                            fontWeight: FontWeight.bold,
+                                            color: context.appColors.primaryColor,
+                                            fontWeight: FontWeight.w500,
                                             fontSize: 12.sp,
                                             letterSpacing: 1.0,
                                           ),
@@ -251,8 +249,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                               SizedBox(width: 16.w),
                               _buildDashboardStat(
                                 "Avg Rating",
-                                profile.averageRating?.toStringAsFixed(1) ??
-                                    "0.0",
+                                profile.averageRating?.toStringAsFixed(1) ?? "0.0",
                                 FontAwesomeIcons.star,
                                 Colors.yellow,
                               ),
@@ -308,7 +305,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
                     fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
@@ -316,7 +313,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
                     fontSize: 9.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -336,7 +333,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        if (ValidUserSubscriptionState.isValid) {
+        if (_isSubscriptionValid) {
           context.read<ProviderBloc>().add(
             NavigateProviderEvent(
               page: 1,
@@ -367,7 +364,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               style: TextStyle(
                 color: hintColor,
                 fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1.1,
               ),
             ),
@@ -404,7 +401,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
           title.toUpperCase(),
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: textColor,
             letterSpacing: 1.2,
           ),
@@ -416,7 +413,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               "VIEW ALL",
               style: TextStyle(
                 color: textColor.withAlpha(180),
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -471,7 +468,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "DIRECT REQUESTS",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -500,7 +497,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        if (ValidUserSubscriptionState.isValid) {
+        if (_isSubscriptionValid) {
           context.read<ProviderBloc>().add(
             NavigateProviderEvent(
               page: 1,
@@ -545,7 +542,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "NEARBY OPPORTUNITIES",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -609,7 +606,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "FINANCIAL WALLET",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -631,6 +628,5 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     );
   }
 }
-
 
 

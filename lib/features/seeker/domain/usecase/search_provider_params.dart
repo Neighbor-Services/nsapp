@@ -13,3 +13,5 @@ class SearchProviderParams {
     this.city,
   });
 }
+
+

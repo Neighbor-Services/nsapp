@@ -16,3 +16,5 @@ class GetAboutUseCase extends UseCase {
     return results.fold((failure) => Left(failure), (about) => Right(about));
   }
 }
+
+

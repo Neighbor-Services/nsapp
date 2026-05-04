@@ -9,7 +9,6 @@ import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/service_package.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/core/models/request_data.dart';
-import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/data/datasource/remote/provider_remote_datasource.dart';
 
 
@@ -137,7 +136,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   }
 
   @override
-  Future<bool> isRequestAccepted({required String requestID}) async {
+  Future<bool> isRequestAccepted({required String requestID, String? uid}) async {
     final token = await Helpers.getString("token");
     try {
       final response = await dio.get(
@@ -155,8 +154,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         if (list != null) {
           for (var request in list) {
             RequestAcceptance acceptance = RequestAcceptance.fromJson(request);
-            if (acceptance.acceptance!.providerId ==
-                SuccessGetProfileState.profile.user!.id) {
+            if (acceptance.acceptance!.providerId == (uid ?? "")) {
               return true;
             }
           }
@@ -493,3 +491,5 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     }
   }
 }
+
+

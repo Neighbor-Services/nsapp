@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/di/injection_container.dart';
@@ -45,7 +45,7 @@ class _AISearchPageState extends State<AISearchPage> {
           "AI MAGIC MATCH",
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 22.sp,
             letterSpacing: 1.0,
           ),
@@ -100,7 +100,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             "AI ASSISTANT",
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: Colors.white,
                               letterSpacing: 1.5,
                             ),
@@ -164,7 +164,7 @@ class _AISearchPageState extends State<AISearchPage> {
                                       style: TextStyle(
                                         color: Colors.white.withAlpha(150),
                                         fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         letterSpacing: 1.0,
                                       ),
                                     ),
@@ -241,7 +241,7 @@ class _AISearchPageState extends State<AISearchPage> {
                               style: TextStyle(
                                 color: Colors.white.withAlpha(150),
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.2,
                                 height: 1.5,
                               ),
@@ -260,6 +260,8 @@ class _AISearchPageState extends State<AISearchPage> {
     );
   }
 }
+
+
 
 
 

@@ -12,8 +12,11 @@ class CreateDisputeUseCase extends UseCase {
   @override
   Future<Either<Failure, bool>> call(params) async {
     if (params is! Dispute) {
-      return Left(Failure(massege: "Invalid parameters"));
+      return Left(Failure(message: "Invalid parameters"));
     }
     return await repository.createDispute(params);
   }
 }
+
+
+

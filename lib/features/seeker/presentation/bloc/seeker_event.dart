@@ -186,3 +186,5 @@ class UpdateSeekerAppointmentEvent extends SeekerEvent {
 
   UpdateSeekerAppointmentEvent({required this.appointment});
 }
+
+

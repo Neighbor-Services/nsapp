@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -310,7 +310,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                     style: TextStyle(
                                       color: context.appColors.primaryTextColor,
                                       fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 0.3,
                                     ),
                                   ),
@@ -353,7 +353,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
           "CREATE ACCOUNT",
           style: TextStyle(
             fontSize: 28.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.5,
           ),
@@ -402,7 +402,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                   text: "Terms and Conditions",
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => Get.toNamed('/legal', arguments: 'TERMS'),
@@ -412,7 +412,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                   text: "Privacy Policy",
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => Get.toNamed('/legal', arguments: 'PRIVACY'),
@@ -425,6 +425,8 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
     );
   }
 }
+
+
 
 
 

@@ -12,3 +12,5 @@ class UpdateMessageUseCase extends UseCase {
     return results.fold((l) => Left(l), (r) => Right(r));
   }
 }
+
+

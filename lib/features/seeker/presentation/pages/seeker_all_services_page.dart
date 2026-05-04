@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -57,7 +57,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                             "SERVICE SELECTION",
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -67,7 +67,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                             "FIND THE BEST PROFESSIONALS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
                             ),
@@ -83,7 +83,7 @@ class SeekerAllServicesPage extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<SharedBloc, SharedState>(
                   builder: (context, state) {
-                    final services = SuccessGetServicesState.services;
+                    final services = SuccessGetServicesState.lastServices;
 
                     if (services.isEmpty) {
                       return Center(
@@ -196,7 +196,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                     (service.name ?? "Service").toUpperCase(),
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: context.appColors.primaryTextColor,
                       letterSpacing: 0.5,
                       height: 1.2,
@@ -213,6 +213,8 @@ class SeekerAllServicesPage extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

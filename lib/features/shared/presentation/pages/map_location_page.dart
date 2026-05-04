@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -50,22 +50,22 @@ class _MapLocationPageState extends State<MapLocationPage> {
             context.read<SharedBloc>().add(
               MapLocationEvent(
                 location: LatLng(
-                  SuccessPlaceState.places.lat!,
-                  SuccessPlaceState.places.lng!,
+                  state.place.lat!,
+                  state.place.lng!,
                 ),
               ),
             );
             pos = LatLng(
-              SuccessPlaceState.places.lat!,
-              SuccessPlaceState.places.lng!,
+              state.place.lat!,
+              state.place.lng!,
             );
             GoogleMapController con = await _controller.future;
             con.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
                   target: LatLng(
-                    SuccessPlaceState.places.lat!,
-                    SuccessPlaceState.places.lng!,
+                    state.place.lat!,
+                    state.place.lng!,
                   ),
                   zoom: 15,
                 ),
@@ -207,7 +207,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                                 style: TextStyle(
                                   color: context.appColors.primaryTextColor,
                                   fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w400,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -289,7 +289,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                 "Confirm Location",
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   fontSize: 16.sp,
                 ),
               ),

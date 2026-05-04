@@ -1,11 +1,11 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
 import '../../../shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -50,7 +50,7 @@ class _ProviderRecentRequestWidgetState
     return BlocBuilder<ProviderBloc, ProviderState>(
       builder: (context, state) {
         return FutureBuilder<List<RequestData>>(
-          future: SuccessGetRecentRequestState.myRequests,
+          future: SuccessGetRecentRequestState.lastMyRequests,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data!.isNotEmpty) {
@@ -143,7 +143,7 @@ class _ProviderRecentRequestWidgetState
                                                     "User",
                                                 style: TextStyle(
                                                   color: textColor,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w500,
                                                   fontSize: 16,
                                                   letterSpacing: 0.5,
                                                 ),
@@ -202,7 +202,7 @@ class _ProviderRecentRequestWidgetState
             } else if (snapshot.hasError) {
               return const SizedBox();
             } else {
-              return const LoadingWidget();
+              return const HorizontalSkeletonLoader(height: 250, itemWidth: 260);
             }
           },
         );
@@ -221,7 +221,7 @@ class _ProviderRecentRequestWidgetState
         label.toUpperCase(),
         style: TextStyle(
           fontSize: 8,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: context.appColors.primaryTextColor,
           letterSpacing: 0.5,
         ),
@@ -255,7 +255,7 @@ class _ProviderRecentRequestWidgetState
         status.toUpperCase(),
         style: TextStyle(
           fontSize: 8,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: Colors.white,
           letterSpacing: 0.5,
         ),
@@ -263,6 +263,9 @@ class _ProviderRecentRequestWidgetState
     );
   }
 }
+
+
+
 
 
 

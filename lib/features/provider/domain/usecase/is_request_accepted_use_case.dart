@@ -10,8 +10,14 @@ class IsRequestAcceptedUseCase extends UseCase<bool, dynamic> {
   IsRequestAcceptedUseCase(this.repository);
   @override
   Future<Either<Failure, bool>> call(dynamic params) async {
-    final results = await repository.isRequestAccepted(id: params);
-
-    return results.fold((l) => Left(l), (r) => Right(r));
+    if (params is Map<String, dynamic>) {
+      return await repository.isRequestAccepted(
+        id: params['id'],
+        uid: params['uid'],
+      );
+    }
+    return await repository.isRequestAccepted(id: params);
   }
 }
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -94,7 +94,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -104,7 +104,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             "AVAILABLE PROFESSIONALS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
                             ),
@@ -126,7 +126,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
 
                     if (state is SuccessSearchProviderState) {
                       return FutureBuilder<List<Profile>>(
-                        future: SuccessSearchProviderState.providers,
+                        future: SuccessSearchProviderState.lastProviders,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -267,7 +267,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           (profile.firstName ?? "Provider").toUpperCase(),
                           style: TextStyle(
                             fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
@@ -290,7 +290,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                     style: TextStyle(
                       color: secondaryTextColor,
                       fontSize: 10.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -306,7 +306,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 12.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       SizedBox(width: 12.w),
@@ -344,6 +344,9 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
     );
   }
 }
+
+
+
 
 
 

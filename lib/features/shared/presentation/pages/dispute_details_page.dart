@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +23,7 @@ class DisputeDetailsPage extends StatelessWidget {
           'DISPUTE DETAILS',
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -110,7 +110,7 @@ class DisputeDetailsPage extends StatelessWidget {
                               style: TextStyle(
                                 color: _getStatusColor(context, dispute.status),
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -124,7 +124,7 @@ class DisputeDetailsPage extends StatelessWidget {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -228,7 +228,7 @@ class DisputeDetailsPage extends StatelessWidget {
             style: TextStyle(
               color: color ?? secondaryTextColor,
               fontSize: 11.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.2,
             ),
           ),
@@ -271,7 +271,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 style: TextStyle(
                   color: secondaryTextColor,
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -280,7 +280,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 style: TextStyle(
                   color: textColor,
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -297,6 +297,8 @@ class DisputeDetailsPage extends StatelessWidget {
     
   }
 }
+
+
 
 
 

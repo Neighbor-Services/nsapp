@@ -45,3 +45,5 @@ class RequestAcceptanceAdapter extends TypeAdapter<RequestAcceptance> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

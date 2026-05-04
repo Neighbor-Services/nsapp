@@ -1,18 +1,14 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'dart:async';
-import 'dart:io' show Platform, exit;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../bloc/shared_bloc.dart';
 
@@ -38,7 +34,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
   init() async {
     final bool dark = await Helpers.getBool("darkmode");
-    final bool usebiometric = await Helpers.getBool("usebiometric");
+    await Helpers.getBool("usebiometric");
     if (dark) {
       scaffold.currentContext?.read<SharedBloc>().add(
         ToggleThemeModeEvent(themeMode: ThemeMode.dark),
@@ -48,170 +44,39 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         ToggleThemeModeEvent(themeMode: ThemeMode.light),
       );
     }
-    streamSubscription = InternetConnection().onStatusChange.listen((
-      status,
-    ) async {
-      switch (status) {
-        case InternetStatus.connected:
-          final isAuthenticated = await Helpers.isAuthenticated();
-          if (isAuthenticated) {
-            Helpers.getLocation();
-            if (mounted) {
-              context.read<ProfileBloc>().add(GetProfileEvent());
-            }
+    final hasInternet = await InternetConnection().hasInternetAccess;
+    if (!hasInternet) {
+      Get.offAllNamed('/no-internet');
+      return;
+    }
 
-            await Future.delayed(const Duration(seconds: 4));
-
-            if (!mounted) return;
-
-            if (SuccessGetProfileState.profile.firstName != null) {
-              context.read<SharedBloc>().add(
-                SharedBlocReloadEvent(SuccessGetProfileState.profile.userType!),
-              );
-
-              if (Helpers.isProvider(SuccessGetProfileState.profile.userType)) {
-                context.read<SharedBloc>().add(
-                  SharedBlocReloadEvent("PROVIDER"),
-                );
-                context.read<SharedBloc>().add(
-                  ToggleDashboardEvent(isProvider: true),
-                );
-              }
-              if (usebiometric) {
-                context.read<SharedBloc>().add(
-                  UseBiometricEvent(usebiometric: true),
-                );
-                Get.offAllNamed('/biometric');
-              } else {
-                context.read<SharedBloc>().add(
-                  UseBiometricEvent(usebiometric: false),
-                );
-                Get.offAllNamed("/home");
-              }
-            } else {
-              Get.offAllNamed('/add-profile');
-            }
-            } else {
-            // Not authenticated, check for biometric credentials
-            final usebiometric = await Helpers.getBool("usebiometric");
-            if (usebiometric) {
-              const secureStorage = FlutterSecureStorage();
-              final email = await secureStorage.read(key: "email");
-              final password = await secureStorage.read(key: "password");
-
-              if (email != null && password != null) {
-                Get.offAllNamed('/biometric');
-                return;
-              }
-            }
-
-            await Future.delayed(const Duration(seconds: 3));
-            if (mounted) {
-              Get.offAllNamed('/login');
-            }
-          }
-          break;
-        case InternetStatus.disconnected:
-          Future.delayed(const Duration(seconds: 3), () {
-            if (!mounted) return;
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return Material(
-                  color: Colors.transparent,
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(20.0.r),
-                      child: Container(
-                        padding: EdgeInsets.all(24.r),
-                        decoration: BoxDecoration(
-                          color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(24.r),
-                          border: Border.all(
-                            color: context.appColors.glassBorder,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(16.r),
-                              decoration: BoxDecoration(
-                                color: context.appColors.errorColor.withAlpha(30),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                FontAwesomeIcons.wifi,
-                                color: context.appColors.errorColor,
-                                size: 40.r,
-                              ),
-                            ),
-                            SizedBox(height: 24.h),
-                            CustomTextWidget(
-                              text: "Connection Lost",
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.bold,
-                              color: context.appColors.primaryTextColor,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 12.h),
-                            CustomTextWidget(
-                              text:
-                                  "Please check your internet connection and try again.",
-                              fontSize: 16.sp,
-                              color: context.appColors.secondaryTextColor,
-                              textAlign: TextAlign.center,
-                              maxLines: 3,
-                            ),
-                            SizedBox(height: 32.h),
-                            Container(
-                              width: double.infinity,
-                              height: 55.h,
-                              decoration: BoxDecoration(
-                                gradient: context.appColors.primaryGradient,
-                                borderRadius: BorderRadius.circular(16.r),
-                                
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  if (Platform.isAndroid) {
-                                    SystemNavigator.pop();
-                                  } else if (Platform.isIOS) {
-                                    exit(0);
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                ),
-                                child: Text(
-                                  "CLOSE APP",
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 1.1,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          });
-          break;
+    final isAuthenticated = await Helpers.isAuthenticated();
+    if (isAuthenticated) {
+      Helpers.getLocation();
+      if (mounted) {
+        context.read<ProfileBloc>().add(GetProfileEvent());
       }
-    });
+      // Routing logic moved to BlocListener in build method
+    } else {
+      // Not authenticated, check for biometric credentials
+      final usebiometric = await Helpers.getBool("usebiometric");
+      if (usebiometric) {
+        final email = await Helpers.getString("email");
+        final password = await Helpers.getString("password");
+
+        if (email.isNotEmpty && password.isNotEmpty) {
+          Get.offAllNamed('/biometric');
+          return;
+        }
+      }
+
+      await Future.delayed(const Duration(seconds: 3));
+      if (mounted) {
+        Get.offAllNamed('/login');
+      }
+    }
   }
+
 
   @override
   void initState() {
@@ -279,8 +144,48 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffold,
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) async {
+        if (state is SuccessGetProfileState) {
+          final profile = state.profile;
+          if (profile.firstName != null) {
+            context.read<SharedBloc>().add(
+              SharedBlocReloadEvent(profile.userType!),
+            );
+
+            bool isProvider = Helpers.isProvider(profile.userType);
+            if (isProvider) {
+              context.read<SharedBloc>().add(
+                SharedBlocReloadEvent("PROVIDER"),
+              );
+              context.read<SharedBloc>().add(
+                ToggleDashboardEvent(isProvider: true),
+              );
+            }
+            
+            final usebiometric = await Helpers.getBool("usebiometric");
+            if (isProvider && profile.isIdentityVerified != true) {
+               Get.offAllNamed("/pending-verification");
+            } else if (usebiometric) {
+              context.read<SharedBloc>().add(
+                UseBiometricEvent(usebiometric: true),
+              );
+              Get.offAllNamed('/biometric');
+            } else {
+              context.read<SharedBloc>().add(
+                UseBiometricEvent(usebiometric: false),
+              );
+              Get.offAllNamed("/home");
+            }
+          } else {
+            Get.offAllNamed('/add-profile');
+          }
+        } else if (state is FailureGetProfileState) {
+          Get.offAllNamed('/add-profile');
+        }
+      },
+      child: Scaffold(
+        key: scaffold,
       body: GradientBackground(
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
@@ -332,7 +237,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                             'Neighbor Service',
                             style: TextStyle(
                               fontSize: 34.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -353,7 +258,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
                                     fontSize: 16.sp,
                                     color: context.appColors.secondaryTextColor,
                                     height: 1.6,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w400,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -389,9 +294,11 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           ),
         ),
       ),
-    );
+    ));
   }
 }
+
+
 
 
 

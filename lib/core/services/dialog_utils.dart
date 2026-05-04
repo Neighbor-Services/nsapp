@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
@@ -79,7 +79,7 @@ class DialogUtils {
                     alertTitle,
                     style: TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 1.2,
                     ),
@@ -111,7 +111,7 @@ class DialogUtils {
                           "Close",
                           style: TextStyle(
                             color: textColor,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -169,4 +169,6 @@ class DialogUtils {
     }
   }
 }
+
+
 

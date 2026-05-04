@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,7 +84,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
               isLoadingMore = false;
             });
             if (state is SuccessGetRequestsState) {
-              SuccessGetRequestsState.requests?.then((value) {
+              state.requests.then((value) {
                 if (value.length < (currentPage * 10)) {
                   setState(() {
                     hasReachedMax = true;
@@ -129,7 +129,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                           "BROWSE REQUESTS",
                           style: TextStyle(
                             color: context.appColors.primaryTextColor,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: 20.sp,
                             letterSpacing: 1.2,
                           ),
@@ -170,7 +170,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
 
   Widget _buildRequestsList(BuildContext context, bool isLargeScreen) {
     return FutureBuilder<List<RequestData>>(
-      future: SuccessGetRequestsState.requests,
+      future: (context.read<ProviderBloc>().state as SuccessGetRequestsState).requests,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data!.isEmpty) {
@@ -192,7 +192,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                       "No requests available",
                       style: TextStyle(
                         fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                         color: context.appColors.glassBorder,
                       ),
                     ),
@@ -325,7 +325,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                                   (data.user?.firstName ?? "User").toUpperCase(),
                                   style: TextStyle(
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     letterSpacing: 0.5,
                                     color: context.appColors.primaryTextColor,
                                   ),
@@ -354,7 +354,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: context.appColors.primaryColor,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -445,7 +445,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
   //       status.toUpperCase(),
   //       style: TextStyle(
   //         fontSize: 8,
-  //         fontWeight: FontWeight.bold,
+  //         fontWeight: FontWeight.w500,
   //         color: color,
   //         letterSpacing: 0.5,
   //       ),
@@ -453,6 +453,8 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
   //   );
   // }
 }
+
+
 
 
 

@@ -60,3 +60,5 @@ class RequestPasswordResetEvent extends AuthenticationEvent {
 class LoginWithAppleAuthenticationEvent extends AuthenticationEvent {}
 
 class DeleteAccountEvent extends AuthenticationEvent {}
+
+

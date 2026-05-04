@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 import '../../../../core/helpers/helpers.dart';
@@ -19,6 +20,7 @@ import '../../../shared/presentation/bloc/shared_bloc.dart';
 import '../../../shared/presentation/widget/loading_view.dart';
 import '../bloc/profile_bloc.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -36,58 +38,56 @@ class _EditProfilePageState extends State<EditProfilePage>
   late TextEditingController stateTextController;
   late TextEditingController zipCodeTextController;
   late TextEditingController serviceTextController;
+  
   String gender = "MALE";
   String countryCode = "";
-  int provider = 1;
   String serviceType = "";
   String catalogServiceId = "";
   String preferredPaymentMode = "ON_SITE";
+  String userType = "seeker";
+  bool isOthersSelected = false;
+  XFile? _selectedImage;
+  Profile? _currentProfile;
+  DateTime? _selectedDob;
+  
+  bool _useMap = false;
+  LatLng? _mapLocation;
+  List<Service> _services = [];
+  
   late GlobalKey<FormState> key;
-  bool isImage = true;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
+    super.initState();
     context.read<SharedBloc>().add(GetServicesEvent());
     context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
+    
     nameTextController = TextEditingController();
     dateOfBirthTextController = TextEditingController();
-
     contactTextController = TextEditingController();
     zipCodeTextController = TextEditingController();
     countryTextController = TextEditingController();
     stateTextController = TextEditingController();
     serviceTextController = TextEditingController();
+    key = GlobalKey<FormState>();
 
-    // Safe initialization
-    final profile = SuccessGetProfileState.profile;
-
-    nameTextController.text = profile.firstName ?? "";
-    locController.text = profile.address ?? "";
-    contactTextController = TextEditingController(text: profile.phone);
-    zipCodeTextController.text = profile.zipCode ?? "";
-    countryTextController.text = profile.country ?? "";
-    stateTextController.text = profile.state ?? "";
-    dateOfBirthTextController.text = profile.dateOfBirth != null
-        ? DateFormat("MMMM-dd-yyyy").format(profile.dateOfBirth!)
-        : "";
-
-    if (profile.service != null && profile.service != "") {
-      serviceType = profile.service ?? "";
+    // Initial load attempt if state is already success
+    final state = context.read<ProfileBloc>().state;
+    if (state is SuccessGetProfileState) {
+      _initializeWithProfile(state.profile);
+    } else if (state is SuccessGetProfileStreamState) {
+      state.profile.then((p) {
+        if (mounted) setState(() => _initializeWithProfile(p));
+      });
     }
 
-    countryCode = profile.countryCode ?? "";
-    gender = profile.gender ?? "MALE";
-    catalogServiceId = profile.catalogServiceId ?? "";
-    preferredPaymentMode = profile.preferredPaymentMode ?? "BOTH";
-
-    String initialUserType = profile.userType ?? "FEMALE";
-    context.read<ProfileBloc>().add(
-      SetUserTypeEvent(userType: initialUserType),
-    );
-
-    key = GlobalKey<FormState>();
+    // Initial load attempt for shared state
+    final sharedState = context.read<SharedBloc>().state;
+    if (sharedState is SuccessGetServicesState) {
+      _services = sharedState.services;
+    }
 
     _fadeController = AnimationController(
       vsync: this,
@@ -98,8 +98,32 @@ class _EditProfilePageState extends State<EditProfilePage>
       end: 1,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _fadeController.forward();
+  }
 
-    super.initState();
+  void _initializeWithProfile(Profile profile) {
+    _currentProfile = profile;
+    nameTextController.text = profile.firstName ?? "";
+    locController.text = profile.address ?? "";
+    contactTextController.text = profile.phone ?? "";
+    zipCodeTextController.text = profile.zipCode ?? "";
+    countryTextController.text = profile.country ?? "";
+    stateTextController.text = profile.state ?? "";
+    _selectedDob = profile.dateOfBirth;
+    dateOfBirthTextController.text = _selectedDob != null
+        ? DateFormat("MMMM-dd-yyyy").format(_selectedDob!)
+        : "";
+
+    if (profile.service != null && profile.service != "") {
+      serviceType = profile.service ?? "";
+    }
+
+    countryCode = profile.countryCode ?? "";
+    gender = profile.gender ?? "MALE";
+    catalogServiceId = profile.catalogServiceId ?? "";
+    preferredPaymentMode = profile.preferredPaymentMode ?? "BOTH";
+    userType = profile.userType ?? "seeker";
+
+    context.read<ProfileBloc>().add(SetUserTypeEvent(userType: userType));
   }
 
   @override
@@ -110,6 +134,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     contactTextController.dispose();
     countryTextController.dispose();
     stateTextController.dispose();
+    serviceTextController.dispose();
     _fadeController.dispose();
     super.dispose();
   }
@@ -117,39 +142,77 @@ class _EditProfilePageState extends State<EditProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          if (state is DateOfBirthProfileState) {
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<SharedBloc, SharedState>(
+            listener: (context, state) {
+              if (state is SuccessGetServicesState) {
+                _services = state.services;
+              } else if (state is MapLocationState) {
+                setState(() {
+                  _mapLocation = state.location;
+                  locController.text = state.address;
+                });
+              } else if (state is UseMapState) {
+                _useMap = state.useMap;
+              }
+            },
+          ),
+          BlocListener<ProfileBloc, ProfileState>(
+            listener: (context, state) {
+              if (state is DateOfBirthProfileState) {
+            _selectedDob = state.dob;
             dateOfBirthTextController.text = DateFormat(
               "MMMM-dd-yyyy",
-            ).format(DateOfBirthProfileState.dob);
+            ).format(_selectedDob!);
+          }
+          if (state is ImageProfileState) {
+            setState(() {
+              _selectedImage = state.profilePicture;
+            });
+          }
+          if (state is UserTypeProfileState) {
+            setState(() {
+              userType = state.userType;
+            });
+          }
+          if (state is OtherServiceSelectState) {
+            setState(() {
+              isOthersSelected = state.others;
+            });
           }
           if (state is SuccessUpdateProfileState) {
             context.read<ProfileBloc>().add(GetProfileStreamEvent());
-            context.read<ProfileBloc>().add(GetProfileEvent());
             context.read<SharedBloc>().add(GetServicesEvent());
-            if (Helpers.isSeeker(UserTypeProfileState.userType)) {
+            
+            if (Helpers.isSeeker(userType)) {
               context.read<SharedBloc>().add(
                 ToggleDashboardEvent(isProvider: false),
               );
             }
             context.read<SharedBloc>().add(
-              SharedBlocReloadEvent(UserTypeProfileState.userType),
+              SharedBlocReloadEvent(userType),
             );
-            customAlert(context, AlertType.success, "Profile updated");
-            context.read<SharedBloc>().add(GetServicesEvent());
-            Future.delayed(const Duration(seconds: 3), () {
+            customAlert(context, AlertType.success, "Profile updated successfully");
+            
+            Future.delayed(const Duration(seconds: 2), () {
               if (mounted) {
                 Navigator.pop(context);
               }
             });
           }
           if (state is FailureUpdateProfileState) {
-            customAlert(context, AlertType.error, "An error occurred");
+            customAlert(context, AlertType.error, state.message);
+          }
+          if (state is SuccessGetProfileState) {
+             setState(() => _initializeWithProfile(state.profile));
           }
         },
-        builder: (context, state) {
-          return LoadingView(
+      ),
+    ],
+    child: BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        return LoadingView(
             isLoading: (state is LoadingProfileState),
             child: GradientBackground(
               child: SafeArea(
@@ -189,25 +252,27 @@ class _EditProfilePageState extends State<EditProfilePage>
                               ),
                               SizedBox(height: 32.h),
                               Text(
-                                "EDIT PROFESSIONAL PROFILE",
+                                "EDIT PROFILE",
                                 style: TextStyle(
                                   fontSize: 24.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 0.5,
                                 ),
                               ),
                               SizedBox(height: 8.h),
                               Text(
-                                "KEEP YOUR PROFILE UPDATED TO BUILD TRUST",
+                                "UPDATE YOUR INFORMATION TO KEEP IT ACCURATE",
                                 style: TextStyle(
                                   fontSize: 10.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   color: context.appColors.secondaryTextColor,
                                   letterSpacing: 1.0,
                                 ),
                               ),
                               SizedBox(height: 30.h),
+                              
+                              // Profile Picture Section
                               Center(
                                 child: GestureDetector(
                                   onTap: () {
@@ -242,44 +307,8 @@ class _EditProfilePageState extends State<EditProfilePage>
                                           ),
                                           child: CircleAvatar(
                                             radius: 60.r,
-                                            backgroundColor: Colors.white
-                                                .withAlpha(10),
-                                            backgroundImage:
-                                                (ImageProfileState
-                                                            .profilePicture !=
-                                                        null &&
-                                                    ImageProfileState
-                                                        .profilePicture!
-                                                        .path
-                                                        .isNotEmpty)
-                                                ? FileImage(
-                                                    File(
-                                                      ImageProfileState
-                                                          .profilePicture!
-                                                          .path,
-                                                    ),
-                                                  )
-                                                : (SuccessGetProfileState
-                                                              .profile
-                                                              .profilePictureUrl !=
-                                                          null &&
-                                                      SuccessGetProfileState
-                                                          .profile
-                                                          .profilePictureUrl!
-                                                          .isNotEmpty &&
-                                                      !SuccessGetProfileState
-                                                          .profile
-                                                          .profilePictureUrl!
-                                                          .startsWith(
-                                                            "file:///",
-                                                          ))
-                                                ? NetworkImage(
-                                                    SuccessGetProfileState
-                                                        .profile
-                                                        .profilePictureUrl!,
-                                                  )
-                                                : const AssetImage(logo2Assets)
-                                                      as ImageProvider,
+                                            backgroundColor: Colors.white.withAlpha(10),
+                                            backgroundImage: _buildProfileImageProvider(),
                                           ),
                                         ),
                                       ),
@@ -295,15 +324,6 @@ class _EditProfilePageState extends State<EditProfilePage>
                                               color: Colors.white.withAlpha(40),
                                               width: 2.r,
                                             ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withAlpha(
-                                                  40,
-                                                ),
-                                                blurRadius: 10.r,
-                                                offset: Offset(0, 4.h),
-                                              ),
-                                            ],
                                           ),
                                           child: Icon(
                                             FontAwesomeIcons.camera,
@@ -317,6 +337,8 @@ class _EditProfilePageState extends State<EditProfilePage>
                                 ),
                               ),
                               SizedBox(height: 40.h),
+                              
+                              // Main Form Container
                               Container(
                                 padding: EdgeInsets.all(24.r),
                                 decoration: BoxDecoration(
@@ -333,17 +355,8 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       controller: nameTextController,
                                       hintText: "ENTER YOUR NAME",
                                       label: "FULL NAME",
-                                      allCapsLabel: true,
                                       prefixIcon: FontAwesomeIcons.user,
-                                      validator: (val) {
-                                        final value = val ?? "";
-                                        if (value.isEmpty) {
-                                          return "Name is required";
-                                        } else if (containSpecial(value)) {
-                                          return "Special characters not allowed";
-                                        }
-                                        return null;
-                                      },
+                                      validator: ValidationUtil.validateName,
                                     ),
                                     SizedBox(height: 24.h),
                                     _buildLabel("Gender"),
@@ -351,12 +364,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                                     CustomSegmentedControl<String>(
                                       buttonLables: const ["MALE", "FEMALE"],
                                       buttonValues: const ["Male", "Female"],
-                                      defaultSelected:
-                                          gender == "MALE" ? "Male" : "Female",
+                                      defaultSelected: gender.capitalizeFirst ?? "Male",
                                       onValueChanged: (val) {
-                                        setState(() {
-                                          gender = val;
-                                        });
+                                        setState(() => gender = val.toUpperCase());
                                       },
                                       width: 240.w,
                                       height: 50.h,
@@ -365,26 +375,14 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       textColor: context.appColors.primaryTextColor,
                                     ),
                                     SizedBox(height: 24.h),
-                                    _buildLabel("Role Type"),
+                                    _buildLabel("Account Type"),
                                     SizedBox(height: 12.h),
                                     CustomSegmentedControl<String>(
-                                      buttonLables: const [
-                                        "SEEKER",
-                                        "PROVIDER",
-                                      ],
-                                      buttonValues: const [
-                                        userTypeSeeker,
-                                        userTypeProvider,
-                                      ],
-                                      defaultSelected: Helpers.isProvider(
-                                        SuccessGetProfileState.profile.userType,
-                                      )
-                                          ? userTypeProvider
-                                          : userTypeSeeker,
+                                      buttonLables: const ["SEEKER", "PROVIDER"],
+                                      buttonValues: const [userTypeSeeker, userTypeProvider],
+                                      defaultSelected: userType,
                                       onValueChanged: (val) {
-                                        context.read<ProfileBloc>().add(
-                                              SetUserTypeEvent(userType: val),
-                                            );
+                                        context.read<ProfileBloc>().add(SetUserTypeEvent(userType: val));
                                       },
                                       width: 240.w,
                                       height: 50.h,
@@ -393,6 +391,8 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       textColor: context.appColors.primaryTextColor,
                                     ),
                                     SizedBox(height: 24.h),
+                                    
+                                    // Location Field with Map Picker
                                     Row(
                                       children: [
                                         Expanded(
@@ -400,21 +400,13 @@ class _EditProfilePageState extends State<EditProfilePage>
                                             controller: locController,
                                             hintText: "LOCATION",
                                             label: "LOCATION",
-                                            allCapsLabel: true,
-                                            prefixIcon:
-                                                FontAwesomeIcons.locationDot,
-                                            validator: (val) {
-                                              if ((val ?? "").isEmpty) {
-                                                return "Location is required";
-                                              }
-                                              return null;
-                                            },
+                                            prefixIcon: FontAwesomeIcons.locationDot,
+                                            validator: (val) => ValidationUtil.validateRequired(val, "Location"),
                                           ),
                                         ),
                                         SizedBox(width: 16.w),
                                         GestureDetector(
-                                          onTap: () =>
-                                              _showLocationSheet(context),
+                                          onTap: () => _showLocationSheet(context),
                                           child: Column(
                                             children: [
                                               SizedBox(height: 25.h),
@@ -423,17 +415,10 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                 height: 58.r,
                                                 decoration: BoxDecoration(
                                                   color: context.appColors.primaryColor.withAlpha(40),
-                                                  borderRadius:
-                                                      BorderRadius.circular(18.r),
-                                                  border: Border.all(
-                                                    color: context.appColors.primaryColor,
-                                                  ),
-                                                  
+                                                  borderRadius: BorderRadius.circular(18.r),
+                                                  border: Border.all(color: context.appColors.primaryColor),
                                                 ),
-                                                child: Icon(
-                                                  FontAwesomeIcons.map,
-                                                  color: context.appColors.primaryColor,
-                                                ),
+                                                child: Icon(FontAwesomeIcons.map, color: context.appColors.primaryColor),
                                               ),
                                             ],
                                           ),
@@ -441,232 +426,82 @@ class _EditProfilePageState extends State<EditProfilePage>
                                       ],
                                     ),
                                     SizedBox(height: 24.h),
+                                    
                                     SolidTextField(
                                       controller: contactTextController,
                                       hintText: "PHONE NUMBER",
                                       label: "PHONE NUMBER",
-                                      allCapsLabel: true,
                                       prefixIcon: FontAwesomeIcons.phone,
                                       keyboardType: TextInputType.phone,
-                                      validator: (val) {
-                                        final value = val ?? "";
-                                        if (value.isEmpty) {
-                                          return "Phone number is required";
-                                        }
-                                        if (!value.isPhoneNumber) {
-                                          return "Enter a valid phone number";
-                                        }
-                                        return null;
-                                      },
+                                      validator: ValidationUtil.validatePhone,
                                     ),
                                     SizedBox(height: 24.h),
+                                    
                                     SolidTextField(
                                       controller: countryTextController,
                                       hintText: "COUNTRY",
                                       label: "COUNTRY",
-                                      allCapsLabel: true,
                                       prefixIcon: FontAwesomeIcons.globe,
-                                      validator: (val) {
-                                        if ((val ?? "").isEmpty) {
-                                          return "Country is required";
-                                        }
-                                        return null;
-                                      },
+                                      validator: (val) => ValidationUtil.validateRequired(val, "Country"),
                                     ),
                                     SizedBox(height: 24.h),
+                                    
                                     SolidTextField(
                                       controller: stateTextController,
-                                      hintText: "State",
-                                      label: "State",
+                                      hintText: "STATE",
+                                      label: "STATE",
                                       prefixIcon: FontAwesomeIcons.building,
-                                      validator: (val) {
-                                        if ((val ?? "").isEmpty) {
-                                          return "State is required";
-                                        }
-                                        return null;
-                                      },
+                                      validator: (val) => ValidationUtil.validateRequired(val, "State"),
                                     ),
                                     SizedBox(height: 24.h),
+                                    
                                     SolidTextField(
                                       controller: zipCodeTextController,
-                                      hintText: "Zip Code",
-                                      label: "Zip Code",
+                                      hintText: "ZIP CODE",
+                                      label: "ZIP CODE",
                                       prefixIcon: FontAwesomeIcons.mapPin,
                                     ),
-                                    if (Helpers.isProvider(
-                                      UserTypeProfileState.userType,
-                                    )) ...[
+                                    
+                                    // Provider Specific Fields
+                                    if (Helpers.isProvider(userType)) ...[
                                       SizedBox(height: 24.h),
                                       _buildLabel("Primary Service"),
                                       SizedBox(height: 12.h),
-                                      GestureDetector(
-                                        onTap: () {
-                                          showServiceSelector(
-                                            context: context,
-                                            services: SuccessGetServicesState
-                                                .services,
-                                            selectedServiceId: serviceType == ""
-                                                ? SuccessGetProfileState
-                                                      .profile
-                                                      .service
-                                                : serviceType,
-                                            onServiceSelected:
-                                                (serviceId, serviceName) {
-                                                  setState(() {
-                                                    serviceType = serviceName;
-                                                    catalogServiceId =
-                                                        serviceId;
-                                                  });
-                                                  context
-                                                      .read<ProfileBloc>()
-                                                      .add(
-                                                        ChooseOtherServiceEvent(
-                                                          others: false,
-                                                        ),
-                                                      );
-                                                },
-                                            onOthersSelected: () {
-                                              context.read<ProfileBloc>().add(
-                                                ChooseOtherServiceEvent(
-                                                  others: true,
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 20.w,
-                                            vertical: 18.h,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: context.appColors.cardBackground,
-                                            borderRadius: BorderRadius.circular(
-                                              18.r,
-                                            ),
-                                            border: Border.all(
-                                              color: context.appColors.glassBorder,
-                                            ),
-                                            
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                FontAwesomeIcons.crown,
-                                                color: context.appColors.primaryColor
-                                                    .withAlpha(180),
-                                              ),
-                                              SizedBox(width: 14.w),
-                                              Expanded(
-                                                child: Text(
-                                                  serviceType == ""
-                                                      ? getServiceName(
-                                                          SuccessGetProfileState
-                                                                  .profile
-                                                                  .service ??
-                                                              "",
-                                                        )
-                                                      : serviceType,
-                                                  style: TextStyle(
-                                                    color: context.appColors.primaryTextColor,
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                              Icon(
-                                                FontAwesomeIcons.upDown,
-                                                color: context.appColors.glassBorder,
-                                                size: 20.r,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      if (OtherServiceSelectState.others) ...[
+                                      _buildServicePicker(),
+                                      
+                                      if (isOthersSelected) ...[
                                         SizedBox(height: 24.h),
                                         SolidTextField(
                                           controller: serviceTextController,
-                                          hintText: "Specify service",
-                                          label: "Specify Service",
-                                          prefixIcon:
-                                              FontAwesomeIcons.buildingCircleCheck,
-                                          validator: (val) {
-                                            if ((val ?? "").isEmpty) {
-                                              return "Service specification is required";
-                                            }
-                                            return null;
-                                          },
+                                          hintText: "SPECIFY SERVICE",
+                                          label: "SPECIFY SERVICE",
+                                          prefixIcon: FontAwesomeIcons.buildingCircleCheck,
+                                          validator: (val) => ValidationUtil.validateRequired(val, "Service"),
                                         ),
                                       ],
-                                      if (Helpers.isProvider(
-                                        UserTypeProfileState.userType,
-                                      )) ...[
-                                        SizedBox(height: 24.h),
-                                        _buildLabel("Preferred Payment Mode"),
-                                        SizedBox(height: 12.h),
-                                        CustomSegmentedControl<String>(
-                                          buttonLables: const [
-                                            "In-App",
-                                            "On-Site",
-                                          ],
-                                          buttonValues: const [
-                                            "IN_APP",
-                                            "ON_SITE",
-                                          ],
-                                          defaultSelected: preferredPaymentMode,
-                                          onValueChanged: (val) {
-                                            setState(() {
-                                              preferredPaymentMode = val;
-                                            });
-                                          },
-                                          width: 240.w,
-                                          height: 50.h,
-                                          radius: 16.r,
-                                          selectedColor: context.appColors.primaryColor.withAlpha(40),
-                                          textColor: context.appColors.primaryTextColor,
-                                        ),
-                                      ],
+                                      
+                                      SizedBox(height: 24.h),
+                                      _buildLabel("Preferred Payment Mode"),
+                                      SizedBox(height: 12.h),
+                                      CustomSegmentedControl<String>(
+                                        buttonLables: const ["In-App", "On-Site"],
+                                        buttonValues: const ["IN_APP", "ON_SITE"],
+                                        defaultSelected: preferredPaymentMode,
+                                        onValueChanged: (val) => setState(() => preferredPaymentMode = val),
+                                        width: 240.w,
+                                        height: 50.h,
+                                        radius: 16.r,
+                                        selectedColor: context.appColors.primaryColor.withAlpha(40),
+                                        textColor: context.appColors.primaryTextColor,
+                                      ),
                                     ],
                                   ],
                                 ),
                               ),
                               SizedBox(height: 40.h),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: context.appColors.primaryColor.withAlpha(80),
-                                      blurRadius: 15.r,
-                                      offset: Offset(0, 5.h),
-                                    ),
-                                  ],
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () => _updateProfile(context),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: context.appColors.primaryColor,
-                                    shadowColor: Colors.transparent,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    minimumSize: Size(
-                                      double.infinity,
-                                      58.h,
-                                    ),
-                                    elevation: 0,
-                                  ),
-                                  child: Text(
-                                    "SAVE CHANGES",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              
+                              // Save Button
+                              _buildSaveButton(),
                             ],
                           ),
                         ),
@@ -678,6 +513,95 @@ class _EditProfilePageState extends State<EditProfilePage>
             ),
           );
         },
+      ),
+      ),
+    );
+  }
+
+  ImageProvider _buildProfileImageProvider() {
+    if (_selectedImage != null) {
+      return FileImage(File(_selectedImage!.path));
+    }
+    if (_currentProfile?.profilePictureUrl != null &&
+        _currentProfile!.profilePictureUrl!.isNotEmpty &&
+        !_currentProfile!.profilePictureUrl!.startsWith("file:///")) {
+      return NetworkImage(_currentProfile!.profilePictureUrl!);
+    }
+    return const AssetImage(logo2Assets) as ImageProvider;
+  }
+
+  Widget _buildServicePicker() {
+    return GestureDetector(
+      onTap: () {
+        showServiceSelector(
+          context: context,
+          services: _services,
+          selectedServiceId: serviceType,
+          onServiceSelected: (serviceId, serviceName) {
+            setState(() {
+              serviceType = serviceName;
+              catalogServiceId = serviceId;
+            });
+            context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
+          },
+          onOthersSelected: () {
+            context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: true));
+          },
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+        decoration: BoxDecoration(
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.circular(18.r),
+          border: Border.all(color: context.appColors.glassBorder),
+        ),
+        child: Row(
+          children: [
+            Icon(FontAwesomeIcons.crown, color: context.appColors.primaryColor.withAlpha(180)),
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Text(
+                serviceType.isEmpty ? "SELECT SERVICE" : serviceType,
+                style: TextStyle(
+                  color: context.appColors.primaryTextColor,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Icon(FontAwesomeIcons.upDown, color: context.appColors.glassBorder, size: 20.r),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: context.appColors.primaryColor.withAlpha(80),
+            blurRadius: 15.r,
+            offset: Offset(0, 5.h),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: () => _updateProfile(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: context.appColors.primaryColor,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+          minimumSize: Size(double.infinity, 58.h),
+          elevation: 0,
+        ),
+        child:  Text(
+          "SAVE CHANGES",
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500, letterSpacing: 1.0),
+        ),
       ),
     );
   }
@@ -692,7 +616,7 @@ class _EditProfilePageState extends State<EditProfilePage>
             text.toUpperCase(),
             style: TextStyle(
               fontSize: 11.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: context.appColors.primaryTextColor,
               letterSpacing: 0.8,
             ),
@@ -703,16 +627,13 @@ class _EditProfilePageState extends State<EditProfilePage>
   }
 
   void _showImageSourceSheet(BuildContext context) {
-
     final handleColor = context.appColors.glassBorder;
     Get.bottomSheet(
       Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-          border: Border.all(
-            color: context.appColors.glassBorder,
-          ),
+          border: Border.all(color: context.appColors.glassBorder),
         ),
         padding: EdgeInsets.all(28.r),
         child: Column(
@@ -756,20 +677,15 @@ class _EditProfilePageState extends State<EditProfilePage>
     required String label,
     required VoidCallback onTap,
   }) {
-    final itemBg = context.appColors.glassBorder;
-    final borderColor = context.appColors.glassBorder;
-    final textColor = context.appColors.primaryTextColor;
-    final arrowColor = context.appColors.glassBorder;
-
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18.r),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         decoration: BoxDecoration(
-          color: itemBg,
+          color: context.appColors.glassBorder,
           borderRadius: BorderRadius.circular(18.r),
-          border: Border.all(color: borderColor),
+          border: Border.all(color: context.appColors.glassBorder),
         ),
         child: Row(
           children: [
@@ -778,13 +694,13 @@ class _EditProfilePageState extends State<EditProfilePage>
             Text(
               label,
               style: TextStyle(
-                color: textColor,
+                color: context.appColors.primaryTextColor,
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w400,
               ),
             ),
             const Spacer(),
-            FaIcon(FontAwesomeIcons.chevronRight, color: arrowColor, size: 14.r),
+            FaIcon(FontAwesomeIcons.chevronRight, color: context.appColors.glassBorder, size: 14.r),
           ],
         ),
       ),
@@ -792,17 +708,13 @@ class _EditProfilePageState extends State<EditProfilePage>
   }
 
   void _showLocationSheet(BuildContext context) {
-    
     final handleColor = context.appColors.glassBorder;
-
     Get.bottomSheet(
       Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
-          border: Border.all(
-            color: context.appColors.glassBorder,
-          ),
+          border: Border.all(color: context.appColors.glassBorder),
         ),
         padding: EdgeInsets.all(28.r),
         child: Column(
@@ -822,9 +734,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               label: "Use Current Location",
               onTap: () async {
                 context.read<SharedBloc>().add(UseMapEvent(useMap: false));
-                context.read<s.SeekerBloc>().add(
-                  s.ChangeLocationEvent(change: true),
-                );
+                context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
                 final success = await Helpers.getLocation();
                 if (success) {
                   if (mounted) {
@@ -834,11 +744,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                 } else {
                   if (mounted) {
                     Get.back();
-                    customAlert(
-                      context,
-                      AlertType.error,
-                      "Unable to get location. Please check location permissions and services.",
-                    );
+                    customAlert(context, AlertType.error, "Unable to get location.");
                   }
                 }
               },
@@ -848,9 +754,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               icon: FontAwesomeIcons.map,
               label: "Choose from Map",
               onTap: () {
-                context.read<s.SeekerBloc>().add(
-                  s.ChangeLocationEvent(change: true),
-                );
+                context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
                 Get.back();
                 context.read<SharedBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
@@ -865,19 +769,12 @@ class _EditProfilePageState extends State<EditProfilePage>
   }
 
   void _updateProfile(BuildContext context) {
-    if (Helpers.isProvider(UserTypeProfileState.userType) &&
-        serviceType == "" &&
-        !OtherServiceSelectState.others) {
+    if (Helpers.isProvider(userType) && serviceType.isEmpty && !isOthersSelected) {
       customAlert(context, AlertType.warning, "Please select your service");
       return;
     }
-    if (zipCodeTextController.text != "" &&
-        !zipCodeTextController.text.isNumericOnly) {
-      customAlert(context, AlertType.warning, "Zipcode must be numeric");
-      return;
-    }
     if (key.currentState?.validate() ?? false) {
-      final profileData = SuccessGetProfileState.profile;
+      final profileData = _currentProfile ?? Profile();
       Profile profile = Profile(
         firstName: nameTextController.text.trim(),
         lastName: nameTextController.text.trim(),
@@ -889,42 +786,38 @@ class _EditProfilePageState extends State<EditProfilePage>
         address: locController.text.trim(),
         gender: gender,
         profilePictureUrl: profileData.profilePictureUrl,
-        dateOfBirth: profileData.dateOfBirth,
+        dateOfBirth: _selectedDob,
         createdAt: profileData.createdAt,
         zipCode: zipCodeTextController.text.trim(),
         state: stateTextController.text.trim(),
         countryCode: countryCode,
         updatedAt: DateTime.now(),
-        service: (OtherServiceSelectState.others)
-            ? serviceTextController.text.trim()
-            : serviceType,
-        userType: UserTypeProfileState.userType,
+        service: isOthersSelected ? serviceTextController.text.trim() : serviceType,
+        userType: userType,
         catalogServiceId: catalogServiceId,
         preferredPaymentMode: preferredPaymentMode,
-        longitude: (UseMapState.useMap)
-            ? MapLocationState.location.longitude.toString()
-            : profileData.longitude,
-        latitude: (UseMapState.useMap)
-            ? MapLocationState.location.latitude.toString()
-            : profileData.latitude,
+        longitude: (_useMap && _mapLocation != null) ? _mapLocation!.longitude.toString() : profileData.longitude,
+        latitude: (_useMap && _mapLocation != null) ? _mapLocation!.latitude.toString() : profileData.latitude,
       );
 
-      if (OtherServiceSelectState.others) {
+      if (isOthersSelected) {
         context.read<SharedBloc>().add(
           AddServiceEvent(
             model: Service(
-              description:
-                  "The user selected others and added this a his specific services",
+              description: "Custom service added by user",
               name: serviceTextController.text.trim(),
             ),
           ),
         );
       }
-      context.read<ProfileBloc>().add(UpdateProfileEvent(profile: profile));
+      
+      // Pass the new image path if selected
+      context.read<ProfileBloc>().add(UpdateProfileEvent(
+        profile: profile,
+        profilePicturePath: _selectedImage?.path,
+      ));
     }
   }
 }
-
-
 
 

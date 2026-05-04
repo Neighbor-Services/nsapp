@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,11 +28,9 @@ class _AddAboutPageState extends State<AddAboutPage> {
   TextEditingController specificationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController experienceController = TextEditingController();
-  TextEditingController skillsController =
-      TextEditingController(); // Comma separated
+  TextEditingController skillsController = TextEditingController();
   TextEditingController educationController = TextEditingController();
-  TextEditingController languagesController =
-      TextEditingController(); // Comma separated
+  TextEditingController languagesController = TextEditingController();
   GlobalKey<FormState> key = GlobalKey<FormState>();
   String countryCode = "";
   bool isSet = false;
@@ -40,14 +38,16 @@ class _AddAboutPageState extends State<AddAboutPage> {
 
   @override
   void initState() {
-    final userId = SuccessGetProfileState.profile.user?.id;
+    super.initState();
+    // Read profile reactively from ProfileBloc state
+    final profileState = context.read<ProfileBloc>().state;
+    final userId = profileState is SuccessGetProfileState
+        ? profileState.profile.user?.id
+        : null;
     if (userId != null) {
       context.read<ProfileBloc>().add(GetAboutEvent(user: userId));
     }
     context.read<SharedBloc>().add(GetServicesEvent());
-    // Clear images from previous session
-    ImagesProfileState.images = null;
-    super.initState();
   }
 
   @override
@@ -59,7 +59,11 @@ class _AddAboutPageState extends State<AddAboutPage> {
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is SuccessAddAboutState) {
-            final userId = SuccessGetProfileState.profile.user?.id;
+            // Read profile reactively from ProfileBloc state
+            final profileState = context.read<ProfileBloc>().state;
+            final userId = profileState is SuccessGetProfileState
+                ? profileState.profile.user?.id
+                : null;
             if (userId != null) {
               context.read<ProfileBloc>().add(GetAboutEvent(user: userId));
             }
@@ -78,7 +82,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           } else if (state is FailureAddAboutState) {
             customAlert(context, AlertType.error, "Failed To Create Portfolio");
           } else if (state is SuccessGetAboutStreamState) {
-            SuccessGetAboutStreamState.about?.then((aboutData) {
+            state.about.then((aboutData) {
               if (aboutData.user != null) {
                 isSet = true;
                 aboutID = aboutData.about?.id ?? "";
@@ -139,6 +143,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                                 context,
                                 isDark,
                                 textColor,
+                                state,
                               ),
                               SizedBox(height: 48.h),
                               _buildSaveButton(context),
@@ -188,7 +193,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
         SizedBox(height: 32.h),
         CustomTextWidget(
           text: "PROFESSIONAL PORTFOLIO",
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           fontSize: 22.sp,
           color: textColor,
           letterSpacing: 1.5,
@@ -198,7 +203,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           text:
               "TELL THE WORLD ABOUT YOUR BUSINESS AND SHOWCASE YOUR BEST WORK.",
           fontSize: 10.sp,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: secondaryTextColor,
           letterSpacing: 1.0,
         ),
@@ -215,7 +220,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
            CustomTextWidget(
             text: "BUSINESS DETAILS",
             fontSize: 12.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: context.appColors.secondaryColor,
             letterSpacing: 1.5,
           ),
@@ -296,6 +301,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
     BuildContext context,
     bool isDark,
     Color textColor,
+    ProfileState state,
   ) {
     return SolidContainer(
       padding: EdgeInsets.all(24.r),
@@ -308,7 +314,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                CustomTextWidget(
                 text: "SHOWCASE IMAGES",
                 fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: context.appColors.secondaryColor,
                 letterSpacing: 1.5,
               ),
@@ -324,9 +330,10 @@ class _AddAboutPageState extends State<AddAboutPage> {
             ],
           ),
           SizedBox(height: 16.h),
-          BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, state) {
-              final selectedImages = ImagesProfileState.images;
+          Builder(
+            builder: (context) {
+              // Use reactive state to get images
+              final selectedImages = state is ImagesProfileState ? state.images : null;
               if (selectedImages == null || selectedImages.isEmpty) {
                 return GestureDetector(
                   onTap: () {
@@ -479,7 +486,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           "PUBLISH PORTFOLIO",
           style: TextStyle(
             fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             letterSpacing: 1.1,
           ),
         ),
@@ -487,7 +494,5 @@ class _AddAboutPageState extends State<AddAboutPage> {
     );
   }
 }
-
-
 
 

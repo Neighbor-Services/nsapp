@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -103,7 +103,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                               "Appointment",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                                 letterSpacing: -0.2,
                               ),
@@ -223,7 +223,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                       style: TextStyle(
                         color: timestampColor,
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -254,7 +254,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -262,5 +262,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     );
   }
 }
+
+
 
 

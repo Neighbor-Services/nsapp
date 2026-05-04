@@ -143,3 +143,5 @@ class ChatMessageAdapter extends TypeAdapter<ChatMessage> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +44,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   String serviceType = "";
   String? selectedService;
   DateTime? selectedScheduledTime;
+  Request? _pendingRequest;
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -58,7 +59,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     super.initState();
     context.read<SharedBloc>().add(GetServicesEvent());
     context.read<SeekerBloc>().add(ChooseOtherServiceEvent(other: false));
-    if (UseMapState.useMap) locController.text = MapLocationState.address;
+    if (UseMapState.lastUseMap) locController.text = MapLocationState.lastAddress;
 
     _fadeController = AnimationController(
       vsync: this,
@@ -91,37 +92,58 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      body: BlocConsumer<SeekerBloc, SeekerState>(
-        listener: (context, state) {
-          if (state is SuccessCreateRequestState) {
-            clear();
+      body: BlocListener<SharedBloc, SharedState>(
+        listener: (context, sharedState) {
+          if (sharedState is SuccessAddServicesState) {
+            if (_pendingRequest != null) {
+              _pendingRequest!.serviceID = sharedState.id ?? serviceType;
+              context.read<SeekerBloc>().add(
+                    CreateRequestEvent(request: _pendingRequest!),
+                  );
+              _pendingRequest = null;
+            }
+          }
+          if (sharedState is FailureAddServiceState) {
             customAlert(
               context,
-              AlertType.success,
-              "Request successfully added",
+              AlertType.error,
+              sharedState.message ?? "Failed to create custom service",
             );
-            Future.delayed(const Duration(seconds: 3), () {
-              context.read<SeekerBloc>().add(ClearImageEvent());
-              context.read<SeekerBloc>().add(
-                NavigateSeekerEvent(
-                  page: NavigatorSeekerState.page,
-                  widget: const SeekerRequestPage(),
-                ),
-              );
-            });
-          }
-          if (state is FailureCreateRequestState) {
-            customAlert(context, AlertType.error, "Request failed to add");
-          }
-          if (state is MapLocationState) {
-            locController.text = MapLocationState.address;
+            _pendingRequest = null;
           }
         },
-        builder: (context, state) {
-          if (UseMapState.useMap) locController.text = MapLocationState.address;
-          return LoadingView(
-            isLoading: (state is LoadingSeekerState),
-            child: GradientBackground(
+        child: BlocConsumer<SeekerBloc, SeekerState>(
+          listener: (context, state) {
+            if (state is SuccessCreateRequestState) {
+              clear();
+              customAlert(
+                context,
+                AlertType.success,
+                "Request successfully added",
+              );
+              Future.delayed(const Duration(seconds: 3), () {
+                context.read<SeekerBloc>().add(ClearImageEvent());
+                context.read<SeekerBloc>().add(
+                  NavigateSeekerEvent(
+                    page: NavigatorSeekerState.lastPage,
+                    widget: const SeekerRequestPage(),
+                  ),
+                );
+              });
+            }
+            if (state is FailureCreateRequestState) {
+              customAlert(context, AlertType.error, "Request failed to add");
+            }
+            if (state is MapLocationState) {
+              locController.text = MapLocationState.lastAddress;
+            }
+          },
+          builder: (context, state) {
+            final sharedState = context.watch<SharedBloc>().state;
+            if (UseMapState.lastUseMap) locController.text = MapLocationState.lastAddress;
+              return LoadingView(
+                isLoading: (state is LoadingSeekerState || sharedState is SharedLoadingState),
+                child: GradientBackground(
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
@@ -147,7 +169,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _buildServiceDropdown(),
-                                    if (OtherServiceSelectState.others) ...[
+                                    if (OtherServiceSelectState.lastOthers) ...[
                                       SizedBox(height: 20.h),
                                       SolidTextField(
                                         controller: serviceTextController,
@@ -211,8 +233,9 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 ),
               ),
             ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -225,7 +248,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           "NEW REQUEST",
           style: TextStyle(
             fontSize: 24.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.2,
           ),
@@ -235,7 +258,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           "TELL US WHAT SERVICE YOU NEED",
           style: TextStyle(
             fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: context.appColors.secondaryTextColor,
             letterSpacing: 1.0,
           ),
@@ -253,7 +276,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           style: TextStyle(
             color: context.appColors.hintTextColor,
             fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.5,
           ),
         ),
@@ -262,7 +285,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           onTap: () {
             showServiceSelector(
               context: context,
-              services: SuccessGetServicesState.services,
+              services: SuccessGetServicesState.lastServices,
               selectedServiceId: serviceType,
               onServiceSelected: (serviceId, serviceName) {
                 setState(() {
@@ -395,7 +418,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 time.minute,
               );
               scheduledTimeController.text = DateFormat(
-                "MMM dd, yyyy â€¢ h:mm a",
+                "MMM dd, yyyy • h:mm a",
               ).format(selectedScheduledTime!);
             });
           }
@@ -515,7 +538,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             width: 1.5.r,
           ),
         ),
-        child: ImageSeekerState.picture == null
+        child: ImageSeekerState.lastPicture == null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -539,7 +562,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.r),
                     child: Image.file(
-                      File(ImageSeekerState.picture!.path),
+                      File(ImageSeekerState.lastPicture!.path),
                       width: double.infinity,
                       height: 140.h,
                       fit: BoxFit.cover,
@@ -630,19 +653,20 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
       approvedUser: "",
       done: false,
       address: locController.text.trim(),
-      latitude: UseMapState.useMap
-          ? MapLocationState.location.latitude
+      latitude: UseMapState.lastUseMap
+          ? MapLocationState.lastLocation.latitude
           : locationData.latitude,
-      longitude: UseMapState.useMap
-          ? MapLocationState.location.longitude
+      longitude: UseMapState.lastUseMap
+          ? MapLocationState.lastLocation.longitude
           : locationData.longitude,
-      withImage: ImageSeekerState.picture != null,
+      withImage: ImageSeekerState.lastPicture != null,
       targetProviderId: widget.targetProviderId,
       scheduledTime: selectedScheduledTime,
     );
 
     if (key.currentState!.validate()) {
-      if (OtherServiceSelectState.others) {
+      if (OtherServiceSelectState.lastOthers) {
+        _pendingRequest = request;
         context.read<SeekerBloc>().add(SeekerReloadEvent());
         context.read<SharedBloc>().add(
           AddServiceEvent(
@@ -652,10 +676,6 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             ),
           ),
         );
-        Future.delayed(const Duration(seconds: 4), () {
-          request.serviceID = SuccessAddServicesState.id ?? serviceType;
-          context.read<SeekerBloc>().add(CreateRequestEvent(request: request));
-        });
       } else {
         request.serviceID = serviceType;
         context.read<SeekerBloc>().add(CreateRequestEvent(request: request));
@@ -663,6 +683,8 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     }
   }
 }
+
+
 
 
 

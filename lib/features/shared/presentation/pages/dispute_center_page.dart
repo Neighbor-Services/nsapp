@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart' hide Response, MultipartFile, FormData;
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -152,7 +151,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dispute Center", style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 18.sp)),
+        title: Text("Dispute Center", style: TextStyle(color: textColor, fontWeight: FontWeight.w500, fontSize: 18.sp)),
         backgroundColor: context.appColors.primaryBackground,
         elevation: 0,
         iconTheme: IconThemeData(color: textColor),
@@ -189,7 +188,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
             SizedBox(height: 24.h),
             
             // Defendant Info
-            CustomTextWidget(text: "DISPUTING AGAINST", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.bold),
+            CustomTextWidget(text: "DISPUTING AGAINST", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.w500),
             SizedBox(height: 8.h),
             SolidContainer(
               padding: EdgeInsets.all(16.r),
@@ -205,7 +204,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
                   SizedBox(width: 16.w),
                   Text(
                     "${widget.otherUser.firstName} ${widget.otherUser.lastName}",
-                    style: TextStyle(color: textColor, fontSize: 16.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: textColor, fontSize: 16.sp, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -213,7 +212,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
             SizedBox(height: 24.h),
 
             // Reason Dropdown
-            CustomTextWidget(text: "REASON FOR DISPUTE", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.bold),
+            CustomTextWidget(text: "REASON FOR DISPUTE", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.w500),
             SizedBox(height: 8.h),
             Container(
               decoration: BoxDecoration(
@@ -222,7 +221,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
                 border: Border.all(color: context.appColors.glassBorder),
               ),
               child: DropdownButtonFormField<String>(
-                value: _selectedReason,
+                initialValue: _selectedReason,
                 dropdownColor: context.appColors.cardBackground,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -239,7 +238,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
             SizedBox(height: 24.h),
 
             // Description
-            CustomTextWidget(text: "DETAILED DESCRIPTION", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.bold),
+            CustomTextWidget(text: "DETAILED DESCRIPTION", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.w500),
             SizedBox(height: 8.h),
             Container(
               decoration: BoxDecoration(
@@ -262,7 +261,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
             SizedBox(height: 24.h),
 
             // Evidence Upload
-            CustomTextWidget(text: "EVIDENCE (OPTIONAL)", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.bold),
+            CustomTextWidget(text: "EVIDENCE (OPTIONAL)", color: hintColor, fontSize: 12.sp, fontWeight: FontWeight.w500),
             SizedBox(height: 8.h),
             GestureDetector(
               onTap: _pickEvidence,
@@ -288,7 +287,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
                     ] else ...[
                       Icon(FontAwesomeIcons.cloudArrowUp, color: context.appColors.primaryColor, size: 32.r),
                       SizedBox(height: 8.h),
-                      Text("Tap to upload photo evidence", style: TextStyle(color: context.appColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 14.sp)),
+                      Text("Tap to upload photo evidence", style: TextStyle(color: context.appColors.primaryColor, fontWeight: FontWeight.w500, fontSize: 14.sp)),
                     ]
                   ],
                 ),
@@ -312,3 +311,5 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
     );
   }
 }
+
+

@@ -139,3 +139,5 @@ class GetLegalDocumentEvent extends SharedEvent {
   final String docType;
   GetLegalDocumentEvent({required this.docType});
 }
+
+

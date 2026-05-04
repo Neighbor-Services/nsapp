@@ -43,8 +43,10 @@ abstract class ProviderRemoteDatasource {
     required String id,
     required double amount,
   });
-  Future<bool> isRequestAccepted({required String requestID});
+  Future<bool> isRequestAccepted({required String requestID, String? uid});
   Future<bool> addPortfolioItem({required File image, String? description});
   Future<bool> verifyAppointmentCode(String appointmentId, String code);
   Future<ServicePackage> addServicePackage(ServicePackage package);
 }
+
+

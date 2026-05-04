@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
@@ -75,7 +75,7 @@ class ProviderListItem extends StatelessWidget {
                   CustomTextWidget(
                     text: profile.firstName ?? "Unknown",
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: appBlackColor,
                   ),
                   SizedBox(height: 4.h),
@@ -94,7 +94,7 @@ class ProviderListItem extends StatelessWidget {
                             .toStringAsFixed(1),
                         color: appBlackColor,
                         fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       ),
                       const Spacer(),
                       if (profile.address != null)
@@ -132,4 +132,6 @@ class ProviderListItem extends StatelessWidget {
     );
   }
 }
+
+
 

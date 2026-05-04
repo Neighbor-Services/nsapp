@@ -1,0 +1,15 @@
+{
+    "appTitle": "Servicio de Vecinos",
+    "activityHistory": "Historial de Actividad",
+    "noActivityFound": "No se encontró historial de actividad.",
+    "retry": "Reintentar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "profileUpdated": "Perfil actualizado con éxito",
+    "failedToUpdateProfile": "Error al actualizar el perfil",
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "requiredField": "Este campo es obligatorio"
+}

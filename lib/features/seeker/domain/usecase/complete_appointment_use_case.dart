@@ -24,3 +24,5 @@ class CompleteAppointmentParams {
 
   CompleteAppointmentParams({required this.id, required this.amount});
 }
+
+

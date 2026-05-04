@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -142,7 +142,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                                   .toUpperCase(),
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -152,7 +152,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor,
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -170,6 +170,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
     );
   }
 }
+
+
 
 
 

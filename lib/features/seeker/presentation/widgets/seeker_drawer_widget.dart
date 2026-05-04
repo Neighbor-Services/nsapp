@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -30,161 +30,177 @@ class SeekerDrawerWidget extends StatelessWidget {
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.secondaryTextColor;
 
-    return Drawer(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      width: 280.w,
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          border: Border(right: BorderSide(color: borderColor, width: 0.5)),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context, isDark, textColor, secondaryTextColor),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  children: [
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.house,
-                      title: "Home",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: 1,
-                            widget: SeekerHomePage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isSelected: NavigatorSeekerState.page == 1,
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.fileLines,
-                      title: "My Requests",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: SeekerRequestPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.calendar,
-                      title: "Calendar",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: SeekerAppointmentPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.listUl,
-                      title: "Appointments",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: const SeekerAppointmentListPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.gavel,
-                      title: "Disputes",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: 1,
-                            widget: const DisputesListPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                      child: Divider(
-                        color: context.appColors.glassBorder,
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, profileState) {
+        final profile = (profileState is SuccessGetProfileState)
+            ? profileState.profile
+            : SuccessGetProfileState.lastProfile;
+
+        return BlocBuilder<SeekerBloc, SeekerState>(
+          builder: (context, seekerState) {
+            final currentPage = (seekerState is NavigatorSeekerState)
+                ? seekerState.page
+                : NavigatorSeekerState.lastPage;
+
+            return Drawer(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              width: 280.w,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  border: Border(right: BorderSide(color: borderColor, width: 0.5.w)),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      _buildHeader(context, profile, isDark, textColor, secondaryTextColor),
+                      SizedBox(height: 20.h),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          children: [
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.house,
+                              title: "Home",
+                              onTap: () {
+                                context.read<SeekerBloc>().add(
+                                  NavigateSeekerEvent(
+                                    page: 1,
+                                    widget: const SeekerHomePage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isSelected: currentPage == 1,
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.fileLines,
+                              title: "My Requests",
+                              onTap: () {
+                                context.read<SeekerBloc>().add(
+                                  NavigateSeekerEvent(
+                                    page: currentPage,
+                                    widget: const SeekerRequestPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.calendar,
+                              title: "Calendar",
+                              onTap: () {
+                                context.read<SeekerBloc>().add(
+                                  NavigateSeekerEvent(
+                                    page: currentPage,
+                                    widget: const SeekerAppointmentPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.listUl,
+                              title: "Appointments",
+                              onTap: () {
+                                context.read<SeekerBloc>().add(
+                                  NavigateSeekerEvent(
+                                    page: currentPage,
+                                    widget: const SeekerAppointmentListPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.gavel,
+                              title: "Disputes",
+                              onTap: () {
+                                context.read<SeekerBloc>().add(
+                                  NavigateSeekerEvent(
+                                    page: 1,
+                                    widget: const DisputesListPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Divider(
+                                color: context.appColors.glassBorder,
+                              ),
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.gear,
+                              title: "Settings",
+                              onTap: () {
+                                context.read<SeekerBloc>().add(
+                                  NavigateSeekerEvent(
+                                    page: currentPage,
+                                    widget: const SettingsPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.triangleExclamation,
+                              title: "Report Issue",
+                              onTap: () {
+                                context.read<SeekerBloc>().add(
+                                  NavigateSeekerEvent(
+                                    page: currentPage,
+                                    widget: const ReportPage(),
+                                  ),
+                                );
+                                Navigator.pop(context);
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.gear,
-                      title: "Settings",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: SettingsPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: FontAwesomeIcons.triangleExclamation,
-                      title: "Report Issue",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: ReportPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                  ],
+                      _buildFooter(context, isDark, textColor),
+                    ],
+                  ),
                 ),
               ),
-              _buildFooter(context, isDark, textColor),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _buildHeader(
     BuildContext context,
+    Profile profile,
     bool isDark,
     Color textColor,
     Color secondaryTextColor,
   ) {
-    final profile = SuccessGetProfileState.profile;
     return Container(
       padding: EdgeInsets.all(24.r),
       child: Column(
@@ -231,7 +247,7 @@ class SeekerDrawerWidget extends StatelessWidget {
             style: TextStyle(
               color: textColor,
               fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               letterSpacing: -0.5,
             ),
           ),
@@ -262,7 +278,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                   style: TextStyle(
                     color: context.appColors.secondaryColor,
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 1,
                   ),
                 ),
@@ -284,7 +300,7 @@ class SeekerDrawerWidget extends StatelessWidget {
     required Color textColor,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8.0.h),
+      padding: EdgeInsets.only(bottom: 8.h),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -320,7 +336,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                         ? context.appColors.primaryColor
                         : context.appColors.primaryTextColor,
                     fontSize: 15.sp,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                   ),
                 ),
               ],
@@ -355,7 +371,6 @@ class SeekerDrawerWidget extends StatelessWidget {
   Widget _buildFooter(BuildContext context, bool isDark, Color textColor) {
     final subTextColor = context.appColors.secondaryTextColor;
     final borderColor = context.appColors.glassBorder;
-    final shadowColor = context.appColors.glassBorder;
 
     final dialogBg = context.appColors.primaryBackground;
     return GestureDetector(
@@ -368,19 +383,12 @@ class SeekerDrawerWidget extends StatelessWidget {
               child: Center(
                 child: Container(
                   padding: EdgeInsets.all(24.r),
-                  width: size(context).width * 0.85,
+                  width: MediaQuery.of(context).size.width * 0.85,
                   constraints: BoxConstraints(maxWidth: 400.w),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
                     color: dialogBg,
                     border: Border.all(color: borderColor),
-                    boxShadow: [
-                      BoxShadow(
-                        color: shadowColor,
-                        blurRadius: 20,
-                        offset: Offset(0, 10),
-                      ),
-                    ],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -402,7 +410,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                         "Logout",
                         style: TextStyle(
                           fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: textColor,
                         ),
                       ),
@@ -432,7 +440,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: subTextColor,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),
@@ -447,13 +455,13 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 context.read<AuthenticationBloc>().add(
                                   LogoutAuthenticationEvent(),
                                 );
-                                SuccessGetProfileState.profile = Profile();
-                                NavigatorSeekerState.widget =
+                                SuccessGetProfileState.lastProfile = Profile();
+                                NavigatorSeekerState.lastWidget =
                                     const SeekerHomePage();
-                                NavigatorSeekerState.page = 1;
-                                NavigatorProviderState.widget =
+                                NavigatorSeekerState.lastPage = 1;
+                                NavigatorProviderState.lastWidget =
                                     const ProviderHomePage();
-                                NavigatorProviderState.page = 1;
+                                NavigatorProviderState.lastPage = 1;
                                 Get.offAllNamed("/login");
                               },
                               style: ElevatedButton.styleFrom(
@@ -471,7 +479,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: context.appColors.errorColor,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),
@@ -504,7 +512,7 @@ class SeekerDrawerWidget extends StatelessWidget {
               style: TextStyle(
                 color: context.appColors.primaryTextColor,
                 fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -513,5 +521,3 @@ class SeekerDrawerWidget extends StatelessWidget {
     );
   }
 }
-
-

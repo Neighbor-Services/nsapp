@@ -127,7 +127,7 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
                             : (widget.unselectedTextColor ??
                                 context.appColors.secondaryTextColor),
                         fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.w500,
+                            isSelected ? FontWeight.w500 : FontWeight.w400,
                         fontSize: 14.sp,
                       ),
                       child: Text(widget.buttonLables[index]),
@@ -142,3 +142,5 @@ class _CustomSegmentedControlState<T> extends State<CustomSegmentedControl<T>> {
     );
   }
 }
+
+

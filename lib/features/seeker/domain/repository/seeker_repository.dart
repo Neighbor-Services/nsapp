@@ -54,3 +54,5 @@ abstract class SeekerRepository {
     required String description,
   });
 }
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -45,7 +45,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 22.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -168,7 +168,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       "Apply Filters",
                       style: TextStyle(
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -191,7 +191,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
           style: TextStyle(
             color: Colors.white.withAlpha(200),
             fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
           ),
         ),
         Text(
@@ -199,11 +199,13 @@ class _FilterDrawerState extends State<FilterDrawer> {
           style: TextStyle(
             color: context.appColors.secondaryColor,
             fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
     );
   }
 }
+
+
 

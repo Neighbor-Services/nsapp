@@ -85,3 +85,5 @@ class GetChatEvent extends MessageEvent {
   final String sender;
   GetChatEvent({required this.sender, required this.receiver});
 }
+
+

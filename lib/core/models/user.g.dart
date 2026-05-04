@@ -100,3 +100,5 @@ class PasswordAdapter extends TypeAdapter<Password> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+

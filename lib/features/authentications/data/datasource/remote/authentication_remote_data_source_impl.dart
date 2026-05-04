@@ -11,6 +11,25 @@ import 'package:nsapp/features/authentications/data/datasource/remote/authentica
 
 class AuthenticationRemoteDataSourceImpl
     extends AuthenticationRemoteDataSource {
+  
+  void _handleDioError(Object e) {
+    if (e is DioException) {
+      if (e.type == DioExceptionType.badResponse) {
+        final response = e.response;
+        if (response != null && response.data != null) {
+          final data = response.data;
+          if (data is Map) {
+            if (data.containsKey('non_field_errors')) {
+              throw data['non_field_errors'][0];
+            } else if (data.containsKey('detail')) throw data['detail'];
+            else if (data.containsKey('error')) throw data['error'];
+          } else if (data is List && data.isNotEmpty) throw data[0].toString();
+        }
+      }
+    }
+    throw e;
+  }
+
   @override
   Future<bool> register(String email, String password) async {
     try {
@@ -26,7 +45,8 @@ class AuthenticationRemoteDataSourceImpl
       }
       return false;
     } catch (e) {
-      return false;
+      _handleDioError(e);
+      return false; // Fallback
     }
   }
 
@@ -50,27 +70,8 @@ class AuthenticationRemoteDataSourceImpl
       }
       return null;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {
-          final response = e.response;
-          if (response != null && response.data != null) {
-            final data = response.data;
-            if (data is Map) {
-              // Handle common DRF error formats
-              if (data.containsKey('non_field_errors')) {
-                throw data['non_field_errors'][0];
-              } else if (data.containsKey('detail')) {
-                throw data['detail'];
-              } else if (data.containsKey('error')) {
-                throw data['error'];
-              }
-            } else if (data is List && data.isNotEmpty) {
-              throw data[0].toString();
-            }
-          }
-        }
-      }
-      rethrow;
+      _handleDioError(e);
+      return null;
     }
   }
 
@@ -108,9 +109,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -131,9 +130,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -229,9 +226,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -252,9 +247,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -275,9 +268,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -291,7 +282,6 @@ class AuthenticationRemoteDataSourceImpl
           AppleIDAuthorizationScopes.fullName,
         ],
         webAuthenticationOptions: WebAuthenticationOptions(
-          // TODO: Replace with your actual Service ID (clientId) later
           clientId: 'com.neighborservicesolutionsllc.nsapp.service',
           redirectUri: Uri.parse(
             'https://api.neighborservice.com/callbacks/apple',
@@ -355,3 +345,5 @@ class AuthenticationRemoteDataSourceImpl
     }
   }
 }
+
+

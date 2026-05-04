@@ -10,6 +10,7 @@ import 'package:nsapp/features/profile/presentation/pages/add_about_page.dart';
 import 'package:nsapp/features/profile/presentation/pages/add_profile_auth_page.dart';
 import 'package:nsapp/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:nsapp/features/profile/presentation/pages/profile_page.dart';
+import 'package:nsapp/features/profile/presentation/pages/pending_verification_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/biometric_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/create_dispute_page_new.dart';
 import 'package:nsapp/features/shared/presentation/pages/home_page.dart';
@@ -19,6 +20,7 @@ import 'package:nsapp/features/shared/presentation/pages/map_location_page.dart'
 import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/setup_webview_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/splash_screen_page.dart';
+import 'package:nsapp/features/shared/presentation/pages/no_internet_page.dart';
 import 'package:nsapp/features/wallet/presentation/pages/wallet_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/disputes_list_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
@@ -29,6 +31,7 @@ import 'package:nsapp/features/shared/presentation/pages/legal_document_page.dar
 
 List<GetPage<dynamic>> pages = [
   GetPage(name: '/', page: () => SplashScreenPage()),
+  GetPage(name: '/no-internet', page: () => const NoInternetPage()),
   GetPage(name: '/otp', page: () => OtpVerificationPage()),
   GetPage(name: '/login', page: () => LoginAuthPage()),
   GetPage(name: '/register', page: () => RegisterAuthPage()),
@@ -38,6 +41,7 @@ List<GetPage<dynamic>> pages = [
   GetPage(name: '/profile', page: () => ProfilePage()),
   GetPage(name: '/edit-profile', page: () => EditProfilePage()),
   GetPage(name: '/edit-portfolio', page: () => AddAboutPage()),
+  GetPage(name: '/pending-verification', page: () => PendingVerificationPage()),
   GetPage(name: '/map-location', page: () => MapLocationPage()),
   GetPage(name: "/map-direction", page: () => MapDirectionPage()),
   GetPage(
@@ -69,3 +73,5 @@ List<GetPage<dynamic>> pages = [
   ),
   GetPage(name: '/legal', page: () => const LegalDocumentPage()),
 ];
+
+

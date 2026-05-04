@@ -18,3 +18,4 @@ class GetAcceptedUsersUseCase extends UseCase{
   }
 
 }
+

@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -32,7 +32,7 @@ class _ProviderRequestPostFeedWidgetState
       body: BlocBuilder<ProviderBloc, ProviderState>(
         builder: (context, state) {
           return FutureBuilder<List<RequestData>>(
-            future: SuccessGetRequestsState.requests,
+            future: SuccessGetRequestsState.lastRequests,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isNotEmpty) {
@@ -81,7 +81,7 @@ class _ProviderRequestPostFeedWidgetState
                                         CustomTextWidget(
                                           text: requestData.user!.firstName!,
                                           fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           color: Colors.white,
                                         ),
                                         Column(
@@ -132,7 +132,7 @@ class _ProviderRequestPostFeedWidgetState
                                           "",
                                       fontSize: 14,
                                       color: Colors.lightBlueAccent,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w400,
                                     ),
                                     SizedBox(height: 4),
                                     CustomTextWidget(
@@ -167,4 +167,7 @@ class _ProviderRequestPostFeedWidgetState
     );
   }
 }
+
+
+
 

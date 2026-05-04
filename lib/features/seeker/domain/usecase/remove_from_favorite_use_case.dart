@@ -16,3 +16,4 @@ class RemoveFromFavoriteUseCase extends UseCase{
   }
 
 }
+

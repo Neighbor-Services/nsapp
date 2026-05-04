@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
@@ -123,7 +123,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                           'Raise Dispute'.toUpperCase(),
                           style: TextStyle(
                             color: textColor,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: 20.sp,
                           ),
                         ),
@@ -171,7 +171,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                         'Raise a Dispute',
                                         style: TextStyle(
                                           fontSize: 20.sp,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           color: textColor,
                                         ),
                                       ),
@@ -201,7 +201,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                   'Who are you disputing against?',
                                   style: TextStyle(
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w400,
                                     color: textColor.withAlpha(200),
                                   ),
                                 ),
@@ -264,7 +264,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                   'Dispute Details',
                                   style: TextStyle(
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w400,
                                     color: textColor.withAlpha(200),
                                   ),
                                 ),
@@ -359,13 +359,13 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
         backgroundColor: context.appColors.cardBackground,
         title: Text(
           'Select User',
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
         ),
         content: SizedBox(
           width: double.maxFinite,
           height: 400.h,
           child: FutureBuilder<List<Chat>>(
-            future: SuccessGetMyMessagesState.myMessages,
+            future: SuccessGetMyMessagesState.lastMyMessages,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: LoadingWidget());
@@ -452,7 +452,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                         user?.firstName ?? 'Unknown User',
                         style: TextStyle(
                           color: textColor,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w400,
                           fontSize: 14.sp,
                         ),
                       ),
@@ -487,5 +487,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
     );
   }
 }
+
+
 
 

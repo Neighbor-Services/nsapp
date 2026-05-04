@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -113,7 +113,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               "YOU ARE ON THE WAY",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -122,7 +122,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               "YOUR LOCATION IS SHARED WITH THE SEEKER.",
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor.withAlpha(150),
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 9.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -151,6 +151,8 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
     );
   }
 }
+
+
 
 
 

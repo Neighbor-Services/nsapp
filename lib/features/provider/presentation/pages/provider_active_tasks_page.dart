@@ -9,7 +9,6 @@ import 'package:nsapp/features/provider/presentation/pages/provider_request_deta
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/helpers/helpers.dart';
-import '../../../../core/models/request_accept.dart';
 import '../../../../core/models/request_acceptance.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
@@ -73,170 +72,181 @@ class _ProviderActiveTasksPageState
             customAlert(context, AlertType.error, "Request Cancelled Failed");
           }
         },
-        builder: (context, state) {
-          return GradientBackground(
-            child: SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 800.w),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32.w : 20.w,
-                            vertical: 10.h,
-                          ),
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => context.read<ProviderBloc>().add(
-                                  ProviderBackPressedEvent(),
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(12.r),
-                                  decoration: BoxDecoration(
-                                    color: context.appColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    border: Border.all(
-                                      color: context.appColors.glassBorder,
-                                      width: 1.5.r,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    FontAwesomeIcons.chevronLeft,
-                                    color: context.appColors.primaryTextColor,
-                                    size: 18.r,
-                                  ),
-                                ),
+        builder: (context, providerState) {
+          return BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, profileState) {
+              final myId = (profileState is SuccessGetProfileState)
+                  ? profileState.profile.user?.id
+                  : null;
+
+              return GradientBackground(
+                child: SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 800.w),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isLargeScreen ? 32.w : 20.w,
+                                vertical: 10.h,
                               ),
-                              SizedBox(width: 16.w),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  Text(
-                                    "ACTIVE TASKS",
-                                    style: TextStyle(
-                                      fontSize: 22.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: textColor,
-                                      letterSpacing: 1.2,
+                                  GestureDetector(
+                                    onTap: () => context.read<ProviderBloc>().add(
+                                      ProviderBackPressedEvent(),
+                                    ),
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 18.r,
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(height: 4.h),
-                                  Text(
-                                    "TASKS YOU HAVE BEEN APPROVED FOR",
-                                    style: TextStyle(
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: secondaryTextColor,
-                                      letterSpacing: 0.8,
-                                    ),
+                                  SizedBox(width: 16.w),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "ACTIVE TASKS",
+                                        style: TextStyle(
+                                          fontSize: 22.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: textColor,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Text(
+                                        "TASKS YOU HAVE BEEN APPROVED FOR",
+                                        style: TextStyle(
+                                          fontSize: 9.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: secondaryTextColor,
+                                          letterSpacing: 0.8,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: FutureBuilder<List<RequestAcceptance>>(
-                            future: SuccessGetAcceptRequestState.accepts,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                // Filter for active tasks
-                                final activeTasks = snapshot.data!.where((r) {
-                                  final request = r.acceptance?.request;
-                                  return request?.approved == true &&
-                                         request?.approvedUser == SuccessGetProfileState.profile.user?.id;
-                                }).toList();
+                            ),
+                            Expanded(
+                              child: FutureBuilder<List<RequestAcceptance>>(
+                                future: (providerState is SuccessGetAcceptRequestState)
+                                    ? providerState.accepts
+                                    : Future.value([]),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    // Filter for active tasks
+                                    final activeTasks = snapshot.data!.where((r) {
+                                      final request = r.acceptance?.request;
+                                      return request?.approved == true &&
+                                             request?.approvedUser == myId;
+                                    }).toList();
 
-                                if (activeTasks.isEmpty) {
-                                  return Center(
-                                    child: Padding(
+                                    if (activeTasks.isEmpty) {
+                                      return Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 24.w,
+                                          ),
+                                          child: Container(
+                                            padding: EdgeInsets.all(48.r),
+                                            decoration: BoxDecoration(
+                                              color: cardColor,
+                                              borderRadius: BorderRadius.circular(
+                                                32.r,
+                                              ),
+                                              border: Border.all(
+                                                color: borderColor,
+                                                width: 1.5.r,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.all(24.r),
+                                                  decoration: BoxDecoration(
+                                                    color: context.appColors.cardBackground,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Icon(
+                                                    FontAwesomeIcons.briefcase,
+                                                    size: 64.r,
+                                                    color: context.appColors.glassBorder,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 32.h),
+                                                Text(
+                                                  "No active tasks",
+                                                  style: TextStyle(
+                                                    fontSize: 22.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: textColor,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 12.h),
+                                                Text(
+                                                  "You have no tasks approved for you yet.",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 15.sp,
+                                                    color: context.appColors.glassBorder,
+                                                    height: 1.5,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return ListView.builder(
+                                      physics: const BouncingScrollPhysics(),
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: 24.w,
+                                        horizontal: isLargeScreen ? 32.w : 16.w,
+                                        vertical: 8.h,
                                       ),
-                                      child: Container(
-                                        padding: EdgeInsets.all(48.r),
-                                        decoration: BoxDecoration(
-                                          color: cardColor,
-                                          borderRadius: BorderRadius.circular(
-                                            32.r,
-                                          ),
-                                          border: Border.all(
-                                            color: borderColor,
-                                            width: 1.5.r,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.all(24.r),
-                                              decoration: BoxDecoration(
-                                                color: context.appColors.cardBackground,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Icon(
-                                                FontAwesomeIcons.briefcase,
-                                                size: 64.r,
-                                                color: context.appColors.glassBorder,
-                                              ),
-                                            ),
-                                            SizedBox(height: 32.h),
-                                            Text(
-                                              "No active tasks",
-                                              style: TextStyle(
-                                                fontSize: 22.sp,
-                                                fontWeight: FontWeight.bold,
-                                                color: textColor,
-                                                letterSpacing: 0.5,
-                                              ),
-                                            ),
-                                            SizedBox(height: 12.h),
-                                            Text(
-                                              "You have no tasks approved for you yet.",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 15.sp,
-                                                color: context.appColors.glassBorder,
-                                                height: 1.5,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isLargeScreen ? 32.w : 16.w,
-                                    vertical: 8.h,
-                                  ),
-                                  itemCount: activeTasks.length,
-                                  itemBuilder: (context, index) {
-                                    return _buildRequestCard(
-                                      context,
-                                      activeTasks[index],
-                                      index,
+                                      itemCount: activeTasks.length,
+                                      itemBuilder: (context, index) {
+                                        return _buildRequestCard(
+                                          context,
+                                          activeTasks[index],
+                                          index,
+                                          myId,
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              }
-                              return const Center(child: LoadingWidget());
-                            },
-                          ),
+                                  }
+                                  return const Center(child: LoadingWidget());
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
@@ -247,7 +257,7 @@ class _ProviderActiveTasksPageState
     BuildContext context,
     RequestAcceptance requestAcceptance,
     int index,
- 
+    String? myId,
   ) {
     final textColor = context.appColors.primaryTextColor;
     final cardColor = context.appColors.cardBackground;
@@ -260,8 +270,7 @@ class _ProviderActiveTasksPageState
     if (user == null) return const SizedBox.shrink();
 
     final isApproved = request.approved ?? false;
-    final isAssignedToMe =
-        request.approvedUser == SuccessGetProfileState.profile.user?.id;
+    final isAssignedToMe = request.approvedUser == myId;
     final status = request.status ?? 'OPEN';
 
     return GestureDetector(
@@ -355,7 +364,7 @@ class _ProviderActiveTasksPageState
                           _getStatusText(isApproved, isAssignedToMe, status).toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.primaryColor,
                             letterSpacing: 0.5,
                           ),
@@ -417,7 +426,7 @@ class _ProviderActiveTasksPageState
                           request.title ?? "Project",
                           style: TextStyle(
                             fontSize: 17.sp,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
@@ -450,28 +459,22 @@ class _ProviderActiveTasksPageState
 
 
   IconData _getStatusIcon(bool isApproved, bool isAssignedToMe, String status) {
-    // If assigned to me and in progress or done
     if (isAssignedToMe && isApproved) {
       if (status == 'DONE') return FontAwesomeIcons.circleCheck;
       if (status == 'IN_PROGRESS') return FontAwesomeIcons.clock;
       return FontAwesomeIcons.circleCheck;
     }
-    // If approved but not assigned to me
     if (isApproved) return FontAwesomeIcons.ellipsis;
-    // Waiting for approval
     return FontAwesomeIcons.hourglass;
   }
 
   String _getStatusText(bool isApproved, bool isAssignedToMe, String status) {
-    // If assigned to me and in progress or done
     if (isAssignedToMe && isApproved) {
       if (status == 'DONE') return "COMPLETED";
       if (status == 'IN_PROGRESS') return "IN PROGRESS";
       return "ACTIVE TASK";
     }
-    // If approved but not assigned to me
     if (isApproved) return "ASSIGNED TO OTHER";
-    // Waiting for approval
     return "WAITING RESPONSE";
   }
 
@@ -521,9 +524,6 @@ class _ProviderActiveTasksPageState
           NavigateProviderEvent(page: 4, widget: const ChatPage()),
         );
         break;
-      case 4:
-        // Canceled option removed
-        break;
       case 5:
         if (ra.acceptance?.request == null) break;
         await Helpers.getLocation();
@@ -535,66 +535,6 @@ class _ProviderActiveTasksPageState
     }
   }
 
-  void _showCancelConfirmation(BuildContext context, RequestAcceptance ra) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: context.appColors.primaryBackground,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-        title: Text(
-          "CANCEL INTEREST?",
-          style: TextStyle(
-            color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-          ),
-        ),
-        content: Text(
-          "Are you sure you want to withdraw your interest from this request?",
-          style: TextStyle(color: context.appColors.secondaryTextColor),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              "Keep It",
-              style: TextStyle(color: context.appColors.secondaryTextColor),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.read<ProviderBloc>().add(
-                CancelRequestAcceptEvent(
-                  requestAccept: RequestAccept(
-                    serviceRequestId: ra.acceptance!.request!.id!,
-                    proposalId: ra.acceptance!.id,
-                    uid: ra.user!.user!.id!,
-                  ),
-                ),
-              );
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.appColors.errorColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              elevation: 0,
-            ),
-            child: const Text(
-              "WITHDRAW",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.0,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   List<PopupMenuEntry<int>> _buildMenuItems() {
     return [
       _buildMenuItem(
@@ -602,14 +542,12 @@ class _ProviderActiveTasksPageState
         FontAwesomeIcons.eye,
         "View Details",
         context.appColors.primaryTextColor
-       
       ),
       _buildMenuItem(
         2,
         FontAwesomeIcons.comment,
         "Chat",
         context.appColors.primaryTextColor
-       
       ),
       _buildMenuItem(
         3,
@@ -619,7 +557,7 @@ class _ProviderActiveTasksPageState
       ),
       _buildMenuItem(
         5,
-        FontAwesomeIcons.directions,
+        FontAwesomeIcons.diamondTurnRight,
         "Directions",
         context.appColors.primaryTextColor
       ),
@@ -643,7 +581,7 @@ class _ProviderActiveTasksPageState
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
             ),
           ),
@@ -652,3 +590,5 @@ class _ProviderActiveTasksPageState
     );
   }
 }
+
+

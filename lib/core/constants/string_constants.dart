@@ -10,17 +10,9 @@ const String seekerProviderLogo = "assets/images/job_provider_1.png";
 const String resetPasswordLogo = "assets/icons/forget_password_icon.png";
 const String placesUrl = "";
 
-const String stripeCustomerUrl = "https://api.stripe.com/v1/customers";
-const String stripePaymentIntentUrl =
-    "https://api.stripe.com/v1/payment_intents";
-final String stripePublishableKey = dotenv.env["STRIPE_PUBLISHABLE_KEY"]!;
-final String stripeSecretKey = dotenv.env["STRIPE_SECRET_KEY"]!;
+final String stripePublishableKey = dotenv.env["STRIPE_PUBLISHABLE_KEY"] ?? "";
 const String stripeCurrency = "USD";
-final Map<String, String> headers = {
-  'Authorization': 'Bearer $stripeSecretKey',
-  'Content-Type': 'application/x-www-form-urlencoded',
-};
-final String mapAPIKey = dotenv.env["GOOGLE_MAP_API"]!;
+final String mapAPIKey = dotenv.env["GOOGLE_MAP_API"] ?? "";
 const String placesAutoCompleteUrl =
     "https://places.googleapis.com/v1/places:autocomplete";
 
@@ -28,3 +20,5 @@ const String placeDetailsUrl = "https://places.googleapis.com/v1/places";
 
 const String userTypeProvider = "PROVIDER";
 const String userTypeSeeker = "SEEKER";
+
+

@@ -1,15 +1,11 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart'
-    hide ReloadState;
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
+
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 
@@ -54,32 +50,30 @@ AppBar homeAppBar({
               onTap: () {
                 Scaffold.of(context).openDrawer();
               },
-              child: Container(
-                padding: EdgeInsets.all(2.r),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: context.appColors.secondaryColor,
-                    width: 1.5.r,
-                  ),
-                ),
-                child: CircleAvatar(
-                  radius: 18.r,
-                  backgroundColor: appBlueCardColor,
-                  backgroundImage:
-                      (SuccessGetProfileState.profile.profilePictureUrl !=
-                              null &&
-                          SuccessGetProfileState
-                              .profile
-                              .profilePictureUrl!
-                              .isNotEmpty &&
-                          !SuccessGetProfileState.profile.profilePictureUrl!
-                              .startsWith("file:///"))
-                      ? NetworkImage(
-                          SuccessGetProfileState.profile.profilePictureUrl!,
-                        )
-                      : AssetImage(logo2Assets) as ImageProvider,
-                ),
+              child: BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  final profile = state is SuccessGetProfileState ? state.profile : Profile();
+                  return Container(
+                    padding: EdgeInsets.all(2.r),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: context.appColors.secondaryColor,
+                        width: 1.5.r,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 18.r,
+                      backgroundColor: appBlueCardColor,
+                      backgroundImage:
+                          (profile.profilePictureUrl != null &&
+                              profile.profilePictureUrl!.isNotEmpty &&
+                              !profile.profilePictureUrl!.startsWith("file:///"))
+                          ? NetworkImage(profile.profilePictureUrl!)
+                          : AssetImage(logo2Assets) as ImageProvider,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -97,11 +91,11 @@ AppBar homeAppBar({
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            (title ?? (DashboardState.isProvider ? 'PROVIDER' : 'SEEKER'))
+            (title ?? (value ? 'PROVIDER' : 'SEEKER'))
                 .toUpperCase(),
             style: TextStyle(
               color: titleColor,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               fontSize: 13.sp,
               letterSpacing: 1.0,
             ),
@@ -114,7 +108,8 @@ AppBar homeAppBar({
         padding: EdgeInsets.symmetric(vertical: 20.0.h),
         child: BlocBuilder<SharedBloc, SharedState>(
           builder: (context, state) {
-            return Helpers.isProvider(ReloadState.type)
+            final userType = state is ReloadState ? state.type : "";
+            return Helpers.isProvider(userType)
                 ? Transform.scale(
                     scale: 0.8,
                     child: Switch(
@@ -230,7 +225,7 @@ class PlatformPopupMenu extends StatelessWidget {
                             "LOGOUT",
                             style: TextStyle(
                               fontSize: 22.sp,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -261,7 +256,7 @@ class PlatformPopupMenu extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       color: subTextColor,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 1.0,
                                     ),
                                   ),
@@ -277,13 +272,7 @@ class PlatformPopupMenu extends StatelessWidget {
                                     context.read<AuthenticationBloc>().add(
                                       LogoutAuthenticationEvent(),
                                     );
-                                    SuccessGetProfileState.profile = Profile();
-                                    NavigatorSeekerState.widget =
-                                        const SeekerHomePage();
-                                    NavigatorSeekerState.page = 1;
-                                    NavigatorProviderState.widget =
-                                        const ProviderHomePage();
-                                    NavigatorProviderState.page = 1;
+                                    context.read<ProfileBloc>().add(LogoutProfileEvent());
                                     Get.offAllNamed("/login");
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -301,7 +290,7 @@ class PlatformPopupMenu extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 1.0,
                                     ),
                                   ),
@@ -322,6 +311,5 @@ class PlatformPopupMenu extends StatelessWidget {
     );
   }
 }
-
 
 

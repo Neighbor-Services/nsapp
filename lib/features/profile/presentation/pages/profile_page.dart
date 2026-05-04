@@ -1,4 +1,4 @@
-﻿import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -7,12 +7,14 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_verification_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/add_service_package_page.dart';
+import 'package:nsapp/features/profile/presentation/pages/audit_log_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/performance_badge_widget.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -25,11 +27,12 @@ class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  Future<Profile>? _profileFuture;
 
   @override
   void initState() {
     super.initState();
-    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+    _fetchProfile();
 
     _fadeController = AnimationController(
       vsync: this,
@@ -40,6 +43,10 @@ class _ProfilePageState extends State<ProfilePage>
       end: 1,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _fadeController.forward();
+  }
+
+  void _fetchProfile() {
+    context.read<ProfileBloc>().add(GetProfileStreamEvent());
   }
 
   @override
@@ -55,14 +62,11 @@ class _ProfilePageState extends State<ProfilePage>
     return Scaffold(
       body: MultiBlocListener(
         listeners: [
-          BlocListener<ProfileBloc, ProfileState>(
-            listener: (context, state) {},
-          ),
           BlocListener<ProviderBloc, ProviderState>(
             listener: (context, state) {
               if (state is SuccessAddPortfolioItemState) {
-                Get.back(); // Close loading dialog if any
-                context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                Get.back(); // Close loading dialog
+                _fetchProfile();
                 Get.snackbar(
                   "Success",
                   "Portfolio item added! AI analysis started.",
@@ -73,13 +77,22 @@ class _ProfilePageState extends State<ProfilePage>
                 Get.back();
                 Get.snackbar(
                   "Error",
-                  "Failed to upload image. Please try again.",
+                  state.message ?? "Failed to upload image. Please try again.",
                   backgroundColor: context.appColors.errorColor.withAlpha(100),
                   colorText: Colors.white,
                 );
               } else if (state is LoadingProviderState) {
                 Get.dialog(
-                  const Center(child: LoadingWidget()),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.all(20.r),
+                      decoration: BoxDecoration(
+                        color: context.appColors.cardBackground,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: const CircularProgressIndicator(),
+                    ),
+                  ),
                   barrierDismissible: false,
                 );
               }
@@ -88,13 +101,24 @@ class _ProfilePageState extends State<ProfilePage>
         ],
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
-            if (state is! SuccessGetProfileStreamState &&
-                SuccessGetProfileState.profile.id == null) {
-              return const Center(child: LoadingWidget());
+            if (state is LoadingProfileState && _profileFuture == null) {
+              return const ProfileSkeletonLoader();
+            }
+
+            if (state is FailureGetProfileStreamState) {
+              return _buildErrorUI(state.message);
+            }
+
+            if (state is SuccessGetProfileStreamState) {
+              _profileFuture = state.profile;
+            }
+
+            if (_profileFuture == null) {
+              return const ProfileSkeletonLoader();
             }
 
             return FutureBuilder<Profile>(
-              future: SuccessGetProfileStreamState.profile,
+              future: _profileFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
                   Profile profile = snapshot.data!;
@@ -168,8 +192,6 @@ class _ProfilePageState extends State<ProfilePage>
                                 // Info Section
                                 _buildInfoSection(profile),
                                 SizedBox(height: 24.h),
-
-                              
                               ],
                             ),
                           ),
@@ -177,12 +199,67 @@ class _ProfilePageState extends State<ProfilePage>
                       ),
                     ),
                   );
+                } else if (snapshot.hasError) {
+                   return _buildErrorUI(snapshot.error.toString());
                 } else {
-                  return const Center(child: LoadingWidget());
+                  return const ProfileSkeletonLoader();
                 }
               },
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorUI(String message) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(32.r),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                FontAwesomeIcons.circleExclamation,
+                size: 60.r,
+                color: context.appColors.errorColor,
+              ),
+              SizedBox(height: 24.h),
+              CustomTextWidget(
+                text: "OPS! SOMETHING WENT WRONG",
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w500,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: context.appColors.secondaryTextColor,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 32.h),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _profileFuture = null;
+                  });
+                  _fetchProfile();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.appColors.primaryColor,
+                  padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 15.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
+                child: const Text("RETRY"),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -241,7 +318,7 @@ class _ProfilePageState extends State<ProfilePage>
               profile.firstName ?? "USER",
               style: TextStyle(
                 fontSize: 28.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: textColor,
                 letterSpacing: -0.5,
               ),
@@ -261,7 +338,7 @@ class _ProfilePageState extends State<ProfilePage>
           profile.user?.email ?? "No email provided",
           style: TextStyle(
             fontSize: 15.sp,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
             color: subTextColor,
           ),
         ),
@@ -295,7 +372,7 @@ class _ProfilePageState extends State<ProfilePage>
                 profile.userType?.toUpperCase() ?? "USER",
                 style: TextStyle(
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1.2,
                   color: isProvider
                       ? context.appColors.primaryColor
@@ -384,7 +461,19 @@ class _ProfilePageState extends State<ProfilePage>
             profile.zipCode ?? "Not set",
             FontAwesomeIcons.mapPin,
           ),
+          
+          // Audit Logs Link
+          InkWell(
+            onTap: () => Get.to(() => const AuditLogPage()),
+            child: _buildInfoRow(
+              "Activity History",
+              "View your recent logs",
+              FontAwesomeIcons.clockRotateLeft,
+            ),
+          ),
+
           if (Helpers.isProvider(profile.userType)) ...[
+            _buildGlassDivider(),
             _buildInfoRow(
               "Payment Preference",
               profile.preferredPaymentMode ?? "BOTH",
@@ -392,7 +481,6 @@ class _ProfilePageState extends State<ProfilePage>
             ),
             InkWell(
               onTap: () {
-                // Navigate to Add Service Package Page
                 Get.to(() => const AddServicePackagePage());
               },
               child: _buildInfoRow(
@@ -454,7 +542,7 @@ class _ProfilePageState extends State<ProfilePage>
                     label.toUpperCase(),
                     style: TextStyle(
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: labelColor,
                       letterSpacing: 0.8,
                     ),
@@ -464,7 +552,7 @@ class _ProfilePageState extends State<ProfilePage>
                     value.isNotEmpty ? value : "Not set",
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                       color: valueColor,
                     ),
                   ),
@@ -483,9 +571,7 @@ class _ProfilePageState extends State<ProfilePage>
       color: context.appColors.glassBorder,
     );
   }
-
 }
-
 
 
 

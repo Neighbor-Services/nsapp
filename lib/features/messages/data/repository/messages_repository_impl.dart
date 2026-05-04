@@ -58,7 +58,7 @@ class MessagesRepositoryImpl extends MessagesRepository {
       }
 
       return Left(
-        Failure(massege: "An error occurred and no cached data found"),
+        Failure(message: "An error occurred and no cached data found"),
       );
     } catch (e) {
       // 4. Fallback to Cache on error
@@ -68,7 +68,7 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (cached != null) {
         return Right(List<ChatMessage>.from(cached));
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -93,7 +93,7 @@ class MessagesRepositoryImpl extends MessagesRepository {
       }
 
       return Left(
-        Failure(massege: "An error occurred and no cached data found"),
+        Failure(message: "An error occurred and no cached data found"),
       );
     } catch (e) {
       // 4. Fallback to Cache on error
@@ -101,7 +101,7 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (cached != null) {
         return Right(List<Chat>.from(cached));
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -112,9 +112,9 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -125,9 +125,9 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -138,9 +138,9 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 
@@ -153,9 +153,12 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     }
   }
 }
+
+
+

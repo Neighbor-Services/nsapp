@@ -30,11 +30,11 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
           backgroundColor: Colors.transparent,
           extendBody: true,
           body: PopScope(
-            canPop: (SeekerVisitedPagesState.pages.isEmpty),
+            canPop: (SeekerVisitedPagesState.lastPages.isEmpty),
             onPopInvokedWithResult: (pop, oo) {
               context.read<SeekerBloc>().add(SeekerBackPressedEvent());
             },
-            child: NavigatorSeekerState.widget,
+            child: NavigatorSeekerState.lastWidget,
           ),
           bottomNavigationBar: SeekerBottomNavigationBarWidget(),
         );
@@ -42,3 +42,5 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
     );
   }
 }
+
+
