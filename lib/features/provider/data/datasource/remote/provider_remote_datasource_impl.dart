@@ -34,7 +34,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   }
 
   @override
-  Future<List<RequestData>?> getRecentRequest({
+  Future<List<RequestData>> getRecentRequest({
     double? lat,
     double? lng,
     double? radius,
@@ -89,10 +89,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         }
         return requests;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -110,10 +108,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       if (response.statusCode == 201 || response.statusCode == 204) {
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -131,10 +127,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       if (response.statusCode == 200 || response.statusCode == 204) {
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -163,14 +157,12 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         }
         return false;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<RequestAcceptance>?> getAcceptedRequest() async {
+  Future<List<RequestAcceptance>> getAcceptedRequest() async {
     final token = await Helpers.getString("token");
     try {
       final response = await _dio.get(
@@ -195,14 +187,12 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         }
         return requests;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<RequestData?> getRequestById({required String id}) async {
+  Future<RequestData> getRequestById({required String id}) async {
     final token = await Helpers.getString("token");
     try {
       final response = await _dio.get(
@@ -212,10 +202,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       if (response.statusCode == 200) {
         return RequestData.fromJson(response.data);
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -225,9 +213,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       // final results = await store.collection("profiles").doc(request).get();
 
       return profile.rating!.contains(request);
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -248,7 +234,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         return true;
       }
       debugPrint("POST APPOINTMENT FAILED: ${response.statusCode} - ${response.data}");
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       if (e is DioException) {
         debugPrint("Dio Error: ${e.response?.statusCode} - ${e.response?.data}");
@@ -258,7 +244,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   }
 
   @override
-  Future<List<AppointmentData>?> getAppointment() async {
+  Future<List<AppointmentData>> getAppointment() async {
     try {
       final token = await Helpers.getString("token");
 
@@ -285,14 +271,12 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         }
         return requests;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<RequestData>?> getRequests({
+  Future<List<RequestData>> getRequests({
     double? lat,
     double? lng,
     double? radius,
@@ -311,7 +295,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   }
 
   @override
-  Future<List<RequestData>?> searchRequests({
+  Future<List<RequestData>> searchRequests({
     String? query,
     double? lat,
     double? lng,
@@ -364,10 +348,8 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         }
         return requests;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -383,7 +365,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
           response.statusCode == 201) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;
@@ -402,7 +384,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       if (response.statusCode == 200) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;
@@ -424,7 +406,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;
@@ -452,7 +434,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
       if (response.statusCode == 201) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;

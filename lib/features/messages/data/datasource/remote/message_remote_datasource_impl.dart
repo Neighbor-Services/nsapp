@@ -69,8 +69,18 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
   @override
   Future<Profile?> reloadMessageReceiver(String user) async {
     try {
-      final results = <String, dynamic>{};
-      return Profile.fromJson(results);
+      final token = await Helpers.getString("token");
+      final response = await _dio.get(
+        "$baseUrl/accounts/profile/?user=$user",
+        options: Options(headers: dioHeaders(token)),
+      );
+      if (response.statusCode == 200) {
+        if (response.data["providers"] is List &&
+            (response.data["providers"] as List).isNotEmpty) {
+          return Profile.fromJson(response.data["providers"][0]);
+        }
+      }
+      return null;
     } catch (e) {
       return null;
     }

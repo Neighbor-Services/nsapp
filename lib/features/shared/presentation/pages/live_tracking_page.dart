@@ -26,6 +26,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   final TrackingService _trackingService = TrackingService();
+  StreamSubscription<Map<String, dynamic>>? _locationSubscription;
   LatLng? _providerLocation;
   double _heading = 0.0;
 
@@ -33,7 +34,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
   void initState() {
     super.initState();
     _trackingService.startTracking(widget.appointmentId, false);
-    _trackingService.locationStream.listen((data) {
+    _locationSubscription = _trackingService.locationStream.listen((data) {
       if (mounted) {
         setState(() {
           _providerLocation = LatLng(data['latitude'], data['longitude']);
@@ -55,6 +56,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
 
   @override
   void dispose() {
+    _locationSubscription?.cancel();
     _trackingService.dispose();
     super.dispose();
   }

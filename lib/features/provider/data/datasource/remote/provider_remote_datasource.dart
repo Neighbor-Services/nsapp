@@ -6,7 +6,7 @@ import '../../../../../core/models/request_acceptance.dart';
 import '../../../../../core/models/request_data.dart';
 
 abstract class ProviderRemoteDatasource {
-  Future<List<RequestData>?> getRecentRequest({
+  Future<List<RequestData>> getRecentRequest({
     double? lat,
     double? lng,
     double? radius,
@@ -14,7 +14,7 @@ abstract class ProviderRemoteDatasource {
     bool? targeted,
     String? catalogServiceId,
   });
-  Future<List<RequestData>?> getRequests({
+  Future<List<RequestData>> getRequests({
     double? lat,
     double? lng,
     double? radius,
@@ -22,7 +22,7 @@ abstract class ProviderRemoteDatasource {
     bool? targeted,
     String? catalogServiceId,
   });
-  Future<List<RequestData>?> searchRequests({
+  Future<List<RequestData>> searchRequests({
     String? query,
     double? lat,
     double? lng,
@@ -32,9 +32,9 @@ abstract class ProviderRemoteDatasource {
   });
   Future<bool> acceptRequest({required String uid, required String requestId});
   Future<bool> cancelRequest({required String uid, required String requestId});
-  Future<List<RequestAcceptance>?> getAcceptedRequest();
-  Future<RequestData?> getRequestById({required String id});
-  Future<List<AppointmentData>?> getAppointment();
+  Future<List<RequestAcceptance>> getAcceptedRequest();
+  Future<RequestData> getRequestById({required String id});
+  Future<List<AppointmentData>> getAppointment();
   Future<bool> reloadProfile({required String request});
   Future<bool> addAppointment({required Appointment appointment});
   Future<bool> cancelAppointment({required String id});

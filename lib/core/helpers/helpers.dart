@@ -363,17 +363,48 @@ class Helpers {
   static Future<bool> isAuthenticated() async {
     final token = await getString("token");
     if (token == "") return false;
+
+    final _dio = Dio();
     try {
-      final dio = Dio();
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/profile/me/",
         options: Options(headers: dioHeaders(token)),
       );
       return response.statusCode == 200;
     } catch (e) {
       if (e is DioException && e.response?.statusCode == 401) {
+        // Access token expired — attempt a silent refresh before evicting session
+        final refreshed = await _tryRefreshToken(_dio);
+        if (refreshed) return true;
+        // Refresh also failed: clear both tokens
         await deletePref("token");
+        await deletePref("refresh_token");
       }
+      return false;
+    }
+  }
+
+  /// Attempts to refresh the access token using the stored refresh token.
+  /// Returns true and saves the new access token on success, false otherwise.
+  static Future<bool> _tryRefreshToken(Dio dio) async {
+    try {
+      final refreshToken = await getString("refresh_token");
+      if (refreshToken.isEmpty) return false;
+
+      final response = await dio.post(
+        "$baseUrl/accounts/token/refresh/",
+        data: {"refresh": refreshToken},
+      );
+
+      if (response.statusCode == 200) {
+        final newToken = response.data["access"] as String?;
+        if (newToken != null && newToken.isNotEmpty) {
+          await saveString("token", newToken);
+          return true;
+        }
+      }
+      return false;
+    } catch (_) {
       return false;
     }
   }

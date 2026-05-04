@@ -51,14 +51,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<RequestData>?> myRequest() async {
+  Future<List<RequestData>> myRequest() async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.get(
@@ -83,14 +81,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return requests;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<Profile>?> getPopularProviders() async {
+  Future<List<Profile>> getPopularProviders() async {
     final token = await Helpers.getString("token");
     try {
       final response = _dio
@@ -118,14 +114,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return providers;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<RequestAcceptance>?> getAcceptedUsers({
+  Future<List<RequestAcceptance>> getAcceptedUsers({
     required String request,
   }) async {
     final token = await Helpers.getString("token");
@@ -153,10 +147,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return providers;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -176,14 +168,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<RequestData?> reloadRequest({required String request}) async {
+  Future<RequestData> reloadRequest({required String request}) async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.get(
@@ -195,10 +185,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         // Standard Detail View returns the object directly
         return RequestData.fromJson(response.data);
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -213,10 +201,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -231,10 +217,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 200 || response.statusCode == 204) {
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -267,10 +251,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -287,10 +269,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 201) {
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -307,14 +287,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
           response.statusCode == 204) {
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<Favorite>?> getMyFavorites() async {
+  Future<List<Favorite>> getMyFavorites() async {
     final token = await Helpers.getString("token");
     try {
       final response = await _dio.get(
@@ -338,14 +316,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return providers;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<AppointmentData>?> getAppointment() async {
+  Future<List<AppointmentData>> getAppointment() async {
     try {
       final token = await Helpers.getString("token");
 
@@ -370,14 +346,12 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return requests;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<Profile>?> searchProviders({
+  Future<List<Profile>> searchProviders({
     double? ratingMin,
     double? priceMin,
     double? priceMax,
@@ -416,10 +390,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return providers;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -435,7 +407,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 200) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;
@@ -463,10 +435,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         );
         return true;
       }
-      return false;
-    } catch (e) {
-      return false;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -480,7 +450,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 204 || response.statusCode == 200) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;
@@ -499,7 +469,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 200) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;
@@ -521,7 +491,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       }
-      return false;
+      throw Exception('Failed');
     } catch (e) {
       debugPrint(e.toString());
       return false;
@@ -529,7 +499,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   }
 
   @override
-  Future<List<Profile>?> matchProviders({required String description}) async {
+  Future<List<Profile>> matchProviders({required String description}) async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.post(
@@ -550,10 +520,8 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         }
         return providers;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 }
 

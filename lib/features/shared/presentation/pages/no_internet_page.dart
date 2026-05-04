@@ -30,7 +30,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
     });
 
     if (hasInternet) {
-      Get.offAllNamed('/splash'); // Or wherever it should restart
+      Get.offAllNamed('/'); // Restart via the registered splash route
     } else {
       // Show brief snackbar that it's still offline
       Get.snackbar(

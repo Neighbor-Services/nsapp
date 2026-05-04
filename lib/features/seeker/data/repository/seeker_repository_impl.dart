@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/failure.dart';
+import 'package:nsapp/core/helpers/error_handler.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/rate.dart';
@@ -29,7 +30,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -56,15 +57,12 @@ class SeekerRepositoryImpl extends SeekerRepository {
   Future<Either<Failure, List<RequestData>>> _syncMyRequests() async {
     try {
       final results = await datasource.myRequest();
-      if (results != null) {
-        await hiveService
-            .getBox(HiveService.serviceRequestBox)
-            .put('my_requests', results);
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      await hiveService
+          .getBox(HiveService.serviceRequestBox)
+          .put('my_requests', results);
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -74,12 +72,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
   }) async {
     try {
       final results = await datasource.getAcceptedUsers(request: request);
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -100,7 +95,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -110,12 +105,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
   }) async {
     try {
       final results = await datasource.reloadRequest(request: request);
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -132,7 +124,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -147,7 +139,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -160,7 +152,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -187,15 +179,12 @@ class SeekerRepositoryImpl extends SeekerRepository {
   Future<Either<Failure, List<Profile>>> _syncPopularProviders() async {
     try {
       final results = await datasource.getPopularProviders();
-      if (results != null) {
-        await hiveService
-            .getBox(HiveService.settingsBox)
-            .put('popular_providers', results);
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      await hiveService
+          .getBox(HiveService.settingsBox)
+          .put('popular_providers', results);
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -208,7 +197,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -223,7 +212,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -250,15 +239,12 @@ class SeekerRepositoryImpl extends SeekerRepository {
   Future<Either<Failure, List<Favorite>>> _syncFavorites() async {
     try {
       final results = await datasource.getMyFavorites();
-      if (results != null) {
-        await hiveService
-            .getBox(HiveService.settingsBox)
-            .put('my_favorites', results);
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      await hiveService
+          .getBox(HiveService.settingsBox)
+          .put('my_favorites', results);
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -285,15 +271,12 @@ class SeekerRepositoryImpl extends SeekerRepository {
   Future<Either<Failure, List<AppointmentData>>> _syncSeekerAppointments() async {
     try {
       final results = await datasource.getAppointment();
-      if (results != null) {
-        await hiveService
-            .getBox(HiveService.appointmentBox)
-            .put('seeker_appointments', results);
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      await hiveService
+          .getBox(HiveService.appointmentBox)
+          .put('seeker_appointments', results);
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -315,12 +298,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
         serviceName: serviceName,
         city: city,
       );
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -333,7 +313,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -346,7 +326,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -397,7 +377,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -407,12 +387,9 @@ class SeekerRepositoryImpl extends SeekerRepository {
   }) async {
     try {
       final results = await datasource.matchProviders(description: description);
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 }
