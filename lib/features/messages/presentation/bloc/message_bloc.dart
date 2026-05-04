@@ -136,14 +136,12 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
     });
 
     on<ChooseMessageImageFromGalleyEvent>((event, emit) async {
-      await Helpers.selectImageFromGallery();
-      _selectedImage = image;
+      _selectedImage = await Helpers.selectImageFromGallery();
       emit(MessageImageState(image: _selectedImage));
     });
 
     on<ChooseMessageImageFromCameraEvent>((event, emit) async {
-      await Helpers.selectImageFromCamera();
-      _selectedImage = image;
+      _selectedImage = await Helpers.selectImageFromCamera();
       emit(MessageImageState(image: _selectedImage));
     });
 
@@ -255,6 +253,3 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
     };
   }
 }
-
-
-

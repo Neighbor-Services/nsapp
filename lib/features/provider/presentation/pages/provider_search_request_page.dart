@@ -90,94 +90,81 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                     ),
                     SizedBox(height: 20.h),
 
-                    // Request Grid
                     SizedBox(
                       height: size(context).height - 200.h,
-                      child: FutureBuilder<List<RequestData>>(
-                        future: state is SuccessSearchRequestState ? state.requests : null,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data!.isNotEmpty) {
-                              if (requests.isEmpty) requests = snapshot.data!;
+                      child: () {
+                        List<RequestData> searchResults = [];
+                        if (state is SuccessSearchRequestState) {
+                          searchResults = state.requests;
+                          if (requests.isEmpty) requests = searchResults;
+                        }
 
-                              final displayList = searchController.text.isNotEmpty
-                                  ? searchedRequests
-                                  : snapshot.data!;
+                        if (state is LoadingProviderState && searchResults.isEmpty) {
+                          return const Center(child: LoadingWidget());
+                        }
 
-                              if (displayList.isEmpty &&
-                                  searchController.text.isNotEmpty) {
-                                return Center(
-                                  child: SolidContainer(
-                                    padding: EdgeInsets.all(24.r),
-                                    child: EmptyWidget(
-                                      message: "No request matches your search",
-                                      height: 200.h,
-                                    ),
+                        final displayList = searchController.text.isNotEmpty
+                            ? searchedRequests
+                            : searchResults;
+
+                        if (displayList.isEmpty && searchController.text.isNotEmpty) {
+                          return Center(
+                            child: SolidContainer(
+                              padding: EdgeInsets.all(24.r),
+                              child: EmptyWidget(
+                                message: "No request matches your search",
+                                height: 200.h,
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (displayList.isEmpty) {
+                           return Center(
+                            child: SolidContainer(
+                              padding: EdgeInsets.all(20.r),
+                              child: EmptyWidget(
+                                message: "No request available at the moment",
+                                height: 250.h,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return GridView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16.w,
+                            mainAxisSpacing: 16.h,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: displayList.length,
+                          itemBuilder: (context, index) {
+                            RequestData requestD = displayList[index];
+
+                            // Staggered Animation
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0.0, end: 1.0),
+                              duration: Duration(
+                                milliseconds: 400 + (index * 100),
+                              ),
+                              curve: Curves.easeOut,
+                              builder: (context, value, child) {
+                                return Transform.translate(
+                                  offset: Offset(0, 50 * (1 - value)),
+                                  child: Opacity(
+                                    opacity: value,
+                                    child: child,
                                   ),
                                 );
-                              }
-
-                              return GridView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 16.w,
-                                      mainAxisSpacing: 16.h,
-                                      childAspectRatio: 0.75,
-                                    ),
-                                itemCount: displayList.length,
-                                itemBuilder: (context, index) {
-                                  RequestData requestD = displayList[index];
-                                  if (searchController.text.isNotEmpty) {
-                                    search = searchedRequests[index];
-                                  }
-
-                                  // Staggered Animation
-                                  return TweenAnimationBuilder<double>(
-                                    tween: Tween(begin: 0.0, end: 1.0),
-                                    duration: Duration(
-                                      milliseconds: 400 + (index * 100),
-                                    ),
-                                    curve: Curves.easeOut,
-                                    builder: (context, value, child) {
-                                      return Transform.translate(
-                                        offset: Offset(0, 50 * (1 - value)),
-                                        child: Opacity(
-                                          opacity: value,
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                    child: _buildRequestCard(requestD),
-                                  );
-                                },
-                              );
-                            } else {
-                              return Center(
-                                child: SolidContainer(
-                                  padding: EdgeInsets.all(20.r),
-                                  child: EmptyWidget(
-                                    message:
-                                        "No request available at the moment",
-                                    height: 250.h,
-                                  ),
-                                ),
-                              );
-                            }
-                          } else if (snapshot.hasError) {
-                            return  Center(
-                              child: Text(
-                                "Error loading requests",
-                                style: TextStyle(color: context.appColors.secondaryTextColor),
-                              ),
+                              },
+                              child: _buildRequestCard(requestD),
                             );
-                          } else {
-                            return const Center(child: LoadingWidget());
-                          }
-                        },
-                      ),
+                          },
+                        );
+                      }(),
                     ),
                   ],
                 ),

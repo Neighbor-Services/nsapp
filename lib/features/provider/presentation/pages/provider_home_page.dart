@@ -150,115 +150,112 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
                 if (profile == null) return const SizedBox.shrink();
 
-                return FutureBuilder<List<RequestAcceptance>>(
-                  future: (providerState is SuccessGetAcceptRequestState)
-                      ? providerState.accepts
-                      : Future.value([]),
-                  builder: (context, snapshot) {
-                    final bidsCount = snapshot.hasData ? snapshot.data!.length : 0;
+                List<RequestAcceptance> accepts = [];
+                if (providerState is SuccessGetAcceptRequestState) {
+                  accepts = providerState.accepts;
+                }
+                final bidsCount = accepts.length;
 
-                    return SolidContainer(
-                      padding: EdgeInsets.all(24.r),
-                      backgroundColor: context.appColors.primaryColor,
-                      borderRadius: BorderRadius.circular(28.r),
-                      gradient: context.appColors.primaryGradient,
-                      child: Column(
-                        children: [
-                          if (profile.preferredPaymentMode != 'ON_SITE') ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                return SolidContainer(
+                  padding: EdgeInsets.all(24.r),
+                  backgroundColor: context.appColors.primaryColor,
+                  borderRadius: BorderRadius.circular(28.r),
+                  gradient: context.appColors.primaryGradient,
+                  child: Column(
+                    children: [
+                      if (profile.preferredPaymentMode != 'ON_SITE') ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "TOTAL BALANCE",
-                                      style: TextStyle(
-                                        color: context.appColors.primaryTextColor,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1.2,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.h),
-                                    Text(
-                                      "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
-                                      style: TextStyle(
-                                        color: context.appColors.primaryTextColor,
-                                        fontSize: 32.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  "TOTAL BALANCE",
+                                  style: TextStyle(
+                                    color: context.appColors.primaryTextColor,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.2,
+                                  ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    context.read<ProviderBloc>().add(
-                                      NavigateProviderEvent(
-                                        page: 1,
-                                        widget: const WalletPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 10.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
-                                        width: 1.5.r,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "WALLET",
-                                          style: TextStyle(
-                                            color: context.appColors.primaryColor,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 12.sp,
-                                            letterSpacing: 1.0,
-                                          ),
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        Icon(
-                                          FontAwesomeIcons.chevronRight,
-                                          size: 10.r,
-                                          color: context.appColors.primaryColor,
-                                        ),
-                                      ],
-                                    ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
+                                  style: TextStyle(
+                                    color: context.appColors.primaryTextColor,
+                                    fontSize: 32.sp,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 24.h),
+                            GestureDetector(
+                              onTap: () {
+                                context.read<ProviderBloc>().add(
+                                  NavigateProviderEvent(
+                                    page: 1,
+                                    widget: const WalletPage(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 10.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: context.appColors.cardBackground,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(
+                                    color: context.appColors.glassBorder,
+                                    width: 1.5.r,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "WALLET",
+                                      style: TextStyle(
+                                        color: context.appColors.primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12.sp,
+                                        letterSpacing: 1.0,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Icon(
+                                      FontAwesomeIcons.chevronRight,
+                                      size: 10.r,
+                                      color: context.appColors.primaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
-                          Row(
-                            children: [
-                              _buildDashboardStat(
-                                "Active Bids",
-                                bidsCount.toString(),
-                                FontAwesomeIcons.gavel,
-                                context.appColors.warningColor,
-                              ),
-                              SizedBox(width: 16.w),
-                              _buildDashboardStat(
-                                "Avg Rating",
-                                profile.averageRating?.toStringAsFixed(1) ?? "0.0",
-                                FontAwesomeIcons.star,
-                                Colors.yellow,
-                              ),
-                            ],
+                        ),
+                        SizedBox(height: 24.h),
+                      ],
+                      Row(
+                        children: [
+                          _buildDashboardStat(
+                            "Active Bids",
+                            bidsCount.toString(),
+                            FontAwesomeIcons.gavel,
+                            context.appColors.warningColor,
+                          ),
+                          SizedBox(width: 16.w),
+                          _buildDashboardStat(
+                            "Avg Rating",
+                            profile.averageRating?.toStringAsFixed(1) ?? "0.0",
+                            FontAwesomeIcons.star,
+                            Colors.yellow,
                           ),
                         ],
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 );
               },
             );

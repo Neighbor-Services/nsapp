@@ -31,7 +31,11 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final providerProfile = ProviderToReviewState.lastProfile;
+    final seekerState = context.watch<SeekerBloc>().state;
+    if (seekerState is! ProviderToReviewState) {
+      return const SizedBox.shrink();
+    }
+    final providerProfile = seekerState.profile;
 
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
@@ -205,9 +209,12 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
       return;
     }
 
-    final providerProfile = ProviderToReviewState.lastProfile;
+    final seekerState = context.read<SeekerBloc>().state;
+    if (seekerState is! ProviderToReviewState) return;
+
+    final providerProfile = seekerState.profile;
     final providerId =
-        ProviderToReviewState.lastProviderUserId ??
+        seekerState.providerUserId ??
         providerProfile.user?.id ??
         providerProfile.id;
 

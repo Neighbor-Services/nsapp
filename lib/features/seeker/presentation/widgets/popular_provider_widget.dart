@@ -21,6 +21,8 @@ class PopularProviderWidget extends StatefulWidget {
 }
 
 class _PopularProviderWidgetState extends State<PopularProviderWidget> {
+  List<Favorite> _favorites = [];
+
   @override
   void initState() {
     context.read<SeekerBloc>().add(GetPopularProvidersEvent());
@@ -32,6 +34,9 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
   Widget build(BuildContext context) {
     return BlocConsumer<SeekerBloc, SeekerState>(
       listener: (context, state) {
+        if (state is SuccessGetMyFavoritesState) {
+          setState(() => _favorites = state.profiles);
+        }
         if (state is SuccessAddToFavoriteState) {
           context.read<SeekerBloc>().add(GetMyFavoritesEvent());
         }
@@ -47,23 +52,20 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           height: 200.h,
           width: size(context).width,
           decoration: BoxDecoration(),
-          child: FutureBuilder<List<Profile>>(
-            future: state is SuccessPopularProvidersState ? state.providers : Future.value(<Profile>[]),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isNotEmpty) {
+          child: () {
+              if (state is SuccessPopularProvidersState) {
+                final providers = state.providers;
+                if (providers.isNotEmpty) {
                   return ListView.builder(
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
+                    itemCount: providers.length,
                     itemBuilder: (context, index) {
-                      Profile profile = snapshot.data![index];
+                      Profile profile = providers[index];
 
                       return GestureDetector(
                         onTap: () {
-                          PortfolioUserState.lastUserId = profile.user!.id!; // legacy — will be removed when PortfolioUserState is fully eliminated
-
                           context.read<SeekerBloc>().add(
                             SetProviderToReviewEvent(
                               provider: profile,
@@ -100,22 +102,6 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                // (profile.profilePictureUrl != "" &&
-                                //         profile.profilePictureUrl != "picture")
-                                //     ? Image.network(
-                                //         profile.profilePictureUrl ?? "",
-                                //         fit: BoxFit.cover,
-                                //         errorBuilder: (context, _, _) =>
-                                //             Image.asset(
-                                //               logo2Assets,
-                                //               fit: BoxFit.cover,
-                                //             ),
-                                //       )
-                                //     : Image.asset(
-                                //         logo2Assets,
-                                //         fit: BoxFit.cover,
-                                //       ),
-
                                 Positioned(
                                   top: 12.h,
                                   left: 12.w,
@@ -126,7 +112,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                 Positioned(
                                   top: 12.h,
                                   right: 12.w,
-                                  child: _buildFavoriteAction(profile, state is SuccessGetMyFavoritesNoFutureState ? state.profiles : const []),
+                                  child: _buildFavoriteAction(profile, _favorites),
                                 ),
 
                                 Positioned(
@@ -207,8 +193,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
               } else {
                 return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
               }
-            },
-          ),
+            }()
         );
       },
     );

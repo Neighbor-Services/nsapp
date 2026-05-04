@@ -40,6 +40,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   TextEditingController descriptionTextController = TextEditingController();
   TextEditingController serviceTextController = TextEditingController();
   TextEditingController scheduledTimeController = TextEditingController();
+  TextEditingController locController = TextEditingController();
   GlobalKey<FormState> key = GlobalKey<FormState>();
   String serviceType = "";
   String? selectedService;
@@ -59,7 +60,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     super.initState();
     context.read<SharedBloc>().add(GetServicesEvent());
     context.read<SeekerBloc>().add(ChooseOtherServiceEvent(other: false));
-    if (UseMapState.lastUseMap) locController.text = MapLocationState.lastAddress;
+    final sharedState = context.read<SharedBloc>().state;
+    if (sharedState is MapLocationState) {
+      locController.text = sharedState.address;
+    }
 
     _fadeController = AnimationController(
       vsync: this,
@@ -83,6 +87,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     descriptionTextController.dispose();
     serviceTextController.dispose();
     scheduledTimeController.dispose();
+    locController.dispose();
     _fadeController.dispose();
     super.dispose();
   }
@@ -125,7 +130,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 context.read<SeekerBloc>().add(ClearImageEvent());
                 context.read<SeekerBloc>().add(
                   NavigateSeekerEvent(
-                    page: NavigatorSeekerState.lastPage,
+                    page:  3,
                     widget: const SeekerRequestPage(),
                   ),
                 );
@@ -134,13 +139,12 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             if (state is FailureCreateRequestState) {
               customAlert(context, AlertType.error, "Request failed to add");
             }
-            if (state is MapLocationState) {
-              locController.text = MapLocationState.lastAddress;
-            }
           },
           builder: (context, state) {
             final sharedState = context.watch<SharedBloc>().state;
-            if (UseMapState.lastUseMap) locController.text = MapLocationState.lastAddress;
+            if (sharedState is MapLocationState) {
+               locController.text = sharedState.address;
+            }
               return LoadingView(
                 isLoading: (state is LoadingSeekerState || sharedState is SharedLoadingState),
                 child: GradientBackground(
@@ -168,8 +172,8 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    _buildServiceDropdown(),
-                                    if (OtherServiceSelectState.lastOthers) ...[
+                                    _buildServiceDropdown(sharedState),
+                                    if (state is OtherServiceSelectState && state.others) ...[
                                       SizedBox(height: 20.h),
                                       SolidTextField(
                                         controller: serviceTextController,
@@ -213,12 +217,12 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                           : null,
                                     ),
                                     SizedBox(height: 24.h),
-                                    _buildImagePicker(context),
+                                    _buildImagePicker(context, state),
                                     SizedBox(height: 28.h),
                                     SolidButton(
                                       label: "CREATE REQUEST",
                                       icon: FontAwesomeIcons.paperPlane,
-                                      onPressed: () => _submitRequest(context),
+                                      onPressed: () => _submitRequest(context, state, sharedState),
                                     ),
                                   ],
                                 ),
@@ -267,7 +271,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-  Widget _buildServiceDropdown() {
+  Widget _buildServiceDropdown(SharedState sharedState) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -285,7 +289,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
           onTap: () {
             showServiceSelector(
               context: context,
-              services: SuccessGetServicesState.lastServices,
+              services: (sharedState is SuccessGetServicesState) ? sharedState.services : [],
               selectedServiceId: serviceType,
               onServiceSelected: (serviceId, serviceName) {
                 setState(() {
@@ -524,7 +528,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-  Widget _buildImagePicker(BuildContext context) {
+  Widget _buildImagePicker(BuildContext context, SeekerState state) {
     return GestureDetector(
       onTap: () => _showImagePicker(context),
       child: Container(
@@ -538,31 +542,13 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             width: 1.5.r,
           ),
         ),
-        child: ImageSeekerState.lastPicture == null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    FontAwesomeIcons.image,
-                    size: 40.r,
-                    color: context.appColors.hintTextColor,
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    "Add Image (Optional)",
-                    style: TextStyle(
-                      color: context.appColors.hintTextColor,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ],
-              )
-            : Stack(
+        child: (state is ImageSeekerState && state.picture != null)
+            ? Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.r),
                     child: Image.file(
-                      File(ImageSeekerState.lastPicture!.path),
+                      File(state.picture!.path),
                       width: double.infinity,
                       height: 140.h,
                       fit: BoxFit.cover,
@@ -582,10 +568,28 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                         ),
                         child: Icon(
                           FontAwesomeIcons.xmark,
-                          color: context.appColors.primaryColor,
+                          color: Colors.white,
                           size: 18.r,
                         ),
                       ),
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    FontAwesomeIcons.image,
+                    size: 40.r,
+                    color: context.appColors.hintTextColor,
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    "Add Image (Optional)",
+                    style: TextStyle(
+                      color: context.appColors.hintTextColor,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ],
@@ -645,7 +649,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-  void _submitRequest(BuildContext context) {
+  void _submitRequest(BuildContext context, SeekerState state, SharedState sharedState) {
     Request? request = Request(
       title: titleTextController.text.trim(),
       description: descriptionTextController.text.trim(),
@@ -653,19 +657,19 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
       approvedUser: "",
       done: false,
       address: locController.text.trim(),
-      latitude: UseMapState.lastUseMap
-          ? MapLocationState.lastLocation.latitude
+      latitude: (sharedState is MapLocationState)
+          ? sharedState.location.latitude
           : locationData.latitude,
-      longitude: UseMapState.lastUseMap
-          ? MapLocationState.lastLocation.longitude
+      longitude: (sharedState is MapLocationState)
+          ? sharedState.location.longitude
           : locationData.longitude,
-      withImage: ImageSeekerState.lastPicture != null,
+      withImage: (state is ImageSeekerState && state.picture != null),
       targetProviderId: widget.targetProviderId,
       scheduledTime: selectedScheduledTime,
     );
 
     if (key.currentState!.validate()) {
-      if (OtherServiceSelectState.lastOthers) {
+      if (state is OtherServiceSelectState && state.others) {
         _pendingRequest = request;
         context.read<SeekerBloc>().add(SeekerReloadEvent());
         context.read<SharedBloc>().add(

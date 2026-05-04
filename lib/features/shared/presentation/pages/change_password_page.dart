@@ -153,11 +153,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       label: "CHANGE PASSWORD",
                                       allCaps: true,
                                       onPressed: () {
-                                        if (emailTextController.text.trim() !=
-                                            SuccessGetProfileState
-                                                .lastProfile
-                                                .user!
-                                                .email) {
+                                        final profileState = context.read<ProfileBloc>().state;
+                                        String? userEmail;
+                                        if (profileState is SuccessGetProfileState) {
+                                          userEmail = profileState.profile.user?.email;
+                                        }
+
+                                        if (userEmail == null || emailTextController.text.trim() != userEmail) {
                                           customAlert(
                                             context,
                                             AlertType.error,

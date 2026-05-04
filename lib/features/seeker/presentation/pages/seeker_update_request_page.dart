@@ -34,6 +34,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   final priceController = TextEditingController();
   final categoryTextController = TextEditingController();
   final scheduledTimeController = TextEditingController();
+  final locController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String serviceType = "";
@@ -43,6 +44,8 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
+
+
   @override
   void dispose() {
     titleTextController.dispose();
@@ -50,6 +53,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     priceController.dispose();
     categoryTextController.dispose();
     scheduledTimeController.dispose();
+    locController.dispose();
     _fadeController.dispose();
     super.dispose();
   }
@@ -71,7 +75,11 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _fadeController.forward();
 
-    final request = SeekerRequestDetailState.lastRequest.request;
+    final currentState = context.read<SeekerBloc>().state;
+    Request? request;
+    if (currentState is SeekerRequestDetailState) {
+      request = currentState.request.request;
+    }
 
     if (request != null) {
       serviceType = request.service?.id ?? "";
@@ -88,11 +96,9 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
 
       // Update location if it exists
       if (request.latitude != null && request.longitude != null) {
-        MapLocationState.lastLocation = LatLng(
-          request.latitude!,
-          request.longitude!,
-        );
-        MapLocationState.lastAddress = request.address ?? "";
+        context.read<SharedBloc>().add(MapLocationEvent(
+          location: LatLng(request.latitude!, request.longitude!),
+        ));
       }
     }
 
@@ -104,7 +110,8 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
     // final textColor = context.appColors.primaryTextColor;
-    final request = SeekerRequestDetailState.lastRequest.request;
+
+
 
     return Scaffold(
       body: BlocConsumer<SeekerBloc, SeekerState>(
@@ -125,12 +132,17 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
           if (state is FailureUpdateRequestState) {
             customAlert(context, AlertType.error, "Failed to update request");
           }
+
         },
         builder: (context, state) {
+          Request? request;
+          if (state is SeekerRequestDetailState) {
+            request = state.request.request;
+          }
           return BlocBuilder<SharedBloc, SharedState>(
             builder: (context, sharedState) {
-              if (UseMapState.lastUseMap) {
-                locController.text = MapLocationState.lastAddress;
+              if (sharedState is MapLocationState) {
+                locController.text = sharedState.address;
               }
               return LoadingView(
                 isLoading: state is LoadingSeekerState,
@@ -206,14 +218,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                         SizedBox(height: 28.h),
                                         _buildLabel("Update Image", isDark),
                                         if (request != null)
-                                          _buildImagePicker(context, request),
+                                          _buildImagePicker(context, state, request),
                                         SizedBox(height: 28.h),
                                         SolidButton(
                                           label: "UPDATE REQUEST",
                                           icon: Icons
                                               .check_circle_outline_rounded,
                                           onPressed: () =>
-                                              _updateRequest(context),
+                                              _updateRequest(context, state, sharedState),
                                         ),
                                       ],
                                     ),
@@ -303,11 +315,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     final textColor = context.appColors.primaryTextColor;
     final hintColor = context.appColors.secondaryTextColor;
 
+    final sharedState = context.watch<SharedBloc>().state;
+    final services = sharedState is SuccessGetServicesState ? sharedState.services : <Service>[];
+
     return GestureDetector(
       onTap: () {
         showServiceSelector(
           context: context,
-          services: SuccessGetServicesState.lastServices,
+          services: services,
           selectedServiceId: serviceType,
           onServiceSelected: (id, name) {
             setState(() {
@@ -398,7 +413,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     );
   }
 
-  Widget _buildImagePicker(BuildContext context, Request originalRequest) {
+  Widget _buildImagePicker(BuildContext context, SeekerState state, Request originalRequest) {
     final containerColor = context.appColors.glassBorder;
     final borderColor = context.appColors.glassBorder;
     final iconColor = context.appColors.glassBorder;
@@ -418,13 +433,13 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             width: 1.5.r,
           ),
         ),
-        child: ImageSeekerState.lastPicture != null
+        child: (state is ImageSeekerState && state.picture != null)
             ? Stack(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.r),
                     child: Image.file(
-                      File(ImageSeekerState.lastPicture!.path),
+                      File(state.picture!.path),
                       width: double.infinity,
                       height: 140.h,
                       fit: BoxFit.cover,
@@ -774,13 +789,17 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     );
   }
 
-  void _updateRequest(BuildContext context) {
+  void _updateRequest(BuildContext context, SeekerState state, SharedState sharedState) {
     if (!_formKey.currentState!.validate() || serviceType.isEmpty) {
       customAlert(context, AlertType.error, "Please fill all required fields");
       return;
     }
 
-    final originalRequest = SeekerRequestDetailState.lastRequest.request;
+    final currentState = context.read<SeekerBloc>().state;
+    Request? originalRequest;
+    if (currentState is SeekerRequestDetailState) {
+      originalRequest = currentState.request.request;
+    }
     if (originalRequest == null) return;
 
     final updatedRequest = Request(
@@ -791,18 +810,17 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       service: Service(id: serviceType, name: selectedServiceName),
       serviceID: serviceType,
       scheduledTime: selectedScheduledTime,
-      latitude: UseMapState.lastUseMap
-          ? MapLocationState.lastLocation.latitude
+      latitude: (sharedState is MapLocationState)
+          ? sharedState.location.latitude
           : locationData.latitude,
-      longitude: UseMapState.lastUseMap
-          ? MapLocationState.lastLocation.longitude
+      longitude: (sharedState is MapLocationState)
+          ? sharedState.location.longitude
           : locationData.longitude,
       address: locController.text,
       status: originalRequest.status,
       done: originalRequest.done,
       version: originalRequest.version,
-      withImage:
-          ImageSeekerState.lastPicture != null ||
+      withImage: (state is ImageSeekerState && state.picture != null) ||
           (originalRequest.withImage ?? false),
     );
 

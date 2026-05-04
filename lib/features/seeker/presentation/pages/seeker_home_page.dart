@@ -1,6 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_provider_search_page.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/popular_provider_widget.dart';
@@ -12,6 +13,7 @@ import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_pa
 import 'package:nsapp/features/seeker/presentation/pages/seeker_all_services_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/core/models/request_data.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -107,7 +109,11 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                         },
                       ),
                       SizedBox(height: 16.h),
-                      _buildServicesGrid(context),
+                      BlocBuilder<SharedBloc, SharedState>(
+                        builder: (context, state) {
+                          return _buildServicesGrid(context, state);
+                        },
+                      ),
                       SizedBox(height: 40.h),
                     ],
                   ),
@@ -269,9 +275,17 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     );
   }
 
-  Widget _buildServicesGrid(BuildContext context) {
-    final services = SuccessGetServicesState.lastServices;
-    final displayServices = services.take(2).toList();
+  Widget _buildServicesGrid(BuildContext context, SharedState state) {
+    List<Service> services = [];
+    if (state is SuccessGetServicesState) {
+      services = state.services;
+    }
+
+    if (state is SharedLoadingState && services.isEmpty) {
+      return const Center(child: LoadingWidget());
+    }
+
+    final displayServices = services.take(6).toList();
 
     final icons = [
       FontAwesomeIcons.wrench,
@@ -366,95 +380,95 @@ class _SeekerHomePageState extends State<SeekerHomePage>
 
     return BlocBuilder<SeekerBloc, SeekerState>(
       builder: (context, state) {
-        return FutureBuilder<List<RequestData>>(
-          future: SuccessGetMyRequestState.lastMyRequests,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const SizedBox.shrink();
-            }
+        List<RequestData> requests = [];
+        if (state is SuccessGetMyRequestState) {
+          requests = state.myRequests;
+        }
 
-            // Find the most recent request that is not COMPLETED
-            RequestData? activeRequest;
-            try {
-              activeRequest = snapshot.data!.firstWhere(
-                (r) => r.request?.status != 'DONE' && r.request?.done != true,
-              );
-            } catch (e) {
-              return const SizedBox.shrink();
-            }
+        if (requests.isEmpty) {
+          return const SizedBox.shrink();
+        }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSectionHeader(context, "Active Project"),
-                SizedBox(height: 16.h),
-                GestureDetector(
-                  onTap: () {
-                    context.read<SeekerBloc>().add(
-                      SeekerRequestDetailEvent(request: activeRequest!),
-                    );
-                    context.read<SeekerBloc>().add(
-                      NavigateSeekerEvent(
-                        page: 1,
-                        widget: const SeekerRequestDetailsPage(),
-                      ),
-                    );
-                  },
-                  child: SolidContainer(
-                    padding: EdgeInsets.all(20.r),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(12.r),
-                          decoration: BoxDecoration(
-                            color: context.appColors.primaryColor.withAlpha(40),
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                          child: Icon(
-                            FontAwesomeIcons.clock,
-                            color: context.appColors.primaryColor,
-                            size: 24.r,
-                          ),
-                        ),
-                        SizedBox(width: 16.w),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                (activeRequest.request?.title ?? "PROJECT")
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: textColor,
-                                  letterSpacing: 0.5,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 6.h),
-                              Text(
-                                "STATUS: ${activeRequest.request?.status ?? 'PROCESSING'}"
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: textColor.withAlpha(150),
-                                  letterSpacing: 0.8,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        FaIcon(FontAwesomeIcons.chevronRight, color: textColor),
-                      ],
-                    ),
+        // Find the most recent request that is not COMPLETED
+        RequestData? activeRequest;
+        try {
+          activeRequest = requests.firstWhere(
+            (r) => r.request?.status != 'DONE' && r.request?.done != true,
+          );
+        } catch (e) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(context, "Active Project"),
+            SizedBox(height: 16.h),
+            GestureDetector(
+              onTap: () {
+                context.read<SeekerBloc>().add(
+                  SeekerRequestDetailEvent(request: activeRequest!),
+                );
+                context.read<SeekerBloc>().add(
+                  NavigateSeekerEvent(
+                    page: 1,
+                    widget: const SeekerRequestDetailsPage(),
                   ),
+                );
+              },
+              child: SolidContainer(
+                padding: EdgeInsets.all(20.r),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12.r),
+                      decoration: BoxDecoration(
+                        color: context.appColors.primaryColor.withAlpha(40),
+                        borderRadius: BorderRadius.circular(14.r),
+                      ),
+                      child: Icon(
+                        FontAwesomeIcons.clock,
+                        color: context.appColors.primaryColor,
+                        size: 24.r,
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            (activeRequest.request?.title ?? "PROJECT")
+                                .toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: textColor,
+                              letterSpacing: 0.5,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 6.h),
+                          Text(
+                            "STATUS: ${activeRequest.request?.status ?? 'PROCESSING'}"
+                                .toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
+                              color: textColor.withAlpha(150),
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    FaIcon(FontAwesomeIcons.chevronRight, color: textColor),
+                  ],
                 ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         );
       },
     );

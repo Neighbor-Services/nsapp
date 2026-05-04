@@ -12,15 +12,17 @@ import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/seeker/data/datasource/remote/seeker_remote_datasource.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/core/models/appointment.dart';
 
 class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
+  final Dio _dio;
+
+  SeekerRemoteDatasourceImpl(this._dio);
   @override
   Future<bool> createRequest(Request request) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseRequestUrl/services/requests/",
         data: request.toJson(),
         options: Options(headers: dioHeaders(token)),
@@ -33,7 +35,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
                   ? response.data["request"]["id"]
                   : null);
 
-          final res = await dio.patch(
+          final res = await _dio.patch(
             "$baseUrl/services/requests/image/",
             data: FormData.fromMap({
               "data": json.encode({"id": id}),
@@ -60,7 +62,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<List<RequestData>?> myRequest() async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseRequestUrl/services/requests/?user_me=true",
         options: Options(headers: dioHeaders(token)),
       );
@@ -92,7 +94,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<List<Profile>?> getPopularProviders() async {
     final token = await Helpers.getString("token");
     try {
-      final response = dio
+      final response = _dio
           .get(
             "$baseUrl/accounts/profile/?user_type=PROVIDER&popular=true",
             options: Options(headers: dioHeaders(token)),
@@ -129,7 +131,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   }) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseRequestUrl/services/proposals/?service_request=$request",
         options: Options(headers: dioHeaders(token)),
       );
@@ -166,7 +168,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   }) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseRequestUrl/services/requests/$serviceRequestId/approve_proposal/",
         options: Options(headers: dioHeaders(token)),
         data: {"proposal_id": proposalId},
@@ -185,7 +187,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<RequestData?> reloadRequest({required String request}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseRequestUrl/services/requests/$request/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -204,7 +206,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<bool> cancelApproveRequest({required String requestId}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseRequestUrl/services/requests/$requestId/cancel_approval/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -222,7 +224,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<bool> deleteRequest({required String requestId}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseRequestUrl/services/requests/$requestId/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -243,14 +245,14 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       final updateData = request.toUpdateJson();
      
 
-      final response = await dio.patch(
+      final response = await _dio.patch(
         "$baseRequestUrl/services/requests/${request.id}/",
         data: updateData,
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 200) {
         if (request.withImage! && image != null) {
-          final res = await dio.patch(
+          final res = await _dio.patch(
             "$baseUrl/services/requests/image/",
             data: FormData.fromMap({
               "data": json.encode({"id": request.id}),
@@ -277,7 +279,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
     final token = await Helpers.getString("token");
 
     try {
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/favorites/",
         data: {"provider": uid},
         options: Options(headers: dioHeaders(token)),
@@ -296,7 +298,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<bool> removeFromFavorite({required String id}) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseUrl/interactions/favorites/$id/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -316,7 +318,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<List<Favorite>?> getMyFavorites() async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/interactions/favorites/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -348,7 +350,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
     try {
       final token = await Helpers.getString("token");
 
-      final response = dio.get(
+      final response = _dio.get(
         "$baseUrl/interactions/appointments/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -394,7 +396,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (serviceName != null) queryString += "&service_name=$serviceName";
       if (city != null) queryString += "&city=$city";
 
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/profile/?$queryString",
         options: Options(headers: dioHeaders(token)),
       );
@@ -425,7 +427,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<bool> markAsDone({required Request request}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.patch(
+      final response = await _dio.patch(
         "$baseRequestUrl/services/requests/${request.id}/",
         options: Options(headers: dioHeaders(token)),
         data: {"status": "DONE"}, // Changed COMPLETED to DONE to match statuses
@@ -446,7 +448,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
     final token = await Helpers.getString("token");
     try {
       // data removed as it was unused and duplicate of post body logic
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/reviews/",
         data: {
           "rating": rate.rate,
@@ -458,7 +460,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (response.statusCode == 201) {
         Get.snackbar(
           "Success",
-          "Successfully rated ${ProviderToReviewState.lastProfile.firstName}",
+          "Rating Successful",
         );
         return true;
       }
@@ -472,7 +474,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<bool> cancelAppointment({required String id}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseUrl/interactions/appointments/$id/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -490,7 +492,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<bool> updateAppointment({required Appointment appointment}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.patch(
+      final response = await _dio.patch(
         "$baseUrl/interactions/appointments/${appointment.id}/",
         data: appointment.toJson(),
         options: Options(headers: dioHeaders(token)),
@@ -512,7 +514,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   }) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/appointments/$id/complete/",
         data: {"amount": amount},
         options: Options(headers: dioHeaders(token)),
@@ -531,7 +533,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<List<Profile>?> matchProviders({required String description}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseRequestUrl/services/match-providers/",
         data: {"description": description},
         options: Options(headers: dioHeaders(token)),

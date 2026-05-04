@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/di/injection_container.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/provider_list_item.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
@@ -137,61 +136,49 @@ class _AISearchPageState extends State<AISearchPage> {
                           ),
                         );
                       } else if (state is SuccessMatchProvidersState) {
-                        return FutureBuilder<List<Profile>>(
-                          future: state.providers,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return  Center(
-                                child: CircularProgressIndicator(
-                                  color: context.appColors.secondaryColor,
+                        final providers = state.providers;
+                        if (providers.isEmpty) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.magnifyingGlass,
+                                  size: 64.r,
+                                  color: Colors.white.withAlpha(60),
                                 ),
-                              );
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      FontAwesomeIcons.magnifyingGlass,
-                                      size: 64.r,
-                                      color: Colors.white.withAlpha(60),
-                                    ),
-                                    SizedBox(height: 16.h),
-                                    Text(
-                                      "NO MATCHING PROVIDERS FOUND",
-                                      style: TextStyle(
-                                        color: Colors.white.withAlpha(150),
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-
-                            return ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.only(
-                                top: 0,
-                                bottom: 40.h,
-                              ),
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                final provider = snapshot.data![index];
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 12.h),
-                                  child: ProviderListItem(
-                                    profile: provider,
-                                    onTap: () {
-                                      // Navigation logic if needed
-                                    },
+                                SizedBox(height: 16.h),
+                                Text(
+                                  "NO MATCHING PROVIDERS FOUND",
+                                  style: TextStyle(
+                                    color: Colors.white.withAlpha(150),
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.0,
                                   ),
-                                );
-                              },
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.only(
+                            top: 0,
+                            bottom: 40.h,
+                          ),
+                          itemCount: providers.length,
+                          itemBuilder: (context, index) {
+                            final provider = providers[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: ProviderListItem(
+                                profile: provider,
+                                onTap: () {
+                                  // Navigation logic if needed
+                                },
+                              ),
                             );
                           },
                         );

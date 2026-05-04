@@ -54,7 +54,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.house,
-                                isActive: NavigatorSeekerState.lastPage == 1,
+                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 1 : true,
                                 label: "Home",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
@@ -70,8 +70,8 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
-                                isActive: NavigatorSeekerState.lastPage == 2,
-                                badgeCount: SuccessGetMyNotificationsState.lastUnreadCount,
+                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 2 : false,
+                                badgeCount: (sharedState is SuccessGetMyNotificationsState) ? sharedState.unreadCount : 0,
                                 label: "Notifications",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
@@ -88,10 +88,9 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
-                                isActive: NavigatorSeekerState.lastPage == 4,
+                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 4 : false,
                                 label: "Chat",
-                                badgeCount:
-                                    SuccessGetMyMessagesState.lastUnreadMessageCount,
+                                badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
                                     NavigateSeekerEvent(
@@ -107,7 +106,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.heart,
                                 label: "Favorites",
-                                isActive: NavigatorSeekerState.lastPage == 5,
+                                isActive: (snapshot is NavigatorSeekerState) ? snapshot.page == 5 : false,
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
                                     NavigateSeekerEvent(

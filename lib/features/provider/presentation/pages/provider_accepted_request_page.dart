@@ -121,97 +121,98 @@ class _ProviderAcceptedRequestPageState
                               ),
                             ),
                             Expanded(
-                              child: FutureBuilder<List<RequestAcceptance>>(
-                                future: (providerState is SuccessGetAcceptRequestState)
-                                    ? providerState.accepts
-                                    : Future.value([]),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    if (snapshot.data!.isEmpty) {
-                                      return Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 24.w,
+                              child: () {
+                                List<RequestAcceptance> accepts = [];
+                                if (providerState is SuccessGetAcceptRequestState) {
+                                  accepts = providerState.accepts;
+                                }
+
+                                if (providerState is LoadingProviderState && accepts.isEmpty) {
+                                  return const Center(child: LoadingWidget());
+                                }
+
+                                if (accepts.isEmpty) {
+                                  return Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 24.w,
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.all(48.r),
+                                        decoration: BoxDecoration(
+                                          color: cardColor,
+                                          borderRadius: BorderRadius.circular(
+                                            32.r,
                                           ),
-                                          child: Container(
-                                            padding: EdgeInsets.all(48.r),
-                                            decoration: BoxDecoration(
-                                              color: cardColor,
-                                              borderRadius: BorderRadius.circular(
-                                                32.r,
-                                              ),
-                                              border: Border.all(
-                                                color: borderColor,
-                                                width: 1.5.r,
-                                              ),
-                                            ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.all(24.r),
-                                                  decoration: BoxDecoration(
-                                                    color: context.appColors.cardBackground,
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Icon(
-                                                    FontAwesomeIcons.clockRotateLeft,
-                                                    size: 64.r,
-                                                    color: context.appColors.glassBorder,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 32.h),
-                                                Text(
-                                                  "No accepted requests",
-                                                  style: TextStyle(
-                                                    fontSize: 22.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: textColor,
-                                                    letterSpacing: 0.5,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 12.h),
-                                                Text(
-                                                  "You haven't accepted any service requests yet.",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 15.sp,
-                                                    color: context.appColors.glassBorder,
-                                                    height: 1.5,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                          border: Border.all(
+                                            color: borderColor,
+                                            width: 1.5.r,
                                           ),
                                         ),
-                                      );
-                                    }
-                                    return RefreshIndicator(
-                                      onRefresh: () async {
-                                        context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
-                                        await Future.delayed(const Duration(seconds: 1));
-                                      },
-                                      child: ListView.builder(
-                                      physics: const BouncingScrollPhysics(),
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: isLargeScreen ? 32.w : 16.w,
-                                        vertical: 8.h,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(24.r),
+                                              decoration: BoxDecoration(
+                                                color: context.appColors.cardBackground,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                FontAwesomeIcons.clockRotateLeft,
+                                                size: 64.r,
+                                                color: context.appColors.glassBorder,
+                                              ),
+                                            ),
+                                            SizedBox(height: 32.h),
+                                            Text(
+                                              "No accepted requests",
+                                              style: TextStyle(
+                                                fontSize: 22.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: textColor,
+                                                letterSpacing: 0.5,
+                                              ),
+                                            ),
+                                            SizedBox(height: 12.h),
+                                            Text(
+                                              "You haven't accepted any service requests yet.",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 15.sp,
+                                                color: context.appColors.glassBorder,
+                                                height: 1.5,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      itemCount: snapshot.data!.length,
-                                      itemBuilder: (context, index) {
-                                        return _buildRequestCard(
-                                          context,
-                                          snapshot.data![index],
-                                          index,
-                                          myId,
-                                        );
-                                      },
                                     ),
                                   );
-                                  }
-                                  return const Center(child: LoadingWidget());
-                                },
-                              ),
+                                }
+                                return RefreshIndicator(
+                                  onRefresh: () async {
+                                    context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
+                                    await Future.delayed(const Duration(seconds: 1));
+                                  },
+                                  child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isLargeScreen ? 32.w : 16.w,
+                                      vertical: 8.h,
+                                    ),
+                                    itemCount: accepts.length,
+                                    itemBuilder: (context, index) {
+                                      return _buildRequestCard(
+                                        context,
+                                        accepts[index],
+                                        index,
+                                        myId,
+                                      );
+                                    },
+                                  ),
+                                );
+                              }(),
                             ),
                           ],
                         ),

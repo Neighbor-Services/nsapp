@@ -8,6 +8,9 @@ import 'package:nsapp/core/constants/urls.dart';
 import '../../../../../core/models/chat.dart';
 
 class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
+  final Dio _dio;
+
+  MessageRemoteDatasourceImpl(this._dio);
   @override
   Future<List<ChatMessage>?> getMessages({required String receiver, String? after}) async {
     try {
@@ -17,7 +20,7 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
       if (after != null) {
         url += '&after=$after';
       }
-      final response = await dio.get(
+      final response = await _dio.get(
         url,
         options: Options(headers: dioHeaders(token)),
       );
@@ -43,7 +46,7 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
     try {
       List<Chat> chats = [];
       final String token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         '$baseMessagesUrl/chat/conversations/',
         options: Options(headers: dioHeaders(token)),
       );
@@ -96,7 +99,7 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
   Future<bool> setSeen({required String messageID}) async {
     try {
       final String token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         '$baseMessagesUrl/chat/conversations/set_seen/',
         data: {"receiver_id": messageID},
         options: Options(headers: dioHeaders(token)),

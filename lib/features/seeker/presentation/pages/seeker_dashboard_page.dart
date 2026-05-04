@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/seeker_bottom_navigation_bar_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
@@ -30,11 +31,11 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
           backgroundColor: Colors.transparent,
           extendBody: true,
           body: PopScope(
-            canPop: (SeekerVisitedPagesState.lastPages.isEmpty),
+            canPop: false,
             onPopInvokedWithResult: (pop, oo) {
               context.read<SeekerBloc>().add(SeekerBackPressedEvent());
             },
-            child: NavigatorSeekerState.lastWidget,
+            child: (state is NavigatorSeekerState) ? state.widget : const SeekerHomePage(),
           ),
           bottomNavigationBar: SeekerBottomNavigationBarWidget(),
         );

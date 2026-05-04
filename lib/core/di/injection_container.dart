@@ -152,22 +152,22 @@ Future<void> init() async {
 
   // ! Data Source
   sl.registerLazySingleton<AuthenticationRemoteDataSource>(
-    () => AuthenticationRemoteDataSourceImpl(),
+    () => AuthenticationRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(),
+    () => ProfileRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<ProviderRemoteDatasource>(
-    () => ProviderRemoteDatasourceImpl(),
+    () => ProviderRemoteDatasourceImpl(sl()),
   );
   sl.registerLazySingleton<SeekerRemoteDatasource>(
-    () => SeekerRemoteDatasourceImpl(),
+    () => SeekerRemoteDatasourceImpl(sl()),
   );
   sl.registerLazySingleton<SharedRemoteDatasource>(
-    () => SharedRemoteDatasourceImpl(),
+    () => SharedRemoteDatasourceImpl(sl()),
   );
   sl.registerLazySingleton<MessageRemoteDatasource>(
-    () => MessageRemoteDatasourceImpl(),
+    () => MessageRemoteDatasourceImpl(sl()),
   );
 
   // ! Repository

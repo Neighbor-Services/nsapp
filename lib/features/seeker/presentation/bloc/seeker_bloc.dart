@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -138,20 +137,18 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         (l) => emit(FailureCreateRequestState(message: l.message)),
         (r) {
           _myRequests = r;
-          emit(SuccessGetMyRequestState(myRequests: Future.value(r)));
+          emit(SuccessGetMyRequestState(myRequests: r));
         },
       );
     }, transformer: sequential());
 
     on<SelectImageFromGalleryEvent>((event, emit) async {
-      await Helpers.selectImageFromGallery();
-      _selectedPicture = image;
+      _selectedPicture = await Helpers.selectImageFromGallery();
       emit(ImageSeekerState(picture: _selectedPicture));
     });
 
     on<SelectImageFromCameraEvent>((event, emit) async {
-      await Helpers.selectImageFromCamera();
-      _selectedPicture = image;
+      _selectedPicture = await Helpers.selectImageFromCamera();
       emit(ImageSeekerState(picture: _selectedPicture));
     });
 
@@ -163,7 +160,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       final results = await getAcceptedUsersUseCase(event.request);
       results.fold(
         (l) => emit(FailureAcceptedUserstState(message: l.message)),
-        (r) => emit(SuccessAcceptedUsersState(users: Future.value(r))),
+        (r) => emit(SuccessAcceptedUsersState(users: r)),
       );
     }, transformer: sequential());
 
@@ -171,7 +168,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       final results = await reloadRequestUseCase(event.request);
       results.fold(
         (l) => emit(FailureReloadRequestState(message: l.message)),
-        (r) => emit(SuccessReloadRequestState(request: Future.value(r))),
+        (r) => emit(SuccessReloadRequestState(request: r)),
       );
     }, transformer: sequential());
 
@@ -206,7 +203,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       final results = await getPopularProviderRequestUseCase(event);
       results.fold(
         (l) => emit(FailurePopularProviderState(message: l.message)),
-        (r) => emit(SuccessPopularProvidersState(providers: Future.value(r))),
+        (r) => emit(SuccessPopularProvidersState(providers: r)),
       );
     }, transformer: sequential());
 
@@ -238,7 +235,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         (l) => emit(FailureGetMyFavoritesState(message: l.message)),
         (r) {
           _myFavorites = r;
-          emit(SuccessGetMyFavoritesNoFutureState(profiles: r));
+          emit(SuccessGetMyFavoritesState(profiles: r));
         },
       );
     }, transformer: sequential());
@@ -266,7 +263,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         (l) => emit(FailureGetAppointmentState(message: l.message)),
         (r) {
           _appointments = r;
-          emit(SuccessGetAppointmentsState(appointments: Future.value(r)));
+          emit(SuccessGetAppointmentsState(appointments: r));
         },
       );
     }, transformer: sequential());
@@ -282,7 +279,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       ));
       results.fold(
         (l) => emit(FailureSearchProviderState(message: l.message)),
-        (r) => emit(SuccessSearchProviderState(providers: Future.value(r))),
+        (r) => emit(SuccessSearchProviderState(providers: r)),
       );
     }, transformer: sequential());
 
@@ -336,7 +333,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       final results = await matchProvidersUseCase(description: event.description);
       results.fold(
         (l) => emit(FailureMatchProvidersState(message: l.message)),
-        (r) => emit(SuccessMatchProvidersState(Future.value(r))),
+        (r) => emit(SuccessMatchProvidersState(providers: r)),
       );
     });
 
@@ -359,6 +356,15 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         (r) => emit(SuccessUpdateAppointmentState()),
       );
     });
+
+    on<SeekerReloadEvent>((event, emit) {
+      add(GetMyRequestEvent());
+    });
+
+    on<ResetImageEvent>((event, emit) {
+      _selectedPicture = null;
+      emit(ClearImageState());
+    });
   }
 
   @override
@@ -379,7 +385,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
             .map((e) => AppointmentData.fromJson(e))
             .toList();
       }
-      return SuccessGetMyRequestState(myRequests: Future.value(_myRequests));
+      return SuccessGetMyRequestState(myRequests: _myRequests);
     } catch (_) {
       return null;
     }
@@ -394,6 +400,3 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     };
   }
 }
-
-
-

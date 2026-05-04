@@ -114,7 +114,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
         (l) => emit(FailureGetRecentRequestState(message: l.message)),
         (r) {
           _recentRequests = r;
-          emit(SuccessGetRecentRequestState(myRequests: Future.value(r)));
+          emit(SuccessGetRecentRequestState(myRequests: r));
         },
       );
     }, transformer: sequential());
@@ -131,7 +131,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
         (l) => emit(FailureGetRequestsState(message: l.message)),
         (r) {
           _allRequests = r;
-          emit(SuccessGetRequestsState(requests: Future.value(r)));
+          emit(SuccessGetRequestsState(requests: r));
         },
       );
     }, transformer: sequential());
@@ -148,7 +148,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       final results = await searchRequestUseCase(params);
       results.fold(
         (l) => emit(FailureSearchRequestState(message: l.message)),
-        (r) => emit(SuccessSearchRequestState(requests: Future.value(r))),
+        (r) => emit(SuccessSearchRequestState(requests: r)),
       );
     }, transformer: sequential());
 
@@ -176,7 +176,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
         (l) => emit(FailureGetAcceptRequestState(message: l.message)),
         (r) {
           _myAcceptedRequests = r;
-          emit(SuccessGetAcceptRequestState(accepts: Future.value(r)));
+          emit(SuccessGetAcceptRequestState(accepts: r));
         },
       );
     }, transformer: sequential());
@@ -196,7 +196,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
         (l) => emit(FailureGetAppointmentState(message: l.message)),
         (r) {
           _appointments = r;
-          emit(SuccessGetAppointmentsState(appointments: Future.value(r)));
+          emit(SuccessGetAppointmentsState(appointments: r));
         },
       );
     }, transformer: sequential());
@@ -313,7 +313,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
             .toList();
       }
       
-      return SuccessGetRecentRequestState(myRequests: Future.value(_recentRequests));
+      return SuccessGetRecentRequestState(myRequests: _recentRequests);
     } catch (_) {
       return null;
     }
@@ -329,6 +329,3 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
     };
   }
 }
-
-
-

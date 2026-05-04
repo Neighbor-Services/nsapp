@@ -1,6 +1,6 @@
 part of 'shared_bloc.dart';
 
-abstract class SharedState {
+sealed class SharedState {
   final bool isProvider;
   final ThemeMode themeMode;
   final bool usebiometric;
@@ -13,7 +13,8 @@ abstract class SharedState {
 }
 
 class SharedInitialState extends SharedState {
-  SharedInitialState({super.isProvider = false,
+  SharedInitialState({
+    super.isProvider = false,
     super.themeMode = ThemeMode.system,
     super.usebiometric = false,
   });
@@ -37,7 +38,6 @@ class DashboardState extends SharedState {
 
 class ThemeModeState extends SharedState {
   ThemeModeState({
-    
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
@@ -63,8 +63,7 @@ class FailureAddNotificationState extends SharedState {
 }
 
 class SuccessGetMyNotificationsState extends SharedState {
-  static int lastUnreadCount = 0;
-  final Future<List<not.NotificationData>> notifications;
+  final List<not.NotificationData> notifications;
   final int unreadCount;
 
   SuccessGetMyNotificationsState({
@@ -73,9 +72,7 @@ class SuccessGetMyNotificationsState extends SharedState {
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
-  }) {
-    SuccessGetMyNotificationsState.lastUnreadCount = unreadCount;
-  }
+  });
 }
 
 class FailureGetMyNotificationsState extends SharedState {
@@ -125,16 +122,13 @@ class FailureNotifyState extends SharedState {
 }
 
 class ViewImageState extends SharedState {
-  static String lastUrl = "";
   final String url;
   ViewImageState({
     required this.url,
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
-  }) {
-    ViewImageState.lastUrl = url;
-  }
+  });
 }
 
 class SuccessPlacesState extends SharedState {
@@ -178,8 +172,6 @@ class FailurePlaceState extends SharedState {
 }
 
 class MapLocationState extends SharedState {
-  static LatLng lastLocation = const LatLng(0, 0);
-  static String lastAddress = "";
   final LatLng location;
   final String address;
   MapLocationState({
@@ -188,23 +180,17 @@ class MapLocationState extends SharedState {
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
-  }) {
-    MapLocationState.lastLocation = location;
-    MapLocationState.lastAddress = address;
-  }
+  });
 }
 
 class UseMapState extends SharedState {
-  static bool lastUseMap = false;
   final bool useMap;
   UseMapState({
     required this.useMap,
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
-  }) {
-    UseMapState.lastUseMap = useMap;
-  }
+  });
 }
 
 class UseBiometricState extends SharedState {
@@ -264,16 +250,13 @@ class FailureConnectAccountState extends SharedState {
 }
 
 class SuccessGetServicesState extends SharedState {
-  static List<Service> lastServices = [];
   final List<Service> services;
   SuccessGetServicesState({
     required this.services,
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
-  }) {
-    SuccessGetServicesState.lastServices = services;
-  }
+  });
 }
 
 class FailureGetServicesState extends SharedState {
@@ -315,16 +298,13 @@ class FailureAddServiceState extends SharedState {
 }
 
 class SuccessAddServicesState extends SharedState {
-  static String? lastId;
   final String? id;
   SuccessAddServicesState({
     this.id,
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
-  }) {
-    SuccessAddServicesState.lastId = id;
-  }
+  });
 }
 
 class SuccessChangeUserTypeState extends SharedState {
@@ -500,16 +480,13 @@ class FailureGetStripeDashboardLinkState extends SharedState {
 }
 
 class SuccessGetLegalDocumentState extends SharedState {
-  static List<LegalDocument> lastDocuments = [];
   final List<LegalDocument> documents;
   SuccessGetLegalDocumentState({
     required this.documents,
     required super.isProvider,
     required super.themeMode,
     required super.usebiometric,
-  }) {
-    SuccessGetLegalDocumentState.lastDocuments = documents;
-  }
+  });
 }
 
 class FailureGetLegalDocumentState extends SharedState {
@@ -521,5 +498,3 @@ class FailureGetLegalDocumentState extends SharedState {
     required super.usebiometric,
   });
 }
-
-

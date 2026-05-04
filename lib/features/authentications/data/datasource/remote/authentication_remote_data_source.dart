@@ -12,6 +12,7 @@ abstract class AuthenticationRemoteDataSource {
   Future<bool> logout();
   Future<bool> loginWithApple();
   Future<bool> deleteAccount();
+  Future<String?> refreshToken();
 }
 
 

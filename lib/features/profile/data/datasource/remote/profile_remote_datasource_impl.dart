@@ -11,11 +11,14 @@ import 'package:nsapp/core/models/audit_log.dart';
 import 'profile_remote_datasource.dart';
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
+  final Dio _dio;
+
+  ProfileRemoteDataSourceImpl(this._dio);
   @override
   Future<List<AuditLog>> getAuditLogs() async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/api/audit/", // Endpoint from backend viewset
         options: Options(headers: dioHeaders(token)),
       );
@@ -37,14 +40,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> addProfile(Profile profile) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/profile/",
         data: json.encode(profile.toJson()),
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
         if (image != null) {
-          final res = await dio.patch(
+          final res = await _dio.patch(
             "$baseUrl/accounts/profile/picture/",
             data: FormData.fromMap({
               "image": await MultipartFile.fromFile(image!.path),
@@ -78,14 +81,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> updateProfile(Profile profile) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.patch(
+      final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
         options: Options(headers: dioHeaders(token)),
         data: json.encode(profile.toJson()),
       );
       if (response.statusCode == 200) {
         if (image != null) {
-          final res = await dio.patch(
+          final res = await _dio.patch(
             "$baseUrl/accounts/profile/picture/",
             data: FormData.fromMap({
               "image": await MultipartFile.fromFile(image!.path),
@@ -141,7 +144,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/profile/?user=$id",
         options: Options(headers: dioHeaders(token)),
       );
@@ -162,7 +165,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<Profile?> getProfileStream() async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/profile/me/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -184,7 +187,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> addAbout(About about) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/about/",
         data: json.encode(about.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -202,7 +205,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<AboutData?> getAboutStream(String userId) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/about/user/?user_id=$userId",
         options: Options(headers: dioHeaders(token)),
       );
@@ -222,7 +225,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> addReview(Review review) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/reviews/",
         data: json.encode(review.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -240,7 +243,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<List<ReviewData>?> getReviews(String user) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/interactions/reviews/?provider=$user",
         options: Options(headers: dioHeaders(token)),
       );
@@ -290,7 +293,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final String deviceToken = await Helpers.getToken();
       final token = await Helpers.getString("token");
       Map<String, dynamic> data = {"token": deviceToken};
-      final response = await dio.patch(
+      final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
         options: Options(headers: dioHeaders(token)),
         data: json.encode(data),
@@ -308,7 +311,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> deleteAboutStream(String id) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseUrl/accounts/about/$id/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -328,7 +331,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<String?> initiateBackgroundCheck(String paymentIntentId) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/moderation/background-checks/initiate/",
         data: json.encode({"payment_intent_id": paymentIntentId}),
         options: Options(headers: dioHeaders(token)),

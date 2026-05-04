@@ -364,14 +364,14 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
         content: SizedBox(
           width: double.maxFinite,
           height: 400.h,
-          child: FutureBuilder<List<Chat>>(
-            future: SuccessGetMyMessagesState.lastMyMessages,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: LoadingWidget());
+          child: BlocBuilder<MessageBloc, MessageState>(
+            builder: (context, state) {
+              List<Chat> conversations = [];
+              if (state is SuccessGetMyMessagesState) {
+                conversations = state.myMessages;
               }
 
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              if (conversations.isEmpty && state is! LoadingMessageState) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -401,7 +401,10 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                 );
               }
 
-              final conversations = snapshot.data!;
+              if (state is LoadingMessageState) {
+                return const Center(child: LoadingWidget());
+              }
+
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: conversations.length,

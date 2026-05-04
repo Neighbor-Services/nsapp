@@ -78,9 +78,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     if (state is SuccessGetProfileState) {
       _initializeWithProfile(state.profile);
     } else if (state is SuccessGetProfileStreamState) {
-      state.profile.then((p) {
-        if (mounted) setState(() => _initializeWithProfile(p));
-      });
+      _initializeWithProfile(state.profile);
     }
 
     // Initial load attempt for shared state
@@ -205,7 +203,10 @@ class _EditProfilePageState extends State<EditProfilePage>
             customAlert(context, AlertType.error, state.message);
           }
           if (state is SuccessGetProfileState) {
-             setState(() => _initializeWithProfile(state.profile));
+            setState(() => _initializeWithProfile(state.profile));
+          }
+          if (state is SuccessGetProfileStreamState) {
+            setState(() => _initializeWithProfile(state.profile));
           }
         },
       ),

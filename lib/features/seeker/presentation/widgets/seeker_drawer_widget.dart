@@ -5,8 +5,6 @@ import 'package:get/get.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_list_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_page.dart';
@@ -34,13 +32,13 @@ class SeekerDrawerWidget extends StatelessWidget {
       builder: (context, profileState) {
         final profile = (profileState is SuccessGetProfileState)
             ? profileState.profile
-            : SuccessGetProfileState.lastProfile;
+            : Profile();
 
         return BlocBuilder<SeekerBloc, SeekerState>(
           builder: (context, seekerState) {
             final currentPage = (seekerState is NavigatorSeekerState)
                 ? seekerState.page
-                : NavigatorSeekerState.lastPage;
+                : 1;
 
             return Drawer(
               backgroundColor: Colors.transparent,
@@ -455,13 +453,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 context.read<AuthenticationBloc>().add(
                                   LogoutAuthenticationEvent(),
                                 );
-                                SuccessGetProfileState.lastProfile = Profile();
-                                NavigatorSeekerState.lastWidget =
-                                    const SeekerHomePage();
-                                NavigatorSeekerState.lastPage = 1;
-                                NavigatorProviderState.lastWidget =
-                                    const ProviderHomePage();
-                                NavigatorProviderState.lastPage = 1;
+                                Navigator.pop(context);
                                 Get.offAllNamed("/login");
                               },
                               style: ElevatedButton.styleFrom(
@@ -478,7 +470,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 "Logout",
                                 style: TextStyle(
                                   fontSize: 16.sp,
-                                  color: context.appColors.errorColor,
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),

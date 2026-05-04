@@ -162,35 +162,27 @@ class _NotificationsPageState extends State<NotificationsPage>
 
   Widget _buildNotificationsList(SharedState state, bool isLargeScreen) {
     if (state is SuccessGetMyNotificationsState) {
-      return FutureBuilder<List<not.NotificationData>>(
-        future: state.notifications,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!.isNotEmpty) {
-              return ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.only(
-                  left: isLargeScreen ? 32.w : 16.w,
-                  right: isLargeScreen ? 32.w : 16.w,
-                  bottom: 24.h,
-                ),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return _buildNotificationCard(
-                    context,
-                    snapshot.data![index],
-                    index,
-                  );
-                },
-              );
-            } else {
-              return _buildEmptyState();
-            }
-          } else {
-            return const ListSkeletonLoader();
-          }
-        },
-      );
+      final notifications = state.notifications;
+      if (notifications.isNotEmpty) {
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.only(
+            left: isLargeScreen ? 32.w : 16.w,
+            right: isLargeScreen ? 32.w : 16.w,
+            bottom: 24.h,
+          ),
+          itemCount: notifications.length,
+          itemBuilder: (context, index) {
+            return _buildNotificationCard(
+              context,
+              notifications[index],
+              index,
+            );
+          },
+        );
+      } else {
+        return _buildEmptyState();
+      }
     } else if (state is SharedLoadingState) {
        return const ListSkeletonLoader();
     } else {

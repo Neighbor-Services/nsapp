@@ -14,7 +14,6 @@ import '../../../shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/appointment.dart';
 import '../../../../core/models/request_data.dart';
-import '../../../shared/presentation/widget/loading_widget.dart';
 import '../../../../features/shared/presentation/pages/create_dispute_page.dart';
 import '../../../../features/shared/presentation/pages/live_tracking_page.dart';
 import 'package:nsapp/core/core.dart';
@@ -140,7 +139,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
 
                           // Calendar
                           Expanded(
-                            child: _buildCalendarView(context, isLargeScreen),
+                            child: _buildCalendarView(context, state, isLargeScreen),
                           ),
                         ],
                       ),
@@ -155,118 +154,113 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     );
   }
 
-  Widget _buildCalendarView(BuildContext context, bool isLargeScreen) {
+  Widget _buildCalendarView(BuildContext context, SeekerState state, bool isLargeScreen) {
     final textColor = context.appColors.primaryTextColor;
     final borderColor = context.appColors.glassBorder;
 
-    return FutureBuilder<List<AppointmentData>>(
-      future: SuccessGetAppointmentsState.lastAppointments,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          events.clear();
-          for (var data in snapshot.data!) {
-            AppointmentData appointmentData = data;
-            final isSeeker = appointmentData.role == 'seeker';
-            events.add(
-              CalendarEventData(
-                event: appointmentData.appointment!.id,
-                title:
-                    "${isSeeker ? '[S] ' : '[P] '}${appointmentData.appointment!.title ?? ""}",
-                date:
-                    appointmentData.appointment!.appointmentDate ??
-                    DateTime.now(),
-                description: appointmentData.appointment!.description ?? "",
-                startTime: appointmentData.appointment?.appointmentDate,
-                color: isSeeker
-                    ? context.appColors.secondaryColor
-                    : context.appColors.primaryColor,
-              ),
-            );
-          }
+    List<AppointmentData> appointments = [];
+    if (state is SuccessGetAppointmentsState) {
+      appointments = state.appointments;
+    }
 
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: isLargeScreen ? 32.w : 16.w),
-            child: CalendarControllerProvider(
-              controller: EventController()..addAll(events),
-              child: SolidContainer(
-                backgroundColor: context.appColors.cardBackground,
-                child: MonthView(
-                  borderColor: borderColor,
-                  cellBuilder:
-                      (date, events, isToday, isInMonth, hideDaysNotInMonth) {
-                        return FilledCell(
-                          date: date,
-                          shouldHighlight: isToday,
-                          backgroundColor: isInMonth
-                              ? context.appColors.cardBackground
-                              : context.appColors.primaryBackground,
-                          events: events,
-                          isInMonth: isInMonth,
-                          hideDaysNotInMonth: hideDaysNotInMonth,
-                          titleColor: isInMonth
-                              ? context.appColors.primaryTextColor
-                              : context.appColors.secondaryTextColor,
-                          highlightColor: context.appColors.secondaryColor,
-                          tileColor: context.appColors.secondaryColor,
-                          onTileTap: (event, date) {
-                            _showAppointmentDetails(context, [event]);
-                          },
-                        );
-                      },
-                  weekDayBuilder: (day) {
-                    return Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(vertical: 10.h),
-                      decoration: BoxDecoration(
-                        color: context.appColors.cardBackground,
-                        border: Border.all(color: borderColor, width: 0.5.r),
-                      ),
-                      child: Text(
-                        ["M", "T", "W", "T", "F", "S", "S"][day],
-                        style: TextStyle(
-                          color: context.appColors.primaryTextColor,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    );
-                  },
-                  onCellTap: (events, date) {
-                    if (events.isNotEmpty) {
-                      _showAppointmentDetails(context, events);
-                    }
-                  },
-                  onEventTap: (event, date) {
-                    _showAppointmentDetails(context, [event]);
-                  },
-                  headerStyle: HeaderStyle(
-                    headerTextStyle: TextStyle(
-                      color: textColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18.sp,
-                      letterSpacing: 0.5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: context.appColors.cardBackground,
-                    ),
-                    leftIconConfig: IconDataConfig(color: textColor),
-                    rightIconConfig: IconDataConfig(color: textColor),
+    events.clear();
+    for (var data in appointments) {
+      AppointmentData appointmentData = data;
+      final isSeeker = appointmentData.role == 'seeker';
+      events.add(
+        CalendarEventData(
+          event: appointmentData.appointment!.id,
+          title:
+              "${isSeeker ? '[S] ' : '[P] '}${appointmentData.appointment!.title ?? ""}",
+          date:
+              appointmentData.appointment!.appointmentDate ??
+              DateTime.now(),
+          description: appointmentData.appointment!.description ?? "",
+          startTime: appointmentData.appointment?.appointmentDate,
+          color: isSeeker
+              ? context.appColors.secondaryColor
+              : context.appColors.primaryColor,
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isLargeScreen ? 32.w : 16.w),
+      child: CalendarControllerProvider(
+        controller: EventController()..addAll(events),
+        child: SolidContainer(
+          backgroundColor: context.appColors.cardBackground,
+          child: MonthView(
+            borderColor: borderColor,
+            cellBuilder:
+                (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+                  return FilledCell(
+                    date: date,
+                    shouldHighlight: isToday,
+                    backgroundColor: isInMonth
+                        ? context.appColors.cardBackground
+                        : context.appColors.primaryBackground,
+                    events: events,
+                    isInMonth: isInMonth,
+                    hideDaysNotInMonth: hideDaysNotInMonth,
+                    titleColor: isInMonth
+                        ? context.appColors.primaryTextColor
+                        : context.appColors.secondaryTextColor,
+                    highlightColor: context.appColors.secondaryColor,
+                    tileColor: context.appColors.secondaryColor,
+                    onTileTap: (event, date) {
+                      _showAppointmentDetails(context, [event], appointments);
+                    },
+                  );
+                },
+            weekDayBuilder: (day) {
+              return Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: context.appColors.cardBackground,
+                  border: Border.all(color: borderColor, width: 0.5.r),
+                ),
+                child: Text(
+                  ["M", "T", "W", "T", "F", "S", "S"][day],
+                  style: TextStyle(
+                    color: context.appColors.primaryTextColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12.sp,
                   ),
                 ),
+              );
+            },
+            onCellTap: (events, date) {
+              if (events.isNotEmpty) {
+                _showAppointmentDetails(context, events, appointments);
+              }
+            },
+            onEventTap: (event, date) {
+              _showAppointmentDetails(context, [event], appointments);
+            },
+            headerStyle: HeaderStyle(
+              headerTextStyle: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 18.sp,
+                letterSpacing: 0.5,
               ),
+              decoration: BoxDecoration(
+                color: context.appColors.cardBackground,
+              ),
+              leftIconConfig: IconDataConfig(color: textColor),
+              rightIconConfig: IconDataConfig(color: textColor),
             ),
-          );
-        } else {
-          return const Center(child: LoadingWidget());
-        }
-      },
+          ),
+        ),
+      ),
     );
   }
 
-  void _handleAddToCalendar(String appointmentId) async {
+  void _handleAddToCalendar(String appointmentId, List<AppointmentData> appointments) async {
     try {
-      final list = await SuccessGetAppointmentsState.lastAppointments!;
-      final data = list.firstWhere(
+      final data = appointments.firstWhere(
         (element) => element.appointment?.id == appointmentId,
       );
       if (data.appointment != null) {
@@ -280,6 +274,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
   void _showAppointmentDetails(
     BuildContext context,
     List<CalendarEventData> data,
+    List<AppointmentData> appointments,
   ) {
     final sheetColor = context.appColors.cardBackground;
     final borderColor = context.appColors.glassBorder;
@@ -314,64 +309,59 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 ),
               ),
               SizedBox(height: 24.h),
-              if (SuccessGetAppointmentsState.lastAppointments != null)
-                FutureBuilder<List<AppointmentData>>(
-                  future: SuccessGetAppointmentsState.lastAppointments,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox();
-                    try {
-                      final appointmentData = snapshot.data!.firstWhere(
-                        (element) => element.appointment?.id == data[0].event,
-                      );
-                      final appt = appointmentData.appointment!;
-                      return Column(
-                        children: [
-                          if (appt.isFunded == true &&
-                              appt.status == 'COMPLETED')
-                            Container(
-                              width: double.infinity,
-                              margin: EdgeInsets.only(bottom: 12.h),
-                              padding: EdgeInsets.all(12.r),
-                              decoration: BoxDecoration(
-                                color: context.appColors.successColor.withAlpha(
-                                  20,
-                                ),
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(
-                                  color: context.appColors.successColor
-                                      .withAlpha(50),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    FontAwesomeIcons.circleCheck,
-                                    color: context.appColors.successColor,
-                                    size: 20.r,
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  Expanded(
-                                    child: Text(
-                                      "Project completed and funds released."
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                        color: context.appColors.successColor,
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+              () {
+                try {
+                  final appointmentData = appointments.firstWhere(
+                    (element) => element.appointment?.id == data[0].event,
+                  );
+                  final appt = appointmentData.appointment!;
+                  return Column(
+                    children: [
+                      if (appt.isFunded == true &&
+                          appt.status == 'COMPLETED')
+                        Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(bottom: 12.h),
+                          padding: EdgeInsets.all(12.r),
+                          decoration: BoxDecoration(
+                            color: context.appColors.successColor.withAlpha(
+                              20,
                             ),
-                        ],
-                      );
-                    } catch (e) {
-                      return const SizedBox();
-                    }
-                  },
-                ),
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(
+                              color: context.appColors.successColor
+                                  .withAlpha(50),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                FontAwesomeIcons.circleCheck,
+                                color: context.appColors.successColor,
+                                size: 20.r,
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Text(
+                                  "Project completed and funds released."
+                                      .toUpperCase(),
+                                  style: TextStyle(
+                                    color: context.appColors.successColor,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  );
+                } catch (e) {
+                  return const SizedBox();
+                }
+              }(),
               Row(
                 children: [
                   Container(
@@ -433,152 +423,126 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                 ),
               SizedBox(height: 16.h),
               // Linked Request Details
-              if (SuccessGetAppointmentsState.lastAppointments != null)
-                FutureBuilder<List<AppointmentData>>(
-                  future: SuccessGetAppointmentsState.lastAppointments,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox();
-                    try {
-                      final appointmentData = snapshot.data!.firstWhere(
-                        (element) => element.appointment?.id == data[0].event,
-                      );
-                      final appt = appointmentData.appointment!;
-                      final req = appt.serviceRequest;
+              () {
+                try {
+                  final appointmentData = appointments.firstWhere(
+                    (element) => element.appointment?.id == data[0].event,
+                  );
+                  final appt = appointmentData.appointment!;
+                  final req = appt.serviceRequest;
 
-                      if (req == null) return const SizedBox();
+                  if (req == null) return const SizedBox();
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Divider(height: 32.h),
-                          CustomTextWidget(
-                            text: "LINKED REQUEST",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
-                            color: context.appColors.secondaryTextColor,
-                            letterSpacing: 1.0,
-                          ),
-                          SizedBox(height: 16.h),
-                          _buildDetailRow(
-                            FontAwesomeIcons.fileLines,
-                            "ORIGINAL TITLE",
-                            req.title ?? "N/A",
-                          ),
-                          _buildDetailRow(
-                            FontAwesomeIcons.list,
-                            "SERVICE",
-                            req.service?.name ?? "N/A",
-                          ),
-                          if (req.price != null)
-                            _buildDetailRow(
-                              FontAwesomeIcons.creditCard,
-                              "REQUEST PRICE",
-                              "\$${req.price}",
-                            ),
-                          if (req.description != null &&
-                              req.description!.isNotEmpty)
-                            _buildDetailRow(
-                              FontAwesomeIcons.fileLines,
-                              "REQ. DESCRIPTION",
-                              req.description!,
-                            ),
-                          SizedBox(height: 12.h),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton.icon(
-                              onPressed: () {
-                                Get.back();
-                                RequestData request = RequestData(
-                                  request: req,
-                                  user: appointmentData.user,
-                                );
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(height: 32.h),
+                      CustomTextWidget(
+                        text: "LINKED REQUEST",
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14.sp,
+                        color: context.appColors.secondaryTextColor,
+                        letterSpacing: 1.0,
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildDetailRow(
+                        FontAwesomeIcons.fileLines,
+                        "ORIGINAL TITLE",
+                        req.title ?? "N/A",
+                      ),
+                      _buildDetailRow(
+                        FontAwesomeIcons.list,
+                        "SERVICE",
+                        req.service?.name ?? "N/A",
+                      ),
+                      if (req.price != null)
+                        _buildDetailRow(
+                          FontAwesomeIcons.creditCard,
+                          "REQUEST PRICE",
+                          "\$${req.price}",
+                        ),
+                      if (req.description != null &&
+                          req.description!.isNotEmpty)
+                        _buildDetailRow(
+                          FontAwesomeIcons.fileLines,
+                          "REQ. DESCRIPTION",
+                          req.description!,
+                        ),
+                      SizedBox(height: 12.h),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Get.back();
+                            RequestData request = RequestData(
+                              request: req,
+                              user: appointmentData.user,
+                            );
 
-                                if (req.userId ==
-                                    SuccessGetProfileState.lastProfile.user?.id) {
-                                      SeekerRequestDetailState.lastRequest =
-                                      RequestData(
-                                        request: req,
-                                        user: appointmentData.user,
-                                      );
-                                  context.read<SeekerBloc>().add(
-                                    SeekerRequestDetailEvent(request: request),
-                                  );
+                            final profileState = context.read<ProfileBloc>().state;
+                            final myId = profileState is SuccessGetProfileState ? profileState.profile.user?.id : null;
 
-                                  context.read<SeekerBloc>().add(
-                                    NavigateSeekerEvent(
-                                      page: 1,
-                                      widget: const SeekerRequestDetailsPage(),
-                                    ),
-                                  );
-                                 
-                                } else {
-                                  customAlert(context, AlertType.error, "You are not authorized to view this request");
-                                }
-                              },
-                              icon: Icon(
-                                FontAwesomeIcons.arrowUpRightFromSquare,
-                                size: 18.r,
-                                color: context.appColors.primaryColor,
-                              ),
-                              label: Text(
-                                "VIEW FULL DETAILS",
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: context.appColors.primaryColor,
-                                  letterSpacing: 0.5,
+                            if (req.userId == myId) {
+                              context.read<SeekerBloc>().add(
+                                SeekerRequestDetailEvent(request: request),
+                              );
+
+                              context.read<SeekerBloc>().add(
+                                NavigateSeekerEvent(
+                                  page: 1,
+                                  widget: const SeekerRequestDetailsPage(),
                                 ),
-                              ),
+                              );
+                             
+                            } else {
+                              customAlert(context, AlertType.error, "You are not authorized to view this request");
+                            }
+                          },
+                          icon: Icon(
+                            FontAwesomeIcons.arrowUpRightFromSquare,
+                            size: 18.r,
+                            color: context.appColors.primaryColor,
+                          ),
+                          label: Text(
+                            "VIEW FULL DETAILS",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w500,
+                              color: context.appColors.primaryColor,
+                              letterSpacing: 0.5,
                             ),
                           ),
-                          Divider(height: 32.h),
-                        ],
-                      );
-                    } catch (e) {
-                      return const SizedBox();
-                    }
-                  },
-                ),
+                        ),
+                      ),
+                      Divider(height: 32.h),
+                    ],
+                  );
+                } catch (e) {
+                  return const SizedBox();
+                }
+              }(),
               SizedBox(height: 24.h),
 
-              // Escrow Actions
-              if (SuccessGetAppointmentsState.lastAppointments != null)
-                FutureBuilder<List<AppointmentData>>(
-                  future: SuccessGetAppointmentsState.lastAppointments,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox();
-                    try {
-                      return const SizedBox();
-                    } catch (e) {
-                      return const SizedBox();
-                    }
-                  },
-                ),
-
               SolidButton(
-                onPressed: () async {
-                  if (SuccessGetAppointmentsState.lastAppointments != null) {
-                    try {
-                      final list =
-                          await SuccessGetAppointmentsState.lastAppointments!;
-                      final appointmentData = list.firstWhere(
-                        (element) =>
-                            element.appointment?.id == data[0].event.toString(),
+                onPressed: () {
+                  try {
+                    final appointmentData = appointments.firstWhere(
+                      (element) =>
+                          element.appointment?.id == data[0].event.toString(),
+                    );
+                    if (appointmentData.appointment != null) {
+                      Get.back();
+                      Get.to(
+                        () => LiveTrackingPage(
+                          appointmentId: appointmentData.appointment!.id!,
+                          providerName:
+                              "${appointmentData.user?.firstName ?? ''} ${appointmentData.user?.lastName ?? ''}"
+                                  .trim(),
+                        ),
                       );
-                      if (appointmentData.appointment != null) {
-                        Get.back();
-                        Get.to(
-                          () => LiveTrackingPage(
-                            appointmentId: appointmentData.appointment!.id!,
-                            providerName:
-                                "${appointmentData.user?.firstName ?? ''} ${appointmentData.user?.lastName ?? ''}"
-                                    .trim(),
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      debugPrint("Appointment not found: $e");
                     }
+                  } catch (e) {
+                    debugPrint("Appointment not found: $e");
                   }
                 },
                 icon: FontAwesomeIcons.locationDot,
@@ -593,7 +557,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               SolidButton(
                 onPressed: () {
                   Get.back();
-                  _handleAddToCalendar(data[0].event.toString());
+                  _handleAddToCalendar(data[0].event.toString(), appointments);
                 },
                 icon: FontAwesomeIcons.calendarCheck,
                 label: "ADD TO CALENDAR",
@@ -605,31 +569,27 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               ),
               SizedBox(height: 16.h),
               SolidButton(
-                onPressed: () async {
-                  if (SuccessGetAppointmentsState.lastAppointments != null) {
-                    try {
-                      final list =
-                          await SuccessGetAppointmentsState.lastAppointments!;
-                      final dataApp = list.firstWhere(
-                        (element) => element.appointment?.id == data[0].event,
+                onPressed: () {
+                  try {
+                    final dataApp = appointments.firstWhere(
+                      (element) => element.appointment?.id == data[0].event,
+                    );
+                    if (dataApp.appointment != null) {
+                      final providerName =
+                          "${dataApp.user?.firstName ?? ''} ${dataApp.user?.lastName ?? ''}"
+                              .trim();
+                      Get.to(
+                        () => CreateDisputePage(
+                          appointmentId: dataApp.appointment!.id!,
+                          providerName: providerName.isNotEmpty
+                              ? providerName
+                              : "Provider",
+                          defendantId: dataApp.user?.id,
+                        ),
                       );
-                      if (dataApp.appointment != null) {
-                        final providerName =
-                            "${dataApp.user?.firstName ?? ''} ${dataApp.user?.lastName ?? ''}"
-                                .trim();
-                        Get.to(
-                          () => CreateDisputePage(
-                            appointmentId: dataApp.appointment!.id!,
-                            providerName: providerName.isNotEmpty
-                                ? providerName
-                                : "Provider",
-                            defendantId: dataApp.user?.id,
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      debugPrint("Appointment not found: $e");
                     }
+                  } catch (e) {
+                    debugPrint("Appointment not found: $e");
                   }
                 },
                 label: "RAISE DISPUTE",

@@ -73,9 +73,6 @@ class _ProviderTargetedRequestsPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isLargeScreen = MediaQuery.of(context).size.width > 600;
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -119,13 +116,11 @@ class _ProviderTargetedRequestsPageState
               isLoadingMore = false;
             });
             if (state is SuccessGetTargetedRequestsState) {
-              SuccessGetTargetedRequestsState.lastRequests?.then((value) {
-                if (value.length < (currentPage * 10)) {
-                  setState(() {
-                    hasReachedMax = true;
-                  });
-                }
-              });
+              if (state.requests.length < (currentPage * 10)) {
+                setState(() {
+                  hasReachedMax = true;
+                });
+              }
             }
           }
         },
@@ -144,8 +139,7 @@ class _ProviderTargetedRequestsPageState
                         Expanded(
                           child: _buildRequestsList(
                             context,
-                            isLargeScreen,
-                            isDark,
+                            state,
                           ),
                         ),
                       ],
@@ -162,78 +156,79 @@ class _ProviderTargetedRequestsPageState
 
   Widget _buildRequestsList(
     BuildContext context,
-    bool isLargeScreen,
-    bool isDark,
+    ProviderState state,
   ) {
-    return FutureBuilder<List<RequestData>>(
-      future: SuccessGetTargetedRequestsState.lastRequests,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: SolidContainer(
-                padding: EdgeInsets.all(40.r),
-                borderColor: context.appColors.glassBorder,
-                borderWidth: 1.5.r,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.handshake,
-                      size: 60.r,
-                      color: context.appColors.glassBorder,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      "No direct requests",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w400,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      "Requests sent specifically to you will appear here",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                  ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
+
+    List<RequestData> requests = [];
+    if (state is SuccessGetTargetedRequestsState) {
+      requests = state.requests;
+    }
+
+    if (state is LoadingProviderState && requests.isEmpty) {
+      return const Center(child: LoadingWidget());
+    }
+
+    if (requests.isEmpty && state is! LoadingProviderState) {
+      return Center(
+        child: SolidContainer(
+          padding: EdgeInsets.all(40.r),
+          borderColor: context.appColors.glassBorder,
+          borderWidth: 1.5.r,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.handshake,
+                size: 60.r,
+                color: context.appColors.glassBorder,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "No direct requests",
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w400,
+                  color: context.appColors.glassBorder,
                 ),
               ),
-            );
-          }
+              SizedBox(height: 8.h),
+              Text(
+                "Requests sent specifically to you will appear here",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.glassBorder,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-          requestData = snapshot.data!.last;
-          return ListView.builder(
-            controller: scrollController,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(
-              horizontal: isLargeScreen ? 32.w : 16.w,
-              vertical: 16.h,
-            ),
-            itemCount: snapshot.data!.length + (isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index < snapshot.data!.length) {
-                return _buildRequestCard(
-                  context,
-                  snapshot.data![index],
-                  index,
-                  isDark,
-                );
-              } else {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24.h),
-                  child: Center(child: LoadingWidget()),
-                );
-              }
-            },
+    return ListView.builder(
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(
+        horizontal: isLargeScreen ? 32.w : 16.w,
+        vertical: 16.h,
+      ),
+      itemCount: requests.length + (isLoadingMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index < requests.length) {
+          return _buildRequestCard(
+            context,
+            requests[index],
+            index,
+            isDark,
           );
         } else {
-          return const Center(child: LoadingWidget());
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h),
+            child: const Center(child: LoadingWidget()),
+          );
         }
       },
     );

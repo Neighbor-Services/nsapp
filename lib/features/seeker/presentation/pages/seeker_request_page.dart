@@ -11,7 +11,6 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/core.dart';
@@ -116,7 +115,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               ),
                             ),
                             SizedBox(height: 24.h),
-                            Expanded(child: _buildRequestList(context)),
+                            Expanded(child: _buildRequestList(context, state)),
                           ],
                         ),
                       ),
@@ -131,67 +130,63 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 
-  Widget _buildRequestList(BuildContext context) {
-    return FutureBuilder<List<RequestData>>(
-      future: SuccessGetMyRequestState.lastMyRequests,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: SolidContainer(
-                padding: EdgeInsets.all(40.r),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.fileLines,
-                      size: 60.r,
-                      color: context.appColors.glassBorder,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      "NO REQUESTS FOUND",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: context.appColors.glassBorder,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      "Create a new request to get started",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                  ],
+  Widget _buildRequestList(BuildContext context, SeekerState state) {
+    List<RequestData> requests = [];
+    if (state is SuccessGetMyRequestState) {
+      requests = state.myRequests;
+    }
+
+    if (requests.isEmpty && state is! LoadingSeekerState) {
+      return Center(
+        child: SolidContainer(
+          padding: EdgeInsets.all(40.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.fileLines,
+                size: 60.r,
+                color: context.appColors.glassBorder,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "NO REQUESTS FOUND",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: context.appColors.glassBorder,
+                  letterSpacing: 1.0,
                 ),
               ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: () async {
-              context.read<SeekerBloc>().add(GetMyRequestEvent());
-              await Future.delayed(const Duration(seconds: 1));
-            },
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return _buildRequestCard(
-                  context,
-                  snapshot.data![index],
-                  index
-                );
-              },
-            ),
-          );
-        } else {
-          return const LoadingWidget();
-        }
+              SizedBox(height: 8.h),
+              Text(
+                "Create a new request to get started",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.glassBorder,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<SeekerBloc>().add(GetMyRequestEvent());
+        await Future.delayed(const Duration(seconds: 1));
       },
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: requests.length,
+        itemBuilder: (context, index) {
+          return _buildRequestCard(
+            context,
+            requests[index],
+            index
+          );
+        },
+      ),
     );
   }
 
@@ -537,7 +532,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                             color: context.appColors.cardBackground,
                                                           ),
                                                         )
-                                                      : const Text("Fund Now"),
+                                                      : const Text("Fund Now", style: TextStyle(color: Colors.white)),
                                                 ),
                                               ),
                                             ],

@@ -11,7 +11,6 @@ import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/appointment_detail_bottom_sheet.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -100,13 +99,14 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: FutureBuilder<List<AppointmentData>>(
-                      future: SuccessGetAppointmentsState.lastAppointments,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: LoadingWidget());
+                    child: Builder(
+                      builder: (context) {
+                        List<AppointmentData> appointments = [];
+                        if (state is SuccessGetAppointmentsState) {
+                          appointments = state.appointments;
                         }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+
+                        if (appointments.isEmpty && state is! LoadingSeekerState) {
                           return const Center(
                             child: EmptyWidget(
                               message: "No appointments found",
@@ -115,7 +115,6 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                           );
                         }
 
-                        final appointments = snapshot.data!;
                         return RefreshIndicator(
                           onRefresh: () async {
                             context.read<SeekerBloc>().add(GetAppointmentsEvent());
@@ -268,6 +267,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                       );
                       },
                     ),
+
                   ),
                 ),
               ),

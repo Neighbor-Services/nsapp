@@ -150,7 +150,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                               children: [
                                 // Requests List
                                 Expanded(
-                                  child: _buildRequestsList(context, isLargeScreen),
+                                  child: _buildRequestsList(context, isLargeScreen, state),
                                 ),
                               ],
                             ),
@@ -168,70 +168,70 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
     );
   }
 
-  Widget _buildRequestsList(BuildContext context, bool isLargeScreen) {
-    return FutureBuilder<List<RequestData>>(
-      future: (context.read<ProviderBloc>().state as SuccessGetRequestsState).requests,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: SolidContainer(
-                padding: EdgeInsets.all(40.r),
-                borderColor: context.appColors.glassBorder,
-                borderWidth: 1.5.r,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.briefcase,
-                      size: 60.r,
-                      color: context.appColors.glassBorder,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      "No requests available",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w400,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      "Check back later for new projects",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                  ],
+  Widget _buildRequestsList(BuildContext context, bool isLargeScreen, ProviderState state) {
+    List<RequestData> requests = [];
+    if (state is SuccessGetRequestsState) {
+      requests = state.requests;
+    }
+
+    if (state is LoadingProviderState && requests.isEmpty) {
+      return const Center(child: LoadingWidget());
+    }
+
+    if (requests.isEmpty) {
+      return Center(
+        child: SolidContainer(
+          padding: EdgeInsets.all(40.r),
+          borderColor: context.appColors.glassBorder,
+          borderWidth: 1.5.r,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.briefcase,
+                size: 60.r,
+                color: context.appColors.glassBorder,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "No requests available",
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w400,
+                  color: context.appColors.glassBorder,
                 ),
               ),
-            );
-          }
+              SizedBox(height: 8.h),
+              Text(
+                "Check back later for new projects",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.glassBorder,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-          requestData = snapshot.data!.last;
-          return ListView.builder(
-            controller: scrollController,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(
-              horizontal: isLargeScreen ? 32.w : 16.w,
-              vertical: 16.h,
-            ),
-            itemCount: snapshot.data!.length + (isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index < snapshot.data!.length) {
-                return _buildRequestCard(context, snapshot.data![index], index);
-              } else {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24.h),
-                  child: Center(child: LoadingWidget()),
-                );
-              }
-            },
-          );
+    requestData = requests.last;
+    return ListView.builder(
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(
+        horizontal: isLargeScreen ? 32.w : 16.w,
+        vertical: 16.h,
+      ),
+      itemCount: requests.length + (isLoadingMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index < requests.length) {
+          return _buildRequestCard(context, requests[index], index);
         } else {
-          return const Center(child: LoadingWidget());
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h),
+            child: Center(child: LoadingWidget()),
+          );
         }
       },
     );

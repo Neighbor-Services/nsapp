@@ -126,62 +126,55 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                       return const Center(child: LoadingWidget());
                     }
 
+                    List<RequestData> requestsData = [];
                     if (state is SuccessSearchRequestState) {
-                      return FutureBuilder<List<RequestData>>(
-                        future: SuccessSearchRequestState.lastRequests,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(child: LoadingWidget());
-                          }
+                      requestsData = state.requests;
+                    }
 
-                          final requestsData = snapshot.data ?? [];
-
-                          if (requestsData.isEmpty) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FontAwesomeIcons.magnifyingGlass,
-                                    size: 80.r,
-                                    color: secondaryTextColor.withAlpha(60),
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  Text(
-                                    "No requests found",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: secondaryTextColor,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    "Try searching for a different service",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: secondaryTextColor.withAlpha(100),
-                                    ),
-                                  ),
-                                ],
+                    if (state is SuccessSearchRequestState || requestsData.isNotEmpty) {
+                      if (requestsData.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                FontAwesomeIcons.magnifyingGlass,
+                                size: 80.r,
+                                color: secondaryTextColor.withAlpha(60),
                               ),
-                            );
-                          }
+                              SizedBox(height: 16.h),
+                              Text(
+                                "No requests found",
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  color: secondaryTextColor,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                "Try searching for a different service",
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: secondaryTextColor.withAlpha(100),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-                          return ListView.separated(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 16.h,
-                            ),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: requestsData.length,
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 16.h),
-                            itemBuilder: (context, index) {
-                              final requestData = requestsData[index];
-                              return _buildRequestCard(context, requestData);
-                            },
-                          );
+                      return ListView.separated(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 16.h,
+                        ),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: requestsData.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 16.h),
+                        itemBuilder: (context, index) {
+                          final requestData = requestsData[index];
+                          return _buildRequestCard(context, requestData);
                         },
                       );
                     }

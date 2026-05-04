@@ -78,16 +78,6 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final providerState = context.read<ProviderBloc>().state;
-    if (providerState is! SuccessGetRequestDetailState) {
-      return const Scaffold(body: Center(child: Text("Request not found")));
-    }
-    final request = providerState.request.request;
-    final user = providerState.request.user;
-
-    if (request == null || user == null) {
-      return const Scaffold(body: Center(child: Text("Request not found")));
-    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -98,10 +88,10 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
             listener: (context, state) {
               if (state is SuccessRequestAcceptState) {
                 customAlert(context, AlertType.success, "Request Accepted");
-                _refreshStatus(request.id ?? "");
+                _refreshStatus(state.requestAccept.serviceRequestId);
               } else if (state is SuccessRequestCancelState) {
                 customAlert(context, AlertType.success, "Request Canceled");
-                _refreshStatus(request.id ?? "");
+                // Note: state here doesn't have the requestId, we might need it from previous state
               } else if (state is IsRequestAcceptedState) {
                 setState(() => _isAccepted = state.accepted);
               }
@@ -117,6 +107,16 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
         ],
         child: BlocBuilder<ProviderBloc, ProviderState>(
           builder: (context, state) {
+            if (state is! SuccessGetRequestDetailState) {
+              return const Scaffold(body: Center(child: Text("Request not found")));
+            }
+            final request = state.request.request;
+            final user = state.request.user;
+
+            if (request == null || user == null) {
+              return const Scaffold(body: Center(child: Text("Request not found")));
+            }
+
             return LoadingView(
               isLoading: (state is LoadingProviderState),
               child: GradientBackground(

@@ -1,37 +1,26 @@
 part of 'seeker_bloc.dart';
 
-abstract class SeekerState {}
+sealed class SeekerState {}
 
 class LoadingSeekerState extends SeekerState {}
 
 class InitialSeekerState extends SeekerState {}
 
 class NavigatorSeekerState extends SeekerState {
-  static Widget lastWidget = const SeekerHomePage();
-  static int lastPage = 1;
   final Widget widget;
   final int page;
 
-  NavigatorSeekerState({this.widget = const SeekerHomePage(), this.page = 1}) {
-    NavigatorSeekerState.lastWidget = widget;
-    NavigatorSeekerState.lastPage = page;
-  }
+  NavigatorSeekerState({this.widget = const SeekerHomePage(), this.page = 1});
 }
 
 class SeekerVisitedPagesState extends SeekerState {
-  static List<VisitedPages> lastPages = [];
   final List<VisitedPages> pages;
-  SeekerVisitedPagesState({required this.pages}) {
-    SeekerVisitedPagesState.lastPages = pages;
-  }
+  SeekerVisitedPagesState({required this.pages});
 }
 
 class ImageSeekerState extends SeekerState {
-  static XFile? lastPicture;
   final XFile? picture;
-  ImageSeekerState({this.picture}) {
-    ImageSeekerState.lastPicture = picture;
-  }
+  ImageSeekerState({this.picture});
 }
 
 class RequestPriceState extends SeekerState {
@@ -42,11 +31,8 @@ class RequestPriceState extends SeekerState {
 class SuccessCreateRequestState extends SeekerState {}
 
 class SuccessGetMyRequestState extends SeekerState {
-  static Future<List<RequestData>>? lastMyRequests;
-  final Future<List<RequestData>>? myRequests;
-  SuccessGetMyRequestState({this.myRequests}) {
-    SuccessGetMyRequestState.lastMyRequests = myRequests;
-  }
+  final List<RequestData> myRequests;
+  SuccessGetMyRequestState({required this.myRequests});
 }
 
 class FailureCreateRequestState extends SeekerState {
@@ -65,51 +51,28 @@ class FailureAcceptedUserstState extends SeekerState {
 }
 
 class SeekerRequestDetailState extends SeekerState {
-  static RequestData lastRequest = RequestData();
   final RequestData request;
-  SeekerRequestDetailState({required this.request}) {
-    SeekerRequestDetailState.lastRequest = request;
-  }
+  SeekerRequestDetailState({required this.request});
 }
 
 class SuccessAcceptedUsersState extends SeekerState {
-  static Future<List<RequestAcceptance>>? lastUsers;
-  final Future<List<RequestAcceptance>>? users;
-  SuccessAcceptedUsersState({this.users}) {
-    SuccessAcceptedUsersState.lastUsers = users;
-  }
+  final List<RequestAcceptance> users;
+  SuccessAcceptedUsersState({required this.users});
 }
 
 class SuccessPopularProvidersState extends SeekerState {
-  static Future<List<Profile>>? lastProviders;
-  final Future<List<Profile>>? providers;
-  SuccessPopularProvidersState({this.providers}) {
-    SuccessPopularProvidersState.lastProviders = providers;
-  }
+  final List<Profile> providers;
+  SuccessPopularProvidersState({required this.providers});
 }
 
 class SuccessGetMyFavoritesState extends SeekerState {
-  static Future<List<Favorite>>? lastProfiles;
-  final Future<List<Favorite>>? profiles;
-  SuccessGetMyFavoritesState({this.profiles}) {
-    SuccessGetMyFavoritesState.lastProfiles = profiles;
-  }
-}
-
-class SuccessGetMyFavoritesNoFutureState extends SeekerState {
-  static List<Favorite> lastProfiles = [];
   final List<Favorite> profiles;
-  SuccessGetMyFavoritesNoFutureState({required this.profiles}) {
-    SuccessGetMyFavoritesNoFutureState.lastProfiles = profiles;
-  }
+  SuccessGetMyFavoritesState({required this.profiles});
 }
 
 class SuccessReloadRequestState extends SeekerState {
-  static Future<RequestData>? lastRequest;
-  final Future<RequestData>? request;
-  SuccessReloadRequestState({this.request}) {
-    SuccessReloadRequestState.lastRequest = request;
-  }
+  final RequestData request;
+  SuccessReloadRequestState({required this.request});
 }
 
 class SuccessApprovedProviderState extends SeekerState {}
@@ -175,19 +138,13 @@ class FailureSearchProviderState extends SeekerState {
 }
 
 class SuccessGetAppointmentsState extends SeekerState {
-  static Future<List<AppointmentData>>? lastAppointments;
-  final Future<List<AppointmentData>>? appointments;
-  SuccessGetAppointmentsState({this.appointments}) {
-    SuccessGetAppointmentsState.lastAppointments = appointments;
-  }
+  final List<AppointmentData> appointments;
+  SuccessGetAppointmentsState({required this.appointments});
 }
 
 class SuccessSearchProviderState extends SeekerState {
-  static Future<List<Profile>>? lastProviders;
-  final Future<List<Profile>>? providers;
-  SuccessSearchProviderState({this.providers}) {
-    SuccessSearchProviderState.lastProviders = providers;
-  }
+  final List<Profile> providers;
+  SuccessSearchProviderState({required this.providers});
 }
 
 class FailureGetAppointmentState extends SeekerState {
@@ -218,14 +175,9 @@ class RatingValueState extends SeekerState {
 }
 
 class ProviderToReviewState extends SeekerState {
-  static Profile lastProfile = Profile();
-  static String? lastProviderUserId;
   final Profile profile;
   final String? providerUserId;
-  ProviderToReviewState({required this.profile, this.providerUserId}) {
-    ProviderToReviewState.lastProfile = profile;
-    ProviderToReviewState.lastProviderUserId = providerUserId;
-  }
+  ProviderToReviewState({required this.profile, this.providerUserId});
 }
 
 class SuccessRateState extends SeekerState {}
@@ -247,19 +199,13 @@ class FailureCancelAppointmentState extends SeekerState {
 class ResetImageState extends SeekerState {}
 
 class OtherServiceSelectState extends SeekerState {
-  static bool lastOthers = false;
   final bool others;
-  OtherServiceSelectState({required this.others}) {
-    OtherServiceSelectState.lastOthers = others;
-  }
+  OtherServiceSelectState({required this.others});
 }
 
 class SuccessMatchProvidersState extends SeekerState {
-  static Future<List<Profile>>? lastProviders;
-  final Future<List<Profile>>? providers;
-  SuccessMatchProvidersState(this.providers) {
-    SuccessMatchProvidersState.lastProviders = providers;
-  }
+  final List<Profile> providers;
+  SuccessMatchProvidersState({required this.providers});
 }
 
 class FailureMatchProvidersState extends SeekerState {
@@ -280,5 +226,3 @@ class FailureCompleteAppointmentState extends SeekerState {
   final String? message;
   FailureCompleteAppointmentState({this.message});
 }
-
-

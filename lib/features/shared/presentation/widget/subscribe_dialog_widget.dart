@@ -81,7 +81,7 @@ class SubscribeDialogWidget extends StatelessWidget {
                         Get.back();
                         context.read<ProviderBloc>().add(
                           NavigateProviderEvent(
-                            page: NavigatorProviderState.lastPage,
+                            page: 3,
                             widget: const SubscriptionPage(),
                           ),
                         );

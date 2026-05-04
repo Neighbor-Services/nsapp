@@ -83,9 +83,9 @@ class SeekerAllServicesPage extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<SharedBloc, SharedState>(
                   builder: (context, state) {
-                    final services = SuccessGetServicesState.lastServices;
+                    final services = state is SuccessGetServicesState ? state.services : [];
 
-                    if (services.isEmpty) {
+                    if (services.isEmpty && state is! SharedLoadingState) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

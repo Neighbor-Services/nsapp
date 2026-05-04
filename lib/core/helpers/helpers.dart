@@ -18,6 +18,7 @@ import 'package:nsapp/core/services/payment_service.dart';
 import 'package:nsapp/core/services/dialog_utils.dart';
 import 'package:nsapp/core/services/location_service.dart';
 import 'package:nsapp/core/utils/media_utils.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/utils/date_utils_helper.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -178,15 +179,15 @@ class Helpers {
     return DateUtilsHelper.selectBirthDate(context);
   }
 
-  static Future<void> selectImageFromGallery() async {
+  static Future<XFile?> selectImageFromGallery() async {
     return MediaUtils.selectImageFromGallery();
   }
 
-  static Future<void> selectImagesFromGallery() async {
+  static Future<List<XFile>?> selectImagesFromGallery() async {
     return MediaUtils.selectImagesFromGallery();
   }
 
-  static Future<void> selectImageFromCamera() async {
+  static Future<XFile?> selectImageFromCamera() async {
     return MediaUtils.selectImageFromCamera();
   }
 

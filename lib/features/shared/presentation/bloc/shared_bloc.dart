@@ -207,7 +207,7 @@ class SharedBloc extends HydratedBloc<SharedEvent, SharedState> {
         )),
         (r) {
           emit(SuccessGetMyNotificationsState(
-            notifications: Future.value(r),
+            notifications: r,
             unreadCount: r.where((n) => n.notification?.isRead == false).length,
             isProvider: _isProvider,
             themeMode: _themeMode,
@@ -634,6 +634,3 @@ class SharedBloc extends HydratedBloc<SharedEvent, SharedState> {
     };
   }
 }
-
-
-

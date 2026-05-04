@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 
@@ -33,8 +34,14 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
 
   Future<void> _fetchDirections() async {
     try {
-      final destinationLat = RequestDirectionState.lastRequest.latitude ?? 0.0;
-      final destinationLng = RequestDirectionState.lastRequest.longitude ?? 0.0;
+      final state = context.read<ProviderBloc>().state;
+      double destinationLat = 0.0;
+      double destinationLng = 0.0;
+
+      if (state is RequestDirectionState) {
+        destinationLat = state.request.latitude ?? 0.0;
+        destinationLng = state.request.longitude ?? 0.0;
+      }
 
       final results = await LocationService.getFullDirections(
         lat: destinationLat,

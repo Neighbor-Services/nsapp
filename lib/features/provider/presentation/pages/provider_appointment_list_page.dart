@@ -101,170 +101,165 @@ class _ProviderAppointmentListPageState
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: state is SuccessGetAppointmentsState 
-                      ? FutureBuilder<List<AppointmentData>>(
-                        future: state.appointments,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: LoadingWidget());
-                          }
-                          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Center(
-                              child: EmptyWidget(
-                                message: "No appointments found",
-                                height: 200.h,
-                              ),
-                            );
-                          }
+                    child: () {
+                      List<AppointmentData> appointments = [];
+                      if (state is SuccessGetAppointmentsState) {
+                        appointments = state.appointments;
+                      }
 
-                          final appointments = snapshot.data!;
-                          return ListView.separated(
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: appointments.length,
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 16.h),
-                            itemBuilder: (context, index) {
-                              final data = appointments[index];
-                              final appt = data.appointment;
-                              if (appt == null) return const SizedBox.shrink();
+                      if (state is LoadingProviderState && appointments.isEmpty) {
+                        return const Center(child: LoadingWidget());
+                      }
 
-                              return Container(
-                                margin: EdgeInsets.only(bottom: 0),
-                                child: GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: () {
-                                    Get.bottomSheet(
-                                      AppointmentDetailBottomSheet(data: data),
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                    );
-                                  },
-                                  child: SolidContainer(
-                                    padding: EdgeInsets.all(20.r),
-                                    borderColor: context.appColors.glassBorder,
-                                    borderWidth: 1.5.r,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                      if (appointments.isEmpty) {
+                        return Center(
+                          child: EmptyWidget(
+                            message: "No appointments found",
+                            height: 200.h,
+                          ),
+                        );
+                      }
+
+                      return ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: appointments.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 16.h),
+                        itemBuilder: (context, index) {
+                          final data = appointments[index];
+                          final appt = data.appointment;
+                          if (appt == null) return const SizedBox.shrink();
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 0),
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                Get.bottomSheet(
+                                  AppointmentDetailBottomSheet(data: data),
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.transparent,
+                                );
+                              },
+                              child: SolidContainer(
+                                padding: EdgeInsets.all(20.r),
+                                borderColor: context.appColors.glassBorder,
+                                borderWidth: 1.5.r,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              CustomTextWidget(
+                                                text: (appt.title ?? "No Title").toUpperCase(),
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: textColor,
+                                                letterSpacing: 0.5,
+                                              ),
+                                              SizedBox(height: 4.h),
+                                              Row(
                                                 children: [
+                                                  Icon(
+                                                    Icons
+                                                        .person_outline_rounded,
+                                                    size: 14.r,
+                                                    color: secondaryTextColor,
+                                                  ),
+                                                  SizedBox(width: 6.w),
                                                   CustomTextWidget(
-                                                    text: (appt.title ?? "No Title").toUpperCase(),
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: textColor,
-                                                    letterSpacing: 0.5,
+                                                    text:
+                                                        (data.user?.firstName ?? '').trim(),
+                                                    fontSize: 12.sp,
+                                                    color: secondaryTextColor,
                                                   ),
-                                                  SizedBox(height: 4.h),
-                                                  Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons
-                                                            .person_outline_rounded,
-                                                        size: 14.r,
-                                                        color: secondaryTextColor,
+                                                  if (data.role != null) ...[
+                                                    SizedBox(width: 12.w),
+                                                    Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                                                      decoration: BoxDecoration(
+                                                        color: context.appColors.primaryColor.withAlpha(30),
+                                                        borderRadius: BorderRadius.circular(6.r),
                                                       ),
-                                                      SizedBox(width: 6.w),
-                                                      CustomTextWidget(
-                                                        text:
-                                                            (data.user?.firstName ?? '').trim(),
-                                                        fontSize: 12.sp,
-                                                        color: secondaryTextColor,
-                                                      ),
-                                                      if (data.role != null) ...[
-                                                        SizedBox(width: 12.w),
-                                                        Container(
-                                                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                                                          decoration: BoxDecoration(
-                                                            color: context.appColors.primaryColor.withAlpha(30),
-                                                            borderRadius: BorderRadius.circular(6.r),
-                                                          ),
-                                                          child: Text(
-                                                            data.role!.toUpperCase(),
-                                                            style: TextStyle(
-                                                              fontSize: 8.sp,
-                                                              fontWeight: FontWeight.w500,
-                                                              color: context.appColors.primaryColor,
-                                                            ),
-                                                          ),
+                                                      child: Text(
+                                                        data.role!.toUpperCase(),
+                                                        style: TextStyle(
+                                                          fontSize: 8.sp,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: context.appColors.primaryColor,
                                                         ),
-                                                      ],
-                                                    ],
-                                                  ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ],
                                               ),
-                                            ),
-                                            _buildStatusBadge(appt, context),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                        SizedBox(height: 16.h),
-                                        Divider(color: dividerColor, height: 1.h),
-                                        SizedBox(height: 16.h),
-                                        Row(
+                                        _buildStatusBadge(appt, context),
+                                      ],
+                                    ),
+                                    SizedBox(height: 16.h),
+                                    Divider(color: dividerColor, height: 1.h),
+                                    SizedBox(height: 16.h),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(8.r),
+                                          decoration: BoxDecoration(
+                                            color: iconBgColor,
+                                            borderRadius: BorderRadius.circular(
+                                              10.r,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 12.w),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              padding: EdgeInsets.all(8.r),
-                                              decoration: BoxDecoration(
-                                                color: iconBgColor,
-                                                borderRadius: BorderRadius.circular(
-                                                  10.r,
-                                                ),
-                                              ),
-                                              child: Icon(
-                                                FontAwesomeIcons.calendar,
-                                                size: 16.r,
-                                                color: context.appColors.secondaryColor,
+                                            Text(
+                                              "SCHEDULED FOR",
+                                              style: TextStyle(
+                                                fontSize: 10.sp,
+                                                color: secondaryTextColor
+                                                    .withAlpha(180),
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: 0.5,
                                               ),
                                             ),
-                                            SizedBox(width: 12.w),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "SCHEDULED FOR",
-                                                  style: TextStyle(
-                                                    fontSize: 10.sp,
-                                                    color: secondaryTextColor
-                                                        .withAlpha(180),
-                                                    fontWeight: FontWeight.w500,
-                                                    letterSpacing: 0.5,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 2.h),
-                                                CustomTextWidget(
-                                                  text: appt.effectiveDate != null
-                                                      ? DateFormat(
-                                                          "MMM dd, yyyy • h:mm a",
-                                                        ).format(
-                                                          appt.effectiveDate!
-                                                              .toLocal(),
-                                                        )
-                                                      : "Date TBD",
-                                                  fontSize: 14.sp,
-                                                  color: textColor.withAlpha(220),
-                                                ),
-                                              ],
+                                            SizedBox(height: 2.h),
+                                            CustomTextWidget(
+                                              text: appt.effectiveDate != null
+                                                  ? DateFormat(
+                                                      "MMM dd, yyyy • h:mm a",
+                                                    ).format(
+                                                      appt.effectiveDate!
+                                                          .toLocal(),
+                                                    )
+                                                  : "Date TBD",
+                                              fontSize: 14.sp,
+                                              color: textColor.withAlpha(220),
                                             ),
                                           ],
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              );
-                            },
+                              ),
+                            ),
                           );
                         },
-                      )
-                    : const SizedBox.shrink(),
+                      );
+                    }(),
                   ),
                 ),
               ),

@@ -66,8 +66,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessDeleteRequestState) {
                 context.read<SeekerBloc>().add(
                   NavigateSeekerEvent(
-                    page: NavigatorSeekerState.lastPage,
-                    widget: SeekerRequestPage(),
+                    page: 3,
+                    widget: const SeekerRequestPage(),
                   ),
                 );
                 customAlert(
@@ -120,366 +120,368 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               }
             },
             builder: (context, state) {
-              return LoadingView(
-                isLoading: (state is LoadingSeekerState),
-                child: FutureBuilder<RequestData>(
-                  future: SuccessReloadRequestState.lastRequest,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(20.r),
-                              decoration: BoxDecoration(
-                                color: context.appColors.errorColor.withAlpha(20),
-                                shape: BoxShape.circle,
-                              ),
-                              child:  Icon(
-                                FontAwesomeIcons.circleExclamation,
-                                color: context.appColors.errorColor,
-                                size: 60.r,
-                              ),
-                            ),
-                            SizedBox(height: 24.h),
-                            Text(
-                              "Failed to load request details",
-                              style: TextStyle(
-                                color: textColor,
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 16.h),
-                            SolidButton(
-                              label: "Retry",
-                              onPressed: () {
-                                context.read<SeekerBloc>().add(
-                                  ReloadRequestEvent(
-                                    request:
-                                        SeekerRequestDetailState
-                                            .lastRequest
-                                            .request
-                                            ?.id ??
-                                        "",
-                                  ),
-                                );
-                              },
-                              isPrimary: true,
-                              height: 50.h,
-                              width: 120.w,
-                            ),
-                          ],
+              if (state is SuccessReloadRequestState) {
+                RequestData requestData = state.request;
+                return LoadingView(
+                  isLoading: false,
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 800.w),
+                      child: ListView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 20.h,
                         ),
-                      );
-                    }
-                    if (snapshot.hasData) {
-                      return Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 800.w),
-                          child: ListView(
-                            physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 20.h,
-                            ),
+                        children: [
+                          // Modified Header
+                          Row(
                             children: [
-                              // Modified Header
-                              Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      context.read<SeekerBloc>().add(
-                                        SeekerBackPressedEvent(),
-                                      );
-                                    },
-                                    child: Container(
+                              GestureDetector(
+                                onTap: () {
+                                  context.read<SeekerBloc>().add(
+                                    SeekerBackPressedEvent(),
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(12.r),
+                                  decoration: BoxDecoration(
+                                    color: buttonColor,
+                                    borderRadius: BorderRadius.circular(14.r),
+                                    border: Border.all(
+                                      color: borderColor,
+                                      width: 1.5.r,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    FontAwesomeIcons.chevronLeft,
+                                    color: textColor,
+                                    size: 20.r,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 16.w),
+                              Text(
+                                "REQUEST DETAILS",
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: textColor,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                              const Spacer(),
+                              _buildActionMenu(requestData, context),
+                            ],
+                          ),
+                          SizedBox(height: 24.h),
+
+                          // Request Info Card
+                          SolidContainer(
+                            padding: EdgeInsets.all(24.r),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
                                       padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
-                                        color: buttonColor,
-                                        borderRadius: BorderRadius.circular(14.r),
-                                        border: Border.all(
-                                          color: borderColor,
-                                          width: 1.5.r,
+                                        color:
+                                            context.appColors.primaryColor
+                                                .withAlpha(40),
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
                                         ),
                                       ),
                                       child: Icon(
-                                        FontAwesomeIcons.chevronLeft,
-                                        color: textColor,
-                                        size: 20.r,
+                                        FontAwesomeIcons.fileLines,
+                                        color: context.appColors.primaryColor,
+                                        size: 24.r,
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(width: 16.w),
-                                  Text(
-                                    "REQUEST DETAILS",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: textColor,
-                                      letterSpacing: 1.2,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  _buildActionMenu(snapshot.data!, context),
-                                ],
-                              ),
-                              SizedBox(height: 24.h),
-
-                              // Request Info Card
-                              SolidContainer(
-                                padding: EdgeInsets.all(24.r),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(12.r),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                context.appColors.primaryColor
-                                                    .withAlpha(40),
-                                            borderRadius: BorderRadius.circular(
-                                              8.r,
+                                    SizedBox(width: 8.w),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            (requestData
+                                                    .request
+                                                    ?.service
+                                                    ?.name ??
+                                                "Service Request").toUpperCase(),
+                                            style: TextStyle(
+                                              color: textColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 0.5,
                                             ),
                                           ),
-                                          child: Icon(
-                                            FontAwesomeIcons.fileLines,
-                                            color: context.appColors.primaryColor,
-                                            size: 24.r,
+                                          SizedBox(height: 4.h),
+                                          Text(
+                                            requestData
+                                                        .request
+                                                        ?.createdAt !=
+                                                    null
+                                                ? DateFormat(
+                                                    "EEEE, MMM d, yyyy",
+                                                  ).format(
+                                                    requestData
+                                                        .request!
+                                                        .createdAt!,
+                                                  )
+                                                : "",
+                                            style: TextStyle(
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: context.appColors.hintTextColor,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                (snapshot
-                                                        .data
-                                                        ?.request
-                                                        ?.service
-                                                        ?.name ??
-                                                    "Service Request").toUpperCase(),
-                                                style: TextStyle(
-                                                  color: textColor,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  letterSpacing: 0.5,
-                                                ),
-                                              ),
-                                              SizedBox(height: 4.h),
-                                              Text(
-                                                snapshot
-                                                            .data
-                                                            ?.request
-                                                            ?.createdAt !=
-                                                        null
-                                                    ? DateFormat(
-                                                        "EEEE, MMM d, yyyy",
-                                                      ).format(
-                                                        snapshot
-                                                            .data!
-                                                            .request!
-                                                            .createdAt!,
-                                                      )
-                                                    : "",
-                                                style: TextStyle(
-                                                  fontSize: 13.sp,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: context.appColors.hintTextColor,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        
-                                      ],
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Divider(
-                                      color: borderColor.withAlpha(50),
-                                      height: 1,
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Text(
-                                      (snapshot.data?.request?.title ?? "").toUpperCase(),
-                                      style: TextStyle(
-                                        color: textColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 0.5,
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      snapshot.data?.request?.description ??
-                                          snapshot.data?.request?.title ??
-                                          "",
-                                      style: TextStyle(
-                                        color: textColor,
-                                        fontSize: 15,
-                                        height: 1.6,
-                                      ),
-                                    ),
+                                    
                                   ],
                                 ),
-                              ),
-
-                              const SizedBox(height: 24),
-
-                              if (snapshot.data?.request?.withImage ?? false)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24),
-                                    border: Border.all(
-                                      color: borderColor,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(24),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        context.read<SharedBloc>().add(
-                                          SetViewImageEvent(
-                                            url:
-                                                snapshot
-                                                    .data!
-                                                    .request!
-                                                    .imageUrl ??
-                                                "",
-                                          ),
-                                        );
-                                        Get.toNamed("/image");
-                                      },
-                                      child: Hero(
-                                        tag:
-                                            'request_image_${snapshot.data!.request!.id}',
-                                        child: Image.network(
-                                          snapshot.data?.request?.imageUrl ??
-                                              "",
-                                          height: 350.h,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover,
-                                          loadingBuilder:
-                                              (
-                                                context,
-                                                child,
-                                                loadingProgress,
-                                              ) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                }
-                                                return Container(
-                                                  height: 350.h,
-                                                  color: buttonColor,
-                                                    child: const Center(
-                                                      child: SkeletonWidget(width: double.infinity, height: 350, borderRadius: 24),
-                                                  ),
-                                                );
-                                              },
-                                          errorBuilder: (context, _, __) =>
-                                              Container(
-                                                height: 350,
-                                                color: buttonColor,
-                                                child: const Icon(
-                                                  Icons
-                                                      .image_not_supported_rounded,
-                                                  color: Colors.white24,
-                                                  size: 50,
-                                                ),
-                                              ),
-                                        ),
-                                      ),
-                                    ),
+                                const SizedBox(height: 24),
+                                Divider(
+                                  color: borderColor.withAlpha(50),
+                                  height: 1,
+                                ),
+                                const SizedBox(height: 20),
+                                Text(
+                                  (requestData.request?.title ?? "").toUpperCase(),
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.5,
                                   ),
                                 ),
-
-                              const SizedBox(height: 32),
-
-                              Text(
-                                "INTERESTED PROVIDERS",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: textColor,
-                                  letterSpacing: 1.0,
+                                const SizedBox(height: 12),
+                                Text(
+                                  requestData.request?.description ??
+                                      requestData.request?.title ??
+                                      "",
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 15,
+                                    height: 1.6,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-
-                              FutureBuilder<List<RequestAcceptance>>(
-                                future: SuccessAcceptedUsersState.lastUsers,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    List<RequestAcceptance> acceptedProviders =
-                                        snapshot.data!;
-
-                                    // Check if any provider is approved
-                                    bool anyApproved = acceptedProviders.any((ap) {
-                                      var req = ap.acceptance?.request;
-                                      var usr = ap.provider?.user;
-                                      return (ap.acceptance?.isApproved == true) ||
-                                          (req?.approvedUser != null &&
-                                              req?.approvedUser == usr?.id);
-                                    });
-
-                                    // If any is approved, only show the approved one(s)
-                                    if (anyApproved) {
-                                      acceptedProviders = acceptedProviders.where((ap) {
-                                        var req = ap.acceptance?.request;
-                                        var usr = ap.provider?.user;
-                                        return (ap.acceptance?.isApproved == true) ||
-                                            (req?.approvedUser != null &&
-                                                req?.approvedUser == usr?.id);
-                                      }).toList();
-                                    }
-
-                                    if (acceptedProviders.isNotEmpty) {
-                                      return ListView.separated(
-                                        shrinkWrap: true,
-                                        primary: false,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: acceptedProviders.length,
-                                        separatorBuilder: (context, index) =>
-                                            SizedBox(height: 16.h),
-                                        itemBuilder: (context, index) {
-                                          return _buildAcceptedUserItem(
-                                            acceptedProviders[index],
-                                            context,
-                                            index,
-                                          );
-                                        },
-                                      );
-                                    } else {
-                                      return SolidContainer(
-                                        padding: EdgeInsets.all(40.r),
-                                        child: EmptyWidget(
-                                          message:
-                                              "No acceptance for your request yet!",
-                                          height: 150.h,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                  return const ListSkeletonLoader();
-                                },
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+
+                          const SizedBox(height: 24),
+
+                          if (requestData.request?.withImage ?? false)
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: borderColor,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(24),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    context.read<SharedBloc>().add(
+                                      SetViewImageEvent(
+                                        url:
+                                            requestData
+                                                .request!
+                                                .imageUrl ??
+                                            "",
+                                      ),
+                                    );
+                                    Get.toNamed("/image");
+                                  },
+                                  child: Hero(
+                                    tag:
+                                        'request_image_${requestData.request!.id}',
+                                    child: Image.network(
+                                      requestData.request?.imageUrl ??
+                                          "",
+                                      height: 350.h,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (
+                                            context,
+                                            child,
+                                            loadingProgress,
+                                          ) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            }
+                                            return Container(
+                                              height: 350.h,
+                                              color: buttonColor,
+                                                child: const Center(
+                                                  child: SkeletonWidget(width: double.infinity, height: 350, borderRadius: 24),
+                                              ),
+                                            );
+                                          },
+                                      errorBuilder: (context, _, __) =>
+                                          Container(
+                                            height: 350,
+                                            color: buttonColor,
+                                            child: const Icon(
+                                              Icons
+                                                  .image_not_supported_rounded,
+                                              color: Colors.white24,
+                                              size: 50,
+                                            ),
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          const SizedBox(height: 32),
+
+                          Text(
+                            "INTERESTED PROVIDERS",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: textColor,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          BlocBuilder<SeekerBloc, SeekerState>(
+                            builder: (context, state) {
+                              List<RequestAcceptance> acceptedProviders = [];
+                              if (state is SuccessAcceptedUsersState) {
+                                acceptedProviders = state.users;
+                              } else if (state is SeekerRequestDetailState) {
+                                // Fallback or initial state
+                              }
+
+                              // Check if any provider is approved
+                              bool anyApproved = acceptedProviders.any((ap) {
+                                var req = ap.acceptance?.request;
+                                var usr = ap.provider?.user;
+                                return (ap.acceptance?.isApproved == true) ||
+                                    (req?.approvedUser != null &&
+                                        req?.approvedUser == usr?.id);
+                              });
+
+                              // If any is approved, only show the approved one(s)
+                              if (anyApproved) {
+                                acceptedProviders = acceptedProviders.where((ap) {
+                                  var req = ap.acceptance?.request;
+                                  var usr = ap.provider?.user;
+                                  return (ap.acceptance?.isApproved == true) ||
+                                      (req?.approvedUser != null &&
+                                          req?.approvedUser == usr?.id);
+                                }).toList();
+                              }
+
+                              if (acceptedProviders.isNotEmpty) {
+                                return ListView.separated(
+                                  shrinkWrap: true,
+                                  primary: false,
+                                  physics:
+                                      const NeverScrollableScrollPhysics(),
+                                  itemCount: acceptedProviders.length,
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(height: 16.h),
+                                  itemBuilder: (context, index) {
+                                    return _buildAcceptedUserItem(
+                                      acceptedProviders[index],
+                                      context,
+                                      index,
+                                      state
+                                    );
+                                  },
+                                );
+                              } else if (state is LoadingSeekerState) {
+                                return const ListSkeletonLoader();
+                              } else {
+                                return SolidContainer(
+                                  padding: EdgeInsets.all(40.r),
+                                  child: EmptyWidget(
+                                    message:
+                                        "No acceptance for your request yet!",
+                                    height: 150.h,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              } else if (state is LoadingSeekerState) {
+                return const ProfileSkeletonLoader();
+              } else if (state is FailureReloadRequestState) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(20.r),
+                        decoration: BoxDecoration(
+                          color: context.appColors.errorColor.withAlpha(20),
+                          shape: BoxShape.circle,
                         ),
-                      );
-                    } else {
-                      return const ListSkeletonLoader();
-                    }
-                  },
-                ),
-              );
+                        child: Icon(
+                          FontAwesomeIcons.circleExclamation,
+                          color: context.appColors.errorColor,
+                          size: 60.r,
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                      Text(
+                        state.message ?? "",
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                      SolidButton(
+                        label: "Retry",
+                        onPressed: () {
+                          final currentState = context.read<SeekerBloc>().state;
+                          String? rId;
+                          if (currentState is SeekerRequestDetailState) {
+                            rId = currentState.request.request?.id;
+                          } else if (currentState is SuccessReloadRequestState) {
+                            rId = currentState.request.request?.id;
+                          } else if (currentState is FailureReloadRequestState) {
+                            // If we failed, we might still have the ID from the previous event or arguments
+                            // For now, let's try to get it from the state if possible
+                          }
+                          
+                          if (rId != null) {
+                            context.read<SeekerBloc>().add(
+                              ReloadRequestEvent(request: rId),
+                            );
+                          }
+                        },
+                        isPrimary: true,
+                        height: 50.h,
+                        width: 120.w,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return const ProfileSkeletonLoader();
             },
           ),
         ),
@@ -772,6 +774,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     RequestAcceptance acceptedProvider,
     BuildContext context,
     int index,
+    SeekerState state
   ) {
     final provider = acceptedProvider.provider;
     final textColor = context.appColors.primaryTextColor;
@@ -836,7 +839,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildApprovalButton(acceptedProvider, context),
+              _buildApprovalButton(acceptedProvider, context, state),
               SizedBox(width: 4.w),
               _buildAcceptedUserMenu(acceptedProvider, context),
             ],
@@ -849,6 +852,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
   Widget _buildApprovalButton(
     RequestAcceptance acceptedProvider,
     BuildContext context,
+    SeekerState state
   ) {
     var request = acceptedProvider.acceptance?.request;
     var provider = acceptedProvider.provider;
@@ -861,7 +865,9 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     if (isApproved) {
       return IconButton(
         onPressed: () {
-          final requestId = SeekerRequestDetailState.lastRequest.request?.id;
+          final requestId = (state is SuccessReloadRequestState) 
+              ? state.request.request?.id 
+              : (state is SeekerRequestDetailState) ? state.request.request?.id : null;
           if (requestId != null) {
             context.read<SeekerBloc>().add(
               CancelApprovedRequestEvent(request: requestId),
@@ -889,7 +895,9 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
       }
       return IconButton(
         onPressed: () {
-          final requestId = SeekerRequestDetailState.lastRequest.request?.id;
+          final requestId = (state is SuccessReloadRequestState) 
+              ? state.request.request?.id 
+              : (state is SeekerRequestDetailState) ? state.request.request?.id : null;
           final proposalId = acceptedProvider.acceptance?.id;
           final userId = user?.id ?? provider?.id ?? "unknown";
 
@@ -1158,6 +1166,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             }
                           },
                           height: 50.h,
+                          textColor: Colors.white,
                         ),
                       ),
                     ],

@@ -125,61 +125,51 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                     }
 
                     if (state is SuccessSearchProviderState) {
-                      return FutureBuilder<List<Profile>>(
-                        future: SuccessSearchProviderState.lastProviders,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(child: LoadingWidget());
-                          }
+                      final providers = state.providers;
 
-                          final providers = snapshot.data ?? [];
-
-                          if (providers.isEmpty) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    FontAwesomeIcons.magnifyingGlass,
-                                    size: 80.r,
-                                    color: secondaryTextColor.withAlpha(60),
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  Text(
-                                    "No providers found",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: secondaryTextColor,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    "Try searching for a different service",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: secondaryTextColor.withAlpha(100),
-                                    ),
-                                  ),
-                                ],
+                      if (providers.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                FontAwesomeIcons.magnifyingGlass,
+                                size: 80.r,
+                                color: secondaryTextColor.withAlpha(60),
                               ),
-                            );
-                          }
+                              SizedBox(height: 16.h),
+                              Text(
+                                "No providers found",
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  color: secondaryTextColor,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                "Try searching for a different service",
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: secondaryTextColor.withAlpha(100),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-                          return ListView.separated(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 16.h,
-                            ),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: providers.length,
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 16.h),
-                            itemBuilder: (context, index) {
-                              final profile = providers[index];
-                              return _buildProviderCard(context, profile);
-                            },
-                          );
+                      return ListView.separated(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 16.h,
+                        ),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: providers.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 16.h),
+                        itemBuilder: (context, index) {
+                          final profile = providers[index];
+                          return _buildProviderCard(context, profile);
                         },
                       );
                     }

@@ -55,7 +55,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.house,
                                 label: 'Home',
-                                isActive: NavigatorProviderState.lastPage == 1,
+                                isActive: (state is NavigatorProviderState) ? state.page == 1 : true,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -71,8 +71,8 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
                                 label: 'Notifications',
-                                isActive: NavigatorProviderState.lastPage == 2,
-                                badgeCount: SuccessGetMyNotificationsState.lastUnreadCount,
+                                isActive: (state is NavigatorProviderState) ? state.page == 2 : false,
+                                badgeCount: (sharedState is SuccessGetMyNotificationsState) ? sharedState.unreadCount : 0,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -89,9 +89,8 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
                                 label: 'Chat',
-                                isActive: NavigatorProviderState.lastPage == 4,
-                                badgeCount:
-                                    SuccessGetMyMessagesState.lastUnreadMessageCount,
+                                isActive: (state is NavigatorProviderState) ? state.page == 4 : false,
+                                badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(
@@ -107,7 +106,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.calendar,
                                 label: 'Appointments',
-                                isActive: NavigatorProviderState.lastPage == 5,
+                                isActive: (state is NavigatorProviderState) ? state.page == 5 : false,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(

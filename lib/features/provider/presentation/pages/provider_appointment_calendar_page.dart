@@ -269,121 +269,117 @@ class _ProviderAppointmentCalendarPageState
     Color textColor,
     Color secondaryTextColor,
   ) {
-    return FutureBuilder<List<AppointmentData>>(
-      future: (state is SuccessGetAppointmentsState) ? state.appointments : Future.value([]),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          events.clear();
-          for (var data in snapshot.data!) {
-            AppointmentData appointmentData = data;
-            final appt = appointmentData.appointment;
-            if (appt == null) continue;
-            final isSeeker = appointmentData.role == 'seeker';
-            events.add(
-              CalendarEventData(
-                event: appt.id,
-                title: appt.title ?? 'Appointment',
-                date: appt.effectiveDate ?? DateTime.now(),
-                description: appt.description,
-                startTime: appt.effectiveDate,
-                color: isSeeker
-                    ? context.appColors.secondaryColor
-                    : context.appColors.primaryColor,
-              ),
-            );
-          }
-          final borderColor = context.appColors.glassBorder;
+    List<AppointmentData> appointments = [];
+    if (state is SuccessGetAppointmentsState) {
+      appointments = state.appointments;
+    }
 
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: CalendarControllerProvider(
-              controller: EventController()..addAll(events),
-              child: SolidContainer(
-                child: MonthView(
-                  borderColor: borderColor,
-                  cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
-                    return FilledCell(
-                      date: date,
-                      shouldHighlight: isToday,
-                      backgroundColor: isInMonth
-                          ? context.appColors.cardBackground
-                          : context.appColors.primaryBackground,
-                      events: events,
-                      isInMonth: isInMonth,
-                      hideDaysNotInMonth: hideDaysNotInMonth,
-                      titleColor: isInMonth
-                          ? context.appColors.primaryTextColor
-                          : context.appColors.secondaryTextColor,
-                      highlightColor: context.appColors.secondaryColor,
-                      tileColor: context.appColors.secondaryColor,
-                      onTileTap: (event, date) {
-                        Get.bottomSheet(
-                          _buildEventDetailsSheet(event, context, isDark),
-                          isScrollControlled: true,
-                          barrierColor: Colors.black.withAlpha(150),
-                        );
-                      },
-                    );
-                  },
-                  weekDayBuilder: (day) {
-                    return Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(vertical: 10.h),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(color: borderColor, width: 0.5.r),
-                      ),
-                      child: Text(
-                        ["M", "T", "W", "T", "F", "S", "S"][day],
-                        style: TextStyle(
-                          color: context.appColors.primaryTextColor,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    );
-                  },
-                  onCellTap: (events, date) {
-                    setState(() {
-                      _calendarSelectedDate = date;
-                      appointmentDate = date;
-                      dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(date);
-                    });
-                    
-                    if (events.isNotEmpty) {
-                      Get.bottomSheet(
-                        _buildEventDetailsSheet(events[0], context, isDark),
-                        isScrollControlled: true,
-                        barrierColor: Colors.black.withAlpha(150),
-                      );
-                    }
-                  },
-                  onEventTap: (event, date) {
-                    Get.bottomSheet(
-                      _buildEventDetailsSheet(event, context, isDark),
-                      isScrollControlled: true,
-                      barrierColor: Colors.black.withAlpha(150),
-                    );
-                  },
-                  headerStyle: HeaderStyle(
-                    headerTextStyle: TextStyle(
-                      color: textColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18.sp,
-                      letterSpacing: 0.5,
-                    ),
-                    decoration: const BoxDecoration(color: Colors.transparent),
-                    leftIconConfig: IconDataConfig(color: textColor),
-                    rightIconConfig: IconDataConfig(color: textColor),
+    events.clear();
+    for (var data in appointments) {
+      AppointmentData appointmentData = data;
+      final appt = appointmentData.appointment;
+      if (appt == null) continue;
+      final isSeeker = appointmentData.role == 'seeker';
+      events.add(
+        CalendarEventData(
+          event: appt.id,
+          title: appt.title ?? 'Appointment',
+          date: appt.effectiveDate ?? DateTime.now(),
+          description: appt.description,
+          startTime: appt.effectiveDate,
+          color: isSeeker
+              ? context.appColors.secondaryColor
+              : context.appColors.primaryColor,
+        ),
+      );
+    }
+    final borderColor = context.appColors.glassBorder;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: CalendarControllerProvider(
+        controller: EventController()..addAll(events),
+        child: SolidContainer(
+          child: MonthView(
+            borderColor: borderColor,
+            cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+              return FilledCell(
+                date: date,
+                shouldHighlight: isToday,
+                backgroundColor: isInMonth
+                    ? context.appColors.cardBackground
+                    : context.appColors.primaryBackground,
+                events: events,
+                isInMonth: isInMonth,
+                hideDaysNotInMonth: hideDaysNotInMonth,
+                titleColor: isInMonth
+                    ? context.appColors.primaryTextColor
+                    : context.appColors.secondaryTextColor,
+                highlightColor: context.appColors.secondaryColor,
+                tileColor: context.appColors.secondaryColor,
+                onTileTap: (event, date) {
+                  Get.bottomSheet(
+                    _buildEventDetailsSheet(event, context, isDark),
+                    isScrollControlled: true,
+                    barrierColor: Colors.black.withAlpha(150),
+                  );
+                },
+              );
+            },
+            weekDayBuilder: (day) {
+              return Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(color: borderColor, width: 0.5.r),
+                ),
+                child: Text(
+                  ["M", "T", "W", "T", "F", "S", "S"][day],
+                  style: TextStyle(
+                    color: context.appColors.primaryTextColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12.sp,
                   ),
                 ),
+              );
+            },
+            onCellTap: (events, date) {
+              setState(() {
+                _calendarSelectedDate = date;
+                appointmentDate = date;
+                dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(date);
+              });
+              
+              if (events.isNotEmpty) {
+                Get.bottomSheet(
+                  _buildEventDetailsSheet(events[0], context, isDark),
+                  isScrollControlled: true,
+                  barrierColor: Colors.black.withAlpha(150),
+                );
+              }
+            },
+            onEventTap: (event, date) {
+              Get.bottomSheet(
+                _buildEventDetailsSheet(event, context, isDark),
+                isScrollControlled: true,
+                barrierColor: Colors.black.withAlpha(150),
+              );
+            },
+            headerStyle: HeaderStyle(
+              headerTextStyle: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 18.sp,
+                letterSpacing: 0.5,
               ),
+              decoration: const BoxDecoration(color: Colors.transparent),
+              leftIconConfig: IconDataConfig(color: textColor),
+              rightIconConfig: IconDataConfig(color: textColor),
             ),
-          );
-        } else {
-          return const Center(child: LoadingWidget());
-        }
-      },
+          ),
+        ),
+      ),
     );
   }
 
@@ -441,145 +437,148 @@ class _ProviderAppointmentCalendarPageState
                 SizedBox(height: 16.h),
                 
                 // Linked Request Details
-                FutureBuilder<List<AppointmentData>>(
-                  future: (state is SuccessGetAppointmentsState) ? state.appointments : Future.value([]),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox();
-                    try {
-                      final appointmentData = snapshot.data!.firstWhere(
-                        (element) =>
-                            element.appointment?.id == data.event.toString(),
-                      );
-                      final appt = appointmentData.appointment!;
-                      final req = appt.serviceRequest;
+                // Linked Request Details
+                () {
+                  List<AppointmentData> appointments = [];
+                  if (state is SuccessGetAppointmentsState) {
+                    appointments = state.appointments;
+                  }
 
-                      if (req == null) return const SizedBox();
+                  try {
+                    final appointmentData = appointments.firstWhere(
+                      (element) =>
+                          element.appointment?.id == data.event.toString(),
+                    );
+                    final appt = appointmentData.appointment!;
+                    final req = appt.serviceRequest;
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Divider(height: 32.h),
-                          CustomTextWidget(
-                            text: "LINKED REQUEST",
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
-                            color: context.appColors.secondaryTextColor,
-                            letterSpacing: 1.0,
-                          ),
-                          SizedBox(height: 16.h),
+                    if (req == null) return const SizedBox();
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(height: 32.h),
+                        CustomTextWidget(
+                          text: "LINKED REQUEST",
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14.sp,
+                          color: context.appColors.secondaryTextColor,
+                          letterSpacing: 1.0,
+                        ),
+                        SizedBox(height: 16.h),
+                        _buildDetailRow(
+                          FontAwesomeIcons.fileLines,
+                          "ORIGINAL TITLE",
+                          req.title ?? "N/A",
+                          isDark,
+                        ),
+                        _buildDetailRow(
+                          FontAwesomeIcons.list,
+                          "SERVICE",
+                          req.service?.name ?? "N/A",
+                          isDark,
+                        ),
+                        if (req.price != null)
                           _buildDetailRow(
+                            FontAwesomeIcons.creditCard,
+                            "REQUEST PRICE",
+                            "\$${req.price}",
+                            isDark,
+                          ),
+                        if (req.description != null && req.description!.isNotEmpty)
+                           _buildDetailRow(
                             FontAwesomeIcons.fileLines,
-                            "ORIGINAL TITLE",
-                            req.title ?? "N/A",
+                            "REQ. DESCRIPTION",
+                            req.description!,
                             isDark,
                           ),
-                          _buildDetailRow(
-                            FontAwesomeIcons.list,
-                            "SERVICE",
-                            req.service?.name ?? "N/A",
-                            isDark,
-                          ),
-                          if (req.price != null)
-                            _buildDetailRow(
-                              FontAwesomeIcons.creditCard,
-                              "REQUEST PRICE",
-                              "\$${req.price}",
-                              isDark,
-                            ),
-                          if (req.description != null && req.description!.isNotEmpty)
-                             _buildDetailRow(
-                              FontAwesomeIcons.fileLines,
-                              "REQ. DESCRIPTION",
-                              req.description!,
-                              isDark,
-                            ),
-                          SizedBox(height: 12.h),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton.icon(
-                              onPressed: () {
-                                Get.back();
-                                final requestData = RequestData(
-                                  request: req,
-                                  user: appointmentData.user,
-                                );
-                                context.read<ProviderBloc>().add(
-                                  RequestDetailEvent(request: requestData),
-                                );
-                                context.read<ProviderBloc>().add(
-                                  ReloadProfileEvent(request: requestData.request!.id!),
-                                );
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: 1,
-                                    widget: const ProviderRequestDetailPage(),
-                                  ),
-                                );
-                              },
-                              icon: Icon(
-                                FontAwesomeIcons.arrowUpRightFromSquare,
-                                size: 18.r,
-                                color: context.appColors.primaryColor,
-                              ),
-                              label: Text(
-                                "VIEW FULL DETAILS",
-                                  style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: context.appColors.primaryColor,
-                                  letterSpacing: 0.5,
+                        SizedBox(height: 12.h),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            onPressed: () {
+                              Get.back();
+                              final requestData = RequestData(
+                                request: req,
+                                user: appointmentData.user,
+                              );
+                              context.read<ProviderBloc>().add(
+                                RequestDetailEvent(request: requestData),
+                              );
+                              context.read<ProviderBloc>().add(
+                                ReloadProfileEvent(request: requestData.request!.id!),
+                              );
+                              context.read<ProviderBloc>().add(
+                                NavigateProviderEvent(
+                                  page: 1,
+                                  widget: const ProviderRequestDetailPage(),
                                 ),
+                              );
+                            },
+                            icon: Icon(
+                              FontAwesomeIcons.arrowUpRightFromSquare,
+                              size: 18.r,
+                              color: context.appColors.primaryColor,
+                            ),
+                            label: Text(
+                              "VIEW FULL DETAILS",
+                                style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                                color: context.appColors.primaryColor,
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ),
-                          Divider(height: 32.h),
-                        ],
-                      );
-                    } catch (e) {
-                      return const SizedBox();
-                    }
-                  },
-                ),
+                        ),
+                        Divider(height: 32.h),
+                      ],
+                    );
+                  } catch (e) {
+                    return const SizedBox();
+                  }
+                }(),
 
                 SizedBox(height: 16.h),
 
                 // Escrow Action for Provider
-                FutureBuilder<List<AppointmentData>>(
-                  future: (state is SuccessGetAppointmentsState) ? state.appointments : Future.value([]),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox();
-                    try {
-                      final appointmentData = snapshot.data!.firstWhere(
-                        (element) =>
-                            element.appointment?.id == data.event.toString(),
-                      );
-                      final appt = appointmentData.appointment!;
+                () {
+                  List<AppointmentData> appointments = [];
+                  if (state is SuccessGetAppointmentsState) {
+                    appointments = state.appointments;
+                  }
 
-                      if (appt.isFunded == true && appt.status != 'COMPLETED') {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 16.h),
-                          child: SolidButton(
-                            onPressed: () {
-                              context.read<ProviderBloc>().add(
-                                CompleteAppointmentEvent(
-                                  id: appt.id!,
-                                  amount: appt.totalPrice ?? 0,
-                                ),
-                              );
-                              Get.back();
-                            },
-                            icon: FontAwesomeIcons.circleCheck,
-                            label: "Mark as Completed",
-                            height: 55.h,
-                          ),
-                        );
-                      }
-                      return const SizedBox();
-                    } catch (e) {
-                      return const SizedBox();
+                  try {
+                    final appointmentData = appointments.firstWhere(
+                      (element) =>
+                          element.appointment?.id == data.event.toString(),
+                    );
+                    final appt = appointmentData.appointment!;
+
+                    if (appt.isFunded == true && appt.status != 'COMPLETED') {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 16.h),
+                        child: SolidButton(
+                          onPressed: () {
+                            context.read<ProviderBloc>().add(
+                              CompleteAppointmentEvent(
+                                id: appt.id!,
+                                amount: appt.totalPrice ?? 0,
+                              ),
+                            );
+                            Get.back();
+                          },
+                          icon: FontAwesomeIcons.circleCheck,
+                          label: "Mark as Completed",
+                          height: 55.h,
+                        ),
+                      );
                     }
-                  },
-                ),
+                    return const SizedBox();
+                  } catch (e) {
+                    return const SizedBox();
+                  }
+                }(),
 
                 SolidButton(
                   onPressed: () {
@@ -597,7 +596,7 @@ class _ProviderAppointmentCalendarPageState
                   onPressed: () async {
                     try {
                       final list = (state is SuccessGetAppointmentsState) 
-                          ? await state.appointments 
+                          ?  state.appointments 
                           : <AppointmentData>[];
                       final appointmentData = list.firstWhere(
                         (element) =>

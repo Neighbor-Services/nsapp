@@ -34,7 +34,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                     minScale: 0.5,
                     maxScale: 5,
                     child: CachedNetworkImage(
-                      imageUrl: ViewImageState.lastUrl,
+                      imageUrl: state is ViewImageState ? state.url : "",
                       fit: BoxFit.contain,
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) => Center(

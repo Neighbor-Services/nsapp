@@ -49,19 +49,13 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
           if (state is SuccessSearchProviderState) {
             // Providers loaded — handled in builder
           }
-          if (state is SuccessGetMyFavoritesNoFutureState) {
+          if (state is SuccessGetMyFavoritesState) {
             setState(() {}); // Refresh to update favorite icons
           }
         },
         builder: (context, state) {
-          // Extract providers list reactively
-          if (state is SuccessSearchProviderState &&
-              state.providers != null) {
-            // We use a FutureBuilder for SuccessSearchProviderState since providers is still a Future
-          }
-
           // Extract favorites list reactively for favorite checks
-          final favorites = state is SuccessGetMyFavoritesNoFutureState
+          final favorites = state is SuccessGetMyFavoritesState
               ? state.profiles
               : <Favorite>[];
 
@@ -105,105 +99,88 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         });
                       },
                     ),
-                    SizedBox(height: 20.h),
-                    Expanded(
-                      child: state is SuccessSearchProviderState
-                          ? FutureBuilder<List<Profile>>(
-                              future: state.providers,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  if (providers.isEmpty &&
-                                      snapshot.data!.isNotEmpty) {
-                                    // Cache providers for local search
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                      if (mounted) {
-                                        setState(() {
-                                          providers = snapshot.data!;
-                                        });
-                                      }
-                                    });
-                                  }
-
-                                  final List<Profile> displayList =
-                                      isSearching
-                                          ? searchedProviders
-                                          : snapshot.data!;
-
-                                  if (isSearching && displayList.isEmpty) {
-                                    return Center(
-                                      child: SolidContainer(
-                                        padding: EdgeInsets.all(24),
-                                        child: EmptyWidget(
-                                          message:
-                                              "No provider matches your search",
-                                          height: 200,
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  if (displayList.isNotEmpty) {
-                                    return GridView.builder(
-                                      physics:
-                                          const BouncingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            crossAxisSpacing: 16.w,
-                                            mainAxisSpacing: 16.h,
-                                            childAspectRatio: 0.75,
-                                          ),
-                                      itemCount: displayList.length,
-                                      itemBuilder: (context, index) {
-                                        return TweenAnimationBuilder<double>(
-                                          tween: Tween(
-                                            begin: 0.0,
-                                            end: 1.0,
-                                          ),
-                                          duration: Duration(
-                                            milliseconds: 300 + (index * 100),
-                                          ),
-                                          curve: Curves.easeOut,
-                                          builder: (context, value, child) {
-                                            return Transform.translate(
-                                              offset:
-                                                  Offset(0, 30 * (1 - value)),
-                                              child: Opacity(
-                                                opacity: value,
-                                                child: child,
-                                              ),
-                                            );
-                                          },
-                                          child: _buildProviderCard(
-                                            displayList[index],
-                                            context,
-                                            favorites,
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    return Center(
-                                      child: SolidContainer(
-                                        padding: EdgeInsets.all(24),
-                                        child: EmptyWidget(
-                                          message: "No providers found",
-                                          height: 200,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                } else {
-                                  return const Center(
-                                    child: LoadingWidget(),
-                                  );
+                    SizedBox(height: 20.h),                    Expanded(
+                      child: Builder(
+                        builder: (context) {
+                          if (state is SuccessSearchProviderState) {
+                            final List<Profile> stateProviders = state.providers;
+                            if (providers.isEmpty && stateProviders.isNotEmpty) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (mounted) {
+                                  setState(() {
+                                    providers = stateProviders;
+                                  });
                                 }
+                              });
+                            }
+                          }
+
+                          if (providers.isEmpty && state is LoadingSeekerState) {
+                            return const Center(child: LoadingWidget());
+                          }
+
+                          final List<Profile> displayList =
+                              isSearching ? searchedProviders : providers;
+
+                          if (isSearching && displayList.isEmpty) {
+                            return Center(
+                              child: SolidContainer(
+                                padding: EdgeInsets.all(24),
+                                child: EmptyWidget(
+                                  message: "No provider matches your search",
+                                  height: 200,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (displayList.isNotEmpty) {
+                            return GridView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 16.w,
+                                mainAxisSpacing: 16.h,
+                                childAspectRatio: 0.75,
+                              ),
+                              itemCount: displayList.length,
+                              itemBuilder: (context, index) {
+                                return TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 0.0, end: 1.0),
+                                  duration: Duration(milliseconds: 300 + (index * 100)),
+                                  curve: Curves.easeOut,
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, 30 * (1 - value)),
+                                      child: Opacity(opacity: value, child: child),
+                                    );
+                                  },
+                                  child: _buildProviderCard(
+                                    displayList[index],
+                                    context,
+                                    favorites,
+                                  ),
+                                );
                               },
-                            )
-                          : const Center(child: LoadingWidget()),
+                            );
+                          } else if (state is SuccessSearchProviderState || providers.isNotEmpty) {
+                             return Center(
+                              child: SolidContainer(
+                                padding: EdgeInsets.all(24),
+                                child: EmptyWidget(
+                                  message: "No providers found",
+                                  height: 200,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return const Center(child: LoadingWidget());
+                        },
+                      ),
                     ),
+
                   ],
                 ),
               ),
@@ -474,7 +451,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
         borderRadius: BorderRadius.circular(50),
         backgroundColor: Colors.black.withAlpha(50),
         child: Icon(
-          FontAwesomeIcons.heart,
+          isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
           color: isFav ? context.appColors.errorColor : Colors.white,
           size: 18,
         ),

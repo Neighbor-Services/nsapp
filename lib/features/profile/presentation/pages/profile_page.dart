@@ -27,7 +27,6 @@ class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  Future<Profile>? _profileFuture;
 
   @override
   void initState() {
@@ -101,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage>
         ],
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
-            if (state is LoadingProfileState && _profileFuture == null) {
+            if (state is LoadingProfileState) {
               return const ProfileSkeletonLoader();
             }
 
@@ -110,102 +109,87 @@ class _ProfilePageState extends State<ProfilePage>
             }
 
             if (state is SuccessGetProfileStreamState) {
-              _profileFuture = state.profile;
-            }
+              Profile profile = state.profile;
+              final isProvider = Helpers.isProvider(profile.userType);
 
-            if (_profileFuture == null) {
-              return const ProfileSkeletonLoader();
-            }
-
-            return FutureBuilder<Profile>(
-              future: _profileFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  Profile profile = snapshot.data!;
-                  final isProvider = Helpers.isProvider(profile.userType);
-
-                  return GradientBackground(
-                    child: SafeArea(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 600.w),
-                          child: FadeTransition(
-                            opacity: _fadeAnimation,
-                            child: ListView(
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: isLargeScreen ? 32.w : 20.w,
-                                vertical: 24.h,
-                              ),
+              return GradientBackground(
+                child: SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 600.w),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isLargeScreen ? 32.w : 20.w,
+                            vertical: 24.h,
+                          ),
+                          children: [
+                            // Back & Edit Buttons
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                               children: [
-                                // Back & Edit Buttons
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => Navigator.pop(context),
-                                      child: Container(
-                                        padding: EdgeInsets.all(12.r),
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.circular(12.r),
-                                          border: Border.all(
-                                            color: context.appColors.glassBorder,
-                                            width: 1.5.r,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          FontAwesomeIcons.chevronLeft,
-                                          color: context.appColors.primaryTextColor,
-                                          size: 20.r,
-                                        ),
+                                GestureDetector(
+                                  onTap: () => Navigator.pop(context),
+                                  child: Container(
+                                    padding: EdgeInsets.all(12.r),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
+                                        width: 1.5.r,
                                       ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () => Get.toNamed("/edit-profile"),
-                                      child: Container(
-                                        padding: EdgeInsets.all(12.r),
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.circular(12.r),
-                                          border: Border.all(
-                                            color: context.appColors.glassBorder,
-                                            width: 1.5.r,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          FontAwesomeIcons.penToSquare,
-                                          color: context.appColors.primaryTextColor,
-                                          size: 20.r,
-                                        ),
-                                      ),
+                                    child: Icon(
+                                      FontAwesomeIcons.chevronLeft,
+                                      color: context.appColors.primaryTextColor,
+                                      size: 20.r,
                                     ),
-                                  ],
+                                  ),
                                 ),
-                                SizedBox(height: 32.h),
-
-                                // Profile Header
-                                _buildProfileHeader(profile, isProvider),
-                                SizedBox(height: 32.h),
-
-                                // Info Section
-                                _buildInfoSection(profile),
-                                SizedBox(height: 24.h),
+                                GestureDetector(
+                                  onTap: () => Get.toNamed("/edit-profile"),
+                                  child: Container(
+                                    padding: EdgeInsets.all(12.r),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
+                                        width: 1.5.r,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      FontAwesomeIcons.penToSquare,
+                                      color: context.appColors.primaryTextColor,
+                                      size: 20.r,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
+                            SizedBox(height: 32.h),
+
+                            // Profile Header
+                            _buildProfileHeader(profile, isProvider),
+                            SizedBox(height: 32.h),
+
+                            // Info Section
+                            _buildInfoSection(profile),
+                            SizedBox(height: 24.h),
+                          ],
                         ),
                       ),
                     ),
-                  );
-                } else if (snapshot.hasError) {
-                   return _buildErrorUI(snapshot.error.toString());
-                } else {
-                  return const ProfileSkeletonLoader();
-                }
-              },
-            );
+                  ),
+                ),
+              );
+            }
+
+            return const ProfileSkeletonLoader();
           },
         ),
       ),
@@ -244,9 +228,6 @@ class _ProfilePageState extends State<ProfilePage>
               SizedBox(height: 32.h),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _profileFuture = null;
-                  });
                   _fetchProfile();
                 },
                 style: ElevatedButton.styleFrom(

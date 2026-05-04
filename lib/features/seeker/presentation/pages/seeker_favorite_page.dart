@@ -171,7 +171,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
     Color textColor,
     Color secondaryTextColor,
   ) {
-    if (state is SuccessGetMyFavoritesNoFutureState) {
+    if (state is SuccessGetMyFavoritesState) {
       if (state.profiles.isNotEmpty) {
         return ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(
@@ -407,6 +407,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
       ),
     );
   }
+
 
   Widget _buildActionButton({
     required IconData icon,

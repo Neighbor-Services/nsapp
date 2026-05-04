@@ -82,25 +82,24 @@ class _AddAboutPageState extends State<AddAboutPage> {
           } else if (state is FailureAddAboutState) {
             customAlert(context, AlertType.error, "Failed To Create Portfolio");
           } else if (state is SuccessGetAboutStreamState) {
-            state.about.then((aboutData) {
-              if (aboutData.user != null) {
-                isSet = true;
-                aboutID = aboutData.about?.id ?? "";
-              }
-              companyNameController.text = aboutData.about?.name ?? "";
-              addressController.text = aboutData.about?.address ?? "";
-              specificationController.text =
-                  aboutData.about?.specification ?? "";
-              descriptionController.text = aboutData.about?.description ?? "";
-              experienceController.text =
-                  (aboutData.about?.experienceYears ?? 0).toString();
-              skillsController.text = (aboutData.about?.skills ?? []).join(
-                ", ",
-              );
-              educationController.text = aboutData.about?.education ?? "";
-              languagesController.text = (aboutData.about?.languages ?? [])
-                  .join(", ");
-            });
+            final aboutData = state.about;
+            if (aboutData.user != null) {
+              isSet = true;
+              aboutID = aboutData.about?.id ?? "";
+            }
+            companyNameController.text = aboutData.about?.name ?? "";
+            addressController.text = aboutData.about?.address ?? "";
+            specificationController.text =
+                aboutData.about?.specification ?? "";
+            descriptionController.text = aboutData.about?.description ?? "";
+            experienceController.text =
+                (aboutData.about?.experienceYears ?? 0).toString();
+            skillsController.text = (aboutData.about?.skills ?? []).join(
+              ", ",
+            );
+            educationController.text = aboutData.about?.education ?? "";
+            languagesController.text = (aboutData.about?.languages ?? [])
+                .join(", ");
           }
         },
         builder: (context, state) {

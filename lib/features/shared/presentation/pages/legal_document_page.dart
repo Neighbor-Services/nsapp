@@ -186,8 +186,12 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
       );
     }
 
-    final List<LegalDocument> docs = SuccessGetLegalDocumentState.lastDocuments;
-    if (docs.isEmpty) {
+    List<LegalDocument> docs = [];
+    if (state is SuccessGetLegalDocumentState) {
+      docs = state.documents;
+    }
+
+    if (docs.isEmpty && state is! SharedLoadingState) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

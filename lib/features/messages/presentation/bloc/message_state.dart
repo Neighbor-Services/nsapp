@@ -48,18 +48,13 @@ class MessageImageState extends MessageState {
 class ClearedImageState extends MessageState {}
 
 class SuccessGetMyMessagesState extends MessageState {
-  static int lastUnreadMessageCount = 0;
-  static Future<List<Chat>> lastMyMessages = Future.value([]);
   final List<Chat> myMessages;
   final int unreadMessageCount;
   
   SuccessGetMyMessagesState({
     required this.myMessages,
     required this.unreadMessageCount,
-  }) {
-    SuccessGetMyMessagesState.lastUnreadMessageCount = unreadMessageCount;
-    SuccessGetMyMessagesState.lastMyMessages = Future.value(myMessages);
-  }
+  });
 }
 
 class FailureGetMyMessagesState extends MessageState {
@@ -99,5 +94,3 @@ final class FailureSetSeenMessageState extends MessageState {
   final String message;
   FailureSetSeenMessageState({required this.message});
 }
-
-

@@ -7,39 +7,25 @@ final class ProviderInitial extends ProviderState {}
 final class LoadingProviderState extends ProviderState {}
 
 class NavigatorProviderState extends ProviderState {
-  static Widget lastWidget = const ProviderHomePage();
-  static int lastPage = 1;
   final Widget widget;
   final int page;
 
-  NavigatorProviderState({this.widget = const ProviderHomePage(), this.page = 1}) {
-    NavigatorProviderState.lastWidget = widget;
-    NavigatorProviderState.lastPage = page;
-  }
+  NavigatorProviderState({this.widget = const ProviderHomePage(), this.page = 1});
 }
 
 class ProviderVisitedPagesState extends ProviderState {
-  static List<VisitedPages> lastPages = [];
   final List<VisitedPages> pages;
-  ProviderVisitedPagesState({required this.pages}) {
-    ProviderVisitedPagesState.lastPages = pages;
-  }
+  ProviderVisitedPagesState({required this.pages});
 }
 
 class SuccessGetRecentRequestState extends ProviderState {
-  static Future<List<RequestData>>? lastMyRequests;
-  final Future<List<RequestData>> myRequests;
-  SuccessGetRecentRequestState({required this.myRequests}) {
-    SuccessGetRecentRequestState.lastMyRequests = myRequests;
-  }
+  final List<RequestData> myRequests;
+  SuccessGetRecentRequestState({required this.myRequests});
 }
 
 class SuccessGetAcceptRequestState extends ProviderState {
-  static Future<List<RequestAcceptance>>? lastAccepts;
-  final Future<List<RequestAcceptance>> accepts;
-  SuccessGetAcceptRequestState({required this.accepts}) {
-    SuccessGetAcceptRequestState.lastAccepts = accepts;
-  }
+  final List<RequestAcceptance> accepts;
+  SuccessGetAcceptRequestState({required this.accepts});
 }
 
 class FailureGetAcceptRequestState extends ProviderState {
@@ -60,22 +46,17 @@ class FailureGetRecentRequestState extends ProviderState {
 class ReloadState extends ProviderState {}
 
 class RequestDetailState extends ProviderState {
-  static RequestData? lastRequestData;
   final RequestData requestData;
-  RequestDetailState({required this.requestData}) {
-    RequestDetailState.lastRequestData = requestData;
-  }
+  RequestDetailState({required this.requestData});
 }
 
 class RequestDirectionState extends ProviderState {
-  static Request lastRequest = Request();
   final Request request;
-  RequestDirectionState({required this.request}) {
-    RequestDirectionState.lastRequest = request;
-  }
+  RequestDirectionState({required this.request});
 }
 
-class SuccessRequestAcceptState extends ProviderState {}
+class SuccessRequestAcceptState extends ProviderState {
+}
 
 class FailureRequestAcceptState extends ProviderState {
   final String? message;
@@ -114,11 +95,8 @@ class SuccessAddServicePackageState extends ProviderState {
 }
 
 class SuccessGetRequestDetailState extends ProviderState {
-  static RequestData? lastRequest;
   final RequestData request;
-  SuccessGetRequestDetailState({required this.request}) {
-    SuccessGetRequestDetailState.lastRequest = request;
-  }
+  SuccessGetRequestDetailState({required this.request});
 }
 
 class FailureAddServicePackageState extends ProviderState {
@@ -137,35 +115,23 @@ class FailureSearchRequestState extends ProviderState {
 }
 
 class SuccessGetAppointmentsState extends ProviderState {
-  static Future<List<AppointmentData>>? lastAppointments;
-  final Future<List<AppointmentData>> appointments;
-  SuccessGetAppointmentsState({required this.appointments}) {
-    SuccessGetAppointmentsState.lastAppointments = appointments;
-  }
+  final List<AppointmentData> appointments;
+  SuccessGetAppointmentsState({required this.appointments});
 }
 
 class SuccessGetRequestsState extends ProviderState {
-  static Future<List<RequestData>>? lastRequests;
-  final Future<List<RequestData>> requests;
-  SuccessGetRequestsState({required this.requests}) {
-    SuccessGetRequestsState.lastRequests = requests;
-  }
+  final List<RequestData> requests;
+  SuccessGetRequestsState({required this.requests});
 }
 
 class SuccessSearchRequestState extends ProviderState {
-  static Future<List<RequestData>>? lastRequests;
-  final Future<List<RequestData>> requests;
-  SuccessSearchRequestState({required this.requests}) {
-    SuccessSearchRequestState.lastRequests = requests;
-  }
+  final List<RequestData> requests;
+  SuccessSearchRequestState({required this.requests});
 }
 
 class SuccessGetTargetedRequestsState extends ProviderState {
-  static Future<List<RequestData>>? lastRequests;
-  final Future<List<RequestData>> requests;
-  SuccessGetTargetedRequestsState({required this.requests}) {
-    SuccessGetTargetedRequestsState.lastRequests = requests;
-  }
+  final List<RequestData> requests;
+  SuccessGetTargetedRequestsState({required this.requests});
 }
 
 class FailureGetTargetedRequestsState extends ProviderState {
@@ -212,6 +178,3 @@ class FailureVerifyAppointmentCodeState extends ProviderState {
   final String? message;
   FailureVerifyAppointmentCodeState({this.message});
 }
-
-
-

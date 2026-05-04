@@ -26,22 +26,20 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    final profile = SuccessGetProfileState.lastProfile;
-    if (profile.user?.id != null) {
-      Helpers.createStripeCustomer(userId: profile.user!.id!);
-    }
-
-    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
-    context.read<SharedBloc>().add(ConnectNotificationSocketEvent());
-    context.read<SharedBloc>().add(GetTokenEvent());
-    
     final profileState = context.read<ProfileBloc>().state;
     if (profileState is SuccessGetProfileState) {
+      if (profileState.profile.user?.id != null) {
+        Helpers.createStripeCustomer(userId: profileState.profile.user!.id!);
+      }
       if (Helpers.isProvider(profileState.profile.userType)) {
         context.read<SharedBloc>().add(SharedBlocReloadEvent("PROVIDER"));
         context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
       }
     }
+
+    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
+    context.read<SharedBloc>().add(ConnectNotificationSocketEvent());
+    context.read<SharedBloc>().add(GetTokenEvent());
   }
 
   @override

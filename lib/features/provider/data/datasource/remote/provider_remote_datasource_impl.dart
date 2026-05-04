@@ -16,10 +16,13 @@ import '../../../../../core/constants/urls.dart';
 import '../../../../../core/helpers/helpers.dart';
 
 class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
+  final Dio _dio;
+
+  ProviderRemoteDatasourceImpl(this._dio);
   @override
   Future<bool> verifyAppointmentCode(String appointmentId, String code) async {
     final token = await Helpers.getString("token");
-    final response = await dio.post(
+    final response = await _dio.post(
       "$baseUrl/interactions/appointments/$appointmentId/verify_code/",
       data: {'code': code},
       options: Options(headers: dioHeaders(token)),
@@ -56,7 +59,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         params['service'] = catalogServiceId;
       }
 
-      final response = await dio.get(
+      final response = await _dio.get(
         url,
         queryParameters: params,
         options: Options(headers: dioHeaders(token)),
@@ -100,7 +103,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   }) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseRequestUrl/services/proposals/",
         data: json.encode({"service_request": requestId}),
         options: Options(headers: dioHeaders(token)),
@@ -121,7 +124,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   }) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseRequestUrl/services/proposals/$requestId/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -139,7 +142,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   Future<bool> isRequestAccepted({required String requestID, String? uid}) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseRequestUrl/services/proposals/?service_request=$requestID",
         options: Options(headers: dioHeaders(token)),
       );
@@ -171,7 +174,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   Future<List<RequestAcceptance>?> getAcceptedRequest() async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         // expand=request means Django should inline the full ServiceRequest
         // object — no separate hydration calls needed.
         "$baseRequestUrl/services/proposals/?provider_me=true&expand=request",
@@ -203,7 +206,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   Future<RequestData?> getRequestById({required String id}) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseRequestUrl/services/requests/$id/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -233,7 +236,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     try {
       final token = await Helpers.getString("token");
       debugPrint("Appointment Payload: ${json.encode(appointment.toJson())}");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/appointments/",
         data: json.encode(appointment.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -260,7 +263,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
     try {
       final token = await Helpers.getString("token");
 
-      final response = dio.get(
+      final response = _dio.get(
         "$baseUrl/interactions/appointments/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -331,7 +334,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         params['catalog_service'] = catalogServiceId;
       }
 
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseRequestUrl/services/requests/",
         queryParameters: params,
         options: Options(headers: dioHeaders(token)),
@@ -372,7 +375,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   Future<bool> cancelAppointment({required String id}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseUrl/interactions/appointments/$id/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -392,7 +395,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   Future<bool> updateAppointment({required Appointment appointment}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.patch(
+      final response = await _dio.patch(
         "$baseUrl/interactions/appointments/${appointment.id}/",
         data: json.encode(appointment.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -414,7 +417,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   }) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/appointments/$id/complete/",
         data: json.encode({"amount": amount}),
         options: Options(headers: dioHeaders(token)),
@@ -441,7 +444,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
         if (description != null) 'description': description,
       });
 
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/portfolio/",
         data: formData,
         options: Options(headers: dioMultiPartHeaders(token)),
@@ -460,7 +463,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   @override
   Future<ServicePackage> addServicePackage(ServicePackage package) async {
     final token = await Helpers.getString("token");
-    final response = await dio.post(
+    final response = await _dio.post(
       "$baseUrl/service-packages/",
       options: Options(headers: dioHeaders(token)),
       data: package.toJson(),
@@ -476,7 +479,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
 
   Future<List<ServicePackage>> getServicePackages() async {
     final token = await Helpers.getString("token");
-    final response = await dio.get(
+    final response = await _dio.get(
       "$baseUrl/service-packages/",
       options: Options(headers: dioHeaders(token)),
     );

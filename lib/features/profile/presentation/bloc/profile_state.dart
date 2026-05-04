@@ -1,6 +1,6 @@
 part of 'profile_bloc.dart';
 
-abstract class ProfileState {}
+sealed class ProfileState {}
 
 class InitialProfileState extends ProfileState {}
 
@@ -39,25 +39,22 @@ class SuccessUpdateProfileState extends ProfileState {}
 class SuccessUpdateTokenState extends ProfileState {}
 
 class SuccessGetProfileState extends ProfileState {
-  static Profile lastProfile = Profile();
   final Profile profile;
-  SuccessGetProfileState({required this.profile}) {
-    SuccessGetProfileState.lastProfile = profile;
-  }
+  SuccessGetProfileState({required this.profile});
 }
 
 class SuccessGetProfileStreamState extends ProfileState {
-  final Future<Profile> profile;
+  final Profile profile;
   SuccessGetProfileStreamState({required this.profile});
 }
 
 class SuccessGetAboutStreamState extends ProfileState {
-  final Future<AboutData> about;
+  final AboutData about;
   SuccessGetAboutStreamState({required this.about});
 }
 
 class SuccessGetReviewStreamState extends ProfileState {
-  final Future<List<ReviewData>> reviews;
+  final List<ReviewData> reviews;
   SuccessGetReviewStreamState({required this.reviews});
 }
 
@@ -122,19 +119,13 @@ class FailureAddReviewState extends ProfileState {
 }
 
 class PortfolioUserState extends ProfileState {
-  static String lastUserId = "";
   final String userId;
-  PortfolioUserState({required this.userId}) {
-    PortfolioUserState.lastUserId = userId;
-  }
+  PortfolioUserState({required this.userId});
 }
 
 class OtherServiceSelectState extends ProfileState {
-  static bool lastOthers = false;
   final bool others;
-  OtherServiceSelectState({required this.others}) {
-    OtherServiceSelectState.lastOthers = others;
-  }
+  OtherServiceSelectState({required this.others});
 }
 
 class SuccessInitiateBackgroundCheckState extends ProfileState {
@@ -146,5 +137,3 @@ class FailureInitiateBackgroundCheckState extends ProfileState {
   final String message;
   FailureInitiateBackgroundCheckState({required this.message});
 }
-
-

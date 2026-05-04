@@ -63,9 +63,9 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     });
     
     on<SelectImageFromGalleryEvent>((event, emit) async {
-      await Helpers.selectImageFromGallery();
-      if (image != null) {
-        emit(ImageProfileState(profilePicture: image));
+      final selectedImage = await Helpers.selectImageFromGallery();
+      if (selectedImage != null) {
+        emit(ImageProfileState(profilePicture: selectedImage));
       }
     });
 
@@ -74,16 +74,16 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     });
 
     on<SelectImagesFromGalleryEvent>((event, emit) async {
-      await Helpers.selectImagesFromGallery();
-      if (images != null && images!.isNotEmpty) {
-        emit(ImagesProfileState(images: images));
+      final selectedImages = await Helpers.selectImagesFromGallery();
+      if (selectedImages != null && selectedImages.isNotEmpty) {
+        emit(ImagesProfileState(images: selectedImages));
       }
     });
 
     on<SelectImageFromCameraEvent>((event, emit) async {
-      await Helpers.selectImageFromCamera();
-      if (image != null) {
-        emit(ImageProfileState(profilePicture: image));
+      final selectedImage = await Helpers.selectImageFromCamera();
+      if (selectedImage != null) {
+        emit(ImageProfileState(profilePicture: selectedImage));
       }
     });
 
@@ -93,9 +93,6 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
     on<AddProfileEvent>((event, emit) async {
       emit(LoadingProfileState());
-      if (event.profilePicturePath != null) {
-        image = XFile(event.profilePicturePath!);
-      }
       final results = await addProfileUseCase.call(event.profile);
       results.fold(
         (failure) => emit(FailureCreateProfileState(message: failure.message ?? 'Failed to create profile')),
@@ -140,9 +137,6 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
     on<UpdateProfileEvent>((event, emit) async {
       emit(LoadingProfileState());
-      if (event.profilePicturePath != null) {
-        image = XFile(event.profilePicturePath!);
-      }
       final results = await updateProfileUseCase.call(event.profile);
       results.fold(
         (failure) => emit(FailureUpdateProfileState(message: failure.message ?? 'Failed to update profile')),
@@ -159,7 +153,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
         (failure) => emit(FailureGetProfileStreamState(message: failure.message ?? 'Failed to fetch profile')),
         (success) {
           _cachedProfile = success;
-          emit(SuccessGetProfileStreamState(profile: Future.value(success)));
+          emit(SuccessGetProfileStreamState(profile: success));
         },
       );
     }, transformer: sequential());
@@ -182,7 +176,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           emit(FailureGetAboutState(message: failure.message ?? 'Failed to fetch about info'));
         },
         (success) {
-          emit(SuccessGetAboutStreamState(about: Future.value(success)));
+          emit(SuccessGetAboutStreamState(about: success));
         },
       );
     }, transformer: sequential());
@@ -194,7 +188,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           emit(FailureGetReviewsStreamState(message: failure.message ?? 'Failed to fetch reviews'));
         },
         (success) {
-          emit(SuccessGetReviewStreamState(reviews: Future.value(success)));
+          emit(SuccessGetReviewStreamState(reviews: success));
         },
       );
     }, transformer: sequential());
@@ -235,6 +229,10 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
       _cachedProfile = null;
       emit(InitialProfileState());
     });
+
+    on<AboutUserEvent>((event, emit) {
+      emit(PortfolioUserState(userId: event.userID));
+    });
   }
 
   @override
@@ -256,6 +254,3 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     return null;
   }
 }
-
-
-
