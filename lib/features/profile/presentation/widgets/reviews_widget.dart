@@ -77,7 +77,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
           child: Stack(
             children: [
               FutureBuilder<List<ReviewData>>(
-                future: state is SuccessGetReviewStreamState ? state.reviews : null,
+                future: state is SuccessGetReviewStreamState ? Future.value(state.reviews) : null,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const LoadingWidget();

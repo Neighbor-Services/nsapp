@@ -9,9 +9,9 @@ class AddProfileUseCase extends UseCase {
   AddProfileUseCase(this.repository);
 
   @override
-  Future<Either<Failure, bool>> call(profile) async {
+  Future<Either<Failure, bool>> call(params) async {
     try {
-      final results = await repository.createProfile(profile);
+      final results = await repository.createProfile(params.profile, profilePicturePath: params.profilePicturePath);
       return results.fold(
         (failure) => left(failure),
         (success) => right(success),

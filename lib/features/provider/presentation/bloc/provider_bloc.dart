@@ -22,6 +22,10 @@ import 'package:nsapp/features/provider/domain/usecase/add_portfolio_item_use_ca
 import 'package:nsapp/features/provider/domain/usecase/add_service_package_use_case.dart';
 import 'package:nsapp/features/provider/domain/usecase/verify_appointment_code_use_case.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
+import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
+import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_appointment_calendar_page.dart';
 import 'package:nsapp/core/models/service_package.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/core/models/request_search_params.dart';
@@ -157,7 +161,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       final results = await acceptRequestUseCase(event.requestAccept);
       results.fold(
         (l) => emit(FailureRequestAcceptState(message: l.message)),
-        (r) => emit(SuccessRequestAcceptState()),
+        (r) => emit(SuccessRequestAcceptState(requestAccept: event.requestAccept)),
       );
     });
 
@@ -166,7 +170,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       final results = await cancelRequestUseCase(event.requestAccept);
       results.fold(
         (l) => emit(FailureRequestCancelState(message: l.message)),
-        (r) => emit(SuccessRequestCancelState()),
+        (r) => emit(SuccessRequestCancelState(requestAccept: event.requestAccept)),
       );
     });
 
@@ -313,6 +317,27 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
             .toList();
       }
       
+      if (json.containsKey('currentPage')) {
+        _currentPage = json['currentPage'];
+        // Restore widget based on page
+        switch (_currentPage) {
+          case 2:
+            _currentWidget = const NotificationsPage();
+            break;
+          case 3:
+            _currentWidget = const ProviderAcceptedRequestPage();
+            break;
+          case 4:
+            _currentWidget = const MyMessagesPage();
+            break;
+          case 5:
+            _currentWidget = const ProviderAppointmentCalendarPage();
+            break;
+          default:
+            _currentWidget = const ProviderHomePage();
+        }
+        return NavigatorProviderState(widget: _currentWidget, page: _currentPage);
+      }
       return SuccessGetRecentRequestState(myRequests: _recentRequests);
     } catch (_) {
       return null;
@@ -326,6 +351,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       'allRequests': _allRequests.map((e) => e.toJson()).toList(),
       'myAcceptedRequests': _myAcceptedRequests.map((e) => e.toJson()).toList(),
       'appointments': _appointments.map((e) => e.toJson()).toList(),
+      'currentPage': _currentPage,
     };
   }
 }

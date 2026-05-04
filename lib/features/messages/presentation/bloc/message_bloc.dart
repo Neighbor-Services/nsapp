@@ -15,7 +15,6 @@ import 'package:nsapp/features/messages/domain/usecase/get_my_messages_use_case.
 import 'package:nsapp/features/messages/domain/usecase/reload_message_receiver_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/set_seen_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/update_message_use_case.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

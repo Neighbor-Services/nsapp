@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/service_package.dart';

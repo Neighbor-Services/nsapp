@@ -32,4 +32,11 @@ class ResetPasswordParams extends Params {
   ResetPasswordParams({required this.otp, required this.password});
 }
 
+class ProfileParams extends Params {
+  final dynamic profile;
+  final String? profilePicturePath;
+
+  ProfileParams({required this.profile, this.profilePicturePath});
+}
+
 

@@ -12,7 +12,6 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/appointment.dart';
@@ -206,7 +205,7 @@ class _ProviderAppointmentCalendarPageState
   void _handleAddToCalendar(ProviderState state, String appointmentId) async {
     try {
       final list = (state is SuccessGetAppointmentsState) 
-          ? await state.appointments 
+          ?  state.appointments 
           : <AppointmentData>[];
       final appointmentWrapper = list.firstWhere(
         (element) => element.appointment?.id == appointmentId,
@@ -878,7 +877,7 @@ class _ProviderAppointmentCalendarPageState
                 String? seekerId;
                 final providerState = context.read<ProviderBloc>().state;
                 if (providerState is SuccessGetAcceptRequestState) {
-                  final proposals = await providerState.accepts;
+                  final proposals = providerState.accepts;
                   try {
                     final selectedP = proposals.firstWhere(
                       (p) => p.acceptance?.id == selectedProposalId,
@@ -931,7 +930,7 @@ class _ProviderAppointmentCalendarPageState
     return BlocBuilder<ProviderBloc, ProviderState>(
       builder: (context, state) {
         return FutureBuilder<List<RequestAcceptance>>(
-          future: (state is SuccessGetAcceptRequestState) ? state.accepts : Future.value([]),
+          future: (state is SuccessGetAcceptRequestState) ? Future.value(state.accepts) : Future.value([]),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Padding(

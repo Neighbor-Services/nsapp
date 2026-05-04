@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
@@ -93,7 +92,10 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
     on<AddProfileEvent>((event, emit) async {
       emit(LoadingProfileState());
-      final results = await addProfileUseCase.call(event.profile);
+      final results = await addProfileUseCase.call(ProfileParams(
+        profile: event.profile,
+        profilePicturePath: event.profilePicturePath,
+      ));
       results.fold(
         (failure) => emit(FailureCreateProfileState(message: failure.message ?? 'Failed to create profile')),
         (success) => emit(SuccessCreateProfileState()),
@@ -137,7 +139,10 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
     on<UpdateProfileEvent>((event, emit) async {
       emit(LoadingProfileState());
-      final results = await updateProfileUseCase.call(event.profile);
+      final results = await updateProfileUseCase.call(ProfileParams(
+        profile: event.profile,
+        profilePicturePath: event.profilePicturePath,
+      ));
       results.fold(
         (failure) => emit(FailureUpdateProfileState(message: failure.message ?? 'Failed to update profile')),
         (success) {
@@ -228,10 +233,6 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<LogoutProfileEvent>((event, emit) {
       _cachedProfile = null;
       emit(InitialProfileState());
-    });
-
-    on<AboutUserEvent>((event, emit) {
-      emit(PortfolioUserState(userId: event.userID));
     });
   }
 

@@ -91,7 +91,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                 _refreshStatus(state.requestAccept.serviceRequestId);
               } else if (state is SuccessRequestCancelState) {
                 customAlert(context, AlertType.success, "Request Canceled");
-                // Note: state here doesn't have the requestId, we might need it from previous state
+                _refreshStatus(state.requestAccept.serviceRequestId);
               } else if (state is IsRequestAcceptedState) {
                 setState(() => _isAccepted = state.accepted);
               }

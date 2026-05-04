@@ -68,7 +68,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                 final profile = snapshot.data;
 
                 return FutureBuilder<AboutData>(
-                  future: state is SuccessGetAboutStreamState ? state.about : null,
+                  future: state is SuccessGetAboutStreamState ? Future.value(state.about) : null,
                   builder: (context, aboutSnapshot) {
                     if (!aboutSnapshot.hasData && profile == null) {
                       return const LoadingWidget();

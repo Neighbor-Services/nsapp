@@ -56,6 +56,8 @@ class RequestDirectionState extends ProviderState {
 }
 
 class SuccessRequestAcceptState extends ProviderState {
+  final RequestAccept requestAccept;
+  SuccessRequestAcceptState({required this.requestAccept});
 }
 
 class FailureRequestAcceptState extends ProviderState {
@@ -63,7 +65,10 @@ class FailureRequestAcceptState extends ProviderState {
   FailureRequestAcceptState({this.message});
 }
 
-class SuccessRequestCancelState extends ProviderState {}
+class SuccessRequestCancelState extends ProviderState {
+  final RequestAccept requestAccept;
+  SuccessRequestCancelState({required this.requestAccept});
+}
 
 class FailureRequestCancelState extends ProviderState {
   final String? message;

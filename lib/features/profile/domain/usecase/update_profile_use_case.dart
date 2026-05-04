@@ -10,9 +10,9 @@ class UpdateProfileUseCase extends UseCase {
   UpdateProfileUseCase(this.repository);
 
   @override
-  Future<Either<Failure, bool>> call(profile) async {
+  Future<Either<Failure, bool>> call(params) async {
     try {
-      final results = await repository.updateProfile(profile);
+      final results = await repository.updateProfile(params.profile, profilePicturePath: params.profilePicturePath);
       return results.fold(
         (failure) => left(failure),
         (success) => right(success),

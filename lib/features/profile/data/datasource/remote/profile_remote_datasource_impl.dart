@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
@@ -37,7 +36,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<bool> addProfile(Profile profile) async {
+  Future<bool> addProfile(Profile profile, {String? profilePicturePath}) async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.post(
@@ -46,11 +45,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
-        if (image != null) {
+        if (profilePicturePath != null) {
           final res = await _dio.patch(
             "$baseUrl/accounts/profile/picture/",
             data: FormData.fromMap({
-              "image": await MultipartFile.fromFile(image!.path),
+              "image": await MultipartFile.fromFile(profilePicturePath),
             }),
             options: Options(headers: dioMultiPartHeaders(token)),
           );
@@ -78,7 +77,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<bool> updateProfile(Profile profile) async {
+  Future<bool> updateProfile(Profile profile, {String? profilePicturePath}) async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.patch(
@@ -87,11 +86,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         data: json.encode(profile.toJson()),
       );
       if (response.statusCode == 200) {
-        if (image != null) {
+        if (profilePicturePath != null) {
           final res = await _dio.patch(
             "$baseUrl/accounts/profile/picture/",
             data: FormData.fromMap({
-              "image": await MultipartFile.fromFile(image!.path),
+              "image": await MultipartFile.fromFile(profilePicturePath),
             }),
             options: Options(headers: dioMultiPartHeaders(token)),
           );
@@ -298,7 +297,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         options: Options(headers: dioHeaders(token)),
         data: json.encode(data),
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         return true;
       }
       return false;

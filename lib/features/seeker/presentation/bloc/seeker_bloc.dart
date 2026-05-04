@@ -29,6 +29,10 @@ import 'package:nsapp/features/seeker/domain/usecase/remove_from_favorite_use_ca
 import 'package:nsapp/features/seeker/domain/usecase/search_provider_use_case.dart';
 import 'package:nsapp/features/seeker/domain/usecase/update_request_use_case.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
+import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
+import 'package:nsapp/features/seeker/presentation/pages/seeker_new_request_page.dart';
+import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
+import 'package:nsapp/features/seeker/presentation/pages/seeker_favorite_page.dart';
 
 import '../../../../core/models/visited_pages.dart';
 import 'package:nsapp/features/seeker/domain/usecase/match_providers_use_case.dart';
@@ -385,6 +389,27 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
             .map((e) => AppointmentData.fromJson(e))
             .toList();
       }
+      if (json.containsKey('currentPage')) {
+        _currentPage = json['currentPage'];
+        // Restore widget based on page
+        switch (_currentPage) {
+          case 2:
+            _currentWidget = const NotificationsPage();
+            break;
+          case 3:
+            _currentWidget = const SeekerNewRequestPage();
+            break;
+          case 4:
+            _currentWidget = const MyMessagesPage();
+            break;
+          case 5:
+            _currentWidget = const SeekerFavoritePage();
+            break;
+          default:
+            _currentWidget = const SeekerHomePage();
+        }
+        return NavigatorSeekerState(widget: _currentWidget, page: _currentPage);
+      }
       return SuccessGetMyRequestState(myRequests: _myRequests);
     } catch (_) {
       return null;
@@ -397,6 +422,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       'myRequests': _myRequests.map((e) => e.toJson()).toList(),
       'myFavorites': _myFavorites.map((e) => e.toJson()).toList(),
       'appointments': _appointments.map((e) => e.toJson()).toList(),
+      'currentPage': _currentPage,
     };
   }
 }

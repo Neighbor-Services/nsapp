@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/message.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/messages/data/datasource/remote/message_remote_datasource.dart';

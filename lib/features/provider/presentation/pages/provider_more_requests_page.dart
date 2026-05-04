@@ -84,13 +84,11 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
               isLoadingMore = false;
             });
             if (state is SuccessGetRequestsState) {
-              state.requests.then((value) {
-                if (value.length < (currentPage * 10)) {
-                  setState(() {
-                    hasReachedMax = true;
-                  });
-                }
-              });
+              if (state.requests.length < (currentPage * 10)) {
+                setState(() {
+                  hasReachedMax = true;
+                });
+              }
             }
           }
         },

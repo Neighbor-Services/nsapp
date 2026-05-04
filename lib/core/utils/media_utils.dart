@@ -1,5 +1,4 @@
 import 'package:image_picker/image_picker.dart';
-import 'package:nsapp/core/initialize/init.dart';
 
 class MediaUtils {
   static Future<XFile?> selectImageFromGallery() async {

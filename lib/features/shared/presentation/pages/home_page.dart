@@ -28,8 +28,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final profileState = context.read<ProfileBloc>().state;
     if (profileState is SuccessGetProfileState) {
-      if (profileState.profile.user?.id != null) {
-        Helpers.createStripeCustomer(userId: profileState.profile.user!.id!);
+      final userId = profileState.profile.user?.id;
+      if (userId != null) {
+        Helpers.createStripeCustomer(userId: userId);
       }
       if (Helpers.isProvider(profileState.profile.userType)) {
         context.read<SharedBloc>().add(SharedBlocReloadEvent("PROVIDER"));

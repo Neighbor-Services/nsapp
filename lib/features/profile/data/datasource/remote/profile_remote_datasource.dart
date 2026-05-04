@@ -4,11 +4,11 @@ import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/core/models/audit_log.dart';
 
 abstract class ProfileRemoteDataSource {
-  Future<bool> addProfile(Profile profile);
+  Future<bool> addProfile(Profile profile, {String? profilePicturePath});
   Future<bool> updateDeviceToken();
   Future<bool> addReview(Review review);
   Future<bool> addAbout(About about);
-  Future<bool> updateProfile(Profile profile);
+  Future<bool> updateProfile(Profile profile, {String? profilePicturePath});
   Future<bool> deleteProfile(String id);
   Future<List<Profile>> getProfiles();
   Future<Profile?> getProfile(String id);

@@ -25,9 +25,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> createProfile(Profile profile) async {
+  Future<Either<Failure, bool>> createProfile(Profile profile, {String? profilePicturePath}) async {
     try {
-      final isSuccess = await remoteDataSource.addProfile(profile);
+      final isSuccess = await remoteDataSource.addProfile(profile, profilePicturePath: profilePicturePath);
       if (isSuccess) {
         return right(true);
       }
@@ -38,9 +38,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> updateProfile(Profile profile) async {
+  Future<Either<Failure, bool>> updateProfile(Profile profile, {String? profilePicturePath}) async {
     try {
-      final isSuccess = await remoteDataSource.updateProfile(profile);
+      final isSuccess = await remoteDataSource.updateProfile(profile, profilePicturePath: profilePicturePath);
       if (isSuccess) {
         return right(true);
       }
