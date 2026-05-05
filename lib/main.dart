@@ -54,39 +54,37 @@ Future<void> main() async {
   HydratedBloc.storage = storage;
 
   
-      // Stripe Setup
-      Stripe.publishableKey = stripePublishableKey;
-      Stripe.merchantIdentifier = "merchant.flutter.stripe.test";
-      Stripe.urlScheme = 'flutterstripe';
-      await Stripe.instance.applySettings();
+  // Stripe Setup
+  Stripe.publishableKey = stripePublishableKey;
+  Stripe.merchantIdentifier = "merchant.flutter.stripe.test";
+  Stripe.urlScheme = 'flutterstripe';
+  await Stripe.instance.applySettings();
 
-      // Dio Setup
-      dio.options.baseUrl = baseUrl;
+  // Dio Setup
+  dio.options.baseUrl = baseUrl;
 
-      // Dependency Injection Init
-      await di.init();
+  // Dependency Injection Init
+  await di.init();
 
-      // Local Notifications Init
-      await LocalNotificationService.initialize();
+  // Local Notifications Init
+  await LocalNotificationService.initialize();
 
-      // Background Service Init (Android only)
-      await BackgroundNotificationService.initializeService();
+  // Background Service Init (Android only)
+  await BackgroundNotificationService.initializeService();
 
-      // Foreground WebSocket
-      BackgroundNotificationService.connectForeground();
+  // Foreground WebSocket
+  BackgroundNotificationService.connectForeground();
 
-      // Initialize Native Notification Token Listener (iOS)
-      DeviceTokenService.initialize();
+  // Initialize Native Notification Token Listener (iOS)
+  DeviceTokenService.initialize();
 
 
-      // Request Notifications Permission
-      await Permission.notification.request();
+  // Request Notifications Permission
+  await Permission.notification.request();
 
-      runApp(
-         const NeighborServiceApp(),
-      );
-    
-  
+  runApp(
+      const NeighborServiceApp(),
+  );
 }
 
 class NeighborServiceApp extends StatelessWidget {
