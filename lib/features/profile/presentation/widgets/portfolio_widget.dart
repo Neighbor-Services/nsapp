@@ -125,7 +125,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               icon: FontAwesomeIcons.hammer,
                               title: "SKILLS",
                               content: (aboutData.about!.skills as List).join(
-                                " • ",
+                                " | ",
                               ),
                             ),
                             SizedBox(height: 16.h),
@@ -136,7 +136,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               icon: FontAwesomeIcons.language,
                               title: "LANGUAGES",
                               content: (aboutData.about!.languages as List)
-                                  .join(" • "),
+                                  .join(" | "),
                             ),
                             SizedBox(height: 32.h),
                           ],

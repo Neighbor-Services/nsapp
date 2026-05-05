@@ -5,7 +5,7 @@ import 'package:nsapp/features/shared/domain/usecase/add_notification_use_case.d
 import 'package:nsapp/features/shared/domain/usecase/get_my_notifications_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/set_seen_notification_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_token_usecase.dart';
-import 'package:nsapp/core/services/notification_socket_service.dart';
+import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/models/notify.dart';
 import 'package:nsapp/core/services/local_notification_service.dart';
 
@@ -16,14 +16,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final AddNotificationUseCase addNotificationUseCase;
   final GetMyNotificationsUseCase getMyNotificationsUseCase;
   final SetSeenNotificationUseCase seenNotificationUseCase;
-  final NotificationSocketService notificationSocketService;
+  // Legacy service removed in favor of BackgroundNotificationService
   final GetTokenUsecase getTokenUsecase;
 
   NotificationBloc({
     required this.addNotificationUseCase,
     required this.getMyNotificationsUseCase,
     required this.seenNotificationUseCase,
-    required this.notificationSocketService,
     required this.getTokenUsecase,
   }) : super(NotificationInitial()) {
     on<AddNotificationEvent>((event, emit) async {
@@ -59,11 +58,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
 
     on<ConnectNotificationSocketEvent>((event, emit) async {
-      await notificationSocketService.connect();
+      await BackgroundNotificationService.connectForeground();
     });
 
     on<DisconnectNotificationSocketEvent>((event, emit) {
-      notificationSocketService.disconnect();
+      BackgroundNotificationService.disconnectForeground();
     });
 
     on<GetTokenEvent>((event, emit) async {

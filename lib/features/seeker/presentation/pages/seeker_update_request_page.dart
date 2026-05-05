@@ -13,9 +13,7 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart
 import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
 import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
+import 'package:nsapp/features/seeker/presentation/widgets/request_form_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -80,7 +78,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       locController.text = request.address ?? "";
       selectedScheduledTime = request.scheduledTime;
       scheduledTimeController.text = selectedScheduledTime != null
-          ? DateFormat("MMM dd, yyyy • h:mm a").format(selectedScheduledTime!)
+          ? DateFormat("MMM dd, yyyy | h:mm a").format(selectedScheduledTime!)
           : "";
       paymentMode = request.paymentMode ?? "IN_APP";
 
@@ -166,77 +164,20 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                                 children: [
                                   _buildHeader(context),
                                   SizedBox(height: 32.h),
-                                  SolidContainer(
-                                    padding: EdgeInsets.all(24.r),
-                                    child: Form(
-                                      key: _formKey,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          _buildLabel("Request Title"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: titleTextController,
-                                            hintText: "Update title",
-                                            prefixIcon: FontAwesomeIcons.heading,
-                                            validator: (val) => val!.isEmpty ? "Title is required" : null,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Description"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: descriptionTextController,
-                                            hintText: "Description",
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Service Category"),
-                                          SizedBox(height: 12.h),
-                                          _buildServicePicker(commonState),
-                                          if (seekerState is OtherServiceSelectState && seekerState.others) ...[
-                                            SizedBox(height: 24.h),
-                                            SolidTextField(
-                                              controller: categoryTextController,
-                                              hintText: "Enter custom service name",
-                                              label: "Custom Service",
-                                              prefixIcon: FontAwesomeIcons.penNib,
-                                              validator: (val) => val!.isEmpty ? "Service name is required" : null,
-                                            ),
-                                          ],
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Location"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: locController,
-                                            hintText: "Where is the service needed?",
-                                            prefixIcon: FontAwesomeIcons.locationDot,
-                                            readOnly: true,
-                                            onTap: () => _showLocationSheet(context),
-                                            validator: (val) => val!.isEmpty ? "Location is required" : null,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Schedule Time"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: scheduledTimeController,
-                                            hintText: "When should it start?",
-                                            prefixIcon: FontAwesomeIcons.calendarDay,
-                                            readOnly: true,
-                                            onTap: () => _selectDateTime(context),
-                                            validator: (val) => val!.isEmpty ? "Time is required" : null,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Payment Mode"),
-                                          SizedBox(height: 12.h),
-                                          _buildPaymentModeSelector(),
-                                          SizedBox(height: 40.h),
-                                          SolidButton(
-                                            label: "UPDATE REQUEST",
-                                            isPrimary: true,
-                                            onPressed: () => _submitUpdate(context),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  RequestFormWidget(
+                                    formKey: _formKey,
+                                    titleController: titleTextController,
+                                    descriptionController: descriptionTextController,
+                                    serviceTextController: categoryTextController,
+                                    locController: locController,
+                                    scheduledTimeController: scheduledTimeController,
+                                    servicePicker: _buildServicePicker(commonState),
+                                    isOtherServiceSelected: seekerState is OtherServiceSelectState && seekerState.others,
+                                    onLocationTap: () => _showLocationSheet(context),
+                                    onScheduleTap: () => _selectDateTime(context),
+                                    paymentModeSelector: _buildPaymentModeSelector(),
+                                    submitButtonLabel: "UPDATE REQUEST",
+                                    onSubmit: () => _submitUpdate(context),
                                   ),
                                 ],
                               ),
@@ -283,17 +224,6 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     );
   }
 
-  Widget _buildLabel(String label) {
-    return Text(
-      label.toUpperCase(),
-      style: TextStyle(
-        fontSize: 11.sp,
-        fontWeight: FontWeight.w500,
-        color: context.appColors.secondaryTextColor,
-        letterSpacing: 1.1,
-      ),
-    );
-  }
 
   Widget _buildServicePicker(CommonState state) {
     final services = state is SuccessGetServicesState ? state.services : <Service>[];
@@ -364,7 +294,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
             pickedTime.hour,
             pickedTime.minute,
           );
-          scheduledTimeController.text = DateFormat("MMM dd, yyyy • h:mm a").format(selectedScheduledTime!);
+          scheduledTimeController.text = DateFormat("MMM dd, yyyy | h:mm a").format(selectedScheduledTime!);
         });
       }
     }

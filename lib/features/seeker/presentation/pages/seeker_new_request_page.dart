@@ -9,11 +9,9 @@ import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
+import 'package:nsapp/features/seeker/presentation/widgets/request_form_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
@@ -171,81 +169,21 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                 children: [
                                   _buildHeader(),
                                   SizedBox(height: 32.h),
-                                  SolidContainer(
-                                    padding: EdgeInsets.all(24.r),
-                                    child: Form(
-                                      key: key,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          _buildLabel("Request Title"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: titleTextController,
-                                            hintText: "What do you need help with?",
-                                            prefixIcon: FontAwesomeIcons.heading,
-                                            validator: (val) => val!.isEmpty ? "Title is required" : null,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Description"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: descriptionTextController,
-                                            hintText: "Describe your request in detail...",
-                                            isMultiLine: true,
-                                            prefixIcon: FontAwesomeIcons.alignLeft,
-                                            validator: (val) => val!.isEmpty ? "Description is required" : null,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Service Category"),
-                                          SizedBox(height: 12.h),
-                                          _buildServicePicker(commonState),
-                                          if (context.watch<SeekerBloc>().state is OtherServiceSelectState &&
-                                              (context.watch<SeekerBloc>().state as OtherServiceSelectState).others) ...[
-                                            SizedBox(height: 24.h),
-                                            SolidTextField(
-                                              controller: serviceTextController,
-                                              hintText: "Enter custom service name",
-                                              label: "Custom Service",
-                                              prefixIcon: FontAwesomeIcons.penNib,
-                                              validator: (val) => val!.isEmpty ? "Service name is required" : null,
-                                            ),
-                                          ],
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Location"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: locController,
-                                            hintText: "Where is the service needed?",
-                                            prefixIcon: FontAwesomeIcons.locationDot,
-                                            readOnly: true,
-                                            onTap: () => _showLocationSheet(context),
-                                            validator: (val) => val!.isEmpty ? "Location is required" : null,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Schedule Time"),
-                                          SizedBox(height: 12.h),
-                                          SolidTextField(
-                                            controller: scheduledTimeController,
-                                            hintText: "When should it start?",
-                                            prefixIcon: FontAwesomeIcons.calendarDay,
-                                            readOnly: true,
-                                            onTap: () => _selectDateTime(context),
-                                            validator: (val) => val!.isEmpty ? "Time is required" : null,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Payment Mode"),
-                                          SizedBox(height: 12.h),
-                                          _buildPaymentModeSelector(),
-                                          SizedBox(height: 40.h),
-                                          SolidButton(
-                                            label: "CREATE REQUEST",
-                                            isPrimary: true,
-                                            onPressed: () => _handleCreateRequest(context),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  RequestFormWidget(
+                                    formKey: key,
+                                    titleController: titleTextController,
+                                    descriptionController: descriptionTextController,
+                                    serviceTextController: serviceTextController,
+                                    locController: locController,
+                                    scheduledTimeController: scheduledTimeController,
+                                    servicePicker: _buildServicePicker(commonState),
+                                    isOtherServiceSelected: context.watch<SeekerBloc>().state is OtherServiceSelectState &&
+                                              (context.watch<SeekerBloc>().state as OtherServiceSelectState).others,
+                                    onLocationTap: () => _showLocationSheet(context),
+                                    onScheduleTap: () => _selectDateTime(context),
+                                    paymentModeSelector: _buildPaymentModeSelector(),
+                                    submitButtonLabel: "CREATE REQUEST",
+                                    onSubmit: () => _handleCreateRequest(context),
                                   ),
                                 ],
                               ),
@@ -292,17 +230,6 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-  Widget _buildLabel(String label) {
-    return Text(
-      label.toUpperCase(),
-      style: TextStyle(
-        fontSize: 11.sp,
-        fontWeight: FontWeight.w500,
-        color: context.appColors.secondaryTextColor,
-        letterSpacing: 1.1,
-      ),
-    );
-  }
 
   Widget _buildServicePicker(CommonState state) {
     final services = state is SuccessGetServicesState ? state.services : <Service>[];

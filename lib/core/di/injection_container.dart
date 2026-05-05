@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nsapp/core/utils/dio_interceptor.dart';
 import 'package:nsapp/core/services/hive_service.dart';
-import 'package:nsapp/core/services/notification_socket_service.dart';
 import 'package:nsapp/features/authentications/data/datasource/remote/authentication_remote_data_source.dart';
 import 'package:nsapp/features/authentications/data/datasource/remote/authentication_remote_data_source_impl.dart';
 import 'package:nsapp/features/authentications/data/repository/authenication_repository_impl.dart';
@@ -118,7 +117,6 @@ import 'package:nsapp/features/shared/domain/usecase/search_place_use_case.dart'
 import 'package:nsapp/features/shared/domain/usecase/search_places_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/set_seen_notification_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_token_usecase.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_disputes_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_use_case.dart';
@@ -136,10 +134,6 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   // ! External
-  final prefs = await SharedPreferencesWithCache.create(
-    cacheOptions: const SharedPreferencesWithCacheOptions(),
-  );
-  sl.registerLazySingleton<SharedPreferencesWithCache>(() => prefs);
   sl.registerLazySingleton(() => const FlutterSecureStorage());
   sl.registerLazySingleton(() {
     final dio = Dio(
@@ -152,8 +146,7 @@ Future<void> init() async {
     return dio;
   });
   // sl.registerLazySingleton(() => InternetConnectionCheckerPlus());
-  sl.registerLazySingleton(() => NotificationSocketService());
-
+  // Legacy services removed
   final hiveService = HiveService();
   await hiveService.init();
   sl.registerLazySingleton(() => hiveService);
@@ -409,7 +402,6 @@ Future<void> init() async {
       addNotificationUseCase: sl(),
       getMyNotificationsUseCase: sl(),
       seenNotificationUseCase: sl(),
-      notificationSocketService: sl(),
       getTokenUsecase: sl(),
     ),
   );

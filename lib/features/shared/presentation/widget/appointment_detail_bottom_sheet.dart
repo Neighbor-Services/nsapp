@@ -54,7 +54,7 @@ class _AppointmentDetailBottomSheetState
     _codeController = TextEditingController();
     _scheduleController = TextEditingController(
       text: _selectedDate != null
-          ? DateFormat("EEEE, MMM dd, yyyy • h:mm a").format(_selectedDate!)
+          ? DateFormat("EEEE, MMM dd, yyyy | h:mm a").format(_selectedDate!)
           : "Date TBD",
     );
   }
@@ -273,7 +273,7 @@ class _AppointmentDetailBottomSheetState
                                 time.minute,
                               );
                               _scheduleController.text = DateFormat(
-                                "EEEE, MMM dd, yyyy • h:mm a",
+                                "EEEE, MMM dd, yyyy | h:mm a",
                               ).format(_selectedDate!);
                             });
                           }

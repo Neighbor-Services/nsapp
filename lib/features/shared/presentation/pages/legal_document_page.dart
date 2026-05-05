@@ -262,7 +262,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                           ),
                           SizedBox(height: 2.h),
                           Text(
-                            'Version ${doc.version}  •  Last updated ${_formatDate(doc.updatedAt)}',
+                            'Version ${doc.version}  |  Last updated ${_formatDate(doc.updatedAt)}',
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: subtitleColor,

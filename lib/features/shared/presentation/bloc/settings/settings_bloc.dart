@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/features/shared/domain/usecase/change_user_type_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/add_report_use_case.dart';
 export 'settings_event.dart';
@@ -32,15 +31,18 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
     });
 
     on<LoadThemeModeEvent>((event, emit) async {
-      final prefsInstance = await prefs;
-      final isDark = prefsInstance.getBool("darkmode");
+      final isDark = await Helpers.getBool("darkmode");
       ThemeMode mode;
+      // We check if it's explicitly set in Hive, otherwise we trust the state (or HydratedBloc)
+      // Actually, since it's a HydratedBloc, we can just rely on the restored state.
+      // But if we want to sync with Hive:
       if (isDark == true) {
         mode = ThemeMode.dark;
-      } else if (isDark == false) {
-        mode = ThemeMode.light;
       } else {
-        mode = ThemeMode.system;
+        // If not found or false, we can't be sure if it was 'system' or 'light'.
+        // But HydratedBloc will have restored the correct index in fromJson.
+        // So LoadThemeModeEvent might be redundant if HydratedBloc is working.
+        mode = state.themeMode;
       }
       emit(state.copyWith(themeMode: mode));
     });

@@ -244,7 +244,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               CustomTextWidget(
                                                 text: appt.effectiveDate != null
                                                     ? DateFormat(
-                                                        "MMM dd, yyyy • h:mm a",
+                                                        "MMM dd, yyyy | h:mm a",
                                                       ).format(
                                                         appt.effectiveDate!
                                                             .toLocal(),

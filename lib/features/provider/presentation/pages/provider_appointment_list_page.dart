@@ -239,7 +239,7 @@ class _ProviderAppointmentListPageState
                                             CustomTextWidget(
                                               text: appt.effectiveDate != null
                                                   ? DateFormat(
-                                                      "MMM dd, yyyy • h:mm a",
+                                                      "MMM dd, yyyy | h:mm a",
                                                     ).format(
                                                       appt.effectiveDate!
                                                           .toLocal(),

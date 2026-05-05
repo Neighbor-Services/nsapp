@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_directions/google_maps_directions.dart' as gmd;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/constants/urls.dart';
+import 'package:nsapp/core/di/injection_container.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/account_link.dart';
 import 'package:nsapp/core/models/customer.dart';
@@ -10,6 +11,7 @@ import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_distance.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/core/models/user_location.dart';
+import 'package:nsapp/core/services/hive_service.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:dio/dio.dart';
 import '../models/subscription.dart';
@@ -303,8 +305,8 @@ class Helpers {
 
   static Future<bool> saveBool(String key, bool value) async {
     try {
-      sharedPreferences = await prefs;
-      await sharedPreferences!.setBool(key, value);
+      final box = sl<HiveService>().getBox(HiveService.settingsBox);
+      await box.put(key, value);
       return true;
     } catch (e) {
       return false;
@@ -322,9 +324,10 @@ class Helpers {
 
   static Future<bool> deletePref(String key) async {
     try {
-      // Still remove from sharedPreferences for backward compatibility
-      sharedPreferences = await prefs;
-      await sharedPreferences!.remove(key);
+      // Clear from Hive if it exists
+      final box = sl<HiveService>().getBox(HiveService.settingsBox);
+      await box.delete(key);
+      // Clear from SecureStorage
       await _secureStorage.delete(key: key);
       return true;
     } catch (e) {
@@ -334,8 +337,8 @@ class Helpers {
 
   static Future<bool> getBool(String key) async {
     try {
-      sharedPreferences = await prefs;
-      return sharedPreferences!.getBool(key) ?? false;
+      final box = sl<HiveService>().getBox(HiveService.settingsBox);
+      return box.get(key) ?? false;
     } catch (e) {
       return false;
     }
@@ -347,14 +350,7 @@ class Helpers {
       if (secureValue != null && secureValue.isNotEmpty) {
         return secureValue;
       }
-      // Fallback for backward compatibility
-      sharedPreferences = await prefs;
-      final oldVal = sharedPreferences!.getString(key) ?? "";
-      if (oldVal.isNotEmpty) {
-        await saveString(key, oldVal);
-        await sharedPreferences!.remove(key);
-      }
-      return oldVal;
+      return "";
     } catch (e) {
       return "";
     }

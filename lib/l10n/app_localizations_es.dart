@@ -47,5 +47,3 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get requiredField => 'Este campo es obligatorio';
 }
-
-

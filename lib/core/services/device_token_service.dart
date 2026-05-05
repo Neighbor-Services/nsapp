@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:nsapp/core/constants/urls.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 
 class DeviceTokenService {
@@ -50,9 +50,8 @@ class DeviceTokenService {
 
   static Future<void> _handleTokenUpdate(String token, String platform) async {
     // Save it locally first
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("device_push_token", token);
-    await prefs.setString("device_platform", platform);
+    await Helpers.saveString("device_push_token", token);
+    await Helpers.saveString("device_platform", platform);
     
     // Attempt registration if user is already logged in
     await registerToken(token, platform);
@@ -60,19 +59,19 @@ class DeviceTokenService {
 
   /// Attempts to register a previously saved token (called after login)
   static Future<void> tryRegisterStoredToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("device_push_token");
-    final platform = prefs.getString("device_platform") ?? (Platform.isIOS ? 'IOS' : 'ANDROID');
-    if (token != null && token.isNotEmpty) {
-      await registerToken(token, platform);
+    final token = await Helpers.getString("device_push_token");
+    final platform = await Helpers.getString("device_platform");
+    final effectivePlatform = platform.isNotEmpty ? platform : (Platform.isIOS ? 'IOS' : 'ANDROID');
+    
+    if (token.isNotEmpty) {
+      await registerToken(token, effectivePlatform);
     }
   }
 
   /// Sends the device token to the Django backend
   static Future<void> registerToken(String token, String platform) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final userAuthToken = prefs.getString("token") ?? "";
+      final userAuthToken = await Helpers.getString("token");
 
       if (userAuthToken.isEmpty) {
         debugPrint("DEBUG [DeviceTokenService]: No user auth token yet. Skipping registration.");
