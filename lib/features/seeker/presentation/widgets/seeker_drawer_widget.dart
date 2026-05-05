@@ -10,7 +10,7 @@ import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_list
 import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/disputes_list_page.dart';
@@ -447,7 +447,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
-                                context.read<SharedBloc>().add(
+                                context.read<NotificationBloc>().add(
                                   DisconnectNotificationSocketEvent(),
                                 );
                                 context.read<AuthenticationBloc>().add(

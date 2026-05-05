@@ -6,7 +6,8 @@ import 'package:local_auth/local_auth.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -89,11 +90,11 @@ class _BiometricPageState extends State<BiometricPage> {
                   : null;
               if (profile?.firstName != null) {
                 if (Helpers.isProvider(profile!.userType)) {
-                  context.read<SharedBloc>().add(
+                  context.read<SettingsBloc>().add(
                     ToggleDashboardEvent(isProvider: true),
                   );
                 } else {
-                  context.read<SharedBloc>().add(
+                  context.read<SettingsBloc>().add(
                     ToggleDashboardEvent(isProvider: false),
                   );
                 }

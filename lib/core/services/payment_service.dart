@@ -10,7 +10,7 @@ import 'package:nsapp/core/models/account_link.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/core/models/subscription.dart';
 import 'package:nsapp/core/initialize/init.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 
 class PaymentService {
   static Future<String> _getToken() async {
@@ -163,8 +163,8 @@ class PaymentService {
       final String token = await _getToken();
       if (token.isEmpty) return false;
 
-      final sharedState = context.read<SharedBloc>().state;
-      final themeMode = sharedState.themeMode;
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
 
       // 1. Call Backend to get PaymentSheet parameters
       // Backend: CustomerViewSet.payment_sheet
@@ -247,8 +247,8 @@ class PaymentService {
         return null;
       }
 
-      final sharedState = context.read<SharedBloc>().state;
-      final themeMode = sharedState.themeMode;
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
 
       final response = await dio.post(
         "$basePaymentUrl/customer/fund-background-check/",
@@ -333,8 +333,8 @@ class PaymentService {
         return false;
       }
 
-      final sharedState = context.read<SharedBloc>().state;
-      final themeMode = sharedState.themeMode;
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
 
       debugPrint(
         "DEBUG: Funding Appointment $appointmentId with amount $amount",
@@ -450,8 +450,8 @@ class PaymentService {
   ) async {
     try {
       final String token = await _getToken();
-      final sharedState = context.read<SharedBloc>().state;
-      final themeMode = sharedState.themeMode;
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
 
       final response = await dio.post(
         "$basePaymentUrl/subscription/create/",

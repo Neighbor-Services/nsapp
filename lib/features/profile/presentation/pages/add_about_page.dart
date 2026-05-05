@@ -6,7 +6,8 @@ import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -47,7 +48,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
     if (userId != null) {
       context.read<ProfileBloc>().add(GetAboutEvent(user: userId));
     }
-    context.read<SharedBloc>().add(GetServicesEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
   }
 
   @override

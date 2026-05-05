@@ -8,7 +8,10 @@ import 'package:nsapp/features/provider/presentation/pages/provider_more_request
 import 'package:nsapp/features/provider/presentation/pages/provider_search_request_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_targeted_requests_page.dart';
 import 'package:nsapp/features/provider/presentation/widgets/provider_recent_request_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
@@ -34,9 +37,9 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     super.initState();
     context.read<ProviderBloc>().add(SearchRequestEvent());
     context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
-    context.read<SharedBloc>().add(GetServicesEvent());
-    context.read<SharedBloc>().add(GetMyWalletEvent());
-    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
+    context.read<WalletBloc>().add(GetMyWalletEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
 
     _fadeController = AnimationController(
       vsync: this,
@@ -62,7 +65,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     return Scaffold(
       body: MultiBlocListener(
         listeners: [
-          BlocListener<SharedBloc, SharedState>(
+          BlocListener<SubscriptionBloc, SubscriptionState>(
             listener: (context, state) {
               if (state is ValidUserSubscriptionState) {
                 setState(() => _isSubscriptionValid = state.isValid);
@@ -135,14 +138,14 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   }
 
   Widget _buildDashboard(BuildContext context, bool isLargeScreen) {
-    return BlocBuilder<SharedBloc, SharedState>(
-      builder: (context, sharedState) {
+    return BlocBuilder<WalletBloc, WalletState>(
+      builder: (context, walletState) {
         return BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, profileState) {
             return BlocBuilder<ProviderBloc, ProviderState>(
               builder: (context, providerState) {
-                final wallet = (sharedState is SuccessGetMyWalletState)
-                    ? sharedState.wallet
+                final wallet = (walletState is SuccessGetMyWalletState)
+                    ? walletState.wallet
                     : null;
                 final profile = (profileState is SuccessGetProfileState)
                     ? profileState.profile

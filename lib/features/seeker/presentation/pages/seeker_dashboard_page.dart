@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/seeker_bottom_navigation_bar_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
 
 class SeekerDashboardPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
     super.initState();
     _currentWidget = context.read<SeekerBloc>().currentWidget;
     // Fetch initial counts for badges
-    context.read<SharedBloc>().add(GetMyNotificationsEvent());
+    context.read<NotificationBloc>().add(GetMyNotificationsEvent());
     context.read<MessageBloc>().add(GetMyMessagesEvent());
   }
 

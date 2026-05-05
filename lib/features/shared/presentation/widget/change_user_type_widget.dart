@@ -2,7 +2,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 
@@ -28,7 +31,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(GetServicesEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
     serviceTextController = TextEditingController();
     formKey = GlobalKey<FormState>();
 
@@ -65,14 +68,14 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
         }
       },
       builder: (context, profileState) {
-        return BlocListener<SharedBloc, SharedState>(
-          listener: (context, sharedState) {
-            if (sharedState is SuccessAddServicesState) {
+        return BlocListener<CommonBloc, CommonState>(
+          listener: (context, commonState) {
+            if (commonState is SuccessAddServicesState) {
               Navigator.pop(context);
-              context.read<SharedBloc>().add(
+              context.read<SettingsBloc>().add(
                 ChangeUserTypeEvent({
                   "type": userType,
-                  "service": sharedState.id ?? "",
+                  "service": commonState.id ?? "",
                 }),
               );
             }
@@ -177,10 +180,10 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                           SizedBox(height: 32.h),
                           _buildSectionLabel("Specialization", subtitleColor),
                           SizedBox(height: 12.h),
-                          BlocBuilder<SharedBloc, SharedState>(
-                            builder: (context, sharedState) {
-                              final services = (sharedState is SuccessGetServicesState) 
-                                  ? sharedState.services 
+                          BlocBuilder<CommonBloc, CommonState>(
+                            builder: (context, commonState) {
+                              final services = (commonState is SuccessGetServicesState) 
+                                  ? commonState.services 
                                   : <Service>[];
                               return GestureDetector(
                                 onTap: () {
@@ -288,7 +291,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                       if (userType != "") {
                         if (isOthersSelected) {
                           if (formKey.currentState!.validate()) {
-                            context.read<SharedBloc>().add(
+                            context.read<CommonBloc>().add(
                               AddServiceEvent(
                                 model: Service(
                                   description:
@@ -309,7 +312,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                             return;
                           }
                           Navigator.pop(context);
-                          context.read<SharedBloc>().add(
+                          context.read<SettingsBloc>().add(
                             ChangeUserTypeEvent({
                               "type": userType,
                               "service": serviceType ?? "",

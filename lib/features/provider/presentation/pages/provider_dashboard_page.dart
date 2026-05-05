@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/widgets/provider_button_navigation_bar_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 
@@ -23,16 +26,15 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
   @override
   void initState() {
     _currentWidget = context.read<ProviderBloc>().currentWidget;
-    context.read<SharedBloc>().add(GetServicesEvent());
-    context.read<SharedBloc>().add(GetMyNotificationsEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
+    context.read<NotificationBloc>().add(GetMyNotificationsEvent());
     context.read<MessageBloc>().add(GetMyMessagesEvent());
     super.initState();
     
     final profileState = context.read<ProfileBloc>().state;
     if (profileState is SuccessGetProfileState) {
       if (Helpers.isProvider(profileState.profile.userType)) {
-        context.read<SharedBloc>().add(SharedBlocReloadEvent("provider"));
-        context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
+        context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: true));
       }
     }
   }

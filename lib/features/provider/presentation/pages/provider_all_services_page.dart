@@ -1,7 +1,9 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
 import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
@@ -21,7 +23,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
   }
 
   @override
@@ -31,7 +33,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
     return Scaffold(
       body: MultiBlocListener(
         listeners: [
-          BlocListener<SharedBloc, SharedState>(
+          BlocListener<SubscriptionBloc, SubscriptionState>(
             listener: (context, state) {
               if (state is ValidUserSubscriptionState) {
                 setState(() => _isSubscriptionValid = state.isValid);
@@ -104,12 +106,12 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
 
                 // Services Grid
                 Expanded(
-                  child: BlocBuilder<SharedBloc, SharedState>(
+                  child: BlocBuilder<CommonBloc, CommonState>(
                     builder: (context, state) {
                       final services = (state is SuccessGetServicesState) 
                           ? state.services 
-                          : (context.read<SharedBloc>().state is SuccessGetServicesState 
-                              ? (context.read<SharedBloc>().state as SuccessGetServicesState).services 
+                          : (context.read<CommonBloc>().state is SuccessGetServicesState 
+                              ? (context.read<CommonBloc>().state as SuccessGetServicesState).services 
                               : []);
 
                       if (services.isEmpty) {

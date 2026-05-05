@@ -6,8 +6,8 @@ import 'package:nsapp/features/messages/data/datasource/remote/message_remote_da
 import 'package:nsapp/features/messages/domain/repository/messages_repository.dart';
 
 import '../../../../core/models/chat.dart';
-
 import '../../../../core/services/hive_service.dart';
+import 'package:nsapp/core/helpers/error_handler.dart';
 
 class MessagesRepositoryImpl extends MessagesRepository {
   final MessageRemoteDatasource messageRemoteDatasource;
@@ -43,32 +43,21 @@ class MessagesRepositoryImpl extends MessagesRepository {
         after: afterDate,
       );
 
-      if (results != null) {
-        // 2. Merge and Update Cache
-        if (results.isNotEmpty) {
-          cachedMessages.addAll(results);
-          await cacheBox.put(cacheKey, cachedMessages);
-        }
-        return Right(cachedMessages);
+      // 2. Merge and Update Cache
+      if (results.isNotEmpty) {
+        cachedMessages.addAll(results);
+        await cacheBox.put(cacheKey, cachedMessages);
       }
-
-      // 3. Fallback to Cache if remote fetch strictly fails without throwing
-      if (cachedMessages.isNotEmpty) {
-        return Right(cachedMessages);
-      }
-
-      return Left(
-        Failure(message: "An error occurred and no cached data found"),
-      );
+      return Right(cachedMessages);
     } catch (e) {
-      // 4. Fallback to Cache on error
+      // 3. Fallback to Cache on error
       final cached = hiveService
           .getBox(HiveService.messageBox)
           .get('messages_$receiver');
       if (cached != null) {
         return Right(List<ChatMessage>.from(cached));
       }
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -78,30 +67,18 @@ class MessagesRepositoryImpl extends MessagesRepository {
       // 1. Fetch from remote
       final results = await messageRemoteDatasource.getMyMessages();
 
-      if (results != null) {
-        // 2. Update Cache
-        await hiveService
-            .getBox(HiveService.messageBox)
-            .put('my_chats', results);
-        return Right(results);
-      }
-
-      // 3. Fallback to Cache
-      final cached = hiveService.getBox(HiveService.messageBox).get('my_chats');
-      if (cached != null) {
-        return Right(List<Chat>.from(cached));
-      }
-
-      return Left(
-        Failure(message: "An error occurred and no cached data found"),
-      );
+      // 2. Update Cache
+      await hiveService
+          .getBox(HiveService.messageBox)
+          .put('my_chats', results);
+      return Right(results);
     } catch (e) {
-      // 4. Fallback to Cache on error
+      // 3. Fallback to Cache on error
       final cached = hiveService.getBox(HiveService.messageBox).get('my_chats');
       if (cached != null) {
         return Right(List<Chat>.from(cached));
       }
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -109,12 +86,9 @@ class MessagesRepositoryImpl extends MessagesRepository {
   Future<Either<Failure, Profile>> reloadMessageReceiver(String user) async {
     try {
       final results = await messageRemoteDatasource.reloadMessageReceiver(user);
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      return Right(results);
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -127,7 +101,7 @@ class MessagesRepositoryImpl extends MessagesRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -140,7 +114,7 @@ class MessagesRepositoryImpl extends MessagesRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -155,7 +129,7 @@ class MessagesRepositoryImpl extends MessagesRepository {
       }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 }

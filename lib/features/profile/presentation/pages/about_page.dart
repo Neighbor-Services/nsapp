@@ -7,7 +7,7 @@ import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/profile/presentation/widgets/portfolio_widget.dart';
 import 'package:nsapp/features/profile/presentation/widgets/reviews_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -74,9 +74,9 @@ class _AboutPageState extends State<AboutPage>
           });
         }
       },
-      child: BlocBuilder<SharedBloc, SharedState>(
-        builder: (context, sharedState) {
-          final isProvider = sharedState.isProvider;
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        builder: (context, settingsState) {
+          final isProvider = settingsState.isProvider;
           final profileState = context.read<ProfileBloc>().state;
           final myProfile = profileState is SuccessGetProfileState ? profileState.profile : null;
 

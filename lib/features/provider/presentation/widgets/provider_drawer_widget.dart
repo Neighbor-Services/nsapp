@@ -8,7 +8,7 @@ import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/profile/presentation/pages/add_about_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_active_tasks_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/subscription_page.dart';
@@ -510,7 +510,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
-                                context.read<SharedBloc>().add(
+                                context.read<NotificationBloc>().add(
                                   DisconnectNotificationSocketEvent(),
                                 );
                                 context.read<AuthenticationBloc>().add(

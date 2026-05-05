@@ -8,7 +8,7 @@ import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_appointment_calendar_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
 
 class ProviderButtonNavigationBarWidget extends StatelessWidget {
@@ -22,8 +22,8 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
 
     return BlocBuilder<MessageBloc, MessageState>(
       builder: (context, messageState) {
-        return BlocBuilder<SharedBloc, SharedState>(
-          builder: (context, sharedState) {
+        return BlocBuilder<NotificationBloc, NotificationState>(
+          builder: (context, notificationState) {
             return BlocConsumer<ProviderBloc, ProviderState>(
               listener: (context, state) {},
               builder: (context, state) {
@@ -72,7 +72,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 icon: FontAwesomeIcons.bell,
                                 label: 'Notifications',
                                 isActive: context.read<ProviderBloc>().currentPage == 2,
-                                badgeCount: (sharedState is SuccessGetMyNotificationsState) ? sharedState.unreadCount : 0,
+                                badgeCount: (notificationState is SuccessGetMyNotificationsState) ? notificationState.unreadCount : 0,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
                                     NavigateProviderEvent(

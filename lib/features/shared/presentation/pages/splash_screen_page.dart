@@ -8,9 +8,10 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 
-import '../bloc/shared_bloc.dart';
 
 class SplashScreenPage extends StatefulWidget {
   const SplashScreenPage({super.key});
@@ -36,11 +37,11 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     final bool dark = await Helpers.getBool("darkmode");
     await Helpers.getBool("usebiometric");
     if (dark) {
-      scaffold.currentContext?.read<SharedBloc>().add(
+      scaffold.currentContext?.read<SettingsBloc>().add(
         ToggleThemeModeEvent(themeMode: ThemeMode.dark),
       );
     } else {
-      scaffold.currentContext?.read<SharedBloc>().add(
+      scaffold.currentContext?.read<SettingsBloc>().add(
         ToggleThemeModeEvent(themeMode: ThemeMode.light),
       );
     }
@@ -149,16 +150,9 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         if (state is SuccessGetProfileState) {
           final profile = state.profile;
           if (profile.firstName != null) {
-            context.read<SharedBloc>().add(
-              SharedBlocReloadEvent(profile.userType!),
-            );
-
             bool isProvider = Helpers.isProvider(profile.userType);
             if (isProvider) {
-              context.read<SharedBloc>().add(
-                SharedBlocReloadEvent("PROVIDER"),
-              );
-              context.read<SharedBloc>().add(
+              context.read<SettingsBloc>().add(
                 ToggleDashboardEvent(isProvider: true),
               );
             }
@@ -167,13 +161,13 @@ class _SplashScreenPageState extends State<SplashScreenPage>
             if (isProvider && profile.isIdentityVerified != true) {
                Get.offAllNamed("/pending-verification");
             } else if (usebiometric) {
-              context.read<SharedBloc>().add(
-                UseBiometricEvent(usebiometric: true),
+              context.read<SettingsBloc>().add(
+                UseBiometricEvent(useBiometric: true),
               );
               Get.offAllNamed('/biometric');
             } else {
-              context.read<SharedBloc>().add(
-                UseBiometricEvent(usebiometric: false),
+              context.read<SettingsBloc>().add(
+                UseBiometricEvent(useBiometric: false),
               );
               Get.offAllNamed("/home");
             }

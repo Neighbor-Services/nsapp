@@ -1,7 +1,9 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -81,11 +83,15 @@ class SeekerAllServicesPage extends StatelessWidget {
 
               // Services Grid
               Expanded(
-                child: BlocBuilder<SharedBloc, SharedState>(
+                child: BlocBuilder<CommonBloc, CommonState>(
                   builder: (context, state) {
                     final services = state is SuccessGetServicesState ? state.services : [];
-
-                    if (services.isEmpty && state is! SharedLoadingState) {
+                    if (state is CommonLoading) {
+                      return const Center(
+                        child: LoadingWidget(),
+                      );
+                    }
+                    if (services.isEmpty) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

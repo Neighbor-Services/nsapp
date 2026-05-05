@@ -1,7 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
 import 'package:nsapp/core/models/dispute.dart';
 import 'package:nsapp/core/models/chat.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
@@ -61,7 +61,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
         description: _descriptionController.text,
       );
 
-      context.read<SharedBloc>().add(CreateDisputeEvent(dispute: dispute));
+      context.read<DisputeBloc>().add(CreateDisputeEvent(dispute: dispute));
     }
   }
 
@@ -74,7 +74,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
       
       body: SafeArea(
         child: GradientBackground(
-          child: BlocConsumer<SharedBloc, SharedState>(
+          child: BlocConsumer<DisputeBloc, DisputeState>(
             listener: (context, state) {
               if (state is SuccessCreateDisputeState) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -83,9 +83,9 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                     backgroundColor: context.appColors.successColor,
                   ),
                 );
-                context.read<SharedBloc>().add(GetMyDisputesEvent());
+                context.read<DisputeBloc>().add(GetMyDisputesEvent());
                 Navigator.pop(context);
-              } else if (state is FailureCreateDisputeState) {
+              } else if (state is DisputeFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
                    SnackBar(
                     content: Text('Failed to raise dispute. Please try again.'),
@@ -333,7 +333,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                           // Submit Button
                           SolidButton(
                             label: 'Submit Dispute',
-                            isLoading: state is SharedLoadingState,
+                            isLoading: state is DisputeLoading,
                             onPressed: _submitDispute,
                           ),
                         ],

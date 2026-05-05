@@ -571,6 +571,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             FontAwesomeIcons.circleCheck
                             
                           ),
+                          if (requestData.request?.paymentMode != 'ON_SITE')
                           _buildPopupMenuItem(
                             'pay',
                             'PAY PROVIDER',

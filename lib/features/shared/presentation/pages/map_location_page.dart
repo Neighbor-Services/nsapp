@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 
-import '../bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
 import '../bloc/location/location_bloc.dart';
 import '../widget/search_location_map_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -46,10 +48,10 @@ class _MapLocationPageState extends State<MapLocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<CommonBloc, CommonState>(
         listener: (context, state) async {
           if (state is SuccessPlaceState) {
-            context.read<SharedBloc>().add(
+            context.read<CommonBloc>().add(
               MapLocationEvent(
                 location: LatLng(
                   state.place.lat!,
@@ -102,7 +104,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                     });
                   },
                   onCameraMove: (position) async {
-                    context.read<SharedBloc>().add(
+                    context.read<CommonBloc>().add(
                       MapLocationEvent(location: position.target),
                     );
                     pos = position.target;
@@ -110,7 +112,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                         await Helpers.getAddressFromMap(position.target);
                   },
                   onTap: (position) {
-                    context.read<SharedBloc>().add(
+                    context.read<CommonBloc>().add(
                       MapLocationEvent(location: position),
                     );
                   },
@@ -226,15 +228,23 @@ class _MapLocationPageState extends State<MapLocationPage> {
                   child: GestureDetector(
                     onTap: () async {
                       GoogleMapController con = await _controller.future;
-                      final location = context.read<LocationBloc>().state.location;
+                      final locState = context.read<LocationBloc>().state;
                       con.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
                             target: LatLng(
-                              location.position.latitude,
-                              location.position.longitude,
+                              locState.location.position.latitude,
+                              locState.location.position.longitude,
                             ),
                             zoom: 15,
+                          ),
+                        ),
+                      );
+                      context.read<CommonBloc>().add(
+                        MapLocationEvent(
+                          location: LatLng(
+                            locState.location.position.latitude,
+                            locState.location.position.longitude,
                           ),
                         ),
                       );

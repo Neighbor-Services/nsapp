@@ -11,7 +11,7 @@ import 'package:nsapp/features/provider/presentation/pages/provider_request_deta
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/core/models/request_data.dart';
@@ -544,9 +544,9 @@ class _AppointmentDetailBottomSheetState
                     final req = appt.serviceRequest;
                     Get.back();
                     if (req == null) return;
-                    final sharedState = context.read<SharedBloc>().state;
+                    final settingsState = context.read<SettingsBloc>().state;
                     final profileState = context.read<ProfileBloc>().state;
-                    final isProvider = sharedState.isProvider;
+                    final isProvider = settingsState.isProvider;
                     final profile = profileState is SuccessGetProfileState ? profileState.profile : null;
 
                     if (req.userId == profile?.user?.id && !isProvider) {

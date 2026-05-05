@@ -2,7 +2,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -29,7 +29,7 @@ class _WalletPageState extends State<WalletPage> {
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(GetMyWalletEvent());
+    context.read<WalletBloc>().add(GetMyWalletEvent());
   }
 
   @override
@@ -96,15 +96,15 @@ class _WalletPageState extends State<WalletPage> {
         ),
         actions: [
           IconButton(
-            onPressed: () => context.read<SharedBloc>().add(GetMyWalletEvent()),
+            onPressed: () => context.read<WalletBloc>().add(GetMyWalletEvent()),
             icon: FaIcon(FontAwesomeIcons.rotateRight, color: context.appColors.primaryTextColor),
           ),
         ],
       ),
-      body: BlocBuilder<SharedBloc, SharedState>(
+      body: BlocBuilder<WalletBloc, WalletState>(
         builder: (context, state) {
           return LoadingView(
-            isLoading: state is SharedLoadingState,
+            isLoading: state is WalletLoading,
             child: GradientBackground(
               child: SafeArea(
                 child: Padding(
@@ -424,7 +424,7 @@ class _WalletPageState extends State<WalletPage> {
             onPressed: () {
               final amount = double.tryParse(amountController.text);
               if (amount != null && amount > 0) {
-                context.read<SharedBloc>().add(
+                context.read<WalletBloc>().add(
                   RequestPayoutEvent(amount: amount),
                 );
                 Navigator.pop(context);
@@ -438,13 +438,13 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   void _openStripeDashboard(BuildContext context) async {
-    context.read<SharedBloc>().add(GetStripeDashboardLinkEvent());
-    final subscription = context.read<SharedBloc>().stream.listen((
+    context.read<WalletBloc>().add(GetStripeDashboardLinkEvent());
+    final subscription = context.read<WalletBloc>().stream.listen((
       state,
     ) async {
       if (state is SuccessGetStripeDashboardLinkState) {
         final url = state.dashboardUrl;
-        if (url != null && context.mounted) {
+        if (url.isNotEmpty && context.mounted) {
           try {
             final uri = Uri.parse(url);
             if (await canLaunchUrl(uri)) {
@@ -461,7 +461,7 @@ class _WalletPageState extends State<WalletPage> {
             }
           }
         }
-      } else if (state is FailureGetStripeDashboardLinkState) {
+      } else if (state is WalletFailure) {
         if (context.mounted) {
           showDialog(
             context: context,
@@ -504,7 +504,7 @@ class _WalletPageState extends State<WalletPage> {
                   SolidButton(
                     onPressed: () {
                       Navigator.pop(dialogContext);
-                      context.read<SharedBloc>().add(
+                      context.read<WalletBloc>().add(
                         CreateConnectAccountEvent(),
                       );
                     },
@@ -517,7 +517,7 @@ class _WalletPageState extends State<WalletPage> {
         }
       } else if (state is SuccessConnectAccountState) {
         final accountLink = state.accountLink;
-        if (accountLink != null && context.mounted) {
+        if (accountLink.url.isNotEmpty && context.mounted) {
           launchUrl(
             Uri.parse(accountLink.url),
             mode: LaunchMode.externalApplication,

@@ -364,9 +364,9 @@ class Helpers {
     final token = await getString("token");
     if (token == "") return false;
 
-    final _dio = Dio();
+    final dio = Dio();
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         "$baseUrl/accounts/profile/me/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -374,7 +374,7 @@ class Helpers {
     } catch (e) {
       if (e is DioException && e.response?.statusCode == 401) {
         // Access token expired — attempt a silent refresh before evicting session
-        final refreshed = await _tryRefreshToken(_dio);
+        final refreshed = await _tryRefreshToken(dio);
         if (refreshed) return true;
         // Refresh also failed: clear both tokens
         await deletePref("token");

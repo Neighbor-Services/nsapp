@@ -9,9 +9,12 @@ import 'package:nsapp/features/provider/presentation/pages/provider_dashboard_pa
 import 'package:nsapp/features/provider/presentation/widgets/provider_drawer_widget.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_dashboard_page.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/seeker_drawer_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/home_app_bar.dart';
+import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,20 +36,18 @@ class _HomePageState extends State<HomePage> {
         Helpers.createStripeCustomer(userId: userId);
       }
       if (Helpers.isProvider(profileState.profile.userType)) {
-        context.read<SharedBloc>().add(SharedBlocReloadEvent("PROVIDER"));
-        context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
+        context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: true));
       }
     }
 
-    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
-    context.read<SharedBloc>().add(ConnectNotificationSocketEvent());
-    context.read<SharedBloc>().add(GetTokenEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+    context.read<NotificationBloc>().add(ConnectNotificationSocketEvent());
+    context.read<NotificationBloc>().add(GetTokenEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<SharedBloc, SharedState>(
-      listener: (context, state) {},
+    return BlocBuilder<SettingsBloc, SettingsState>(
       builder: (context, state) {
         return Scaffold(
           extendBodyBehindAppBar: true,
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
             ],
             value: state.isProvider,
             onToggle: (val) {
-              context.read<SharedBloc>().add(
+              context.read<SettingsBloc>().add(
                 ToggleDashboardEvent(isProvider: val),
               );
             },

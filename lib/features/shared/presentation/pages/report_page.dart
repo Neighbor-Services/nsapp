@@ -13,7 +13,7 @@ import '../../../provider/presentation/bloc/provider_bloc.dart';
 import '../../../provider/presentation/pages/provider_home_page.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart';
 import '../../../seeker/presentation/pages/seeker_home_page.dart';
-import '../bloc/shared_bloc.dart';
+import '../bloc/settings/settings_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class ReportPage extends StatefulWidget {
@@ -27,6 +27,7 @@ class _ReportPageState extends State<ReportPage> {
   TextEditingController descriptionController = TextEditingController();
   String title = "Fraud Issue"; // Default value
   GlobalKey<FormState> key = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   final List<String> reportIssues = [
     "Fraud Issue",
@@ -43,13 +44,14 @@ class _ReportPageState extends State<ReportPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<SettingsBloc, SettingsState>(
         listener: (context, state) {
           if (state is SuccessAddReportState) {
+            setState(() => _isLoading = false);
             customAlert(context, AlertType.success, "Report Sent Successfully");
             Future.delayed(const Duration(seconds: 3), () {
-              final sharedState = context.read<SharedBloc>().state;
-              if (sharedState.isProvider) {
+              final settingsState = context.read<SettingsBloc>().state;
+              if (settingsState.isProvider) {
                 context.read<ProviderBloc>().add(
                   NavigateProviderEvent(
                     page: 1,
@@ -63,14 +65,13 @@ class _ReportPageState extends State<ReportPage> {
               }
             });
           } else if (state is FailureAddReportState) {
+            setState(() => _isLoading = false);
             customAlert(context, AlertType.error, "Failed To Send Report");
           }
         },
         builder: (context, state) {
-          final isProvider = state.isProvider;
-
           return LoadingView(
-            isLoading: (state is SharedLoadingState),
+            isLoading: _isLoading,
             child: SizedBox.expand(
               child: GradientBackground(
                 child: SafeArea(
@@ -90,7 +91,7 @@ class _ReportPageState extends State<ReportPage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  if (isProvider) {
+                                  if (state.isProvider) {
                                     context.read<ProviderBloc>().add(
                                       ProviderBackPressedEvent(),
                                     );
@@ -238,7 +239,8 @@ class _ReportPageState extends State<ReportPage> {
                                             return;
                                           }
                                           if (key.currentState!.validate()) {
-                                            context.read<SharedBloc>().add(
+                                            setState(() => _isLoading = true);
+                                            context.read<SettingsBloc>().add(
                                                   AddReportEvent(
                                                     report: Report(
                                                       reason:

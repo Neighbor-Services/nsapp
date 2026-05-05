@@ -10,7 +10,8 @@ import 'package:nsapp/features/authentications/presentation/bloc/authentication_
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+import 'package:nsapp/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/change_user_type_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/connect_account_setup_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
@@ -78,13 +79,13 @@ class _SettingsPageState extends State<SettingsPage>
               }
             },
           ),
-          BlocListener<SharedBloc, SharedState>(
+          BlocListener<WalletBloc, WalletState>(
             listener: (context, state) {
               if (state is SuccessConnectAccountState) {
                 final isDark = Theme.of(context).brightness == Brightness.dark;
-                if (state.accountLink != null) {
+                if (state.accountLink.url.isNotEmpty) {
                   FlutterWebBrowser.openWebPage(
-                    url: state.accountLink!.url,
+                    url: state.accountLink.url,
                     customTabsOptions: CustomTabsOptions(
                       colorScheme: isDark ? CustomTabsColorScheme.dark : CustomTabsColorScheme.light,
                       shareState: CustomTabsShareState.on,
@@ -103,37 +104,34 @@ class _SettingsPageState extends State<SettingsPage>
                   );
                 }
               }
+            },
+          ),
+          BlocListener<SettingsBloc, SettingsState>(
+            listener: (context, state) {
               if (state is SuccessChangeUserTypeState) {
                 context.read<ProfileBloc>().add(GetProfileEvent());
                 final userType = _currentProfile?.userType ?? "";
                 if (Helpers.isSeeker(userType)) {
-                  context.read<SharedBloc>().add(
+                  context.read<SettingsBloc>().add(
                     ToggleDashboardEvent(isProvider: false),
                   );
                 }
-                context.read<SharedBloc>().add(
-                  SharedBlocReloadEvent(userType),
-                );
                 customAlert(context, AlertType.success, "Update Successful");
               }
-              if (state is FailureChangeUserTypeState) {
-                final userType = _currentProfile?.userType ?? "";
-                context.read<SharedBloc>().add(
-                  SharedBlocReloadEvent(userType),
-                );
-                customAlert(context, AlertType.error, "Update Failed");
+              if (state is SettingsFailure) {
+                customAlert(context, AlertType.error, state.message);
               }
             },
           ),
         ],
-        child: BlocBuilder<SharedBloc, SharedState>(
+        child: BlocBuilder<SettingsBloc, SettingsState>(
           builder: (context, state) {
             final isProvider = state.isProvider;
             final themeMode = state.themeMode;
-            final useBiometric = state.usebiometric;
+            final useBiometric = state.useBiometric;
 
             return LoadingView(
-              isLoading: (state is SharedLoadingState),
+              isLoading: false, // SettingsBloc always has state; no separate loading state
               child: GradientBackground(
                 child: SafeArea(
                   child: Center(
@@ -204,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage>
                                   value: themeMode == ThemeMode.dark,
                                   activeThumbColor: context.appColors.secondaryColor,
                                   onChanged: (val) {
-                                    context.read<SharedBloc>().add(
+                                    context.read<SettingsBloc>().add(
                                       ToggleThemeModeEvent(
                                         themeMode: val
                                             ? ThemeMode.dark
@@ -244,10 +242,10 @@ class _SettingsPageState extends State<SettingsPage>
                                                 );
                                         if (isAuthenticated) {
                                           scaffold.currentContext!
-                                              .read<SharedBloc>()
+                                              .read<SettingsBloc>()
                                               .add(
                                                 UseBiometricEvent(
-                                                  usebiometric: val,
+                                                  useBiometric: val,
                                                 ),
                                               );
                                         }
@@ -260,10 +258,10 @@ class _SettingsPageState extends State<SettingsPage>
                                           key: "password",
                                         );
                                         scaffold.currentContext!
-                                            .read<SharedBloc>()
+                                            .read<SettingsBloc>()
                                             .add(
                                               UseBiometricEvent(
-                                                usebiometric: val,
+                                                useBiometric: val,
                                               ),
                                             );
                                       } else {

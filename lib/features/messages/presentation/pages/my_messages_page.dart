@@ -8,7 +8,7 @@ import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/chat.dart';
 import '../../../provider/presentation/bloc/provider_bloc.dart';
-import '../../../shared/presentation/bloc/shared_bloc.dart';
+import '../../../shared/presentation/bloc/settings/settings_bloc.dart';
 import '../bloc/message_bloc.dart';
 import 'chat_page.dart';
 
@@ -270,8 +270,8 @@ class _MyMessagesPageState extends State<MyMessagesPage>
             SetSeenMessageEvent(reciever: chat.other!.user!.id!),
           );
           
-          final sharedState = context.read<SharedBloc>().state;
-          if (sharedState.isProvider) {
+          final settingsState = context.read<SettingsBloc>().state;
+          if (settingsState.isProvider) {
             context.read<ProviderBloc>().add(
               NavigateProviderEvent(page: 4, widget: const ChatPage()),
             );

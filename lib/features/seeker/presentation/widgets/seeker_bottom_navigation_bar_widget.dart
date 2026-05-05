@@ -8,7 +8,7 @@ import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_favorite_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_new_request_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
 
 class SeekerBottomNavigationBarWidget extends StatelessWidget {
@@ -22,8 +22,8 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
 
     return BlocBuilder<MessageBloc, MessageState>(
       builder: (context, messageState) {
-        return BlocBuilder<SharedBloc, SharedState>(
-          builder: (context, sharedState) {
+        return BlocBuilder<NotificationBloc, NotificationState>(
+          builder: (context, notificationState) {
             return BlocConsumer<SeekerBloc, SeekerState>(
               listener: (context, state) {},
               builder: (context, snapshot) {
@@ -71,7 +71,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
                                 isActive: context.read<SeekerBloc>().currentPage == 2,
-                                badgeCount: (sharedState is SuccessGetMyNotificationsState) ? sharedState.unreadCount : 0,
+                                badgeCount: (notificationState is SuccessGetMyNotificationsState) ? notificationState.unreadCount : 0,
                                 label: "Notifications",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(

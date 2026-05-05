@@ -6,7 +6,9 @@ import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_provider_search_page.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/popular_provider_widget.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/filter_drawer.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/seeker/presentation/pages/ai_search_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_page.dart';
@@ -33,7 +35,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(GetServicesEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
     context.read<SeekerBloc>().add(GetMyRequestEvent());
 
     _fadeController = AnimationController(
@@ -68,7 +70,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 opacity: _fadeAnimation,
                 child: RefreshIndicator(
                   onRefresh: () async {
-                    context.read<SharedBloc>().add(GetServicesEvent());
+                    context.read<CommonBloc>().add(GetServicesEvent());
                     context.read<SeekerBloc>().add(GetMyRequestEvent());
                     await Future.delayed(const Duration(seconds: 1));
                   },
@@ -109,7 +111,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                         },
                       ),
                       SizedBox(height: 16.h),
-                      BlocBuilder<SharedBloc, SharedState>(
+                      BlocBuilder<CommonBloc, CommonState>(
                         builder: (context, state) {
                           return _buildServicesGrid(context, state);
                         },
@@ -275,13 +277,13 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     );
   }
 
-  Widget _buildServicesGrid(BuildContext context, SharedState state) {
+  Widget _buildServicesGrid(BuildContext context, CommonState state) {
     List<Service> services = [];
     if (state is SuccessGetServicesState) {
       services = state.services;
     }
 
-    if (state is SharedLoadingState && services.isEmpty) {
+    if (state is CommonLoading && services.isEmpty) {
       return const Center(child: LoadingWidget());
     }
 

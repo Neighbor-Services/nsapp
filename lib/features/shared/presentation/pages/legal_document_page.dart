@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/core/models/legal_document.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/legal/legal_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -36,7 +36,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SharedBloc>().add(
+      context.read<LegalBloc>().add(
         GetLegalDocumentEvent(docType: _docType),
       );
     });
@@ -55,7 +55,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     final subtitleColor = textColor.withAlpha(150);
 
     return Scaffold(
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<LegalBloc, LegalState>(
         listener: (context, state) {
           if (state is SuccessGetLegalDocumentState) {
             _fadeController.forward();
@@ -133,18 +133,18 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
 
   Widget _buildBody(
     BuildContext context,
-    SharedState state,
+    LegalState state,
     Color textColor,
     Color subtitleColor,
     Color secondaryColor,
   ) {
-    if (state is SharedLoadingState || state is SharedInitialState) {
+    if (state is LegalLoading) {
       return const Center(
         child: LoadingWidget(),
       );
     }
 
-    if (state is FailureGetLegalDocumentState) {
+    if (state is LegalFailure) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -171,7 +171,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
             SizedBox(height: 24.h),
             TextButton.icon(
               onPressed: () {
-                context.read<SharedBloc>().add(
+                context.read<LegalBloc>().add(
                   GetLegalDocumentEvent(docType: _docType),
                 );
               },
@@ -191,7 +191,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
       docs = state.documents;
     }
 
-    if (docs.isEmpty && state is! SharedLoadingState) {
+    if (docs.isEmpty && state is! LegalLoading) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

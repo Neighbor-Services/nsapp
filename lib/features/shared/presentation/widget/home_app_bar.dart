@@ -5,11 +5,11 @@ import 'package:get/get.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 
-import '../bloc/shared_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 AppBar homeAppBar({
@@ -106,10 +106,10 @@ AppBar homeAppBar({
     actions: [
       Padding(
         padding: EdgeInsets.symmetric(vertical: 20.0.h),
-        child: BlocBuilder<SharedBloc, SharedState>(
-          builder: (context, state) {
-            final userType = state is ReloadState ? state.type : "";
-            return Helpers.isProvider(userType)
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, profileState) {
+            final profile = profileState is SuccessGetProfileState ? profileState.profile : null;
+            return Helpers.isProvider(profile?.userType ?? "")
                 ? Transform.scale(
                     scale: 0.8,
                     child: Switch(
@@ -266,7 +266,7 @@ class PlatformPopupMenu extends StatelessWidget {
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    context.read<SharedBloc>().add(
+                                    context.read<NotificationBloc>().add(
                                       DisconnectNotificationSocketEvent(),
                                     );
                                     context.read<AuthenticationBloc>().add(

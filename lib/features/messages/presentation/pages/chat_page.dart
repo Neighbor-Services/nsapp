@@ -18,7 +18,7 @@ import 'package:nsapp/features/messages/presentation/widgets/sender_chat_text_wi
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/models/chat.dart';
@@ -163,8 +163,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           children: [
             IconButton(
               onPressed: () {
-                final sharedState = context.read<SharedBloc>().state;
-                if (sharedState.isProvider) {
+                final settingsState = context.read<SettingsBloc>().state;
+                if (settingsState.isProvider) {
                   context.read<ProviderBloc>().add(ProviderBackPressedEvent());
                 } else {
                   context.read<SeekerBloc>().add(SeekerBackPressedEvent());

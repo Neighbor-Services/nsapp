@@ -11,7 +11,7 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
 
   MessageRemoteDatasourceImpl(this._dio);
   @override
-  Future<List<ChatMessage>?> getMessages({required String receiver, String? after}) async {
+  Future<List<ChatMessage>> getMessages({required String receiver, String? after}) async {
     try {
       List<ChatMessage> chats = [];
       final String token = await Helpers.getString("token");
@@ -34,14 +34,12 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
         }
         return chats;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<Chat>?> getMyMessages() async {
+  Future<List<Chat>> getMyMessages() async {
     try {
       List<Chat> chats = [];
       final String token = await Helpers.getString("token");
@@ -60,14 +58,12 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
         }
         return chats;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<Profile?> reloadMessageReceiver(String user) async {
+  Future<Profile> reloadMessageReceiver(String user) async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.get(
@@ -80,28 +76,22 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
           return Profile.fromJson(response.data["providers"][0]);
         }
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
   Future<bool> deleteMessage(Message message) async {
     try {
       return true;
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { rethrow; }
   }
 
   @override
   Future<bool> updateMessage(Message message) async {
     try {
       return true;
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { rethrow; }
   }
 
   @override
@@ -114,9 +104,7 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
         options: Options(headers: dioHeaders(token)),
       );
       return response.statusCode == 200;
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { rethrow; }
   }
 }
 

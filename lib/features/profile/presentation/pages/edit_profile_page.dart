@@ -15,8 +15,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/profile.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart' as s;
-import '../../../shared/presentation/bloc/shared_bloc.dart';
+import '../../../shared/presentation/bloc/common/common_bloc.dart';
+import '../../../shared/presentation/bloc/common/common_event.dart';
+import '../../../shared/presentation/bloc/common/common_state.dart';
 import '../../../shared/presentation/bloc/location/location_bloc.dart';
+import '../../../shared/presentation/bloc/settings/settings_bloc.dart';
 import '../../../shared/presentation/widget/loading_view.dart';
 import '../bloc/profile_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -62,7 +65,7 @@ class _EditProfilePageState extends State<EditProfilePage>
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(GetServicesEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
     context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
     
     nameTextController = TextEditingController();
@@ -83,10 +86,10 @@ class _EditProfilePageState extends State<EditProfilePage>
       _initializeWithProfile(state.profile);
     }
 
-    // Initial load attempt for shared state
-    final sharedState = context.read<SharedBloc>().state;
-    if (sharedState is SuccessGetServicesState) {
-      _services = sharedState.services;
+    // Initial load attempt for common state
+    final commonState = context.read<CommonBloc>().state;
+    if (commonState is SuccessGetServicesState) {
+      _services = commonState.services;
     }
 
     _fadeController = AnimationController(
@@ -145,17 +148,23 @@ class _EditProfilePageState extends State<EditProfilePage>
     return Scaffold(
       body: MultiBlocListener(
         listeners: [
-          BlocListener<SharedBloc, SharedState>(
+          BlocListener<CommonBloc, CommonState>(
             listener: (context, state) {
               if (state is SuccessGetServicesState) {
-                _services = state.services;
-              } else if (state is MapLocationState) {
+                setState(() => _services = state.services);
+              }
+              if (state is SuccessAddServicesState) {
+                catalogServiceId = state.id ?? "";
+                _submitForm();
+              }
+              if (state is UseMapState) {
+                setState(() => _useMap = state.useMap);
+              }
+              if (state is MapLocationState) {
                 setState(() {
                   _mapLocation = state.location;
                   locController.text = state.address;
                 });
-              } else if (state is UseMapState) {
-                _useMap = state.useMap;
               }
             },
           ),
@@ -184,16 +193,13 @@ class _EditProfilePageState extends State<EditProfilePage>
           }
           if (state is SuccessUpdateProfileState) {
             context.read<ProfileBloc>().add(GetProfileStreamEvent());
-            context.read<SharedBloc>().add(GetServicesEvent());
+            context.read<CommonBloc>().add(GetServicesEvent());
             
             if (Helpers.isSeeker(userType)) {
-              context.read<SharedBloc>().add(
+              context.read<SettingsBloc>().add(
                 ToggleDashboardEvent(isProvider: false),
               );
             }
-            context.read<SharedBloc>().add(
-              SharedBlocReloadEvent(userType),
-            );
             customAlert(context, AlertType.success, "Profile updated successfully");
             
             Future.delayed(const Duration(seconds: 2), () {
@@ -215,9 +221,11 @@ class _EditProfilePageState extends State<EditProfilePage>
       ),
     ],
     child: BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
-        return LoadingView(
-            isLoading: (state is LoadingProfileState),
+      builder: (context, profileState) {
+        return BlocBuilder<CommonBloc, CommonState>(
+          builder: (context, commonState) {
+            return LoadingView(
+              isLoading: (profileState is LoadingProfileState) || (commonState is CommonLoading),
             child: GradientBackground(
               child: SafeArea(
                 child: Center(
@@ -515,12 +523,14 @@ class _EditProfilePageState extends State<EditProfilePage>
                 ),
               ),
             ),
-          );
-        },
-      ),
-      ),
-    );
-  }
+            );
+          },
+        );
+      },
+    ),
+  ),
+);
+}
 
   ImageProvider _buildProfileImageProvider() {
     if (_selectedImage != null) {
@@ -737,7 +747,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               icon: FontAwesomeIcons.locationCrosshairs,
               label: "Use Current Location",
               onTap: () async {
-                context.read<SharedBloc>().add(UseMapEvent(useMap: false));
+                context.read<CommonBloc>().add(UseMapEvent(useMap: false));
                 context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
                 final userLocation = await Helpers.getLocation();
                 if (userLocation != null) {
@@ -761,7 +771,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               onTap: () {
                 context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
                 Get.back();
-                context.read<SharedBloc>().add(UseMapEvent(useMap: true));
+                context.read<CommonBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
                 Get.toNamed("map-location")?.then((result) {
                   if (result != null && result is String) {
@@ -777,7 +787,44 @@ class _EditProfilePageState extends State<EditProfilePage>
     );
   }
 
+  /// Called after a custom service is successfully created.
+  /// At this point, [catalogServiceId] has already been populated from
+  /// [SuccessAddServicesState], so we can dispatch the update directly.
+  void _submitForm() {
+    final profileData = _currentProfile ?? Profile();
+    final profile = Profile(
+      firstName: nameTextController.text.trim(),
+      lastName: nameTextController.text.trim(),
+      phone: contactTextController.text.trim(),
+      city: profileData.city,
+      rating: profileData.rating,
+      country: countryTextController.text.trim(),
+      ratings: profileData.ratings,
+      address: locController.text.trim(),
+      gender: gender,
+      profilePictureUrl: profileData.profilePictureUrl,
+      dateOfBirth: _selectedDob,
+      createdAt: profileData.createdAt,
+      zipCode: zipCodeTextController.text.trim(),
+      state: stateTextController.text.trim(),
+      countryCode: countryCode,
+      updatedAt: DateTime.now(),
+      service: serviceTextController.text.trim(),
+      userType: userType,
+      catalogServiceId: catalogServiceId,
+      preferredPaymentMode: preferredPaymentMode,
+      longitude: (_useMap && _mapLocation != null) ? _mapLocation!.longitude.toString() : profileData.longitude,
+      latitude: (_useMap && _mapLocation != null) ? _mapLocation!.latitude.toString() : profileData.latitude,
+    );
+
+    context.read<ProfileBloc>().add(UpdateProfileEvent(
+      profile: profile,
+      profilePicturePath: _selectedImage?.path,
+    ));
+  }
+
   void _updateProfile(BuildContext context) {
+
     if (Helpers.isProvider(userType) && serviceType.isEmpty && !isOthersSelected) {
       customAlert(context, AlertType.warning, "Please select your service");
       return;
@@ -810,7 +857,7 @@ class _EditProfilePageState extends State<EditProfilePage>
       );
 
       if (isOthersSelected) {
-        context.read<SharedBloc>().add(
+        context.read<CommonBloc>().add(
           AddServiceEvent(
             model: Service(
               description: "Custom service added by user",

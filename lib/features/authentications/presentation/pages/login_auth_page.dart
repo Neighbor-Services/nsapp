@@ -2,14 +2,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:get/get.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -92,7 +92,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                 if (profile.phone != null &&
                     profile.phone!.isNotEmpty) {
                   bool isProvider = Helpers.isProvider(profile.userType);
-                  context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: isProvider));
+                  context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: isProvider));
                   
                   if (isProvider && profile.isIdentityVerified != true) {
                     Get.offAllNamed("/pending-verification");

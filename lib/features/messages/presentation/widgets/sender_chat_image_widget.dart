@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -73,7 +74,7 @@ class SenderChatImageWidget extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<SharedBloc>().add(
+                        context.read<CommonBloc>().add(
                           SetViewImageEvent(url: finalUrl),
                         );
                         Get.toNamed("/image");

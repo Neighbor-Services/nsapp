@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/dispute.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -46,7 +47,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
         description: _descriptionController.text,
       );
 
-      context.read<SharedBloc>().add(CreateDisputeEvent(dispute: dispute));
+      context.read<DisputeBloc>().add(CreateDisputeEvent(dispute: dispute));
     }
   }
 
@@ -88,7 +89,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
         ),
       ),
       body: GradientBackground(
-        child: BlocConsumer<SharedBloc, SharedState>(
+        child: BlocConsumer<DisputeBloc, DisputeState>(
           listener: (context, state) {
             if (state is SuccessCreateDisputeState) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -98,13 +99,8 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                 ),
               );
               Navigator.pop(context);
-            } else if (state is FailureCreateDisputeState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
-                  content: Text('Failed to raise dispute.'),
-                  backgroundColor: context.appColors.errorColor,
-                ),
-              );
+            } else if (state is DisputeFailure) {
+              customAlert(context, AlertType.error, state.message ?? "Error");
             }
           },
           builder: (context, state) {

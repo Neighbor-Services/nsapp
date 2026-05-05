@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/models/map_places.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 
 class SearchLocationMapWidget extends StatefulWidget {
@@ -20,7 +22,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<SharedBloc, SharedState>(
+    return BlocConsumer<CommonBloc, CommonState>(
       listener: (context, state) {},
       builder: (context, state) {
         final places = state is SuccessPlacesState ? state.places : <MapPlaces>[];
@@ -43,7 +45,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                 label: "Search Location",
                 prefixIcon: FontAwesomeIcons.magnifyingGlass,
                 onChanged: (val) {
-                  context.read<SharedBloc>().add(SearchPlacesEvent(input: val));
+                  context.read<CommonBloc>().add(SearchPlacesEvent(input: val));
                 },
               ),
             ),
@@ -109,9 +111,9 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                 color: Colors.transparent,
                                 child: ListTile(
                                   onTap: () {
-                                    context.read<SharedBloc>().add(
+                                    context.read<CommonBloc>().add(
                                       SearchPlaceEvent(
-                                        placeId: places[index].placeId!,
+                                        placeId: places[index].placeId ?? "",
                                       ),
                                     );
                                     Get.back();

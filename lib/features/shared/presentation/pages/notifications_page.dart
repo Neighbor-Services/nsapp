@@ -10,6 +10,7 @@ import 'package:nsapp/features/provider/presentation/pages/provider_accepted_req
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
+
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 
@@ -19,7 +20,8 @@ import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' hi
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' as provider_bloc show GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' hide GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as seeker_bloc show GetAppointmentsEvent;
-import '../bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/models/profile.dart';
 
@@ -39,7 +41,7 @@ class _NotificationsPageState extends State<NotificationsPage>
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(GetMyNotificationsEvent());
+    context.read<NotificationBloc>().add(GetMyNotificationsEvent());
     
     // Get initial profile
     final profileState = context.read<ProfileBloc>().state;
@@ -80,79 +82,85 @@ class _NotificationsPageState extends State<NotificationsPage>
             },
           ),
         ],
-        child: BlocConsumer<SharedBloc, SharedState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            final isProvider = state.isProvider;
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, settingsState) {
+            final isProvider = settingsState.isProvider;
 
-            return GradientBackground(
-              child: SafeArea(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700.w),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isLargeScreen ? 32.w : 20.w,
-                              vertical: 24.h,
-                            ),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    if (isProvider) {
-                                      context.read<ProviderBloc>().add(
-                                        ProviderBackPressedEvent(),
-                                      );
-                                    } else {
-                                      context.read<SeekerBloc>().add(
-                                        SeekerBackPressedEvent(),
-                                      );
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(12.r),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
+            return BlocBuilder<NotificationBloc, NotificationState>(
+              builder: (context, state) {
+                return GradientBackground(
+                  child: SafeArea(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 700.w),
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isLargeScreen ? 32.w : 20.w,
+                                  vertical: 24.h,
+                                ),
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (isProvider) {
+                                          context.read<ProviderBloc>().add(
+                                                ProviderBackPressedEvent(),
+                                              );
+                                        } else {
+                                          context.read<SeekerBloc>().add(
+                                                SeekerBackPressedEvent(),
+                                              );
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(12.r),
+                                        decoration: BoxDecoration(
+                                          color: context.appColors.cardBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(12.r),
+                                          border: Border.all(
+                                            color: context.appColors.glassBorder,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          FontAwesomeIcons.chevronLeft,
+                                          color:
+                                              context.appColors.primaryTextColor,
+                                          size: 20.r,
+                                        ),
                                       ),
                                     ),
-                                    child: Icon(
-                                      FontAwesomeIcons.chevronLeft,
-                                      color: context.appColors.primaryTextColor,
-                                      size: 20.r,
+                                    SizedBox(width: 16.w),
+                                    Text(
+                                      "NOTIFICATIONS",
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: context
+                                            .appColors.primaryTextColor,
+                                        letterSpacing: 1.2,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                                SizedBox(width: 16.w),
-                                Text(
-                                  "NOTIFICATIONS",
-                                  style: TextStyle(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: context.appColors.primaryTextColor,
-                                    letterSpacing: 1.2,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                              Expanded(
+                                child: _buildNotificationsList(
+                                    state, isLargeScreen),
+                              ),
+                            ],
                           ),
-
-                          Expanded(
-                            child: _buildNotificationsList(state, isLargeScreen),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
         ),
@@ -160,7 +168,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
   }
 
-  Widget _buildNotificationsList(SharedState state, bool isLargeScreen) {
+  Widget _buildNotificationsList(NotificationState state, bool isLargeScreen) {
     if (state is SuccessGetMyNotificationsState) {
       final notifications = state.notifications;
       if (notifications.isNotEmpty) {
@@ -183,7 +191,7 @@ class _NotificationsPageState extends State<NotificationsPage>
       } else {
         return _buildEmptyState();
       }
-    } else if (state is SharedLoadingState) {
+    } else if (state is NotificationLoading) {
        return const ListSkeletonLoader();
     } else {
        return _buildEmptyState();
@@ -402,7 +410,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     BuildContext context,
     not.NotificationData notificationData,
   ) {
-    context.read<SharedBloc>().add(
+    context.read<NotificationBloc>().add(
       SetNotificationSeenEvent(
         notificationID: notificationData.notification!.id!,
       ),
@@ -542,8 +550,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     final notification = notificationData.notification;
     final data = notification?.data;
     final type = notification?.notificationType?.toLowerCase();
-    final sharedState = context.read<SharedBloc>().state;
-    final isProvider = sharedState.isProvider;
+    final isProvider = context.read<SettingsBloc>().state.isProvider;
 
     Get.back(); // Close bottom sheet
 

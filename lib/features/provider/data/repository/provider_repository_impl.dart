@@ -70,22 +70,20 @@ class ProviderRepositoryImpl extends ProviderRepository {
         catalogServiceId: params?.catalogServiceId,
       );
 
-      if (results != null) {
-        if (params?.catalogServiceId != null &&
-            params!.catalogServiceId!.isNotEmpty) {
-          final filterId = params.catalogServiceId!;
-          results = results
-              .where((item) => item.request?.serviceID == filterId)
-              .toList();
-        }
-        if (params == null || params.page == null || params.page == 1) {
-          await hiveService
-              .getBox(HiveService.serviceRequestBox)
-              .put('recent_requests', results);
-        }
-        return Right(results);
+      if (params?.catalogServiceId != null &&
+          params!.catalogServiceId!.isNotEmpty) {
+        final filterId = params.catalogServiceId!;
+        results = results
+            .where((item) => item.request?.serviceID == filterId)
+            .toList();
       }
-      return Left(Failure(message: "An error occurred"));
+      if (params == null || params.page == null || params.page == 1) {
+        await hiveService
+            .getBox(HiveService.serviceRequestBox)
+            .put('recent_requests', results);
+      }
+      return Right(results);
+          
     } catch (e) {
       return Left(Failure(message: "An error occurred"));
     }
@@ -147,17 +145,11 @@ class ProviderRepositoryImpl extends ProviderRepository {
       // The datasource already requests expand=request from the server.
       // No secondary per-item hydration loop needed.
       final results = await datasource.getAcceptedRequest();
-      if (results != null) {
-        await hiveService
-            .getBox(HiveService.serviceRequestBox)
-            .put('accepted_requests', results);
-        return Right(results);
-      }
-      final cached = hiveService
+      await hiveService
           .getBox(HiveService.serviceRequestBox)
-          .get('accepted_requests');
-      if (cached != null) return Right(List<RequestAcceptance>.from(cached));
-      return Left(Failure(message: "An error occurred"));
+          .put('accepted_requests', results);
+      return Right(results);
+          
     } catch (e) {
       final cached = hiveService
           .getBox(HiveService.serviceRequestBox)
@@ -208,13 +200,11 @@ class ProviderRepositoryImpl extends ProviderRepository {
   Future<Either<Failure, List<AppointmentData>>> _syncAppointments() async {
     try {
       final results = await datasource.getAppointment();
-      if (results != null) {
-        await hiveService
-            .getBox(HiveService.appointmentBox)
-            .put('provider_appointments', results);
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      await hiveService
+          .getBox(HiveService.appointmentBox)
+          .put('provider_appointments', results);
+      return Right(results);
+        
     } catch (e) {
       return Left(Failure(message: "An error occurred"));
     }
@@ -233,28 +223,22 @@ class ProviderRepositoryImpl extends ProviderRepository {
         targeted: params?.targeted,
         catalogServiceId: params?.catalogServiceId,
       );
-      if (results != null) {
-        // Local filtering fallback
-        if (params?.catalogServiceId != null &&
-            params!.catalogServiceId!.isNotEmpty) {
-          final filterId = params.catalogServiceId!;
-          results = results.where((item) {
-            return item.request?.serviceID == filterId;
-          }).toList();
-        }
-
-        if (params == null || params.page == null || params.page == 1) {
-          await hiveService
-              .getBox(HiveService.serviceRequestBox)
-              .put('all_requests', results);
-        }
-        return Right(results);
+      // Local filtering fallback
+      if (params?.catalogServiceId != null &&
+          params!.catalogServiceId!.isNotEmpty) {
+        final filterId = params.catalogServiceId!;
+        results = results.where((item) {
+          return item.request?.serviceID == filterId;
+        }).toList();
       }
-      final cached = hiveService
-          .getBox(HiveService.serviceRequestBox)
-          .get('all_requests');
-      if (cached != null) return Right(List<RequestData>.from(cached));
-      return Left(Failure(message: "An error occurred"));
+
+      if (params == null || params.page == null || params.page == 1) {
+        await hiveService
+            .getBox(HiveService.serviceRequestBox)
+            .put('all_requests', results);
+      }
+      return Right(results);
+         
     } catch (e) {
       final cached = hiveService
           .getBox(HiveService.serviceRequestBox)
@@ -277,10 +261,8 @@ class ProviderRepositoryImpl extends ProviderRepository {
         page: params?.page,
         catalogServiceId: params?.catalogServiceId,
       );
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(message: "An error occurred"));
+      return Right(results);
+         
     } catch (e) {
       return Left(Failure(message: "An error occurred"));
     }
@@ -292,10 +274,8 @@ class ProviderRepositoryImpl extends ProviderRepository {
   }) async {
     try {
       final results = await datasource.getRequestById(id: id);
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(message: "Not found"));
+      return Right(results);
+         
     } catch (e) {
       return Left(Failure(message: "An error occurred"));
     }

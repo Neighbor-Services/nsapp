@@ -117,13 +117,20 @@ import 'package:nsapp/features/shared/domain/usecase/get_subscription_plans_use_
 import 'package:nsapp/features/shared/domain/usecase/search_place_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/search_places_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/set_seen_notification_use_case.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/domain/usecase/get_token_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_disputes_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_legal_document_use_case.dart';
 import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/legal/legal_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -305,6 +312,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetMyDisputesUseCase(sl()));
   sl.registerLazySingleton(() => GetStripeDashboardLinkUseCase(sl()));
   sl.registerLazySingleton(() => GetLegalDocumentUseCase(sl()));
+  sl.registerLazySingleton(() => GetTokenUsecase());
 
   // ! Blocs
   sl.registerFactory(
@@ -380,25 +388,57 @@ Future<void> init() async {
 
   sl.registerFactory(() => MessageBloc(sl(), sl(), sl(), sl(), sl(), sl()));
 
+
   sl.registerFactory(
-    () => SharedBloc(
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(), // GetLegalDocumentUseCase
+    () => WalletBloc(
+      getMyWalletUseCase: sl(),
+      requestPayoutUseCase: sl(),
+      getStripeDashboardLinkUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => DisputeBloc(
+      createDisputeUseCase: sl(),
+      getMyDisputesUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => NotificationBloc(
+      addNotificationUseCase: sl(),
+      getMyNotificationsUseCase: sl(),
+      seenNotificationUseCase: sl(),
+      notificationSocketService: sl(),
+      getTokenUsecase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => SettingsBloc(
+      changeUserTypeUseCase: sl(),
+      addReportUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => LegalBloc(
+      getLegalDocumentUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => SubscriptionBloc(
+      getSubscriptionPlansUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => CommonBloc(
+      getServicesUsecase: sl(),
+      addServiceUseCase: sl(),
+      searchPlacesUseCase: sl(),
+      searchPlaceUseCase: sl(),
     ),
   );
 

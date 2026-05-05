@@ -16,9 +16,15 @@ import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/core/services/local_notification_service.dart';
 import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/legal/legal_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -81,11 +87,7 @@ Future<void> main() async {
       await Permission.notification.request();
 
       runApp(
-        SentryScreenshotWidget(
-          child: SentryUserInteractionWidget(
-            child: const NeighborServiceApp(),
-          ),
-        ),
+         const NeighborServiceApp(),
       );
     },
   );
@@ -102,18 +104,24 @@ class NeighborServiceApp extends StatelessWidget {
           create: (_) => di.sl<AuthenticationBloc>(),
         ),
         BlocProvider<ProfileBloc>(create: (_) => di.sl<ProfileBloc>()),
-        BlocProvider<SharedBloc>(
-          create: (_) => di.sl<SharedBloc>()..add(LoadThemeModeEvent()),
-        ),
         BlocProvider<MessageBloc>(create: (_) => di.sl<MessageBloc>()),
         BlocProvider<SeekerBloc>(create: (_) => di.sl<SeekerBloc>()),
         BlocProvider<ProviderBloc>(create: (_) => di.sl<ProviderBloc>()),
         BlocProvider<LocationBloc>(
           create: (_) => di.sl<LocationBloc>()..add(GetLocationEvent()),
         ),
+        BlocProvider<SettingsBloc>(
+          create: (_) => di.sl<SettingsBloc>()..add(LoadThemeModeEvent()),
+        ),
+        BlocProvider<WalletBloc>(create: (_) => di.sl<WalletBloc>()),
+        BlocProvider<DisputeBloc>(create: (_) => di.sl<DisputeBloc>()),
+        BlocProvider<NotificationBloc>(create: (_) => di.sl<NotificationBloc>()),
+        BlocProvider<LegalBloc>(create: (_) => di.sl<LegalBloc>()),
+        BlocProvider<SubscriptionBloc>(create: (_) => di.sl<SubscriptionBloc>()),
+        BlocProvider<CommonBloc>(create: (_) => di.sl<CommonBloc>()),
       ],
-      child: BlocBuilder<SharedBloc, SharedState>(
-        buildWhen: (previous, current) => current is ThemeModeState,
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        buildWhen: (previous, current) => previous.themeMode != current.themeMode,
         builder: (context, state) {
           return GetMaterialApp(
             title: "Neighbor Service App",

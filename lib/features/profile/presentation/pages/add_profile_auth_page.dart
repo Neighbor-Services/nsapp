@@ -19,7 +19,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
-import '../../../shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
 
 class AddProfileAuthPage extends StatefulWidget {
   const AddProfileAuthPage({super.key});
@@ -55,7 +57,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
 
   @override
   void initState() {
-    context.read<SharedBloc>().add(GetServicesEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
     context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
     nameTextController = TextEditingController();
     dateOfBirthTextController = TextEditingController();
@@ -65,9 +67,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
     key = GlobalKey<FormState>();
     
     // Attempt to pre-fill from BLoC if available immediately
-    final sharedState = context.read<SharedBloc>().state;
-    if (sharedState is SuccessGetServicesState) {
-      _services = sharedState.services;
+    final commonState = context.read<CommonBloc>().state;
+    if (commonState is SuccessGetServicesState) {
+      _services = commonState.services;
     }
     
     super.initState();
@@ -122,25 +124,27 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               }
             },
           ),
-          BlocListener<SharedBloc, SharedState>(
+          BlocListener<CommonBloc, CommonState>(
             listener: (context, state) {
               if (state is SuccessGetServicesState) {
-                _services = state.services;
+                setState(() => _services = state.services);
               } else if (state is MapLocationState) {
                 setState(() {
                   _mapLocation = state.location;
                   locController.text = state.address;
                 });
               } else if (state is UseMapState) {
-                _useMap = state.useMap;
+                setState(() => _useMap = state.useMap);
               }
             },
           ),
         ],
         child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            return LoadingView(
-              isLoading: (state is LoadingProfileState),
+          builder: (context, profileState) {
+            return BlocBuilder<CommonBloc, CommonState>(
+              builder: (context, commonState) {
+                return LoadingView(
+                  isLoading: (profileState is LoadingProfileState) || (commonState is CommonLoading),
               child: GradientBackground(
                 child: SafeArea(
                   child: SingleChildScrollView(
@@ -558,7 +562,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
 
                               if (key.currentState!.validate()) {
                                 if (_others) {
-                                  context.read<SharedBloc>().add(
+                                  context.read<CommonBloc>().add(
                                     AddServiceEvent(
                                       model: Service(
                                         description: "Custom service added by user during profile creation",
@@ -600,10 +604,12 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               ),
             );
           },
-        ),
-      ),
-    );
-  }
+        );
+      },
+    ),
+  ),
+);
+}
 
   void _showImagePickerBottomSheet(BuildContext context) {
     final handleColor = context.appColors.glassBorder;
@@ -683,7 +689,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               icon: FontAwesomeIcons.locationCrosshairs,
               label: "Current Location",
               onTap: () async {
-                context.read<SharedBloc>().add(UseMapEvent(useMap: false));
+                context.read<CommonBloc>().add(UseMapEvent(useMap: false));
                 context.read<s.SeekerBloc>().add(
                   s.ChangeLocationEvent(change: true),
                 );
@@ -715,7 +721,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                   s.ChangeLocationEvent(change: true),
                 );
                 Get.back();
-                context.read<SharedBloc>().add(UseMapEvent(useMap: true));
+                context.read<CommonBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
                 Get.toNamed("map-location")?.then((result) {
                   if (result != null && result is String) {

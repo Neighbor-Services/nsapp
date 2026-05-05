@@ -1,7 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -60,7 +60,7 @@ class ConnectAccountSetupWidget extends StatelessWidget {
         SolidButton(
           label: "CONTINUE TO SETUP",
           onPressed: () {
-            context.read<SharedBloc>().add(CreateConnectAccountEvent());
+            context.read<WalletBloc>().add(CreateConnectAccountEvent());
           },
         ),
       ],

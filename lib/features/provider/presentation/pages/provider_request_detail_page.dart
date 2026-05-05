@@ -14,7 +14,9 @@ import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
-import '../../../shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
 class ProviderRequestDetailPage extends StatefulWidget {
@@ -55,7 +57,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
       ),
     );
 
-    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
 
     _fadeController = AnimationController(
       vsync: this,
@@ -97,7 +99,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
               }
             },
           ),
-          BlocListener<SharedBloc, SharedState>(
+          BlocListener<SubscriptionBloc, SubscriptionState>(
             listener: (context, state) {
               if (state is ValidUserSubscriptionState) {
                 setState(() => _isSubscriptionValid = state.isValid);
@@ -264,7 +266,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
               child: hasImage
                   ? GestureDetector(
                       onTap: () {
-                        context.read<SharedBloc>().add(
+                        context.read<CommonBloc>().add(
                           SetViewImageEvent(url: request.imageUrl ?? ""),
                         );
                         Get.toNamed("/image");

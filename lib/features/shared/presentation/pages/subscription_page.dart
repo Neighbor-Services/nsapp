@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
@@ -30,8 +30,8 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
-    context.read<SharedBloc>().add(GetSubscriptionPlansEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+    context.read<SubscriptionBloc>().add(GetSubscriptionPlansEvent());
 
     _fadeController = AnimationController(
       vsync: this,
@@ -55,17 +55,17 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<SubscriptionBloc, SubscriptionState>(
         listener: (context, state) {
           if (state is SuccessDeleteUserSubscriptionState) {
-            context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
+            context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
             customAlert(context, AlertType.success, "Subscription Canceled");
           }
-          if (state is FailureDeleteUserSubscriptionState) {
+          if (state is SubscriptionFailure) {
             customAlert(
               context,
               AlertType.error,
-              "Unable to cancel subscription",
+              state.message ?? "Error",
             );
           }
           if (state is ValidUserSubscriptionState) {
@@ -73,7 +73,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               _isValid = state.isValid;
             });
             if (!state.isValid) {
-              context.read<SharedBloc>().add(GetSubscriptionPlansEvent());
+              context.read<SubscriptionBloc>().add(GetSubscriptionPlansEvent());
             }
           }
           if (state is SuccessGetSubscriptionPlansState) {
@@ -81,16 +81,14 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               _allPlans = state.plans;
             });
           }
-          if (state is SuccessMakeSubscriptionState) {
-            context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
-            customAlert(context, AlertType.success, "Subscription Made");
+          if (state is SubscriptionFailure) {
+            setState(() {
+              _allPlans = [];
+            });
           }
-          if (state is FailureMakeSubscriptionState) {
-            customAlert(
-              context,
-              AlertType.error,
-              "Unable to make subscription",
-            );
+          if (state is SuccessMakeSubscriptionState) {
+            context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+            customAlert(context, AlertType.success, "Subscription Made");
           }
         },
         builder: (context, state) {
@@ -101,7 +99,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           final borderColor = context.appColors.glassBorder;
 
           return LoadingView(
-            isLoading: (state is SharedLoadingState),
+            isLoading: (state is SubscriptionLoading),
             child: GradientBackground(
               child: SafeArea(
                 child: Center(
@@ -253,7 +251,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 height: 54.h,
                 child: OutlinedButton(
                   onPressed: () {
-                    context.read<SharedBloc>().add(
+                    context.read<SubscriptionBloc>().add(
                       DeleteUserSubscriptionEvent(),
                     );
                   },
@@ -288,7 +286,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     Color secondaryTextColor,
     Color buttonColor,
     Color borderColor,
-    SharedState state,
+    SubscriptionState state,
   ) {
     if (_allPlans.isNotEmpty) {
       final plans =
@@ -387,7 +385,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       );
     }
 
-    if (state is FailureGetSubscriptionPlansState) {
+    if (state is SubscriptionFailure) {
       return _buildFailureView(textColor, secondaryTextColor);
     }
 
@@ -531,7 +529,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     return GestureDetector(
       onTap: () async {
         if (plan.id != null) {
-          context.read<SharedBloc>().add(
+          context.read<SubscriptionBloc>().add(
             MakeSubscriptionEvent(planId: plan.id!, context: context),
           );
         }
@@ -739,7 +737,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
         SizedBox(height: 24.h),
         ElevatedButton(
           onPressed: () {
-            context.read<SharedBloc>().add(GetSubscriptionPlansEvent());
+            context.read<SubscriptionBloc>().add(GetSubscriptionPlansEvent());
           },
           child: const Text("Retry"),
         ),

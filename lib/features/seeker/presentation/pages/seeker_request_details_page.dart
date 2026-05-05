@@ -21,7 +21,8 @@ import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widge
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
-import '../../../shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import '../../../shared/presentation/widget/custom_text_widget.dart';
 import '../../../shared/presentation/widget/loading_view.dart';
 import '../bloc/seeker_bloc.dart';
@@ -271,6 +272,40 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                     height: 1.6,
                                   ),
                                 ),
+                                const SizedBox(height: 24),
+                                Divider(
+                                  color: borderColor.withAlpha(50),
+                                  height: 1,
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      FontAwesomeIcons.moneyBillWave,
+                                      color: context.appColors.primaryColor,
+                                      size: 18.r,
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Text(
+                                      "PAYMENT MODE:",
+                                      style: TextStyle(
+                                        color: context.appColors.hintTextColor,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      requestData.request?.paymentMode == 'ON_SITE' ? "ON-SITE" : "IN-APP",
+                                      style: TextStyle(
+                                        color: context.appColors.primaryColor,
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -290,7 +325,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                 borderRadius: BorderRadius.circular(24),
                                 child: GestureDetector(
                                   onTap: () {
-                                    context.read<SharedBloc>().add(
+                                    context.read<CommonBloc>().add(
                                       SetViewImageEvent(
                                         url:
                                             requestData
@@ -746,14 +781,15 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 ],
               ),
             ),
+            if (requestData.request?.paymentMode != 'ON_SITE')
             PopupMenuItem(
               value: 4,
               child: Row(
                 children: [
-                  FaIcon(FontAwesomeIcons.creditCard, color: context.appColors.secondaryColor, size: 20.r),
+                  FaIcon(FontAwesomeIcons.vault, color: context.appColors.secondaryColor, size: 20.r),
                   SizedBox(width: 12.w),
                   Text(
-                    "FUND PROVIDER",
+                    "FUND PROJECT",
                     style: TextStyle(
                       color: iconColor,
                       fontWeight: FontWeight.w500,

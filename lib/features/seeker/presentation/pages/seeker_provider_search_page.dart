@@ -14,7 +14,9 @@ import '../../../messages/presentation/bloc/message_bloc.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/pages/about_page.dart';
-import '../../../shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+
+
 import '../../../shared/presentation/widget/empty_widget.dart';
 import '../../../shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -531,9 +533,9 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
         ? (profileState.profile.firstName ?? "User")
         : "User";
 
-    context.read<SharedBloc>().add(
+    context.read<NotificationBloc>().add(
       SendNotificationEvent(
-        notify: Notify(
+        notificationModel: Notify(
           userId: profile.id!,
           title: title,
           body: "$myName $bodySuffix",
