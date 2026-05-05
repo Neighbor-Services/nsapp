@@ -28,7 +28,7 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart'
 import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'firebase_options.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -40,7 +40,9 @@ Future<void> main() async {
 
   // Firebase Setup
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     debugPrint("Firebase initialization failed: $e");
   }
@@ -51,13 +53,7 @@ Future<void> main() async {
   );
   HydratedBloc.storage = storage;
 
-  // Sentry Setup
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = dotenv.get('SENTRY_DSN', fallback: '');
-      options.tracesSampleRate = 1.0;
-    },
-    appRunner: () async {
+  
       // Stripe Setup
       Stripe.publishableKey = stripePublishableKey;
       Stripe.merchantIdentifier = "merchant.flutter.stripe.test";
@@ -89,8 +85,8 @@ Future<void> main() async {
       runApp(
          const NeighborServiceApp(),
       );
-    },
-  );
+    
+  
 }
 
 class NeighborServiceApp extends StatelessWidget {
