@@ -6,6 +6,8 @@ class InitialProfileState extends ProfileState {}
 
 class LoadingProfileState extends ProfileState {}
 
+class LoadingAuditLogsState extends ProfileState {}
+
 class DateOfBirthProfileState extends ProfileState {
   final DateTime dob;
   DateOfBirthProfileState({required this.dob});
@@ -43,9 +45,8 @@ class SuccessGetProfileState extends ProfileState {
   SuccessGetProfileState({required this.profile});
 }
 
-class SuccessGetProfileStreamState extends ProfileState {
-  final Profile profile;
-  SuccessGetProfileStreamState({required this.profile});
+class SuccessGetProfileStreamState extends SuccessGetProfileState {
+  SuccessGetProfileStreamState({required super.profile});
 }
 
 class SuccessGetAboutStreamState extends ProfileState {

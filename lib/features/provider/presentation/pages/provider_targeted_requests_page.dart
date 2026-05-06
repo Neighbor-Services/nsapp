@@ -162,7 +162,7 @@ class _ProviderTargetedRequestsPageState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
-    List<RequestData> requests = [];
+    List<RequestData> requests = context.read<ProviderBloc>().targetedRequests;
     if (state is SuccessGetTargetedRequestsState) {
       requests = state.requests;
     }
@@ -288,7 +288,7 @@ class _ProviderTargetedRequestsPageState
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.white.withAlpha(10),
-                                  child: const Center(child: LoadingWidget()),
+                                  child: const Center(child: LoadingWidget(count: 1)),
                                 ),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(logoAssets, fit: BoxFit.cover),

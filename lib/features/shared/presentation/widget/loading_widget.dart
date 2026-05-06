@@ -4,7 +4,8 @@ import 'package:nsapp/core/core.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({super.key});
+  final int count;
+  const LoadingWidget({super.key, this.count = 3});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +15,9 @@ class LoadingWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(16.r),
         child: Column(
-          children: List.generate(3, (index) => Padding(
-            padding: EdgeInsets.only(bottom: 16.h),
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(count, (index) => Padding(
+            padding: EdgeInsets.only(bottom: index == count - 1 ? 0 : 16.h),
             child: Row(
               children: [
                 Container(
@@ -30,6 +32,7 @@ class LoadingWidget extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
                         width: double.infinity,

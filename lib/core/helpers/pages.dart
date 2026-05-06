@@ -22,12 +22,14 @@ import 'package:nsapp/features/shared/presentation/pages/setup_webview_page.dart
 import 'package:nsapp/features/shared/presentation/pages/splash_screen_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/no_internet_page.dart';
 import 'package:nsapp/features/wallet/presentation/pages/wallet_page.dart';
+import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/disputes_list_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_appointment_list_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/dispute_details_page.dart';
 import 'package:nsapp/features/shared/presentation/pages/legal_document_page.dart';
+import 'package:nsapp/features/profile/presentation/pages/audit_log_page.dart';
 
 List<GetPage<dynamic>> pages = [
   GetPage(name: '/', page: () => SplashScreenPage()),
@@ -71,7 +73,9 @@ List<GetPage<dynamic>> pages = [
     name: '/app/appointments',
     page: () => const ProviderAppointmentListPage(),
   ),
+  GetPage(name: '/notifications', page: () => const NotificationsPage()),
   GetPage(name: '/legal', page: () => const LegalDocumentPage()),
+  GetPage(name: '/audit-logs', page: () => const AuditLogPage()),
 ];
 
 

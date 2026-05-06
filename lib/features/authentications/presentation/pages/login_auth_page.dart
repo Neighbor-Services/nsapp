@@ -94,7 +94,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: isProvider));
                   
                   if (isProvider && profile.isIdentityVerified != true) {
-                    Get.offAllNamed("/pending-verification");
+                    Get.offAllNamed("/home");
+                    // Get.offAllNamed("/pending-verification");
                   } else {
                     Get.offAllNamed("/home");
                   }

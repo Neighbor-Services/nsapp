@@ -125,13 +125,17 @@ class AuthenticationBloc
     on<LoginWithGoogleAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
       final results = await loginWithGoogleUseCase.call(event);
+      
+      bool isSuccess = false;
       results.fold(
         (l) => emit(FailureLoginAuthenticationState()),
-        (r) async {
-          await DeviceTokenService.tryRegisterStoredToken();
-          emit(SuccessLoginAuthenticationState());
-        },
+        (r) => isSuccess = true,
       );
+
+      if (isSuccess) {
+        await DeviceTokenService.tryRegisterStoredToken();
+        emit(SuccessLoginAuthenticationState());
+      }
     });
     on<VerifyEmailOtpEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
@@ -176,13 +180,17 @@ class AuthenticationBloc
     on<LoginWithAppleAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
       final results = await loginWithAppleUseCase.call();
+      
+      bool isSuccess = false;
       results.fold(
         (l) => emit(FailureLoginAuthenticationState()),
-        (r) async {
-          await DeviceTokenService.tryRegisterStoredToken();
-          emit(SuccessLoginAuthenticationState());
-        },
+        (r) => isSuccess = true,
       );
+
+      if (isSuccess) {
+        await DeviceTokenService.tryRegisterStoredToken();
+        emit(SuccessLoginAuthenticationState());
+      }
     });
     on<DeleteAccountEvent>((event, emit) async {
       emit(LoadingAuthenticationState());

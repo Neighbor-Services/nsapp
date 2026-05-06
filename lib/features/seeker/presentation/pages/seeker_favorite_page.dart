@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -72,8 +73,15 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
             );
           }
         },
+        buildWhen: (previous, current) =>
+          current is SuccessGetMyFavoritesState ||
+          current is FailureGetMyFavoritesState ||
+          current is LoadingSeekerState ||
+          current is InitialSeekerState,
         builder: (context, state) {
-          return GradientBackground(
+          return LoadingView(
+            isLoading: state is LoadingSeekerState,
+            child: GradientBackground(
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
@@ -157,6 +165,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                 ),
               ),
             ),
+          )
           );
         },
       ),
@@ -170,26 +179,11 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
     Color textColor,
     Color secondaryTextColor,
   ) {
+    final favorites = context.read<SeekerBloc>().myFavorites;
+    
     if (state is SuccessGetMyFavoritesState) {
       if (state.profiles.isNotEmpty) {
-        return ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics(),
-          ),
-          padding: EdgeInsets.only(
-            left: isLargeScreen ? 32.w : 16.w,
-            right: isLargeScreen ? 32.w : 16.w,
-            bottom: 32.h,
-          ),
-          itemCount: state.profiles.length,
-          itemBuilder: (context, index) {
-            return _buildFavoriteCard(
-              context,
-              state.profiles[index],
-              index,
-            );
-          },
-        );
+        return _buildFavoriteList(context, state.profiles, isLargeScreen);
       } else {
         return _buildEmptyState(context, textColor, secondaryTextColor);
       }
@@ -204,7 +198,33 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
       );
     }
 
+    // Fallback to cached data if available
+    if (favorites.isNotEmpty) {
+      return _buildFavoriteList(context, favorites, isLargeScreen);
+    }
+
     return const Center(child: LoadingWidget());
+  }
+
+  Widget _buildFavoriteList(BuildContext context, List<Favorite> profiles, bool isLargeScreen) {
+    return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
+      padding: EdgeInsets.only(
+        left: isLargeScreen ? 32.w : 16.w,
+        right: isLargeScreen ? 32.w : 16.w,
+        bottom: 32.h,
+      ),
+      itemCount: profiles.length,
+      itemBuilder: (context, index) {
+        return _buildFavoriteCard(
+          context,
+          profiles[index],
+          index,
+        );
+      },
+    );
   }
 
   Widget _buildEmptyState(BuildContext context, Color textColor, Color secondaryTextColor) {
@@ -285,12 +305,15 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
       },
       child: GestureDetector(
         onTap: (){
-          context.read<ProfileBloc>().add(
-            AboutUserEvent(
-              userID: favorite.favoriteUser!.user!.id!,
-            ),
-          );
-          Get.to(() => const AboutPage());
+          final String? providerId = favorite.favoriteUser?.user?.id;
+          if (providerId != null) {
+            context.read<ProfileBloc>().add(
+              AboutUserEvent(
+                userID: providerId,
+              ),
+            );
+            Get.to(() => const AboutPage());
+          }
         },
         child: Container(
           margin: EdgeInsets.only(bottom: 16.h),
@@ -307,21 +330,18 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                     border: Border.all(color: borderColor, width: 2.5.r),
                    
                   ),
-                  child: CircleAvatar(
-                    radius: 36.r,
-                    backgroundColor: Colors.white12,
-                    backgroundImage:
-                        (favorite.favoriteUser!.profilePictureUrl != null &&
-                            favorite
-                                .favoriteUser!
-                                .profilePictureUrl!
-                                .isNotEmpty &&
-                            favorite.favoriteUser!.profilePictureUrl!.startsWith(
-                              "http",
-                            ))
-                        ? NetworkImage(favorite.favoriteUser!.profilePictureUrl!)
-                        : const AssetImage(logoAssets) as ImageProvider,
-                  ),
+                    child: CircleAvatar(
+                      radius: 36.r,
+                      backgroundColor: Colors.white12,
+                      backgroundImage:
+                          (favorite.favoriteUser?.profilePictureUrl != null &&
+                              favorite.favoriteUser!.profilePictureUrl!.isNotEmpty &&
+                              favorite.favoriteUser!.profilePictureUrl!.startsWith(
+                                "http",
+                              ))
+                          ? NetworkImage(favorite.favoriteUser!.profilePictureUrl!)
+                          : const AssetImage(logoAssets) as ImageProvider,
+                    ),
                 ),
                 SizedBox(width: 18.w),
         
@@ -331,7 +351,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (favorite.favoriteUser!.firstName ?? "Provider").toUpperCase(),
+                        (favorite.favoriteUser?.firstName ?? "Provider").toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
@@ -350,7 +370,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                         child: Text(
-                          getServiceName(favorite.favoriteUser!.service ?? favorite.favoriteUser!.catalogServiceName ?? "").toUpperCase(),
+                          getServiceName(favorite.favoriteUser?.service ?? favorite.favoriteUser?.catalogServiceName ?? "").toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w500,
@@ -367,6 +387,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (favorite.favoriteUser != null)
                      _buildActionButton(
                   icon: FontAwesomeIcons.comment,
                   color: context.appColors.primaryColor,
@@ -385,9 +406,11 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                       icon: FontAwesomeIcons.heart,
                       color: context.appColors.errorColor,
                       onTap: () {
-                        context.read<SeekerBloc>().add(
-                          RemoveFromFavoriteEvent(userId: favorite.id!),
-                        );
+                        if (favorite.id != null) {
+                          context.read<SeekerBloc>().add(
+                            RemoveFromFavoriteEvent(userId: favorite.id!),
+                          );
+                        }
                       },
                     ),
                   ],

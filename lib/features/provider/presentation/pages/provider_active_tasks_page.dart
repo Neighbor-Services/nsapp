@@ -145,10 +145,7 @@ class _ProviderActiveTasksPageState
                             ),
                             Expanded(
                               child: () {
-                                List<RequestAcceptance> accepts = [];
-                                if (providerState is SuccessGetAcceptRequestState) {
-                                  accepts = providerState.accepts;
-                                }
+                                final accepts = context.read<ProviderBloc>().myAcceptedRequests;
 
                                 final activeTasks = accepts.where((r) {
                                   final request = r.acceptance?.request;

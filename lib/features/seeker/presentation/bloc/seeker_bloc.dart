@@ -1,4 +1,5 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -65,9 +66,15 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
   List<RequestData> _myRequests = [];
   List<Favorite> _myFavorites = [];
   List<AppointmentData> _appointments = [];
+  List<Profile> _popularProviders = [];
   
-  // Getter for active tab
+  // Getters for data
   int get currentTab => _currentTab;
+  XFile? get selectedPicture => _selectedPicture;
+  List<RequestData> get myRequests => _myRequests;
+  List<Favorite> get myFavorites => _myFavorites;
+  List<AppointmentData> get appointments => _appointments;
+  List<Profile> get popularProviders => _popularProviders;
 
   SeekerBloc(
     this.createRequestUseCase,
@@ -135,7 +142,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
           emit(SuccessGetMyRequestState(myRequests: r));
         },
       );
-    }, transformer: sequential());
+    });
 
     on<SelectImageFromGalleryEvent>((event, emit) async {
       _selectedPicture = await Helpers.selectImageFromGallery();
@@ -157,7 +164,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         (l) => emit(FailureAcceptedUserstState(message: l.message)),
         (r) => emit(SuccessAcceptedUsersState(users: r)),
       );
-    }, transformer: sequential());
+    });
 
     on<ReloadRequestEvent>((event, emit) async {
       final results = await reloadRequestUseCase(event.request);
@@ -165,7 +172,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         (l) => emit(FailureReloadRequestState(message: l.message)),
         (r) => emit(SuccessReloadRequestState(request: r)),
       );
-    }, transformer: sequential());
+    });
 
     on<ApprovedRequestEvent>((event, emit) async {
       emit(LoadingSeekerState());
@@ -198,12 +205,20 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     });
 
     on<GetPopularProvidersEvent>((event, emit) async {
+      debugPrint("SeekerBloc: Fetching popular providers...");
       final results = await getPopularProviderRequestUseCase(event);
       results.fold(
-        (l) => emit(FailurePopularProviderState(message: l.message)),
-        (r) => emit(SuccessPopularProvidersState(providers: r)),
+        (l) {
+          debugPrint("SeekerBloc: Failed to fetch popular providers: ${l.message}");
+          emit(FailurePopularProviderState(message: l.message));
+        },
+        (r) {
+          debugPrint("SeekerBloc: Successfully fetched ${r.length} popular providers");
+          _popularProviders = r;
+          emit(SuccessPopularProvidersState(providers: r));
+        },
       );
-    }, transformer: sequential());
+    });
 
     on<AddToFavoriteEvent>((event, emit) async {
       final results = await addToFavoriteUseCase(event.userId);
@@ -228,15 +243,20 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     });
 
     on<GetMyFavoritesEvent>((event, emit) async {
+      debugPrint("SeekerBloc: Fetching favorites...");
       final results = await getMyFavoritesUseCase(event);
       results.fold(
-        (l) => emit(FailureGetMyFavoritesState(message: l.message)),
+        (l) {
+          debugPrint("SeekerBloc: Failed to fetch favorites: ${l.message}");
+          emit(FailureGetMyFavoritesState(message: l.message));
+        },
         (r) {
+          debugPrint("SeekerBloc: Successfully fetched ${r.length} favorites");
           _myFavorites = r;
           emit(SuccessGetMyFavoritesState(profiles: r));
         },
       );
-    }, transformer: sequential());
+    });
 
     // SeekerBackPressedEvent removed
 
@@ -257,7 +277,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
           emit(SuccessGetAppointmentsState(appointments: r));
         },
       );
-    }, transformer: sequential());
+    });
 
     on<SearchProviderEvent>((event, emit) async {
       final results = await searchProviderUseCase(SearchProviderParams(
@@ -272,7 +292,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         (l) => emit(FailureSearchProviderState(message: l.message)),
         (r) => emit(SuccessSearchProviderState(providers: r)),
       );
-    }, transformer: sequential());
+    });
 
     on<SearchEvent>((event, emit) {
       emit(SearchingState(isSearching: event.isSearching));
@@ -376,6 +396,11 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
             .map((e) => AppointmentData.fromJson(e))
             .toList();
       }
+      if (json.containsKey('popularProviders')) {
+        _popularProviders = (json['popularProviders'] as List)
+            .map((e) => Profile.fromJson(e))
+            .toList();
+      }
       if (json.containsKey('currentTab')) {
         _currentTab = json['currentTab'];
         return SeekerTabChangedState(tabIndex: _currentTab);
@@ -392,6 +417,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       'myRequests': _myRequests.map((e) => e.toJson()).toList(),
       'myFavorites': _myFavorites.map((e) => e.toJson()).toList(),
       'appointments': _appointments.map((e) => e.toJson()).toList(),
+      'popularProviders': _popularProviders.map((e) => e.toJson()).toList(),
       'currentTab': _currentTab,
     };
   }

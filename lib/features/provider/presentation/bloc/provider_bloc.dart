@@ -1,4 +1,5 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/core/models/request.dart';
@@ -53,11 +54,19 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
   int _currentTab = 1;
   List<RequestData> _recentRequests = [];
   List<RequestData> _allRequests = [];
+  List<RequestData> _targetedRequests = [];
   List<RequestAcceptance> _myAcceptedRequests = [];
   List<AppointmentData> _appointments = [];
+  RequestData? _selectedRequest;
   
-  // Getter for active tab
+  // Getters for data
   int get currentTab => _currentTab;
+  List<RequestData> get recentRequests => _recentRequests;
+  List<RequestData> get allRequests => _allRequests;
+  List<RequestData> get targetedRequests => _targetedRequests;
+  List<RequestAcceptance> get myAcceptedRequests => _myAcceptedRequests;
+  List<AppointmentData> get appointments => _appointments;
+  RequestData? get selectedRequest => _selectedRequest;
 
   ProviderBloc(
     this.getRecentRequestUseCase,
@@ -78,7 +87,32 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
     this.addServicePackageUseCase,
     this.verifyAppointmentCodeUseCase,
   ) : super(ProviderInitial()) {
+    debugPrint("ProviderBloc: Constructor initialized");
     
+    on<GetTargetedRequestsEvent>((event, emit) async {
+      debugPrint("ProviderBloc: Handling GetTargetedRequestsEvent");
+      final params = RequestSearchParams(
+        lat: event.lat,
+        lng: event.lng,
+        radius: event.radius,
+        page: event.page,
+        targeted: true,
+      );
+      final results = await getRequestsUseCase(params);
+      results.fold(
+        (l) => emit(FailureGetTargetedRequestsState(message: l.message)),
+        (r) {
+          debugPrint("ProviderBloc: Success GetTargetedRequests: ${r.length} items");
+          if (event.page != null && event.page! > 1) {
+            _targetedRequests.addAll(r);
+          } else {
+            _targetedRequests = r;
+          }
+          emit(SuccessGetTargetedRequestsState(requests: List.from(_targetedRequests)));
+        },
+      );
+    }, transformer: sequential());
+
     on<ChangeProviderTabEvent>((event, emit) {
       _currentTab = event.tabIndex;
       emit(ProviderTabChangedState(tabIndex: _currentTab));
@@ -136,6 +170,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       );
     }, transformer: sequential());
 
+
     on<RequestAcceptEvent>((event, emit) async {
       emit(LoadingProviderState());
       final results = await acceptRequestUseCase(event.requestAccept);
@@ -164,6 +199,11 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
         },
       );
     }, transformer: sequential());
+
+    on<RequestDetailEvent>((event, emit) {
+      _selectedRequest = event.request;
+      emit(SuccessGetRequestDetailState(request: event.request));
+    });
 
     on<GetRequestDetailEvent>((event, emit) async {
       emit(LoadingProviderState());
@@ -286,6 +326,11 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
             .map((e) => RequestData.fromJson(e))
             .toList();
       }
+      if (json.containsKey('targetedRequests')) {
+        _targetedRequests = (json['targetedRequests'] as List)
+            .map((e) => RequestData.fromJson(e))
+            .toList();
+      }
       if (json.containsKey('myAcceptedRequests')) {
         _myAcceptedRequests = (json['myAcceptedRequests'] as List)
             .map((e) => RequestAcceptance.fromJson(e))
@@ -295,6 +340,9 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
         _appointments = (json['appointments'] as List)
             .map((e) => AppointmentData.fromJson(e))
             .toList();
+      }
+      if (json.containsKey('selectedRequest')) {
+        _selectedRequest = RequestData.fromJson(json['selectedRequest']);
       }
       
       if (json.containsKey('currentTab')) {
@@ -312,8 +360,10 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
     return {
       'recentRequests': _recentRequests.map((e) => e.toJson()).toList(),
       'allRequests': _allRequests.map((e) => e.toJson()).toList(),
+      'targetedRequests': _targetedRequests.map((e) => e.toJson()).toList(),
       'myAcceptedRequests': _myAcceptedRequests.map((e) => e.toJson()).toList(),
       'appointments': _appointments.map((e) => e.toJson()).toList(),
+      'selectedRequest': _selectedRequest?.toJson(),
       'currentTab': _currentTab,
     };
   }

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter/material.dart';
@@ -46,7 +47,6 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   String? selectedService;
   DateTime? selectedScheduledTime;
   Request? _pendingRequest;
-  String paymentMode = "IN_APP";
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -63,6 +63,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     super.initState();
     context.read<CommonBloc>().add(GetServicesEvent());
     context.read<SeekerBloc>().add(ChooseOtherServiceEvent(other: false));
+    context.read<SeekerBloc>().add(ClearImageEvent());
     
     final commonState = context.read<CommonBloc>().state;
     if (commonState is MapLocationState) {
@@ -181,7 +182,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                               (context.watch<SeekerBloc>().state as OtherServiceSelectState).others,
                                     onLocationTap: () => _showLocationSheet(context),
                                     onScheduleTap: () => _selectDateTime(context),
-                                    paymentModeSelector: _buildPaymentModeSelector(),
+                                    imageSelector: _buildImageSelector(),
                                     submitButtonLabel: "CREATE REQUEST",
                                     onSubmit: () => _handleCreateRequest(context),
                                   ),
@@ -358,7 +359,6 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
         latitude: (_useMap && _mapLocation != null) ? _mapLocation!.latitude : userLoc.position.latitude,
         longitude: (_useMap && _mapLocation != null) ? _mapLocation!.longitude : userLoc.position.longitude,
         targetProviderId: widget.targetProviderId,
-        paymentMode: paymentMode,
       );
 
       final seekerState = context.read<SeekerBloc>().state;
@@ -387,57 +387,79 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     }
   }
 
-  Widget _buildPaymentModeSelector() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildPaymentOption(
-            "In-App",
-            "IN_APP",
-            FontAwesomeIcons.creditCard,
+  Widget _buildImageSelector() {
+    return BlocBuilder<SeekerBloc, SeekerState>(
+      buildWhen: (previous, current) => current is ImageSeekerState,
+      builder: (context, state) {
+        final image = context.read<SeekerBloc>().selectedPicture;
+        return GestureDetector(
+          onTap: () => _showImageSourceSheet(context),
+          child: Container(
+            height: 120.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: context.appColors.cardBackground,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+                style: image == null ? BorderStyle.solid : BorderStyle.none,
+              ),
+            ),
+            child: image != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: Image.file(File(image.path), fit: BoxFit.cover),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        FontAwesomeIcons.image,
+                        color: context.appColors.primaryColor,
+                        size: 32.r,
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        "Tap to select image",
+                        style: TextStyle(
+                          color: context.appColors.secondaryTextColor,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ],
+                  ),
           ),
-        ),
-        SizedBox(width: 16.w),
-        Expanded(
-          child: _buildPaymentOption(
-            "On-Site",
-            "ON_SITE",
-            FontAwesomeIcons.moneyBillWave,
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildPaymentOption(String label, String value, IconData icon) {
-    bool isSelected = paymentMode == value;
-    return GestureDetector(
-      onTap: () => setState(() => paymentMode = value),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h),
+  void _showImageSourceSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
-          color: isSelected ? context.appColors.primaryColor.withAlpha(40) : context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: isSelected ? context.appColors.primaryColor : context.appColors.glassBorder,
-            width: isSelected ? 2 : 1,
-          ),
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: isSelected ? context.appColors.primaryColor : context.appColors.hintTextColor,
-              size: 24.r,
+            ListTile(
+              leading: const Icon(FontAwesomeIcons.camera),
+              title: const Text("Camera"),
+              onTap: () {
+                context.read<SeekerBloc>().add(SelectImageFromCameraEvent());
+                Get.back();
+              },
             ),
-            SizedBox(height: 8.h),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? context.appColors.primaryTextColor : context.appColors.hintTextColor,
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                fontSize: 13.sp,
-              ),
+            ListTile(
+              leading: const Icon(FontAwesomeIcons.images),
+              title: const Text("Gallery"),
+              onTap: () {
+                context.read<SeekerBloc>().add(SelectImageFromGalleryEvent());
+                Get.back();
+              },
             ),
           ],
         ),

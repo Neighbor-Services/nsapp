@@ -1,3 +1,5 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +41,7 @@ class SeekerRequestDetailsPage extends StatefulWidget {
 class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
   late TextEditingController amountController;
   late GlobalKey<FormState> formKey;
+  RequestData? _cachedRequestData;
 
   @override
   void initState() {
@@ -52,6 +55,83 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     super.initState();
   }
 
+  void _showSuccessCelebration(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: FadeInUp(
+          child: SolidContainer(
+            padding: EdgeInsets.all(32.r),
+            width: MediaQuery.of(context).size.width * 0.85,
+            borderRadius: BorderRadius.circular(32.r),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(24.r),
+                  decoration: BoxDecoration(
+                    color: Colors.greenAccent.withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    FontAwesomeIcons.circleCheck,
+                    color: Colors.greenAccent,
+                    size: 64.r,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                Text(
+                  "TASK COMPLETED!",
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: context.appColors.primaryTextColor,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  "Amazing work! You've just made your neighborhood a better place.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: context.appColors.secondaryTextColor,
+                    fontSize: 14.sp,
+                    height: 1.5,
+                  ),
+                ),
+                SizedBox(height: 32.h),
+                SolidButton(
+                  label: "REVIEW NEIGHBOR",
+                  onPressed: () {
+                    Navigator.pop(context);
+                    // Navigate to review flow
+                  },
+                  isPrimary: true,
+                  height: 56.h,
+                ),
+                SizedBox(height: 12.h),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Get.to(() => const SeekerRequestPage());
+                  },
+                  child: Text(
+                    "NOT NOW",
+                    style: TextStyle(
+                      color: context.appColors.hintTextColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final textColor = context.appColors.primaryTextColor;
@@ -63,6 +143,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
       body: GradientBackground(
         child: SafeArea(
           child: BlocConsumer<SeekerBloc, SeekerState>(
+            buildWhen: (previous, current) =>
+                current is SuccessReloadRequestState ||
+                current is LoadingSeekerState ||
+                current is FailureReloadRequestState ||
+                current is SeekerRequestDetailState ||
+                current is SuccessMarkAsDoneState ||
+                current is SuccessApprovedProviderState ||
+                current is SuccessCancelApprovedProviderState,
             listener: (context, state) {
               if (state is SuccessDeleteRequestState) {
                 Get.to(() => const SeekerRequestPage());
@@ -114,12 +202,28 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                   ),
                 );
               }
+              if (state is SuccessMarkAsDoneState) {
+                HapticFeedback.heavyImpact();
+                _showSuccessCelebration(context);
+                // Refresh profile to update XP/Level
+                context.read<ProfileBloc>().add(GetProfileEvent());
+              }
+              if (state is FailureMarkAsDoneState) {
+                customAlert(context, AlertType.error, state.message ?? "Failed to mark as done");
+              }
             },
             builder: (context, state) {
               if (state is SuccessReloadRequestState) {
-                RequestData requestData = state.request;
+                _cachedRequestData = state.request;
+              } else if (state is SeekerRequestDetailState) {
+                _cachedRequestData = state.request;
+              }
+
+              final requestData = _cachedRequestData;
+
+              if (requestData != null) {
                 return LoadingView(
-                  isLoading: false,
+                  isLoading: state is LoadingSeekerState,
                   child: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: 800.w),
@@ -472,7 +576,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                       ),
                       SizedBox(height: 24.h),
                       Text(
-                        state.message ?? "",
+                        state.message ?? "Error loading request",
                         style: TextStyle(
                           color: textColor,
                           fontSize: 18.sp,
@@ -489,9 +593,6 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             rId = currentState.request.request?.id;
                           } else if (currentState is SuccessReloadRequestState) {
                             rId = currentState.request.request?.id;
-                          } else if (currentState is FailureReloadRequestState) {
-                            // If we failed, we might still have the ID from the previous event or arguments
-                            // For now, let's try to get it from the state if possible
                           }
                           
                           if (rId != null) {

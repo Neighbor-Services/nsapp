@@ -58,11 +58,11 @@ Future<void> main() async {
   Stripe.urlScheme = 'flutterstripe';
   await Stripe.instance.applySettings();
 
-  // Dio Setup
-  dio.options.baseUrl = baseUrl;
-
   // Dependency Injection Init
   await di.init();
+
+  // Dio Setup
+  dio.options.baseUrl = baseUrl;
 
   // Local Notifications Init
   await LocalNotificationService.initialize();

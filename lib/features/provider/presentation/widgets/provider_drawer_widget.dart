@@ -32,6 +32,9 @@ class ProviderDrawerWidget extends StatelessWidget {
     final secondaryTextColor = context.appColors.glassBorder;
 
     return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => 
+        current is SuccessGetProfileState || 
+        current is SuccessGetProfileStreamState,
       builder: (context, profileState) {
         final profile = (profileState is SuccessGetProfileState)
             ? profileState.profile
@@ -66,8 +69,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.house,
                               title: "Home",
                               onTap: () {
-                                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
                                 Navigator.pop(context);
+                                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
                               },
                               isSelected: currentPage == 1,
                               isDark: isDark,
@@ -78,8 +81,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.circleCheck,
                               title: "My Jobs",
                               onTap: () {
-                                Get.to(() => const ProviderAcceptedRequestPage());
                                 Navigator.pop(context);
+                                Get.to(() => const ProviderAcceptedRequestPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -89,8 +92,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.briefcase,
                               title: "Active Tasks",
                               onTap: () {
-                                Get.to(() => const ProviderActiveTasksPage());
                                 Navigator.pop(context);
+                                Get.to(() => const ProviderActiveTasksPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -100,8 +103,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.listUl,
                               title: "Appointments",
                               onTap: () {
-                                Get.to(() => const ProviderAppointmentListPage());
                                 Navigator.pop(context);
+                                Get.to(() => const ProviderAppointmentListPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -111,8 +114,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.video,
                               title: "Subscription",
                               onTap: () {
-                                Get.to(() => const SubscriptionPage());
                                 Navigator.pop(context);
+                                Get.to(() => const SubscriptionPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -134,8 +137,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gavel,
                               title: "Disputes",
                               onTap: () {
-                                Get.to(() => const DisputesListPage());
                                 Navigator.pop(context);
+                                Get.to(() => const DisputesListPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -151,13 +154,13 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.circleInfo,
                               title: "Portfolio",
                               onTap: () {
+                                Navigator.pop(context);
                                 context.read<ProfileBloc>().add(
                                   AboutUserEvent(
                                     userID: profile.user?.id ?? "",
                                   ),
                                 );
                                 Get.to(() => const AboutPage());
-                                Navigator.pop(context);
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -167,8 +170,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.user,
                               title: "About",
                               onTap: () {
-                                Get.to(() => const AddAboutPage());
                                 Navigator.pop(context);
+                                Get.to(() => const AddAboutPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -178,8 +181,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gear,
                               title: "Settings",
                               onTap: () {
-                                Get.to(() => const SettingsPage());
                                 Navigator.pop(context);
+                                Get.to(() => const SettingsPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -189,8 +192,8 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.triangleExclamation,
                               title: "Report Issue",
                               onTap: () {
-                                Get.to(() => const ReportPage());
                                 Navigator.pop(context);
+                                Get.to(() => const ReportPage());
                               },
                               isDark: isDark,
                               textColor: textColor,

@@ -102,10 +102,9 @@ class _ProviderAppointmentListPageState
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: () {
-                      List<AppointmentData> appointments = [];
-                      if (state is SuccessGetAppointmentsState) {
-                        appointments = state.appointments;
-                      }
+                      List<AppointmentData> appointments = (state is SuccessGetAppointmentsState) 
+                          ? state.appointments 
+                          : context.read<ProviderBloc>().appointments;
 
                       if (state is LoadingProviderState && appointments.isEmpty) {
                         return const Center(child: LoadingWidget());

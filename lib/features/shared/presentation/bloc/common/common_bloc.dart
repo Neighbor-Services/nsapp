@@ -1,4 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_services_usecase.dart';
 import 'package:nsapp/features/shared/domain/usecase/add_service_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/search_places_use_case.dart';
@@ -7,11 +8,14 @@ import 'package:nsapp/core/helpers/helpers.dart';
 import 'common_event.dart';
 import 'common_state.dart';
 
-class CommonBloc extends Bloc<CommonEvent, CommonState> {
+class CommonBloc extends HydratedBloc<CommonEvent, CommonState> {
   final GetServicesUsecase getServicesUsecase;
   final AddServiceUseCase addServiceUseCase;
   final SearchPlacesUseCase searchPlacesUseCase;
   final SearchPlaceUseCase searchPlaceUseCase;
+
+  List<Service> _services = [];
+  List<Service> get services => _services;
 
   CommonBloc({
     required this.getServicesUsecase,
@@ -23,7 +27,10 @@ class CommonBloc extends Bloc<CommonEvent, CommonState> {
       final results = await getServicesUsecase(null);
       results.fold(
         (l) => emit(CommonFailure(l.message)),
-        (r) => emit(SuccessGetServicesState(services: r)),
+        (r) {
+          _services = r;
+          emit(SuccessGetServicesState(services: r));
+        },
       );
     });
 
@@ -63,5 +70,25 @@ class CommonBloc extends Bloc<CommonEvent, CommonState> {
     on<SetViewImageEvent>((event, emit) {
       emit(ViewImageState(url: event.url));
     });
+  }
+
+  @override
+  CommonState? fromJson(Map<String, dynamic> json) {
+    try {
+      if (json.containsKey('services')) {
+        _services = (json['services'] as List)
+            .map((e) => Service.fromJson(e))
+            .toList();
+        return SuccessGetServicesState(services: _services);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  @override
+  Map<String, dynamic>? toJson(CommonState state) {
+    return {
+      'services': _services.map((e) => e.toJson()).toList(),
+    };
   }
 }

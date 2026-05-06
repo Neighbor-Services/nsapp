@@ -60,7 +60,7 @@ class DeviceTokenService {
 
       final deviceId = await _getDeviceId();
       // Use the centralized notifications endpoint
-      final url = Uri.parse("$baseUrl/api/notifications/tokens/");
+      final url = Uri.parse("$baseUrl/notifications/tokens/");
       
       debugPrint("DEBUG [DeviceTokenService]: Registering $platform token on backend...");
       

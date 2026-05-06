@@ -89,21 +89,18 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<List<Profile>> getPopularProviders() async {
     final token = await Helpers.getString("token");
     try {
-      final response = _dio
-          .get(
-            "$baseUrl/accounts/profile/?user_type=PROVIDER&popular=true",
-            options: Options(headers: dioHeaders(token)),
-          )
-          .asStream();
-      final data = await response.last;
-      if (data.statusCode == 200) {
+      final response = await _dio.get(
+        "$baseUrl/accounts/profile/?user_type=PROVIDER&popular=true",
+        options: Options(headers: dioHeaders(token)),
+      );
+      if (response.statusCode == 200) {
         List<Profile> providers = [];
         // Accounts might use 'providers' key or results. Checking standardized approach.
-        var list = (data.data is List)
-            ? data.data
-            : (data.data is Map
-                  ? (data.data["results"] ?? data.data["providers"])
-                  : []);
+        var list = (response.data is List)
+            ? response.data
+            : (response.data is Map
+                ? (response.data["results"] ?? response.data["providers"])
+                : []);
 
         if (list != null) {
           for (var profile in list) {
@@ -115,7 +112,9 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         return providers;
       }
       throw Exception('Failed');
-    } catch (e) { rethrow; }
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override

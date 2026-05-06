@@ -50,10 +50,9 @@ class _ProviderRecentRequestWidgetState
 
     return BlocBuilder<ProviderBloc, ProviderState>(
       builder: (context, state) {
-        List<RequestData> requests = [];
-        if (state is SuccessGetRecentRequestState) {
-          requests = state.myRequests;
-        }
+        List<RequestData> requests = (state is SuccessGetRecentRequestState) 
+            ? state.myRequests 
+            : context.read<ProviderBloc>().recentRequests;
 
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 500),

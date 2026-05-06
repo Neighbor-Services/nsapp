@@ -78,6 +78,14 @@ class Profile {
   List<PerformanceBadge>? performanceBadges;
   @HiveField(34)
   String? preferredPaymentMode;
+  @HiveField(35)
+  int? streakCount;
+  @HiveField(36)
+  int? xp;
+  @HiveField(37)
+  int? level;
+  @HiveField(38)
+  int? neighborScore;
 
   Profile({
     this.id,
@@ -112,6 +120,10 @@ class Profile {
     this.subscriptionTier,
     this.performanceBadges,
     this.preferredPaymentMode,
+    this.streakCount,
+    this.xp,
+    this.level,
+    this.neighborScore,
   });
 
   Profile.fromJson(Map<String, dynamic> json) {
@@ -177,6 +189,10 @@ class Profile {
       });
     }
     preferredPaymentMode = json['preferred_payment_mode'];
+    streakCount = json['streak_count'];
+    xp = json['xp'];
+    level = json['level'];
+    neighborScore = json['neighbor_score'];
   }
 
   Map<String, dynamic> toJson() {
@@ -217,6 +233,10 @@ class Profile {
           .map((v) => v.toJson())
           .toList();
     }
+    data['streak_count'] = streakCount;
+    data['xp'] = xp;
+    data['level'] = level;
+    data['neighbor_score'] = neighborScore;
     return data;
   }
 }

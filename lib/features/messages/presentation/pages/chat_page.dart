@@ -60,7 +60,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     final receiverId = _receiver.user?.id;
     final profileState = context.read<ProfileBloc>().state;
-    String? senderId;
     if (profileState is SuccessGetProfileState) {
       _currentSenderId = profileState.profile.user?.id;
     }

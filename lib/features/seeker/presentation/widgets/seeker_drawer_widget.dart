@@ -28,6 +28,9 @@ class SeekerDrawerWidget extends StatelessWidget {
     final secondaryTextColor = context.appColors.secondaryTextColor;
 
     return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => 
+        current is SuccessGetProfileState || 
+        current is SuccessGetProfileStreamState,
       builder: (context, profileState) {
         final profile = (profileState is SuccessGetProfileState)
             ? profileState.profile
@@ -62,8 +65,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.house,
                               title: "Home",
                               onTap: () {
-                                context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 1));
                                 Navigator.pop(context);
+                                context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 1));
                               },
                               isSelected: currentPage == 1,
                               isDark: isDark,
@@ -74,8 +77,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.fileLines,
                               title: "My Requests",
                               onTap: () {
-                                Get.to(() => const SeekerRequestPage());
                                 Navigator.pop(context);
+                                Get.to(() => const SeekerRequestPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -85,8 +88,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.calendar,
                               title: "Calendar",
                               onTap: () {
-                                Get.to(() => const SeekerAppointmentPage());
                                 Navigator.pop(context);
+                                Get.to(() => const SeekerAppointmentPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -96,8 +99,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.listUl,
                               title: "Appointments",
                               onTap: () {
-                                Get.to(() => const SeekerAppointmentListPage());
                                 Navigator.pop(context);
+                                Get.to(() => const SeekerAppointmentListPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -107,8 +110,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gavel,
                               title: "Disputes",
                               onTap: () {
-                                Get.to(() => const DisputesListPage());
                                 Navigator.pop(context);
+                                Get.to(() => const DisputesListPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -124,8 +127,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gear,
                               title: "Settings",
                               onTap: () {
-                                Get.to(() => const SettingsPage());
                                 Navigator.pop(context);
+                                Get.to(() => const SettingsPage());
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -135,8 +138,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.triangleExclamation,
                               title: "Report Issue",
                               onTap: () {
-                                Get.to(() => const ReportPage());
                                 Navigator.pop(context);
+                                Get.to(() => const ReportPage());
                               },
                               isDark: isDark,
                               textColor: textColor,

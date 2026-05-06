@@ -33,7 +33,6 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   late Animation<double> _fadeAnimation;
   bool _isAccepted = false;
   bool _isSubscriptionValid = false;
-
   @override
   void initState() {
     super.initState();
@@ -44,18 +43,17 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
       uid = profileState.profile.user?.id;
     }
 
-    final providerState = context.read<ProviderBloc>().state;
-    String? requestId = "";
-    if (providerState is SuccessGetRequestDetailState) {
-      requestId = providerState.request.request?.id;
-    }
+    final selectedRequest = context.read<ProviderBloc>().selectedRequest;
+    final requestId = selectedRequest?.request?.id;
 
-    context.read<ProviderBloc>().add(
-      IsRequestAcceptedEvent(
-        id: requestId ?? "",
-        uid: uid,
-      ),
-    );
+    if (requestId != null) {
+      context.read<ProviderBloc>().add(
+        IsRequestAcceptedEvent(
+          id: requestId,
+          uid: uid,
+        ),
+      );
+    }
 
     context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
 
@@ -109,14 +107,20 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
         ],
         child: BlocBuilder<ProviderBloc, ProviderState>(
           builder: (context, state) {
-            if (state is! SuccessGetRequestDetailState) {
+            final requestData = context.read<ProviderBloc>().selectedRequest;
+
+            if (requestData == null) {
+              if (state is LoadingProviderState) {
+                return const Scaffold(body: Center(child: ProfileSkeletonLoader()));
+              }
               return const Scaffold(body: Center(child: Text("Request not found")));
             }
-            final request = state.request.request;
-            final user = state.request.user;
+
+            final request = requestData.request;
+            final user = requestData.user;
 
             if (request == null || user == null) {
-              return const Scaffold(body: Center(child: Text("Request not found")));
+              return const Scaffold(body: Center(child: Text("Request data incomplete")));
             }
 
             return LoadingView(

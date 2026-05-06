@@ -99,6 +99,11 @@ class _ProfilePageState extends State<ProfilePage>
           ),
         ],
         child: BlocBuilder<ProfileBloc, ProfileState>(
+          buildWhen: (previous, current) =>
+              current is SuccessGetProfileStreamState ||
+              current is FailureGetProfileStreamState ||
+              current is LoadingProfileState ||
+              current is InitialProfileState,
           builder: (context, state) {
             if (state is LoadingProfileState) {
               return const ProfileSkeletonLoader();

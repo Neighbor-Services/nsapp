@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -26,6 +27,7 @@ class RequestsByServicePage extends StatefulWidget {
 
 class _RequestsByServicePageState extends State<RequestsByServicePage> {
   bool _isLoading = true;
+  List<RequestData> _cachedRequests = [];
 
   @override
   void initState() {
@@ -120,49 +122,54 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
               // Requests List
               Expanded(
                 child: BlocBuilder<ProviderBloc, ProviderState>(
+                  buildWhen: (previous, current) =>
+                      current is SuccessSearchRequestState ||
+                      current is LoadingProviderState ||
+                      current is FailureSearchRequestState,
                   builder: (context, state) {
-                    if (state is LoadingProviderState || _isLoading) {
-                      return const Center(child: LoadingWidget());
-                    }
-
-                    List<RequestData> requestsData = [];
                     if (state is SuccessSearchRequestState) {
-                      requestsData = state.requests;
+                      _cachedRequests = state.requests;
                     }
 
-                    if (state is SuccessSearchRequestState || requestsData.isNotEmpty) {
-                      if (requestsData.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.magnifyingGlass,
-                                size: 80.r,
-                                color: secondaryTextColor.withAlpha(60),
-                              ),
-                              SizedBox(height: 16.h),
-                              Text(
-                                "No requests found",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  color: secondaryTextColor,
-                                ),
-                              ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                "Try searching for a different service",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: secondaryTextColor.withAlpha(100),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
+                    final requestsData = _cachedRequests;
 
-                      return ListView.separated(
+                    if (requestsData.isEmpty) {
+                      if (state is LoadingProviderState || _isLoading) {
+                        return const Center(child: LoadingWidget());
+                      }
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.magnifyingGlass,
+                              size: 80.r,
+                              color: secondaryTextColor.withAlpha(60),
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              "No requests found",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              "Try searching for a different service",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: secondaryTextColor.withAlpha(100),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return LoadingView(
+                      isLoading: state is LoadingProviderState || _isLoading,
+                      child: ListView.separated(
                         padding: EdgeInsets.symmetric(
                           horizontal: 20.w,
                           vertical: 16.h,
@@ -175,16 +182,6 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                           final requestData = requestsData[index];
                           return _buildRequestCard(context, requestData, index);
                         },
-                      );
-                    }
-
-                    return Center(
-                      child: Text(
-                        "Start searching for requests",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: secondaryTextColor,
-                        ),
                       ),
                     );
                   },

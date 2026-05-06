@@ -122,10 +122,7 @@ class _ProviderAcceptedRequestPageState
                             ),
                             Expanded(
                               child: () {
-                                List<RequestAcceptance> accepts = [];
-                                if (providerState is SuccessGetAcceptRequestState) {
-                                  accepts = providerState.accepts;
-                                }
+                                final accepts = context.read<ProviderBloc>().myAcceptedRequests;
 
                                 if (providerState is LoadingProviderState && accepts.isEmpty) {
                                   return const Center(child: LoadingWidget());

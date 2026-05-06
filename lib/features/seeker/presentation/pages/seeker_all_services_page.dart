@@ -83,13 +83,16 @@ class SeekerAllServicesPage extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<CommonBloc, CommonState>(
                   builder: (context, state) {
-                    final services = state is SuccessGetServicesState ? state.services : [];
-                    if (state is CommonLoading) {
+                    // Always try to get services from the Bloc's internal cache first
+                    final cachedServices = context.read<CommonBloc>().services;
+                    final services = state is SuccessGetServicesState ? state.services : cachedServices;
+                    
+                    if (state is CommonLoading && services.isEmpty) {
                       return const Center(
                         child: LoadingWidget(),
                       );
                     }
-                    if (services.isEmpty) {
+                    if (services.isEmpty && state is! CommonLoading) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,

@@ -101,10 +101,9 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Builder(
                       builder: (context) {
-                        List<AppointmentData> appointments = [];
-                        if (state is SuccessGetAppointmentsState) {
-                          appointments = state.appointments;
-                        }
+                        List<AppointmentData> appointments = (state is SuccessGetAppointmentsState) 
+                            ? state.appointments 
+                            : context.read<SeekerBloc>().appointments;
 
                         if (appointments.isEmpty && state is! LoadingSeekerState) {
                           return const Center(

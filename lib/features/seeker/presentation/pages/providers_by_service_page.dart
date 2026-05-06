@@ -28,6 +28,7 @@ class ProvidersByServicePage extends StatefulWidget {
 
 class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
   bool _isLoading = true;
+  List<Profile> _providers = [];
 
   @override
   void initState() {
@@ -119,44 +120,48 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
               Expanded(
                 child: BlocBuilder<SeekerBloc, SeekerState>(
                   builder: (context, state) {
-                    if (state is LoadingSeekerState || _isLoading) {
+                    if (state is SuccessSearchProviderState) {
+                      _providers = state.providers;
+                    }
+
+                    if ((state is LoadingSeekerState || _isLoading) && _providers.isEmpty) {
                       return const Center(child: LoadingWidget());
                     }
 
-                    if (state is SuccessSearchProviderState) {
-                      final providers = state.providers;
+                    final providers = _providers;
 
-                      if (providers.isEmpty) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.magnifyingGlass,
-                                size: 80.r,
-                                color: secondaryTextColor.withAlpha(60),
+                    if (providers.isEmpty && !(state is LoadingSeekerState || _isLoading)) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.magnifyingGlass,
+                              size: 80.r,
+                              color: secondaryTextColor.withAlpha(60),
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              "No providers found",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: secondaryTextColor,
                               ),
-                              SizedBox(height: 16.h),
-                              Text(
-                                "No providers found",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  color: secondaryTextColor,
-                                ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              "Try searching for a different service",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: secondaryTextColor.withAlpha(100),
                               ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                "Try searching for a different service",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: secondaryTextColor.withAlpha(100),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
+                            ),
+                          ],
+                        ),
+                      );
+                    }
 
+                    if (providers.isNotEmpty) {
                       return ListView.separated(
                         padding: EdgeInsets.symmetric(
                           horizontal: 20.w,

@@ -34,11 +34,15 @@ class _AuditLogPageState extends State<AuditLogPage> {
       ),
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
-          if (state is LoadingProfileState) {
+          final logs = (state is SuccessGetAuditLogsState) 
+              ? state.logs 
+              : context.read<ProfileBloc>().auditLogs;
+
+          if ((state is LoadingProfileState || state is LoadingAuditLogsState) && logs.isEmpty) {
             return const ListSkeletonLoader();
           }
 
-          if (state is FailureGetAuditLogsState) {
+          if (state is FailureGetAuditLogsState && logs.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -55,16 +59,15 @@ class _AuditLogPageState extends State<AuditLogPage> {
             );
           }
 
-          if (state is SuccessGetAuditLogsState) {
-            if (state.logs.isEmpty) {
-              return const Center(child: CustomTextWidget(text: "No activity history found."));
-            }
+          if (logs.isEmpty) {
+            return const Center(child: CustomTextWidget(text: "No activity history found."));
+          }
 
             return ListView.builder(
               padding: EdgeInsets.all(16.r),
-              itemCount: state.logs.length,
+              itemCount: logs.length,
               itemBuilder: (context, index) {
-                final log = state.logs[index];
+                final log = logs[index];
                 return Padding(
                   padding: EdgeInsets.only(bottom: 12.r),
                   child: SolidContainer(
@@ -111,9 +114,6 @@ class _AuditLogPageState extends State<AuditLogPage> {
               },
             );
           }
-
-          return const SizedBox();
-        },
       ),
     );
   }

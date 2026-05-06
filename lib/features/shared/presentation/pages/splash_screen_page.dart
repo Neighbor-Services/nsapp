@@ -159,7 +159,8 @@ class _SplashScreenPageState extends State<SplashScreenPage>
             
             final usebiometric = await Helpers.getBool("usebiometric");
             if (isProvider && profile.isIdentityVerified != true) {
-               Get.offAllNamed("/pending-verification");
+              Get.offAllNamed("/home");
+              //  Get.offAllNamed("/pending-verification");
             } else if (usebiometric) {
               context.read<SettingsBloc>().add(
                 UseBiometricEvent(useBiometric: true),

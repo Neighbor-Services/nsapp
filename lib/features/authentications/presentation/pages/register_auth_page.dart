@@ -93,7 +93,8 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                   );
 
                   if (isProvider && profile.isIdentityVerified != true) {
-                    Get.offAllNamed("/pending-verification");
+                    Get.offAllNamed("/home");
+                    // Get.offAllNamed("/pending-verification");
                   } else {
                     Get.offAllNamed("/home");
                   }

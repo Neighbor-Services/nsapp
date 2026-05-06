@@ -18,7 +18,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     final token = await Helpers.getString("token");
     try {
       final response = await _dio.get(
-        "$baseUrl/api/audit/", // Endpoint from backend viewset
+        "$baseUrl/audit/", // Endpoint from backend viewset
         options: Options(headers: dioHeaders(token)),
       );
 

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,6 +54,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 isActive: context.read<SeekerBloc>().currentTab == 1,
                                 label: "Home",
                                 onTap: () {
+                                  HapticFeedback.selectionClick();
                                   context.read<SeekerBloc>().add(
                                     ChangeSeekerTabEvent(tabIndex: 1),
                                   );
@@ -67,6 +69,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 badgeCount: (notificationState is SuccessGetMyNotificationsState) ? notificationState.unreadCount : 0,
                                 label: "Notifications",
                                 onTap: () {
+                                  HapticFeedback.selectionClick();
                                   context.read<SeekerBloc>().add(
                                     ChangeSeekerTabEvent(tabIndex: 2),
                                   );
@@ -82,6 +85,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 label: "Chat",
                                 badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
                                 onTap: () {
+                                  HapticFeedback.selectionClick();
                                   context.read<SeekerBloc>().add(
                                     ChangeSeekerTabEvent(tabIndex: 4),
                                   );
@@ -95,6 +99,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 label: "Favorites",
                                 isActive: context.read<SeekerBloc>().currentTab == 5,
                                 onTap: () {
+                                  HapticFeedback.selectionClick();
                                   context.read<SeekerBloc>().add(
                                     ChangeSeekerTabEvent(tabIndex: 5),
                                   );
@@ -172,6 +177,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        HapticFeedback.mediumImpact();
         context.read<SeekerBloc>().add(
           ChangeSeekerTabEvent(tabIndex: 3),
         );

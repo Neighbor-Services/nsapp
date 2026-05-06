@@ -160,10 +160,9 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
   }
 
   Widget _buildRequestList(BuildContext context, SeekerState state) {
-    List<RequestData> requests = [];
-    if (state is SuccessGetMyRequestState) {
-      requests = state.myRequests;
-    }
+    List<RequestData> requests = (state is SuccessGetMyRequestState) 
+        ? state.myRequests 
+        : context.read<SeekerBloc>().myRequests;
 
     if (requests.isEmpty && state is! LoadingSeekerState) {
       return Center(

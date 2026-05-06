@@ -17,7 +17,7 @@ class RequestFormWidget extends StatelessWidget {
   final bool isOtherServiceSelected;
   final VoidCallback onLocationTap;
   final VoidCallback onScheduleTap;
-  final Widget paymentModeSelector;
+  final Widget imageSelector;
   
   final String submitButtonLabel;
   final VoidCallback onSubmit;
@@ -34,7 +34,7 @@ class RequestFormWidget extends StatelessWidget {
     required this.isOtherServiceSelected,
     required this.onLocationTap,
     required this.onScheduleTap,
-    required this.paymentModeSelector,
+    required this.imageSelector,
     required this.submitButtonLabel,
     required this.onSubmit,
   });
@@ -115,9 +115,9 @@ class RequestFormWidget extends StatelessWidget {
               validator: (val) => val!.isEmpty ? "Time is required" : null,
             ),
             SizedBox(height: 24.h),
-            _buildLabel(context, "Payment Mode"),
+            _buildLabel(context, "Reference Image (Optional)"),
             SizedBox(height: 12.h),
-            paymentModeSelector,
+            imageSelector,
             SizedBox(height: 40.h),
             SolidButton(
               label: submitButtonLabel,

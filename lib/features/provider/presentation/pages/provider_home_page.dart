@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_more_requests_page.dart';
@@ -93,10 +94,18 @@ class _ProviderHomePageState extends State<ProviderHomePage>
           ),
         ],
         child: BlocBuilder<ProfileBloc, ProfileState>(
+          buildWhen: (previous, current) =>
+              current is SuccessGetProfileState ||
+              current is SuccessGetProfileStreamState ||
+              current is LoadingProfileState ||
+              current is InitialProfileState,
           builder: (context, profileState) {
-            final profile = (profileState is SuccessGetProfileState)
-                ? profileState.profile
-                : null;
+            Profile? profile;
+            if (profileState is SuccessGetProfileState) {
+              profile = profileState.profile;
+            } else if (profileState is SuccessGetProfileStreamState) {
+              profile = profileState.profile;
+            }
 
             return GradientBackground(
               child: SafeArea(
@@ -176,9 +185,13 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 final wallet = (walletState is SuccessGetMyWalletState)
                     ? walletState.wallet
                     : null;
-                final profile = (profileState is SuccessGetProfileState)
-                    ? profileState.profile
-                    : null;
+                
+                Profile? profile;
+                if (profileState is SuccessGetProfileState) {
+                  profile = profileState.profile;
+                } else if (profileState is SuccessGetProfileStreamState) {
+                  profile = profileState.profile;
+                }
 
                 if (profile == null) return const SizedBox.shrink();
 
@@ -264,6 +277,65 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         ),
                         SizedBox(height: 24.h),
                       ],
+                      Row(
+                        children: [
+                          _buildDashboardStat(
+                            "Level",
+                            "LVL ${profile.level ?? 1}",
+                            FontAwesomeIcons.bolt,
+                            Colors.yellowAccent,
+                          ),
+                          SizedBox(width: 16.w),
+                          _buildDashboardStat(
+                            "Streak",
+                            "${profile.streakCount ?? 0} DAYS",
+                            FontAwesomeIcons.fire,
+                            Colors.orangeAccent,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
+                      // XP Progress Bar
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "NEXT LEVEL",
+                                style: TextStyle(
+                                  color: context.appColors.primaryTextColor.withAlpha(200),
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                              Text(
+                                "${(profile.xp ?? 0) % 1000}/1000 XP",
+                                style: TextStyle(
+                                  color: context.appColors.primaryTextColor,
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.r),
+                            child: LinearProgressIndicator(
+                              value: ((profile.xp ?? 0) % 1000) / 1000,
+                              backgroundColor: Colors.white.withAlpha(40),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                context.appColors.primaryTextColor,
+                              ),
+                              minHeight: 6.h,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20.h),
                       Row(
                         children: [
                           _buildDashboardStat(

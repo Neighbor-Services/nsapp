@@ -51,6 +51,9 @@ AppBar homeAppBar({
                 Scaffold.of(context).openDrawer();
               },
               child: BlocBuilder<ProfileBloc, ProfileState>(
+                buildWhen: (previous, current) => 
+                  current is SuccessGetProfileState || 
+                  current is SuccessGetProfileStreamState,
                 builder: (context, state) {
                   final profile = state is SuccessGetProfileState ? state.profile : Profile();
                   return Container(

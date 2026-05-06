@@ -1,4 +1,4 @@
-import 'package:bloc_concurrency/bloc_concurrency.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,6 +39,9 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
   final GetAuditLogsUseCase getAuditLogsUseCase;
 
   Profile? _cachedProfile;
+  List<AuditLog> _cachedAuditLogs = [];
+
+  List<AuditLog> get auditLogs => _cachedAuditLogs;
 
   ProfileBloc(
     this.addProfileUseCase,
@@ -98,7 +101,10 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
       ));
       results.fold(
         (failure) => emit(FailureCreateProfileState(message: failure.message ?? 'Failed to create profile')),
-        (success) => emit(SuccessCreateProfileState()),
+        (success) {
+          _cachedProfile = event.profile;
+          emit(SuccessCreateProfileState());
+        },
       );
     });
 
@@ -155,18 +161,33 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<GetProfileStreamEvent>((event, emit) async {
       final results = await getProfileStreamUseCase.call(event);
       results.fold(
-        (failure) => emit(FailureGetProfileStreamState(message: failure.message ?? 'Failed to fetch profile')),
+        (failure) {
+          debugPrint("ProfileBloc: GetProfileStreamEvent Failure: ${failure.message}");
+          if (_cachedProfile != null) {
+            emit(SuccessGetProfileStreamState(profile: _cachedProfile!));
+          } else {
+            emit(FailureGetProfileStreamState(message: failure.message ?? 'Failed to fetch profile'));
+          }
+        },
         (success) {
+          debugPrint("ProfileBloc: GetProfileStreamEvent Success");
           _cachedProfile = success;
           emit(SuccessGetProfileStreamState(profile: success));
         },
       );
-    }, transformer: sequential());
+    });
 
     on<GetProfileEvent>((event, emit) async {
       final results = await getProfileStreamUseCase.call(event);
       results.fold(
-        (failure) => emit(FailureGetProfileState(message: failure.message ?? 'Failed to fetch profile')),
+        (failure) {
+          debugPrint("ProfileBloc: GetProfileEvent Failure: ${failure.message}");
+          if (_cachedProfile != null) {
+            emit(SuccessGetProfileState(profile: _cachedProfile!));
+          } else {
+            emit(FailureGetProfileState(message: failure.message ?? 'Failed to fetch profile'));
+          }
+        },
         (success) {
           _cachedProfile = success;
           emit(SuccessGetProfileState(profile: success));
@@ -184,7 +205,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           emit(SuccessGetAboutStreamState(about: success));
         },
       );
-    }, transformer: sequential());
+    });
 
     on<GetReviewsEvent>((event, emit) async {
       final results = await getReviewsUseCase.call(event.user);
@@ -196,7 +217,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           emit(SuccessGetReviewStreamState(reviews: success));
         },
       );
-    }, transformer: sequential());
+    });
 
     on<ChooseOtherServiceEvent>((event, emit) {
       emit(OtherServiceSelectState(others: event.others));
@@ -221,17 +242,21 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     });
 
     on<GetAuditLogsEvent>((event, emit) async {
-      emit(LoadingProfileState());
+      emit(LoadingAuditLogsState());
       final results = await getAuditLogsUseCase.call(NoParams());
       results.fold(
         (failure) => emit(FailureGetAuditLogsState(
             message: failure.message ?? 'Failed to fetch audit logs')),
-        (success) => emit(SuccessGetAuditLogsState(logs: success)),
+        (success) {
+          _cachedAuditLogs = success;
+          emit(SuccessGetAuditLogsState(logs: success));
+        },
       );
     });
 
     on<LogoutProfileEvent>((event, emit) {
       _cachedProfile = null;
+      _cachedAuditLogs = [];
       emit(InitialProfileState());
     });
   }
@@ -241,6 +266,13 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     try {
       if (json.containsKey('profile')) {
         _cachedProfile = Profile.fromJson(json['profile']);
+      }
+      if (json.containsKey('audit_logs')) {
+        final List logsJson = json['audit_logs'];
+        _cachedAuditLogs = logsJson.map((e) => AuditLog.fromJson(e)).toList();
+      }
+      
+      if (_cachedProfile != null) {
         return SuccessGetProfileState(profile: _cachedProfile!);
       }
     } catch (_) {}
@@ -249,9 +281,13 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
   @override
   Map<String, dynamic>? toJson(ProfileState state) {
+    final Map<String, dynamic> data = {};
     if (_cachedProfile != null) {
-      return {'profile': _cachedProfile!.toJson()};
+      data['profile'] = _cachedProfile!.toJson();
     }
-    return null;
+    if (_cachedAuditLogs.isNotEmpty) {
+      data['audit_logs'] = _cachedAuditLogs.map((e) => e.toJson()).toList();
+    }
+    return data.isNotEmpty ? data : null;
   }
 }

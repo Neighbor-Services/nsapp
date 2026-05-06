@@ -360,21 +360,31 @@ class Helpers {
     final token = await getString("token");
     if (token == "") return false;
 
-    final dio = Dio();
     try {
       final response = await dio.get(
         "$baseUrl/accounts/profile/me/",
-        options: Options(headers: dioHeaders(token)),
+        options: Options(
+          headers: dioHeaders(token),
+          sendTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (e is DioException && e.response?.statusCode == 401) {
-        // Access token expired — attempt a silent refresh before evicting session
-        final refreshed = await _tryRefreshToken(dio);
-        if (refreshed) return true;
-        // Refresh also failed: clear both tokens
-        await deletePref("token");
-        await deletePref("refresh_token");
+      if (e is DioException) {
+        if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+          // Access token explicitly invalid — attempt a silent refresh
+          final refreshed = await _tryRefreshToken(dio);
+          if (refreshed) return true;
+          
+          // Refresh also failed: clear both tokens and force login
+          await deletePref("token");
+          await deletePref("refresh_token");
+          return false;
+        }
+        // For other network errors (timeout, no internet), assume authenticated 
+        // if we have a token, and let the BLoC handle the offline state.
+        return true;
       }
       return false;
     }

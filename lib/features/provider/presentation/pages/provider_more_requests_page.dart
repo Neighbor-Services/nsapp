@@ -166,10 +166,9 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
   }
 
   Widget _buildRequestsList(BuildContext context, bool isLargeScreen, ProviderState state) {
-    List<RequestData> requests = [];
-    if (state is SuccessGetRequestsState) {
-      requests = state.requests;
-    }
+    List<RequestData> requests = (state is SuccessGetRequestsState) 
+        ? state.requests 
+        : context.read<ProviderBloc>().allRequests;
 
     if (state is LoadingProviderState && requests.isEmpty) {
       return const Center(child: LoadingWidget());
@@ -279,7 +278,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.white.withAlpha(10),
-                                  child: const Center(child: LoadingWidget()),
+                                  child: const Center(child: LoadingWidget(count: 1)),
                                 ),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(logoAssets, fit: BoxFit.cover),
