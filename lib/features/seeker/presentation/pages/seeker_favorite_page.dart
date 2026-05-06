@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,9 +95,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                               Row(
                                 children: [
                                   GestureDetector(
-                                    onTap: () => context.read<SeekerBloc>().add(
-                                      SeekerBackPressedEvent(),
-                                    ),
+                                    onTap: () => Get.back(),
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
@@ -291,12 +290,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
               userID: favorite.favoriteUser!.user!.id!,
             ),
           );
-          context.read<SeekerBloc>().add(
-            NavigateSeekerEvent(
-              page: 1,
-              widget: const AboutPage(),
-            ),
-          );
+          Get.to(() => const AboutPage());
         },
         child: Container(
           margin: EdgeInsets.only(bottom: 16.h),
@@ -382,9 +376,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         profile: favorite.favoriteUser!,
                       ),
                     );
-                    context.read<SeekerBloc>().add(
-                      NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-                    );
+                    Get.to(() => const ChatPage());
                   },
                 ),
                  SizedBox(width: 8.w),

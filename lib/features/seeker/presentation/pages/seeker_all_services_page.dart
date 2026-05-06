@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +7,6 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_page.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerAllServicesPage extends StatelessWidget {
@@ -29,9 +29,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<SeekerBloc>().add(
-                          SeekerBackPressedEvent(),
-                        );
+                        Get.back();
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -152,68 +150,76 @@ class SeekerAllServicesPage extends StatelessWidget {
 
     final icon = icons[index % icons.length];
 
-    return GestureDetector(
-      onTap: () {
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(
-            page: 1,
-            widget: ProvidersByServicePage(
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 50)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
+        );
+      },
+      child: GestureDetector(
+        onTap: () {
+          Get.to(
+            () => ProvidersByServicePage(
               serviceId: service.id ?? '',
               serviceName: service.name ?? 'Service',
             ),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(
-            color: context.appColors.glassBorder,
-            width: 1.5.r,
-          ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              right: -5.r,
-              bottom: -5.r,
-              child: Icon(
-                icon,
-                size: 60.r,
-                color: context.appColors.primaryColor.withAlpha(20),
-              ),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.appColors.cardBackground,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: context.appColors.glassBorder,
+              width: 1.5.r,
             ),
-            Padding(
-              padding: EdgeInsets.all(16.r),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      color: context.appColors.primaryColor,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 20.r),
-                  ),
-                  Text(
-                    (service.name ?? "Service").toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
-                      color: context.appColors.primaryTextColor,
-                      letterSpacing: 0.5,
-                      height: 1.2,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -5.r,
+                bottom: -5.r,
+                child: Icon(
+                  icon,
+                  size: 60.r,
+                  color: context.appColors.primaryColor.withAlpha(20),
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.all(16.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.r),
+                      decoration: BoxDecoration(
+                        color: context.appColors.primaryColor,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(icon, color: Colors.white, size: 20.r),
+                    ),
+                    Text(
+                      (service.name ?? "Service").toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: context.appColors.primaryTextColor,
+                        letterSpacing: 0.5,
+                        height: 1.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

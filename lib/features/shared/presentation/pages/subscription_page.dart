@@ -1,10 +1,10 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -123,9 +123,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                                   if (Navigator.canPop(context)) {
                                     Navigator.pop(context);
                                   } else {
-                                    context.read<ProviderBloc>().add(
-                                      ProviderBackPressedEvent(),
-                                    );
+                                    Get.back();
                                   }
                                 },
                                 child: Container(

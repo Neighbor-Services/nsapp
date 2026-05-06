@@ -6,16 +6,10 @@ final class ProviderInitial extends ProviderState {}
 
 final class LoadingProviderState extends ProviderState {}
 
-class NavigatorProviderState extends ProviderState {
-  final Widget widget;
-  final int page;
+class ProviderTabChangedState extends ProviderState {
+  final int tabIndex;
 
-  NavigatorProviderState({this.widget = const ProviderHomePage(), this.page = 1});
-}
-
-class ProviderVisitedPagesState extends ProviderState {
-  final List<VisitedPages> pages;
-  ProviderVisitedPagesState({required this.pages});
+  ProviderTabChangedState({this.tabIndex = 1});
 }
 
 class SuccessGetRecentRequestState extends ProviderState {

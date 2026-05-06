@@ -65,12 +65,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           child: BlocConsumer<SeekerBloc, SeekerState>(
             listener: (context, state) {
               if (state is SuccessDeleteRequestState) {
-                context.read<SeekerBloc>().add(
-                  NavigateSeekerEvent(
-                    page: 3,
-                    widget: const SeekerRequestPage(),
-                  ),
-                );
+                Get.to(() => const SeekerRequestPage());
                 customAlert(
                   context,
                   AlertType.success,
@@ -140,9 +135,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  context.read<SeekerBloc>().add(
-                                    SeekerBackPressedEvent(),
-                                  );
+                                  Get.back();
                                 },
                                 child: Container(
                                   padding: EdgeInsets.all(12.r),
@@ -676,12 +669,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               context.read<SeekerBloc>().add(
                 SeekerRequestDetailEvent(request: requestData),
               );
-              context.read<SeekerBloc>().add(
-                NavigateSeekerEvent(
-                  page: 3,
-                  widget: const SeekerUpdateRequestPage(),
-                ),
-              );
+              Get.to(() => const SeekerUpdateRequestPage());
               break;
             case 2:
               final requestId = requestData.request?.id;
@@ -1001,18 +989,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             if (val == 1) {
               if (userId != null) {
                 context.read<ProfileBloc>().add(AboutUserEvent(userID: userId));
-                context.read<SeekerBloc>().add(
-                  NavigateSeekerEvent(page: 1, widget: const AboutPage()),
-                );
+                Get.to(() => const AboutPage());
               }
             } else if (val == 2) {
               if (provider != null) {
                 context.read<MessageBloc>().add(
                   SetMessageReceiverEvent(profile: provider),
                 );
-                context.read<SeekerBloc>().add(
-                  NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-                );
+                Get.to(() => const ChatPage());
               }
             }
           },

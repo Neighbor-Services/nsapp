@@ -14,6 +14,8 @@ class SenderChatImageWidget extends StatelessWidget {
   final DateTime dateTime;
   final bool withText;
   final String imageUrl;
+  final bool isDelivered;
+  final bool isSeen;
   final VoidCallback onLongPressed;
 
   const SenderChatImageWidget({
@@ -22,6 +24,8 @@ class SenderChatImageWidget extends StatelessWidget {
     required this.dateTime,
     required this.withText,
     required this.imageUrl,
+    this.isDelivered = false,
+    this.isSeen = false,
     required this.onLongPressed,
   });
 
@@ -134,13 +138,24 @@ class SenderChatImageWidget extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.only(top: 4.h, right: 4.w),
-                child: Text(
-                  DateFormat("HH:mm").format(dateTime.toLocal()),
-                  style: TextStyle(
-                    color: timestampColor,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      DateFormat("HH:mm").format(dateTime.toLocal()),
+                      style: TextStyle(
+                        color: timestampColor,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      isSeen ? Icons.done_all : (isDelivered ? Icons.done_all : Icons.check),
+                      size: 14.sp,
+                      color: isSeen ? Colors.blue : timestampColor,
+                    ),
+                  ],
                 ),
               ),
             ],

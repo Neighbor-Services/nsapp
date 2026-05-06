@@ -42,13 +42,14 @@ class RequestAdapter extends TypeAdapter<Request> {
       isFunded: fields[22] as bool?,
       price: fields[23] as double?,
       targetProviderId: fields[24] as String?,
+      paymentMode: fields[25] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Request obj) {
     writer
-      ..writeByte(25)
+      ..writeByte(26)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -98,7 +99,9 @@ class RequestAdapter extends TypeAdapter<Request> {
       ..writeByte(23)
       ..write(obj.price)
       ..writeByte(24)
-      ..write(obj.targetProviderId);
+      ..write(obj.targetProviderId)
+      ..writeByte(25)
+      ..write(obj.paymentMode);
   }
 
   @override
@@ -111,5 +114,3 @@ class RequestAdapter extends TypeAdapter<Request> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

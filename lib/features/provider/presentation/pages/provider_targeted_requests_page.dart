@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,7 @@ class _ProviderTargetedRequestsPageState
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => context.read<ProviderBloc>().add(ProviderBackPressedEvent()),
+          onTap: () => Get.back(),
           child: Container(
             margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
@@ -256,12 +257,7 @@ class _ProviderTargetedRequestsPageState
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: data.request?.id ?? ""),
           );
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderRequestDetailPage(),
-            ),
-          );
+          Get.to(() => const ProviderRequestDetailPage());
         },
         child: Padding(
           padding: EdgeInsets.only(bottom: 16.h),

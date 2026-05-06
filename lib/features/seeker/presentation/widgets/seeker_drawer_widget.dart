@@ -8,7 +8,6 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_list_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
@@ -36,8 +35,8 @@ class SeekerDrawerWidget extends StatelessWidget {
 
         return BlocBuilder<SeekerBloc, SeekerState>(
           builder: (context, seekerState) {
-            final currentPage = (seekerState is NavigatorSeekerState)
-                ? seekerState.page
+            final currentPage = (seekerState is SeekerTabChangedState)
+                ? seekerState.tabIndex
                 : 1;
 
             return Drawer(
@@ -63,12 +62,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.house,
                               title: "Home",
                               onTap: () {
-                                context.read<SeekerBloc>().add(
-                                  NavigateSeekerEvent(
-                                    page: 1,
-                                    widget: const SeekerHomePage(),
-                                  ),
-                                );
+                                context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 1));
                                 Navigator.pop(context);
                               },
                               isSelected: currentPage == 1,
@@ -80,12 +74,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.fileLines,
                               title: "My Requests",
                               onTap: () {
-                                context.read<SeekerBloc>().add(
-                                  NavigateSeekerEvent(
-                                    page: currentPage,
-                                    widget: const SeekerRequestPage(),
-                                  ),
-                                );
+                                Get.to(() => const SeekerRequestPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -96,12 +85,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.calendar,
                               title: "Calendar",
                               onTap: () {
-                                context.read<SeekerBloc>().add(
-                                  NavigateSeekerEvent(
-                                    page: currentPage,
-                                    widget: const SeekerAppointmentPage(),
-                                  ),
-                                );
+                                Get.to(() => const SeekerAppointmentPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -112,12 +96,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.listUl,
                               title: "Appointments",
                               onTap: () {
-                                context.read<SeekerBloc>().add(
-                                  NavigateSeekerEvent(
-                                    page: currentPage,
-                                    widget: const SeekerAppointmentListPage(),
-                                  ),
-                                );
+                                Get.to(() => const SeekerAppointmentListPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -128,12 +107,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gavel,
                               title: "Disputes",
                               onTap: () {
-                                context.read<SeekerBloc>().add(
-                                  NavigateSeekerEvent(
-                                    page: 1,
-                                    widget: const DisputesListPage(),
-                                  ),
-                                );
+                                Get.to(() => const DisputesListPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -150,12 +124,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gear,
                               title: "Settings",
                               onTap: () {
-                                context.read<SeekerBloc>().add(
-                                  NavigateSeekerEvent(
-                                    page: currentPage,
-                                    widget: const SettingsPage(),
-                                  ),
-                                );
+                                Get.to(() => const SettingsPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -166,12 +135,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.triangleExclamation,
                               title: "Report Issue",
                               onTap: () {
-                                context.read<SeekerBloc>().add(
-                                  NavigateSeekerEvent(
-                                    page: currentPage,
-                                    widget: const ReportPage(),
-                                  ),
-                                );
+                                Get.to(() => const ReportPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,

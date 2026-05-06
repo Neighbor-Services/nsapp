@@ -141,5 +141,3 @@ class ProfileAdapter extends TypeAdapter<Profile> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

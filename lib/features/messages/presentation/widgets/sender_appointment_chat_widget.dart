@@ -15,6 +15,8 @@ class SenderAppointmentChatWidget extends StatelessWidget {
   final String from;
   final String chatID;
   final String seekerId;
+  final bool isDelivered;
+  final bool isSeen;
   final VoidCallback onLongPressed;
 
   const SenderAppointmentChatWidget({
@@ -23,6 +25,8 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     required this.appointmentDate,
     required this.message,
     required this.from,
+    this.isDelivered = false,
+    this.isSeen = false,
     required this.onLongPressed,
     required this.chatID,
     required this.seekerId,
@@ -212,12 +216,6 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      FontAwesomeIcons.checkDouble,
-                      size: 14.r,
-                      color: timestampColor,
-                    ),
-                    SizedBox(width: 4.w),
                     Text(
                       DateFormat("HH:mm").format(appointmentDate.toLocal()),
                       style: TextStyle(
@@ -225,6 +223,12 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,
                       ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      isSeen ? Icons.done_all : (isDelivered ? Icons.done_all : Icons.check),
+                      size: 14.sp,
+                      color: isSeen ? Colors.blue : timestampColor,
                     ),
                   ],
                 ),

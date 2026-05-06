@@ -3,13 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_favorite_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_new_request_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
-import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
+// Removed UI imports since BLoC no longer stores Widgets
 
 class SeekerBottomNavigationBarWidget extends StatelessWidget {
   const SeekerBottomNavigationBarWidget({super.key});
@@ -54,14 +50,11 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.house,
-                                isActive: context.read<SeekerBloc>().currentPage == 1,
+                                isActive: context.read<SeekerBloc>().currentTab == 1,
                                 label: "Home",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
-                                    NavigateSeekerEvent(
-                                      page: 1,
-                                      widget: const SeekerHomePage(),
-                                    ),
+                                    ChangeSeekerTabEvent(tabIndex: 1),
                                   );
                                 },
                               ),
@@ -70,15 +63,12 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
-                                isActive: context.read<SeekerBloc>().currentPage == 2,
+                                isActive: context.read<SeekerBloc>().currentTab == 2,
                                 badgeCount: (notificationState is SuccessGetMyNotificationsState) ? notificationState.unreadCount : 0,
                                 label: "Notifications",
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
-                                    NavigateSeekerEvent(
-                                      page: 2,
-                                      widget: const NotificationsPage(),
-                                    ),
+                                    ChangeSeekerTabEvent(tabIndex: 2),
                                   );
                                 },
                               ),
@@ -88,15 +78,12 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                               child: _buildNavIcon(
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
-                                isActive: context.read<SeekerBloc>().currentPage == 4,
+                                isActive: context.read<SeekerBloc>().currentTab == 4,
                                 label: "Chat",
                                 badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
-                                    NavigateSeekerEvent(
-                                      page: 4,
-                                      widget: const MyMessagesPage(),
-                                    ),
+                                    ChangeSeekerTabEvent(tabIndex: 4),
                                   );
                                 },
                               ),
@@ -106,13 +93,10 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.heart,
                                 label: "Favorites",
-                                isActive: context.read<SeekerBloc>().currentPage == 5,
+                                isActive: context.read<SeekerBloc>().currentTab == 5,
                                 onTap: () {
                                   context.read<SeekerBloc>().add(
-                                    NavigateSeekerEvent(
-                                      page: 5,
-                                      widget: const SeekerFavoritePage(),
-                                    ),
+                                    ChangeSeekerTabEvent(tabIndex: 5),
                                   );
                                 },
                               ),
@@ -189,7 +173,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(page: 3, widget: const SeekerNewRequestPage()),
+          ChangeSeekerTabEvent(tabIndex: 3),
         );
       },
       child: Container(

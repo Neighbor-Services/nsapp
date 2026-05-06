@@ -57,5 +57,3 @@ class AcceptanceAdapter extends TypeAdapter<Acceptance> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

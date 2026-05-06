@@ -15,12 +15,14 @@ class ReceiverChatImageWidget extends StatelessWidget {
   final bool withText;
   final String imageUrl;
 
+  final VoidCallback? onLongPressed;
   const ReceiverChatImageWidget({
     super.key,
     required this.message,
     required this.dateTime,
     required this.withText,
     required this.imageUrl,
+    this.onLongPressed,
   });
 
   @override
@@ -51,7 +53,9 @@ class ReceiverChatImageWidget extends StatelessWidget {
       ),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Column(
+        child: GestureDetector(
+          onLongPress: onLongPressed,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -147,7 +151,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),);
   }
 }
 

@@ -48,5 +48,3 @@ class PortfolioItemAdapter extends TypeAdapter<PortfolioItem> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

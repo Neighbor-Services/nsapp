@@ -109,5 +109,3 @@ class ServiceAdapter extends TypeAdapter<Service> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

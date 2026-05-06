@@ -15,7 +15,6 @@ import 'package:nsapp/features/authentications/domain/usecase/verify_email_use_c
 import 'package:nsapp/features/authentications/domain/usecase/send_email_verification_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/login_with_apple_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/delete_account_use_case.dart';
-import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 
 part 'authentication_event.dart';
@@ -99,7 +98,6 @@ class AuthenticationBloc
     });
     on<LogoutAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
-      BackgroundNotificationService.disconnectForeground();
       final results = await logoutUseCase.call(event);
       results.fold(
         (l) => emit(FailureLoginAuthenticationState()),

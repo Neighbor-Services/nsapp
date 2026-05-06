@@ -55,7 +55,7 @@ class _ProviderAppointmentListPageState
         elevation: 0,
         leading: GestureDetector(
           onTap: () {
-            context.read<ProviderBloc>().add(ProviderBackPressedEvent());
+            Get.back();
           },
           child: Container(
             margin: EdgeInsets.all(10.r),

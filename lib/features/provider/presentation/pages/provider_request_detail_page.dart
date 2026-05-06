@@ -142,9 +142,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      context.read<ProviderBloc>().add(
-                                        ProviderBackPressedEvent(),
-                                      );
+                                      Get.back();
                                     },
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
@@ -179,12 +177,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                       context.read<MessageBloc>().add(
                                         SetMessageReceiverEvent(profile: user),
                                       );
-                                      context.read<ProviderBloc>().add(
-                                        NavigateProviderEvent(
-                                          page: 4,
-                                          widget: const ChatPage(),
-                                        ),
-                                      );
+                                      Get.to(() => const ChatPage());
                                     },
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),

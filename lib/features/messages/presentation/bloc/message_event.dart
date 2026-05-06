@@ -26,8 +26,9 @@ class ImageEvent extends MessageEvent {
 
 class GetMessagesEvent extends MessageEvent {
   final String receiver;
+  final String? before;
 
-  GetMessagesEvent({required this.receiver});
+  GetMessagesEvent({required this.receiver, this.before});
 }
 
 class CalenderAppointmentEvent extends MessageEvent {
@@ -84,6 +85,14 @@ class GetChatEvent extends MessageEvent {
   final String receiver;
   final String sender;
   GetChatEvent({required this.sender, required this.receiver});
+}
+
+class ConnectGlobalPresenceEvent extends MessageEvent {}
+
+class SendMessageStatusEvent extends MessageEvent {
+  final String messageId;
+  final String status; // 'delivered' or 'seen'
+  SendMessageStatusEvent({required this.messageId, required this.status});
 }
 
 

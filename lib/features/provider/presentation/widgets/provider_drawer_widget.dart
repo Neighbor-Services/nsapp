@@ -18,7 +18,6 @@ import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../wallet/presentation/pages/wallet_page.dart';
 import '../bloc/provider_bloc.dart';
 import '../pages/provider_appointment_list_page.dart';
-import '../pages/provider_home_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderDrawerWidget extends StatelessWidget {
@@ -40,8 +39,8 @@ class ProviderDrawerWidget extends StatelessWidget {
 
         return BlocBuilder<ProviderBloc, ProviderState>(
           builder: (context, providerState) {
-            final currentPage = (providerState is NavigatorProviderState)
-                ? providerState.page
+            final currentPage = (providerState is ProviderTabChangedState)
+                ? providerState.tabIndex
                 : 1;
 
             return Drawer(
@@ -67,12 +66,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.house,
                               title: "Home",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: 1,
-                                    widget: const ProviderHomePage(),
-                                  ),
-                                );
+                                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
                                 Navigator.pop(context);
                               },
                               isSelected: currentPage == 1,
@@ -84,12 +78,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.circleCheck,
                               title: "My Jobs",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: currentPage,
-                                    widget: const ProviderAcceptedRequestPage(),
-                                  ),
-                                );
+                                Get.to(() => const ProviderAcceptedRequestPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -100,12 +89,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.briefcase,
                               title: "Active Tasks",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: currentPage,
-                                    widget: const ProviderActiveTasksPage(),
-                                  ),
-                                );
+                                Get.to(() => const ProviderActiveTasksPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -116,12 +100,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.listUl,
                               title: "Appointments",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: currentPage,
-                                    widget: const ProviderAppointmentListPage(),
-                                  ),
-                                );
+                                Get.to(() => const ProviderAppointmentListPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -132,12 +111,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.video,
                               title: "Subscription",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: currentPage,
-                                    widget: const SubscriptionPage(),
-                                  ),
-                                );
+                                Get.to(() => const SubscriptionPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -149,12 +123,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                                 icon: FontAwesomeIcons.wallet,
                                 title: "Wallet",
                                 onTap: () {
-                                  context.read<ProviderBloc>().add(
-                                    NavigateProviderEvent(
-                                      page: 1,
-                                      widget: const WalletPage(),
-                                    ),
-                                  );
+                                  Get.to(() => const WalletPage());
                                   Navigator.pop(context);
                                 },
                                 isDark: isDark,
@@ -165,12 +134,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gavel,
                               title: "Disputes",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: 1,
-                                    widget: const DisputesListPage(),
-                                  ),
-                                );
+                                Get.to(() => const DisputesListPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -192,9 +156,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                                     userID: profile.user?.id ?? "",
                                   ),
                                 );
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(page: 1, widget: const AboutPage()),
-                                );
+                                Get.to(() => const AboutPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -205,12 +167,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.user,
                               title: "About",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: 1,
-                                    widget: const AddAboutPage(),
-                                  ),
-                                );
+                                Get.to(() => const AddAboutPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -221,12 +178,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.gear,
                               title: "Settings",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: currentPage,
-                                    widget: const SettingsPage(),
-                                  ),
-                                );
+                                Get.to(() => const SettingsPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,
@@ -237,12 +189,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               icon: FontAwesomeIcons.triangleExclamation,
                               title: "Report Issue",
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: currentPage,
-                                    widget: const ReportPage(),
-                                  ),
-                                );
+                                Get.to(() => const ReportPage());
                                 Navigator.pop(context);
                               },
                               isDark: isDark,

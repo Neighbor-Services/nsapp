@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -102,9 +103,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                     child: Row(
                       children: [
                         GestureDetector(
-                          onTap: () => context.read<ProviderBloc>().add(
-                            ProviderBackPressedEvent(),
-                          ),
+                          onTap: () => Get.back(),
                           child: Container(
                             padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(
@@ -252,12 +251,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: data.request?.id ?? ""),
           );
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderRequestDetailPage(),
-            ),
-          );
+          Get.to(() => const ProviderRequestDetailPage());
         },
         child: Padding(
           padding: EdgeInsets.only(bottom: 16.h),

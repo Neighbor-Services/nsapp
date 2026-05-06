@@ -60,5 +60,3 @@ class ServicePackageAdapter extends TypeAdapter<ServicePackage> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

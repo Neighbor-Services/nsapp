@@ -10,11 +10,13 @@ import 'package:nsapp/features/provider/presentation/widgets/provider_drawer_wid
 import 'package:nsapp/features/seeker/presentation/pages/seeker_dashboard_page.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/seeker_drawer_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/home_app_bar.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
+import 'package:nsapp/core/services/notification_navigator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,7 +25,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   GlobalKey<ScaffoldState> scaffold = GlobalKey<ScaffoldState>();
 
   @override
@@ -43,6 +45,24 @@ class _HomePageState extends State<HomePage> {
     context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
     context.read<NotificationBloc>().add(ConnectNotificationSocketEvent());
     context.read<NotificationBloc>().add(GetTokenEvent());
+    context.read<MessageBloc>().add(ConnectGlobalPresenceEvent());
+
+    NotificationNavigator.consumePendingNavigation();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      context.read<MessageBloc>().add(ConnectGlobalPresenceEvent());
+      context.read<MessageBloc>().add(GetMyMessagesEvent());
+    }
   }
 
   @override

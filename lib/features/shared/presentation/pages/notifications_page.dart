@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/notification.dart' as not;
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
@@ -109,11 +108,11 @@ class _NotificationsPageState extends State<NotificationsPage>
                                       onTap: () {
                                         if (isProvider) {
                                           context.read<ProviderBloc>().add(
-                                                ProviderBackPressedEvent(),
+                                                ChangeProviderTabEvent(tabIndex: 1),
                                               );
                                         } else {
                                           context.read<SeekerBloc>().add(
-                                                SeekerBackPressedEvent(),
+                                                ChangeSeekerTabEvent(tabIndex: 1),
                                               );
                                         }
                                       },
@@ -574,13 +573,9 @@ class _NotificationsPageState extends State<NotificationsPage>
         Navigator.pop(context); // Remove loading
 
         if (isProvider) {
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(page: 4, widget: const ChatPage()),
-          );
+          Get.to(() => const ChatPage());
         } else {
-          context.read<SeekerBloc>().add(
-            NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-          );
+          Get.to(() => const ChatPage());
         }
         break;
 
@@ -601,22 +596,14 @@ class _NotificationsPageState extends State<NotificationsPage>
             Navigator.pop(context); // Remove loading
 
             if (state is SuccessGetRequestDetailState) {
-              context.read<ProviderBloc>().add(
-                NavigateProviderEvent(
-                  page: 1,
-                  widget: const ProviderRequestDetailPage(),
-                ),
-              );
+              Get.to(() => const ProviderRequestDetailPage());
             } else {
               customAlert(context, AlertType.error, "Failed to load request details");
             }
           } else {
              Navigator.pop(context);
              context.read<ProviderBloc>().add(
-              NavigateProviderEvent(
-                page: 3,
-                widget: const ProviderAcceptedRequestPage(),
-              ),
+              ChangeProviderTabEvent(tabIndex: 3),
             );
           }
         } else {
@@ -643,23 +630,13 @@ class _NotificationsPageState extends State<NotificationsPage>
               context.read<SeekerBloc>().add(
                 SeekerRequestDetailEvent(request: requestData),
               );
-              context.read<SeekerBloc>().add(
-                NavigateSeekerEvent(
-                  page: 1,
-                  widget: const SeekerRequestDetailsPage(),
-                ),
-              );
+              Get.to(() => const SeekerRequestDetailsPage());
             } else {
               customAlert(context, AlertType.error, "Failed to load request details");
             }
           } else {
             Navigator.pop(context);
-            context.read<SeekerBloc>().add(
-              NavigateSeekerEvent(
-                page: 4,
-                widget: const SeekerRequestPage(),
-              ),
-            );
+            Get.to(() => const SeekerRequestPage());
           }
         }
         break;
@@ -669,19 +646,11 @@ class _NotificationsPageState extends State<NotificationsPage>
         if (isProvider) {
           context.read<ProviderBloc>().add(provider_bloc.GetAppointmentsEvent());
           context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 2,
-              widget: const ProviderAcceptedRequestPage(),
-            ),
+            ChangeProviderTabEvent(tabIndex: 5),
           );
         } else {
           context.read<SeekerBloc>().add(seeker_bloc.GetAppointmentsEvent());
-          context.read<SeekerBloc>().add(
-            NavigateSeekerEvent(
-              page: 3,
-              widget: const SeekerRequestPage(),
-            ),
-          );
+          Get.to(() => const SeekerRequestPage());
         }
         break;
 

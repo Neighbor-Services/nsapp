@@ -95,24 +95,53 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "MY REQUESTS",
-                              style: TextStyle(
-                                fontSize: 24.sp,
-                                fontWeight: FontWeight.w500,
-                                color: context.appColors.primaryTextColor,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              "MANAGE YOUR SERVICE REQUESTS",
-                              style: TextStyle(
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w500,
-                                color: context.appColors.secondaryTextColor,
-                                letterSpacing: 1.0,
-                              ),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => Get.back(),
+                                  child: Container(
+                                    padding: EdgeInsets.all(12.r),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
+                                        width: 1.5.r,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      FontAwesomeIcons.chevronLeft,
+                                      color: context.appColors.primaryTextColor,
+                                      size: 16.r,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "MY REQUESTS",
+                                      style: TextStyle(
+                                        fontSize: 24.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: context.appColors.primaryTextColor,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    Text(
+                                      "MANAGE YOUR SERVICE REQUESTS",
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: context.appColors.secondaryTextColor,
+                                        letterSpacing: 1.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             SizedBox(height: 24.h),
                             Expanded(child: _buildRequestList(context, state)),
@@ -202,12 +231,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
           SeekerRequestDetailEvent(request: requestData),
         );
 
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(
-            page: 1,
-            widget: const SeekerRequestDetailsPage(),
-          ),
-        );
+        Get.to(() => const SeekerRequestDetailsPage());
       },
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
@@ -333,22 +357,12 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),
                             );
-                            context.read<SeekerBloc>().add(
-                              NavigateSeekerEvent(
-                                page: 1,
-                                widget: const SeekerRequestDetailsPage(),
-                              ),
-                            );
+                            Get.to(() => const SeekerRequestDetailsPage());
                           } else if (val == 'edit') {
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),
                             );
-                            context.read<SeekerBloc>().add(
-                              NavigateSeekerEvent(
-                                page: 1,
-                                widget: const SeekerUpdateRequestPage(),
-                              ),
-                            );
+                            Get.to(() => const SeekerUpdateRequestPage());
                           } else if (val == 'delete') {
                             context.read<SeekerBloc>().add(
                               DeleteRequestEvent(

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,9 +65,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<SeekerBloc>().add(
-                          SeekerBackPressedEvent(),
-                        );
+                        Get.back();
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -169,7 +168,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             SizedBox(height: 16.h),
                         itemBuilder: (context, index) {
                           final profile = providers[index];
-                          return _buildProviderCard(context, profile);
+                          return _buildProviderCard(context, profile, index);
                         },
                       );
                     }
@@ -193,25 +192,33 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
     );
   }
 
-  Widget _buildProviderCard(BuildContext context, Profile profile) {
+  Widget _buildProviderCard(BuildContext context, Profile profile, int index) {
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.secondaryTextColor;
 
-    return GestureDetector(
-      onTap: () {
-        context.read<SeekerBloc>().add(
-          SetProviderToReviewEvent(
-            provider: profile,
-            providerUserId: profile.user!.id!,
-          ),
-        );
-        context.read<ProfileBloc>().add(
-          AboutUserEvent(userID: profile.user!.id!),
-        );
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(page: 1, widget: AboutPage()),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 100)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
         );
       },
+      child: GestureDetector(
+        onTap: () {
+          context.read<SeekerBloc>().add(
+            SetProviderToReviewEvent(
+              provider: profile,
+              providerUserId: profile.user!.id!,
+            ),
+          );
+          context.read<ProfileBloc>().add(
+            AboutUserEvent(userID: profile.user!.id!),
+          );
+          Get.to(() => const AboutPage());
+        },
       child: SolidContainer(
         padding: EdgeInsets.all(16.r),
         borderWidth: 1.5.r,
@@ -331,6 +338,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
           ],
         ),
       ),
+    ),
     );
   }
 }

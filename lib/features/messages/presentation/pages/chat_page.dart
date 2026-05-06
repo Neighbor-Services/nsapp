@@ -1,8 +1,10 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -16,8 +18,6 @@ import 'package:nsapp/features/messages/presentation/widgets/sender_appointment_
 import 'package:nsapp/features/messages/presentation/widgets/sender_chat_image_widget.dart';
 import 'package:nsapp/features/messages/presentation/widgets/sender_chat_text_widget.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
@@ -43,11 +43,15 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   List<ChatMessage> _messages = [];
   bool _isTyping = false;
   bool _isOnline = false;
+  bool _isLoadingOlder = false;
+  String? _currentSenderId;
 
   @override
   void initState() {
     super.initState();
     
+    _scrollController.addListener(_onScroll);
+
     // Get initial receiver from Bloc state
     final messageState = context.read<MessageBloc>().state;
     if (messageState is MessageReceiverState) {
@@ -58,14 +62,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final profileState = context.read<ProfileBloc>().state;
     String? senderId;
     if (profileState is SuccessGetProfileState) {
-      senderId = profileState.profile.user?.id;
+      _currentSenderId = profileState.profile.user?.id;
     }
 
     if (receiverId != null) {
       context.read<MessageBloc>().add(GetMessagesEvent(receiver: receiverId));
-      if (senderId != null) {
+      if (_currentSenderId != null) {
         context.read<MessageBloc>().add(
-          ConnectWebSocketEvent(sender: senderId, receiver: receiverId),
+          ConnectWebSocketEvent(sender: _currentSenderId!, receiver: receiverId),
         );
       }
     }
@@ -81,6 +85,21 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _headerController.forward();
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels <= _scrollController.position.minScrollExtent + 100 &&
+        !_isLoadingOlder &&
+        _messages.isNotEmpty) {
+      final firstMsg = _messages.first.message;
+      if (firstMsg != null && firstMsg.createdAt != null) {
+        setState(() => _isLoadingOlder = true);
+        context.read<MessageBloc>().add(GetMessagesEvent(
+              receiver: _receiver.user?.id ?? "",
+              before: firstMsg.createdAt!.toUtc().toIso8601String(),
+            ));
+      }
+    }
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -94,10 +113,18 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return BlocConsumer<MessageBloc, MessageState>(
       listener: (context, state) {
         if (state is SuccessGetMessageState) {
-          setState(() => _messages = state.messages);
-          _scrollToBottom();
+          final wasLoadingOlder = _isLoadingOlder;
+          setState(() {
+            _messages = state.messages;
+            _isLoadingOlder = false;
+          });
+          if (!wasLoadingOlder) {
+            _scrollToBottom();
+          }
         } else if (state is SuccessSendMessageState) {
           _scrollToBottom();
+        } else if (state is FailureGetMessageState) {
+          setState(() => _isLoadingOlder = false);
         } else if (state is MessageImageState) {
           if (state.image != null) {
             _handleSendImage(state.image!);
@@ -165,9 +192,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               onPressed: () {
                 final settingsState = context.read<SettingsBloc>().state;
                 if (settingsState.isProvider) {
-                  context.read<ProviderBloc>().add(ProviderBackPressedEvent());
+                  Get.back();
                 } else {
-                  context.read<SeekerBloc>().add(SeekerBackPressedEvent());
+                  Get.back();
                 }
               },
               icon: const FaIcon(FontAwesomeIcons.chevronLeft),
@@ -333,57 +360,218 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     final bool withImage = message.withImage ?? false;
     final bool withImageAndText = message.withImageAndText ?? false;
-    final bool isCalender = message.isCalender ?? false;
     final String contentTxt = message.message ?? "";
     final String mediaUrl = message.mediaUrl ?? "";
     final DateTime createdAt = message.createdAt ?? DateTime.now();
     final String msgId = message.id ?? "";
 
     if (isMe) {
-      if (withImage) {
-        return SenderChatImageWidget(
-          withText: withImageAndText,
-          message: contentTxt,
-          imageUrl: mediaUrl,
-          dateTime: createdAt,
-          onLongPressed: () {},
-        );
-      } else if (isCalender) {
-        return SenderAppointmentChatWidget(
-          chatID: msgId,
-          startTime: message.calenderDate ?? DateTime.now(),
-          appointmentDate: message.calenderDate ?? DateTime.now(),
-          message: contentTxt,
-          from: chatMessage.sender?.user?.id ?? message.sender ?? "",
-          onLongPressed: () {},
-          seekerId: _receiver.user?.id ?? "",
-        );
-      } else {
-        return SenderChatTextWidget(
-          message: contentTxt,
-          dateTime: createdAt,
-          onLongPressed: () {},
-        );
-      }
+      return FadeInRight(
+        duration: const Duration(milliseconds: 400),
+        child: _buildSenderMessage(withImage, withImageAndText, contentTxt, mediaUrl, createdAt, msgId, message, chatMessage),
+      );
     } else {
-      if (withImage) {
-        return ReceiverChatImageWidget(
-          withText: withImageAndText,
-          message: contentTxt,
-          imageUrl: mediaUrl,
-          dateTime: createdAt,
-        );
-      } else if (isCalender) {
-        return ReceiverAppointmentChatWidget(
-          chatID: msgId,
-          startTime: message.calenderDate ?? DateTime.now(),
-          appointmentDate: message.calenderDate ?? DateTime.now(),
-          message: contentTxt,
-          from: chatMessage.receiver?.user?.id ?? message.sender ?? "",
-        );
-      } else {
-        return ReceiverChatTextWidget(message: contentTxt, dateTime: createdAt);
-      }
+      return FadeInLeft(
+        duration: const Duration(milliseconds: 400),
+        child: _buildReceiverMessage(withImage, withImageAndText, contentTxt, mediaUrl, createdAt, msgId, chatMessage, message),
+      );
+    }
+  }
+
+  void _showMessageOptions(Message message) {
+    final sheetColor = context.appColors.cardBackground;
+    final textColor = context.appColors.primaryTextColor;
+
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(24.r),
+        decoration: BoxDecoration(
+          color: sheetColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: context.appColors.glassBorder,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            _buildListTile(
+              icon: FontAwesomeIcons.copy,
+              title: "Copy Text",
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: message.message ?? ""));
+                Get.back();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Message copied to clipboard")),
+                );
+              },
+              color: textColor,
+            ),
+            if (message.sender == _currentSenderId) ...[
+              _buildListTile(
+                icon: FontAwesomeIcons.penToSquare,
+                title: "Edit Message",
+                onTap: () {
+                  Get.back();
+                  _showEditDialog(message);
+                },
+                color: textColor,
+              ),
+              _buildListTile(
+                icon: FontAwesomeIcons.trash,
+                title: "Delete Message",
+                onTap: () {
+                  Get.back();
+                  _showDeleteConfirmation(message);
+                },
+                color: Colors.redAccent,
+              ),
+            ],
+            SizedBox(height: 16.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(Message message) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: context.appColors.cardBackground,
+        title: Text("Delete Message", style: TextStyle(color: context.appColors.primaryTextColor)),
+        content: Text("Are you sure you want to delete this message? This action cannot be undone.", 
+          style: TextStyle(color: context.appColors.secondaryTextColor)),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text("Cancel", style: TextStyle(color: context.appColors.hintTextColor)),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<MessageBloc>().add(DeleteMessageEvent(message: message));
+              Get.back();
+            },
+            child: const Text("Delete", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditDialog(Message message) {
+    final controller = TextEditingController(text: message.message);
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: context.appColors.cardBackground,
+        title: Text("Edit Message", style: TextStyle(color: context.appColors.primaryTextColor)),
+        content: TextField(
+          controller: controller,
+          maxLines: null,
+          style: TextStyle(color: context.appColors.primaryTextColor),
+          decoration: InputDecoration(
+            hintText: "Enter new message...",
+            hintStyle: TextStyle(color: context.appColors.hintTextColor),
+            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: context.appColors.glassBorder)),
+            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: context.appColors.primaryColor)),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text("Cancel", style: TextStyle(color: context.appColors.hintTextColor)),
+          ),
+          TextButton(
+            onPressed: () {
+              final newText = controller.text.trim();
+              if (newText.isNotEmpty && newText != message.message) {
+                final updatedMessage = message.copyWith(message: newText);
+                context.read<MessageBloc>().add(UpdateMessageEvent(message: updatedMessage));
+              }
+              Get.back();
+            },
+            child: Text("Update", style: TextStyle(color: context.appColors.primaryColor)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListTile({required IconData icon, required String title, required VoidCallback onTap, required Color color}) {
+    return ListTile(
+      leading: Icon(icon, color: color, size: 20.r),
+      title: Text(title, style: TextStyle(color: color, fontSize: 16.sp, fontWeight: FontWeight.w400)),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+    );
+  }
+
+  Widget _buildSenderMessage(bool withImage, bool withImageAndText, String contentTxt, String mediaUrl, DateTime createdAt, String msgId, Message message, ChatMessage chatMessage) {
+    if (withImage) {
+      return SenderChatImageWidget(
+        withText: withImageAndText,
+        message: contentTxt,
+        imageUrl: mediaUrl,
+        dateTime: createdAt,
+        isDelivered: message.isDelivered ?? false,
+        isSeen: message.read ?? false,
+        onLongPressed: () => _showMessageOptions(message),
+      );
+    } else if (message.isCalender ?? false) {
+      return SenderAppointmentChatWidget(
+        chatID: msgId,
+        startTime: message.calenderDate ?? DateTime.now(),
+        appointmentDate: message.calenderDate ?? DateTime.now(),
+        message: contentTxt,
+        from: chatMessage.sender?.user?.id ?? message.sender ?? "",
+        isDelivered: message.isDelivered ?? false,
+        isSeen: message.read ?? false,
+        onLongPressed: () => _showMessageOptions(message),
+        seekerId: _receiver.user?.id ?? "",
+      );
+    } else {
+      return SenderChatTextWidget(
+        message: contentTxt,
+        dateTime: createdAt,
+        isDelivered: message.isDelivered ?? false,
+        isSeen: message.read ?? false,
+        onLongPressed: () => _showMessageOptions(message),
+      );
+    }
+  }
+
+  Widget _buildReceiverMessage(bool withImage, bool withImageAndText, String contentTxt, String mediaUrl, DateTime createdAt, String msgId, ChatMessage chatMessage, Message message) {
+    if (withImage) {
+      return ReceiverChatImageWidget(
+        withText: withImageAndText,
+        message: contentTxt,
+        imageUrl: mediaUrl,
+        dateTime: createdAt,
+      );
+    } else if (message.isCalender ?? false) {
+      return ReceiverAppointmentChatWidget(
+        chatID: msgId,
+        startTime: message.calenderDate ?? DateTime.now(),
+        appointmentDate: message.calenderDate ?? DateTime.now(),
+        message: contentTxt,
+        from: chatMessage.receiver?.user?.id ?? message.sender ?? "",
+      );
+    } else {
+      return ReceiverChatTextWidget(
+        message: contentTxt, 
+        dateTime: createdAt,
+        onLongPressed: () {
+          Clipboard.setData(ClipboardData(text: contentTxt));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Message copied to clipboard")),
+          );
+        },
+      );
     }
   }
 

@@ -11,13 +11,16 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
 
   MessageRemoteDatasourceImpl(this._dio);
   @override
-  Future<List<ChatMessage>> getMessages({required String receiver, String? after}) async {
+  Future<List<ChatMessage>> getMessages({required String receiver, String? after, String? before}) async {
     try {
       List<ChatMessage> chats = [];
       final String token = await Helpers.getString("token");
       String url = '$baseMessagesUrl/chat/messages/?conversation=$receiver';
       if (after != null) {
         url += '&after=$after';
+      }
+      if (before != null) {
+        url += '&before=$before';
       }
       final response = await _dio.get(
         url,

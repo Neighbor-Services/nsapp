@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -193,12 +194,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
             context.read<ProviderBloc>().add(
               ReloadProfileEvent(request: requestData.request!.id!),
             );
-            context.read<ProviderBloc>().add(
-              NavigateProviderEvent(
-                page: 1,
-                widget: const ProviderRequestDetailPage(),
-              ),
-            );
+            Get.to(() => const ProviderRequestDetailPage());
           },
           child: SolidContainer(
             padding: EdgeInsets.zero,
@@ -353,23 +349,13 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               request: requestData.request!.id!,
                             ),
                           );
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 1,
-                              widget: const ProviderRequestDetailPage(),
-                            ),
-                          );
+                          Get.to(() => const ProviderRequestDetailPage());
                           break;
                         case 2:
                           context.read<MessageBloc>().add(
                             SetMessageReceiverEvent(profile: profile),
                           );
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 4,
-                              widget: const ChatPage(),
-                            ),
-                          );
+                          Get.to(() => const ChatPage());
                           break;
                       }
                     },

@@ -8,8 +8,6 @@ import 'package:local_auth/local_auth.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/change_user_type_widget.dart';
@@ -151,13 +149,9 @@ class _SettingsPageState extends State<SettingsPage>
                                 GestureDetector(
                                   onTap: () {
                                     if (isProvider) {
-                                      context.read<ProviderBloc>().add(
-                                        ProviderBackPressedEvent(),
-                                      );
+                                      Get.back();
                                     } else {
-                                      context.read<SeekerBloc>().add(
-                                        SeekerBackPressedEvent(),
-                                      );
+                                      Get.back();
                                     }
                                   },
                                   child: Container(

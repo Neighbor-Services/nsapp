@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -209,9 +210,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
         context.read<ProfileBloc>().add(
           AboutUserEvent(userID: profile.user!.id!),
         );
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(page: 1, widget: const AboutPage()),
-        );
+        Get.to(() => const AboutPage());
       },
       child: SolidContainer(
         padding: EdgeInsets.zero,
@@ -477,16 +476,12 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
       context.read<ProfileBloc>().add(
         AboutUserEvent(userID: profile.user!.id!),
       );
-      context.read<SeekerBloc>().add(
-        NavigateSeekerEvent(page: 1, widget: const AboutPage()),
-      );
+      Get.to(() => const AboutPage());
     } else if (val == 2) {
       context.read<MessageBloc>().add(
         SetMessageReceiverEvent(profile: profile),
       );
-      context.read<SeekerBloc>().add(
-        NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-      );
+      Get.to(() => const ChatPage());
     }
   }
 

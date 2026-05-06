@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,7 +54,7 @@ class _AISearchPageState extends State<AISearchPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => context.read<SeekerBloc>().add(SeekerBackPressedEvent()),
+          onTap: () => Get.back(),
           child: Container(
             margin: EdgeInsets.all(10.r),
             decoration: BoxDecoration(

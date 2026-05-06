@@ -51,5 +51,3 @@ class FavoriteAdapter extends TypeAdapter<Favorite> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

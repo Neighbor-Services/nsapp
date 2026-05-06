@@ -6,16 +6,10 @@ class LoadingSeekerState extends SeekerState {}
 
 class InitialSeekerState extends SeekerState {}
 
-class NavigatorSeekerState extends SeekerState {
-  final Widget widget;
-  final int page;
+class SeekerTabChangedState extends SeekerState {
+  final int tabIndex;
 
-  NavigatorSeekerState({this.widget = const SeekerHomePage(), this.page = 1});
-}
-
-class SeekerVisitedPagesState extends SeekerState {
-  final List<VisitedPages> pages;
-  SeekerVisitedPagesState({required this.pages});
+  SeekerTabChangedState({this.tabIndex = 1});
 }
 
 class ImageSeekerState extends SeekerState {

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,6 +59,24 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     super.dispose();
   }
 
+  Widget _buildAnimatedSection(int index, Widget child) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 400 + (index * 150)),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 50 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
@@ -96,30 +115,40 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                           SizedBox(height: 24.h),
 
                           // Performance Dashboard
-                          _buildDashboard(context, isLargeScreen),
+                          _buildAnimatedSection(0, _buildDashboard(context, isLargeScreen)),
                           SizedBox(height: 32.h),
 
                           // Search Bar
-                          _buildSearchBar(context),
+                          _buildAnimatedSection(1, _buildSearchBar(context)),
                           SizedBox(height: 32.h),
 
                           // Recent Requests Section
-                          _buildSectionHeader(context, "Recent Requests"),
-                          SizedBox(height: 16.h),
-                          SizedBox(
-                            height: 250.h,
-                            child: const ProviderRecentRequestWidget(),
-                          ),
+                          _buildAnimatedSection(2, Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionHeader(context, "Recent Requests"),
+                              SizedBox(height: 16.h),
+                              SizedBox(
+                                height: 250.h,
+                                child: const ProviderRecentRequestWidget(),
+                              ),
+                            ],
+                          )),
                           SizedBox(height: 32.h),
 
-                          _buildSectionHeader(context, "Explore More"),
+                          _buildAnimatedSection(3, Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionHeader(context, "Explore More"),
+                              SizedBox(height: 16.h),
+                              _buildDirectRequestsCard(context),
+                            ],
+                          )),
                           SizedBox(height: 16.h),
-                          _buildDirectRequestsCard(context),
-                          SizedBox(height: 16.h),
-                          _buildExploreCard(context),
+                          _buildAnimatedSection(4, _buildExploreCard(context)),
                           SizedBox(height: 16.h),
                           if (profile?.preferredPaymentMode != 'ON_SITE') ...[
-                            _buildWalletCard(context),
+                            _buildAnimatedSection(5, _buildWalletCard(context)),
                             SizedBox(height: 32.h),
                           ],
 
@@ -195,12 +224,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                             ),
                             GestureDetector(
                               onTap: () {
-                                context.read<ProviderBloc>().add(
-                                  NavigateProviderEvent(
-                                    page: 1,
-                                    widget: const WalletPage(),
-                                  ),
-                                );
+                                Get.to(() => const WalletPage());
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -334,12 +358,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     return GestureDetector(
       onTap: () {
         if (_isSubscriptionValid) {
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderSearchRequestPage(),
-            ),
-          );
+          Get.to(() => const ProviderSearchRequestPage());
         } else {
           showDialog(
             context: context,
@@ -430,12 +449,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 1,
-            widget: const ProviderTargetedRequestsPage(),
-          ),
-        );
+        Get.to(() => const ProviderTargetedRequestsPage());
       },
       child: Container(
         padding: EdgeInsets.all(12.r),
@@ -498,12 +512,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     return GestureDetector(
       onTap: () {
         if (_isSubscriptionValid) {
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderMoreRequestsPage(),
-            ),
-          );
+          Get.to(() => const ProviderMoreRequestsPage());
         } else {
           showDialog(
             context: context,
@@ -571,9 +580,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 1, widget: const WalletPage()),
-        );
+        Get.to(() => const WalletPage());
       },
       child: Container(
         padding: EdgeInsets.all(12.r),

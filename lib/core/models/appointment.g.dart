@@ -138,5 +138,3 @@ class AppointmentDataAdapter extends TypeAdapter<AppointmentData> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

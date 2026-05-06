@@ -487,12 +487,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 SeekerRequestDetailEvent(request: request),
                               );
 
-                              context.read<SeekerBloc>().add(
-                                NavigateSeekerEvent(
-                                  page: 1,
-                                  widget: const SeekerRequestDetailsPage(),
-                                ),
-                              );
+                              Get.to(() => const SeekerRequestDetailsPage());
                              
                             } else {
                               customAlert(context, AlertType.error, "You are not authorized to view this request");

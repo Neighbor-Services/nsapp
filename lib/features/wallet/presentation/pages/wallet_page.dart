@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,8 +7,6 @@ import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart'
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -62,9 +61,9 @@ class _WalletPageState extends State<WalletPage> {
               onTap: () {
                 if (state is SuccessGetProfileState &&
                     Helpers.isProvider(state.profile.userType)) {
-                  context.read<ProviderBloc>().add(ProviderBackPressedEvent());
+                  Get.back();
                 } else {
-                  context.read<SeekerBloc>().add(SeekerBackPressedEvent());
+                  Get.back();
                 }
               },
               child: Container(
@@ -247,8 +246,18 @@ class _WalletPageState extends State<WalletPage> {
                                           ? context.appColors.warningColor
                                           : context.appColors.errorColor);
 
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: 12.h),
+                                return TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 0.0, end: 1.0),
+                                  duration: Duration(milliseconds: 400 + (index * 100)),
+                                  curve: Curves.easeOut,
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, 20 * (1 - value)),
+                                      child: Opacity(opacity: value, child: child),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 12.h),
                                   child: SolidContainer(
                                     padding: EdgeInsets.all(16.r),
                                     child: Row(
@@ -347,6 +356,7 @@ class _WalletPageState extends State<WalletPage> {
                                           ],
                                         ),
                                       ],
+                                    ),
                                     ),
                                   ),
                                 );

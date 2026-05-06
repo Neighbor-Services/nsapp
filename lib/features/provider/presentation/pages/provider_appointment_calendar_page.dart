@@ -507,12 +507,7 @@ class _ProviderAppointmentCalendarPageState
                               context.read<ProviderBloc>().add(
                                 ReloadProfileEvent(request: requestData.request!.id!),
                               );
-                              context.read<ProviderBloc>().add(
-                                NavigateProviderEvent(
-                                  page: 1,
-                                  widget: const ProviderRequestDetailPage(),
-                                ),
-                              );
+                              Get.to(() => const ProviderRequestDetailPage());
                             },
                             icon: Icon(
                               FontAwesomeIcons.arrowUpRightFromSquare,

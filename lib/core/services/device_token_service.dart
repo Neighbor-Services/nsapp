@@ -2,50 +2,30 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 
 class DeviceTokenService {
-  static const MethodChannel _channel = MethodChannel('com.nsapp/notifications');
-
   /// Initialize and listen for native token updates (iOS APNs & Android FCM)
   static void initialize() {
-    if (Platform.isIOS) {
-       _channel.setMethodCallHandler((call) async {
-        if (call.method == "onTokenReceived") {
-          final String? token = call.arguments;
-          if (token != null) {
-            debugPrint("DEBUG [Dart]: Received APNs token from iOS (Push): $token");
-            await _handleTokenUpdate(token, 'IOS');
-          }
-        }
-      });
+    // Both iOS and Android can use FirebaseMessaging.instance.getToken()
+    // once APNs is properly configured in the Firebase Console for iOS.
+    FirebaseMessaging.instance.getToken().then((token) async {
+      if (token != null) {
+        final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
+        debugPrint("DEBUG [Dart]: Received FCM token from $platform: $token");
+        await _handleTokenUpdate(token, platform);
+      }
+    });
 
-      // Also pull the token immediately in case it was already generated
-      _channel.invokeMethod<String>("getLatestToken").then((token) async {
-        if (token != null && token.isNotEmpty) {
-          debugPrint("DEBUG [Dart]: Received APNs token from iOS (Pull): $token");
-          await _handleTokenUpdate(token, 'IOS');
-        }
-      });
-    } else if (Platform.isAndroid) {
-      // Initialize Firebase Messaging for Android
-      FirebaseMessaging.instance.getToken().then((token) async {
-        if (token != null) {
-          debugPrint("DEBUG [Dart]: Received FCM token from Android: $token");
-          await _handleTokenUpdate(token, 'ANDROID');
-        }
-      });
-
-      // Listen for token refresh
-      FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
-        debugPrint("DEBUG [Dart]: FCM token refreshed: $token");
-        await _handleTokenUpdate(token, 'ANDROID');
-      });
-    }
+    // Listen for token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
+      final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
+      debugPrint("DEBUG [Dart]: FCM token refreshed: $token");
+      await _handleTokenUpdate(token, platform);
+    });
   }
 
   static Future<void> _handleTokenUpdate(String token, String platform) async {

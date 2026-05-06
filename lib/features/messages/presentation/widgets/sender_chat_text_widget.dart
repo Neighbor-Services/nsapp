@@ -5,11 +5,15 @@ import 'package:nsapp/core/core.dart';
 class SenderChatTextWidget extends StatelessWidget {
   final String message;
   final DateTime dateTime;
+  final bool isDelivered;
+  final bool isSeen;
   final VoidCallback onLongPressed;
   const SenderChatTextWidget({
     super.key,
     required this.message,
     required this.dateTime,
+    this.isDelivered = false,
+    this.isSeen = false,
     required this.onLongPressed,
   });
 
@@ -71,14 +75,25 @@ class SenderChatTextWidget extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.only(top: 4.h, right: 4.w),
-                child: Text(
-                  DateFormat("HH:mm").format(dateTime.toLocal()),
-                  style: TextStyle(
-                    color: timestampColor,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0.5,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      DateFormat("HH:mm").format(dateTime.toLocal()),
+                      style: TextStyle(
+                        color: timestampColor,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      isSeen ? Icons.done_all : (isDelivered ? Icons.done_all : Icons.check),
+                      size: 14.sp,
+                      color: isSeen ? Colors.blue : timestampColor,
+                    ),
+                  ],
                 ),
               ),
             ],

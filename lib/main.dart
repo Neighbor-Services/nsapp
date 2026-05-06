@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' hide Transition;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -27,9 +27,8 @@ import 'package:nsapp/features/shared/presentation/bloc/subscription/subscriptio
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'firebase_options.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart' hide Transition;
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -71,15 +70,16 @@ Future<void> main() async {
   // Background Service Init (Android only)
   await BackgroundNotificationService.initializeService();
 
-  // Foreground WebSocket
-  BackgroundNotificationService.connectForeground();
+  // Foreground WebSocket — connected after login, not at cold boot.
+  // BackgroundNotificationService.connectForeground() is called in AuthenticationBloc
+  // after a successful login / token validation.
 
   // Initialize Native Notification Token Listener (iOS)
   DeviceTokenService.initialize();
 
 
-  // Request Notifications Permission
-  await Permission.notification.request();
+  // Notification permission is requested inside BackgroundNotificationService.initializeService()
+  // via FirebaseMessaging.instance.requestPermission(), covering both iOS and Android 13+.
 
   runApp(
       const NeighborServiceApp(),
@@ -123,6 +123,8 @@ class NeighborServiceApp extends StatelessWidget {
             themeMode: state.themeMode,
             initialRoute: "/",
             getPages: pages,
+            defaultTransition: Transition.fadeIn,
+            transitionDuration: const Duration(milliseconds: 300),
             debugShowCheckedModeBanner: false,
             builder: (context, child) {
               Responsive.init(context);

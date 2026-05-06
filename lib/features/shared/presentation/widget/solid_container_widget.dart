@@ -42,7 +42,9 @@ class SolidContainer extends StatelessWidget {
 
 
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       width: width?.w,
       height: height?.h,
       margin: margin,

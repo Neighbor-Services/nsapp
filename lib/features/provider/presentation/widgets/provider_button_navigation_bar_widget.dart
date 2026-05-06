@@ -3,13 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_appointment_calendar_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
-import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
+// Removed UI imports since BLoC no longer stores Widgets
 
 class ProviderButtonNavigationBarWidget extends StatelessWidget {
   const ProviderButtonNavigationBarWidget({super.key});
@@ -55,13 +51,10 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.house,
                                 label: 'Home',
-                                isActive: context.read<ProviderBloc>().currentPage == 1,
+                                isActive: context.read<ProviderBloc>().currentTab == 1,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
-                                    NavigateProviderEvent(
-                                      page: 1,
-                                      widget: ProviderHomePage(),
-                                    ),
+                                    ChangeProviderTabEvent(tabIndex: 1),
                                   );
                                 },
                               ),
@@ -71,14 +64,11 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.bell,
                                 label: 'Notifications',
-                                isActive: context.read<ProviderBloc>().currentPage == 2,
+                                isActive: context.read<ProviderBloc>().currentTab == 2,
                                 badgeCount: (notificationState is SuccessGetMyNotificationsState) ? notificationState.unreadCount : 0,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
-                                    NavigateProviderEvent(
-                                      page: 2,
-                                      widget: NotificationsPage(),
-                                    ),
+                                    ChangeProviderTabEvent(tabIndex: 2),
                                   );
                                 },
                               ),
@@ -89,14 +79,11 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.comment,
                                 label: 'Chat',
-                                isActive: context.read<ProviderBloc>().currentPage == 4,
+                                isActive: context.read<ProviderBloc>().currentTab == 4,
                                 badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
-                                    NavigateProviderEvent(
-                                      page: 4,
-                                      widget: MyMessagesPage(),
-                                    ),
+                                    ChangeProviderTabEvent(tabIndex: 4),
                                   );
                                 },
                               ),
@@ -106,13 +93,10 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                                 context: context,
                                 icon: FontAwesomeIcons.calendar,
                                 label: 'Appointments',
-                                isActive: context.read<ProviderBloc>().currentPage == 5,
+                                isActive: context.read<ProviderBloc>().currentTab == 5,
                                 onTap: () {
                                   context.read<ProviderBloc>().add(
-                                    NavigateProviderEvent(
-                                      page: 5,
-                                      widget: ProviderAppointmentCalendarPage(),
-                                    ),
+                                    ChangeProviderTabEvent(tabIndex: 5),
                                   );
                                 },
                               ),
@@ -189,7 +173,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 3, widget: ProviderAcceptedRequestPage()),
+          ChangeProviderTabEvent(tabIndex: 3),
         );
       },
       child: Container(

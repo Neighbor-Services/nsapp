@@ -248,27 +248,32 @@ class _ProviderAcceptedRequestPageState
     final isAssignedToMe = request.approvedUser == myId;
     final status = request.status ?? 'OPEN';
 
-    return GestureDetector(
-      onTap: () {
-        context.read<ProviderBloc>().add(
-          RequestDetailEvent(
-            request: RequestData(
-              request: requestAcceptance.acceptance!.request,
-              user: requestAcceptance.user,
-            ),
-          ),
-        );
-        context.read<ProviderBloc>().add(
-          ReloadProfileEvent(request: request.id ?? ""),
-        );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 3,
-            widget: const ProviderRequestDetailPage(),
-          ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 100)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
         );
       },
-      child: Container(
+      child: GestureDetector(
+        onTap: () {
+          context.read<ProviderBloc>().add(
+            RequestDetailEvent(
+              request: RequestData(
+                request: requestAcceptance.acceptance!.request,
+                user: requestAcceptance.user,
+              ),
+            ),
+          );
+          context.read<ProviderBloc>().add(
+            ReloadProfileEvent(request: request.id ?? ""),
+          );
+          Get.to(() => const ProviderRequestDetailPage());
+        },
+        child: Container(
         margin: EdgeInsets.only(bottom: 20.h),
         decoration: BoxDecoration(
           color: cardColor,
@@ -429,6 +434,7 @@ class _ProviderAcceptedRequestPageState
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -471,21 +477,14 @@ class _ProviderAcceptedRequestPageState
         context.read<ProviderBloc>().add(
           ReloadProfileEvent(request: ra.acceptance?.request?.id ?? ""),
         );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 3,
-            widget: const ProviderRequestDetailPage(),
-          ),
-        );
+        Get.to(() => const ProviderRequestDetailPage());
         break;
       case 2:
         if (ra.user == null) break;
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 4, widget: const ChatPage()),
-        );
+        Get.to(() => const ChatPage());
         break;
       case 3:
         context.read<MessageBloc>().add(
@@ -495,9 +494,7 @@ class _ProviderAcceptedRequestPageState
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 4, widget: const ChatPage()),
-        );
+        Get.to(() => const ChatPage());
         break;
       case 4:
         if (ra.acceptance?.request?.id == null) break;

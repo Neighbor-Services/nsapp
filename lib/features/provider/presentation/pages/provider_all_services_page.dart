@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +8,6 @@ import 'package:nsapp/features/shared/presentation/bloc/subscription/subscriptio
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
 import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderAllServicesPage extends StatefulWidget {
@@ -52,9 +52,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          context.read<ProviderBloc>().add(
-                            ProviderBackPressedEvent(),
-                          );
+                          Get.back();
                         },
                         child: Container(
                           padding: EdgeInsets.all(12.r),
@@ -173,64 +171,70 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
     ];
     final icon = icons[index % icons.length];
 
-    return GestureDetector(
-      onTap: () {
-        if (_isSubscriptionValid) {
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: RequestsByServicePage(
-                serviceId: service.id ?? '',
-                serviceName: service.name ?? 'Service',
-              ),
-            ),
-          );
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) => const SubscribeDialogWidget(),
-          );
-        }
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 50)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
+        );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(
-            color: context.appColors.glassBorder,
-            width: 1.5.r,
+      child: GestureDetector(
+        onTap: () {
+          if (_isSubscriptionValid) {
+            Get.to(() => RequestsByServicePage(
+              serviceId: service.id ?? '',
+              serviceName: service.name ?? 'Service',
+            ));
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => const SubscribeDialogWidget(),
+            );
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.appColors.cardBackground,
+            borderRadius: BorderRadius.circular(24.r),
+            border: Border.all(
+              color: context.appColors.glassBorder,
+              width: 1.5.r,
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              right: -10.r,
-              bottom: -10.r,
-              child: Icon(icon, size: 70.r, color: context.appColors.glassBorder),
-            ),
-            Padding(
-              padding: EdgeInsets.all(12.r),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(icon, color: context.appColors.primaryColor, size: 24.r),
-                  Text(
-                    (service.name ?? "Service").toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                      color: context.appColors.primaryTextColor,
-                      height: 1.2,
-                      letterSpacing: 0.5,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+          child: Stack(
+            children: [
+              Positioned(
+                right: -10.r,
+                bottom: -10.r,
+                child: Icon(icon, size: 70.r, color: context.appColors.glassBorder),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.all(12.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Icon(icon, color: context.appColors.primaryColor, size: 24.r),
+                    Text(
+                      (service.name ?? "Service").toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w500,
+                        color: context.appColors.primaryTextColor,
+                        height: 1.2,
+                        letterSpacing: 0.5,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

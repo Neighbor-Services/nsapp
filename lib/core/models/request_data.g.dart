@@ -45,5 +45,3 @@ class RequestDataAdapter extends TypeAdapter<RequestData> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-

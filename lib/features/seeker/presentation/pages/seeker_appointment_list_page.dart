@@ -53,7 +53,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
         elevation: 0,
         leading: GestureDetector(
           onTap: () {
-            context.read<SeekerBloc>().add(SeekerBackPressedEvent());
+            Get.back();
           },
           child: Container(
             margin: EdgeInsets.all(10.r),
@@ -130,7 +130,17 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                             final appt = data.appointment;
                             if (appt == null) return const SizedBox.shrink();
 
-                            return Container(
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0.0, end: 1.0),
+                              duration: Duration(milliseconds: 400 + (index * 80)),
+                              curve: Curves.easeOut,
+                              builder: (context, value, child) {
+                                return Transform.translate(
+                                  offset: Offset(0, 20 * (1 - value)),
+                                  child: Opacity(opacity: value, child: child),
+                                );
+                              },
+                              child: Container(
                               margin: EdgeInsets.only(bottom: 0),
                               child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
@@ -261,6 +271,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                   ),
                                 ),
                               ),
+                            ),
                             );
                           },
                         ),

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,9 +11,7 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 
 import '../../../provider/presentation/bloc/provider_bloc.dart';
-import '../../../provider/presentation/pages/provider_home_page.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart';
-import '../../../seeker/presentation/pages/seeker_home_page.dart';
 import '../bloc/settings/settings_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -52,16 +51,9 @@ class _ReportPageState extends State<ReportPage> {
             Future.delayed(const Duration(seconds: 3), () {
               final settingsState = context.read<SettingsBloc>().state;
               if (settingsState.isProvider) {
-                context.read<ProviderBloc>().add(
-                  NavigateProviderEvent(
-                    page: 1,
-                    widget: const ProviderHomePage(),
-                  ),
-                );
+                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
               } else {
-                context.read<SeekerBloc>().add(
-                  NavigateSeekerEvent(page: 1, widget: const SeekerHomePage()),
-                );
+                context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 1));
               }
             });
           } else if (state is FailureAddReportState) {
@@ -92,13 +84,9 @@ class _ReportPageState extends State<ReportPage> {
                               GestureDetector(
                                 onTap: () {
                                   if (state.isProvider) {
-                                    context.read<ProviderBloc>().add(
-                                      ProviderBackPressedEvent(),
-                                    );
+                                    Get.back();
                                   } else {
-                                    context.read<SeekerBloc>().add(
-                                      SeekerBackPressedEvent(),
-                                    );
+                                    Get.back();
                                   }
                                 },
                                 child: Container(

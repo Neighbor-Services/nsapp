@@ -11,7 +11,11 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart'
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 
 import '../bloc/provider_bloc.dart';
-
+import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
+import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
+import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_appointment_calendar_page.dart';
 class ProviderDashboardPage extends StatefulWidget {
   const ProviderDashboardPage({super.key});
 
@@ -20,12 +24,20 @@ class ProviderDashboardPage extends StatefulWidget {
 }
 
 class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
-  late Widget _currentWidget;
-  final bool _canPop = true;
+  int _currentTab = 1;
+
+  final List<Widget> _pages = const [
+    SizedBox.shrink(), // 0: Unused
+    ProviderHomePage(), // 1: Home
+    NotificationsPage(), // 2: Notifications
+    ProviderAcceptedRequestPage(), // 3: Accepted Requests
+    MyMessagesPage(), // 4: Chat
+    ProviderAppointmentCalendarPage(), // 5: Calendar
+  ];
 
   @override
   void initState() {
-    _currentWidget = context.read<ProviderBloc>().currentWidget;
+    _currentTab = context.read<ProviderBloc>().currentTab;
     context.read<CommonBloc>().add(GetServicesEvent());
     context.read<NotificationBloc>().add(GetMyNotificationsEvent());
     context.read<MessageBloc>().add(GetMyMessagesEvent());
@@ -43,9 +55,9 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProviderBloc, ProviderState>(
       listener: (context, state) {
-        if (state is NavigatorProviderState) {
+        if (state is ProviderTabChangedState) {
           setState(() {
-            _currentWidget = state.widget;
+            _currentTab = state.tabIndex;
           });
         }
       },
@@ -53,14 +65,9 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
         return Scaffold(
           backgroundColor: Colors.transparent,
           extendBody: true,
-          body: PopScope(
-            canPop: _canPop,
-            onPopInvokedWithResult: (pop, os) {
-              if (!pop) {
-                context.read<ProviderBloc>().add(ProviderBackPressedEvent());
-              }
-            },
-            child: _currentWidget,
+          body: IndexedStack(
+            index: _currentTab,
+            children: _pages,
           ),
           bottomNavigationBar: const ProviderButtonNavigationBarWidget(),
         );

@@ -9,8 +9,6 @@ import 'package:nsapp/features/profile/presentation/widgets/portfolio_widget.dar
 import 'package:nsapp/features/profile/presentation/widgets/reviews_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:get/get.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
@@ -107,13 +105,9 @@ class _AboutPageState extends State<AboutPage>
                               GestureDetector(
                                 onTap: () {
                                   if (isProvider) {
-                                    context.read<ProviderBloc>().add(
-                                      ProviderBackPressedEvent(),
-                                    );
+                                    Get.back();
                                   } else {
-                                    context.read<SeekerBloc>().add(
-                                      SeekerBackPressedEvent(),
-                                    );
+                                    Get.back();
                                   }
                                 },
                                 child: Container(
@@ -132,19 +126,29 @@ class _AboutPageState extends State<AboutPage>
                                 ),
                               ),
                               SizedBox(height: 20.h),
-                              SolidContainer(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(20.r),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: 180.h,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: context.appColors.primaryColor
-                                            .withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(20.r),
-                                      ),
+                              TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeOutCubic,
+                                builder: (context, value, child) {
+                                  return Transform.translate(
+                                    offset: Offset(0, 40 * (1 - value)),
+                                    child: Opacity(opacity: value, child: child),
+                                  );
+                                },
+                                child: SolidContainer(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.all(20.r),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        height: 180.h,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: context.appColors.primaryColor
+                                              .withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(20.r),
+                                        ),
                                       child: Icon(
                                         FontAwesomeIcons.images,
                                         size: 60.r,
@@ -244,6 +248,7 @@ class _AboutPageState extends State<AboutPage>
                                   ],
                                 ),
                               ),
+                            ),
                               SizedBox(height: 12.h),
                               Row(
                                 children: [
@@ -265,21 +270,7 @@ class _AboutPageState extends State<AboutPage>
                                             ),
                                           );
                                           const chatPage = ChatPage();
-                                          if (isProvider) {
-                                            context.read<ProviderBloc>().add(
-                                              NavigateProviderEvent(
-                                                page: 4,
-                                                widget: chatPage,
-                                              ),
-                                            );
-                                          } else {
-                                            context.read<SeekerBloc>().add(
-                                              NavigateSeekerEvent(
-                                                page: 4,
-                                                widget: chatPage,
-                                              ),
-                                            );
-                                          }
+                                          Get.to(() => chatPage);
                                         }
                                       },
                                     ),
@@ -301,18 +292,13 @@ class _AboutPageState extends State<AboutPage>
                                             );
                                             return;
                                           }
-                                          context.read<SeekerBloc>().add(
-                                            NavigateSeekerEvent(
-                                              page: 4,
-                                              widget: SeekerNewRequestPage(
+                                          Get.to(() => SeekerNewRequestPage(
                                                 targetProviderId: profile.user!.id,
                                                 initialServiceId:
                                                     profile.catalogServiceId,
                                                 initialServiceName:
                                                     profile.catalogServiceName,
-                                              ),
-                                            ),
-                                          );
+                                              ));
                                         }
                                       },
                                     ),

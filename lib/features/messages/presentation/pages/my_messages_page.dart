@@ -1,13 +1,14 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/chat.dart';
-import '../../../provider/presentation/bloc/provider_bloc.dart';
 import '../../../shared/presentation/bloc/settings/settings_bloc.dart';
 import '../bloc/message_bloc.dart';
 import 'chat_page.dart';
@@ -200,56 +201,69 @@ class _MyMessagesPageState extends State<MyMessagesPage>
 
     if (_chats.isEmpty) {
       return Center(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 24.w),
-          padding: EdgeInsets.all(40.r),
-          decoration: BoxDecoration(
-            color: context.appColors.cardBackground,
-            borderRadius: BorderRadius.circular(24.r),
-            border: Border.all(
-              color: context.appColors.glassBorder,
+        child: FadeInUp(
+          duration: const Duration(milliseconds: 600),
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: EdgeInsets.all(40.r),
+            decoration: BoxDecoration(
+              color: context.appColors.cardBackground,
+              borderRadius: BorderRadius.circular(24.r),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                FontAwesomeIcons.comment,
-                size: 64.r,
-                color: context.appColors.secondaryColor.withAlpha(150),
-              ),
-              SizedBox(height: 24.h),
-              Text(
-                "NO CONVERSATIONS YET",
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: context.appColors.primaryTextColor,
-                  letterSpacing: 1.0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  FontAwesomeIcons.comment,
+                  size: 64.r,
+                  color: context.appColors.secondaryColor.withAlpha(150),
                 ),
-              ),
-              SizedBox(height: 12.h),
-              Text(
-                "Your messages will appear here once you start chatting.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: context.appColors.hintTextColor,
-                  height: 1.5,
+                SizedBox(height: 24.h),
+                Text(
+                  "NO CONVERSATIONS YET",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: context.appColors.primaryTextColor,
+                    letterSpacing: 1.0,
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 12.h),
+                Text(
+                  "Your messages will appear here once you start chatting.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: context.appColors.hintTextColor,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
 
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-      itemCount: _chats.length,
-      itemBuilder: (context, index) =>
-          _buildMessageCard(context, _chats[index], index),
+    return AnimationLimiter(
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+        itemCount: _chats.length,
+        itemBuilder: (context, index) => AnimationConfiguration.staggeredList(
+          position: index,
+          duration: const Duration(milliseconds: 450),
+          child: SlideAnimation(
+            verticalOffset: 50.0,
+            child: FadeInAnimation(
+              child: _buildMessageCard(context, _chats[index], index),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -272,13 +286,9 @@ class _MyMessagesPageState extends State<MyMessagesPage>
           
           final settingsState = context.read<SettingsBloc>().state;
           if (settingsState.isProvider) {
-            context.read<ProviderBloc>().add(
-              NavigateProviderEvent(page: 4, widget: const ChatPage()),
-            );
+            Get.to(() => const ChatPage());
           } else {
-            context.read<SeekerBloc>().add(
-              NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-            );
+            Get.to(() => const ChatPage());
           }
         },
         borderRadius: BorderRadius.circular(20.r),

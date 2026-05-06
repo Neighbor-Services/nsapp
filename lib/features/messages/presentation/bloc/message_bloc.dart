@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -21,7 +23,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 part 'message_event.dart';
 part 'message_state.dart';
 
-class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
+class MessageBloc extends Bloc<MessageEvent, MessageState> {
   final GetMessagesUseCase getMessagesUseCase;
   final GetMyMessagesUseCase getMyMessagesUseCase;
   final ReloadMessageReceiverUseCase reloadMessageReceiverUseCase;
@@ -29,7 +31,7 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
   final UpdateMessageUseCase updateMessageUseCase;
   final SetSeenUseCase setSeenUseCase;
 
-  // Local instance-based variables to replace static state
+  // Local instance-based variables
   List<ChatMessage> _currentMessages = [];
   Profile _receiverProfile = Profile();
   List<Chat> _myChats = [];
@@ -37,12 +39,20 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
   bool _isTyping = false;
   bool _isOnline = false;
   String? _targetUserId;
+  String? _currentSenderId;
   XFile? _selectedImage;
   bool _setAppointment = false;
   bool _isWithImage = false;
 
   WebSocketChannel? _messageChannel;
   StreamSubscription? _wsSubscription;
+  Timer? _reconnectTimer;
+  int _retryCount = 0;
+
+  WebSocketChannel? _presenceChannel;
+  StreamSubscription? _presenceSubscription;
+  Timer? _presenceReconnectTimer;
+  int _presenceRetryCount = 0;
 
   MessageBloc(
     this.getMessagesUseCase,
@@ -54,38 +64,16 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
   ) : super(MessageInitial()) {
     
     on<ConnectWebSocketEvent>((event, emit) async {
+      if (_targetUserId != event.receiver) {
+        _currentMessages = [];
+        _isTyping = false;
+        _isOnline = false;
+      }
       await _closeWebSocket();
-      
-      final token = await Helpers.getString("token");
-      final url = '$baseMessagesWsUrl/ws/${Helpers.createChatRoom(sender: event.sender, receiver: event.receiver)}/?token=$token';
-      
-      _messageChannel = IOWebSocketChannel.connect(Uri.parse(url));
+      _currentSenderId = event.sender;
       _targetUserId = event.receiver;
-
-      _wsSubscription = _messageChannel?.stream.listen(
-        (dataString) {
-          final data = json.decode(dataString);
-          final type = data['type'];
-
-          if (type == 'message') {
-            final chatMessage = ChatMessage.fromJson(data);
-            _currentMessages = List.from(_currentMessages)..add(chatMessage);
-            add(GetChatStatusEvent()); // Refresh state
-          } else if (type == 'typing') {
-            if (data['user_id'] == _targetUserId) {
-              _isTyping = data['is_typing'];
-              add(GetChatStatusEvent());
-            }
-          } else if (type == 'presence') {
-            if (data['user_id'] == _targetUserId) {
-              _isOnline = data['status'] == 'online';
-              add(GetChatStatusEvent());
-            }
-          }
-        },
-        onError: (error) {},
-        onDone: () {},
-      );
+      _retryCount = 0;
+      _connectChat();
       
       emit(SuccessGetMessageState(messages: _currentMessages));
     });
@@ -102,7 +90,6 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
         isOnline: _isOnline,
         targetUserId: _targetUserId,
       ));
-      // Also emit current messages if we are in a chat
       if (_currentMessages.isNotEmpty) {
         emit(SuccessGetMessageState(messages: _currentMessages));
       }
@@ -114,19 +101,24 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
     });
 
     on<DeleteMessageEvent>((event, emit) async {
-      final results = await deleteMessageUseCase(event.message);
-      results.fold(
-        (l) => emit(FailureDeleteMessageState(message: l.message ??"")),
-        (r) => emit(SuccessDeleteMessageState()),
-      );
+      if (_messageChannel != null) {
+        _messageChannel?.sink.add(json.encode({
+          'type': 'delete_message',
+          'message_id': event.message.id
+        }));
+      }
+      // Optimistic delete from local list if needed, 
+      // but we'll wait for the WS confirmation for full consistency
     });
 
     on<UpdateMessageEvent>((event, emit) async {
-      final results = await updateMessageUseCase(event.message);
-      results.fold(
-        (l) => emit(FailureUpdateMessageState(message: l.message ?? "")),
-        (r) => emit(SuccessUpdateMessageState()),
-      );
+       if (_messageChannel != null) {
+        _messageChannel?.sink.add(json.encode({
+          'type': 'update_message',
+          'message_id': event.message.id,
+          'message': event.message.message
+        }));
+      }
     });
 
     on<SetMessageReceiverEvent>((event, emit) async {
@@ -150,8 +142,14 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
     });
 
     on<GetMessagesEvent>((event, emit) async {
-      // Local current messages are already loaded via HydratedBloc fromJson
-      final results = await getMessagesUseCase(event.receiver);
+      if (event.before == null && event.receiver != _targetUserId) {
+        _currentMessages = [];
+        emit(LoadingMessageState());
+      }
+      final results = await getMessagesUseCase(GetMessagesParams(
+        receiver: event.receiver,
+        before: event.before,
+      ));
       results.fold(
         (l) => emit(FailureGetMessageState(message: l.message ?? "")),
         (r) {
@@ -206,49 +204,165 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
         },
       );
     });
+
+    on<ConnectGlobalPresenceEvent>((event, emit) async {
+      await _closePresenceWebSocket();
+      _presenceRetryCount = 0;
+      _connectPresence();
+    });
+
+    on<SendMessageStatusEvent>((event, emit) async {
+      if (_messageChannel != null) {
+        _messageChannel?.sink.add(json.encode({
+          'type': 'message_status',
+          'message_id': event.messageId,
+          'status': event.status
+        }));
+      }
+    });
+  }
+
+  void _connectChat() async {
+    if (_currentSenderId == null || _targetUserId == null) return;
+    
+    final token = await Helpers.getString("token");
+    final url = '$baseMessagesWsUrl/ws/${Helpers.createChatRoom(sender: _currentSenderId!, receiver: _targetUserId!)}/?token=$token';
+    
+    try {
+      _messageChannel = IOWebSocketChannel.connect(Uri.parse(url));
+      _wsSubscription = _messageChannel?.stream.listen(
+        (dataString) {
+          _retryCount = 0;
+          final data = json.decode(dataString);
+          final type = data['type'];
+
+          if (type == 'message') {
+            final chatMessage = ChatMessage.fromJson(data);
+            _currentMessages = List.from(_currentMessages)..add(chatMessage);
+            
+            if (chatMessage.message?.sender == _targetUserId && chatMessage.message?.id != null) {
+                add(SendMessageStatusEvent(messageId: chatMessage.message!.id!, status: "seen"));
+            }
+            
+            add(GetChatStatusEvent());
+          } else if (type == 'message_status') {
+            final msgId = data['message_id'];
+            final status = data['status'];
+            final idx = _currentMessages.indexWhere((m) => m.message?.id == msgId);
+            if (idx != -1) {
+              if (status == 'delivered') {
+                _currentMessages[idx].message?.isDelivered = true;
+              } else if (status == 'seen') {
+                _currentMessages[idx].message?.isDelivered = true;
+                _currentMessages[idx].message?.read = true;
+              }
+              add(GetChatStatusEvent());
+            }
+          } else if (type == 'delete_message') {
+            final msgId = data['message_id'];
+            _currentMessages.removeWhere((m) => m.message?.id == msgId);
+            add(GetChatStatusEvent());
+          } else if (type == 'update_message') {
+            final updatedData = data['message'];
+            final updatedChatMsg = ChatMessage.fromJson(updatedData);
+            final index = _currentMessages.indexWhere((m) => m.message?.id == updatedChatMsg.message?.id);
+            if (index != -1) {
+              _currentMessages[index] = updatedChatMsg;
+              add(GetChatStatusEvent());
+            }
+          } else if (type == 'typing') {
+            if (data['user_id'] == _targetUserId) {
+              _isTyping = data['is_typing'];
+              add(GetChatStatusEvent());
+            }
+          } else if (type == 'presence') {
+            if (data['user_id'] == _targetUserId) {
+              _isOnline = data['status'] == 'online';
+              add(GetChatStatusEvent());
+            }
+          }
+        },
+        onError: (error) {
+          debugPrint("Chat WS Error: $error");
+          _reconnectChat();
+        },
+        onDone: () {
+          debugPrint("Chat WS Closed");
+          _reconnectChat();
+        },
+      );
+    } catch (e) {
+      debugPrint("Chat WS Connect Error: $e");
+      _reconnectChat();
+    }
+  }
+
+  void _reconnectChat() {
+    _reconnectTimer?.cancel();
+    _retryCount++;
+    final delay = min(pow(2, _retryCount).toInt(), 30);
+    debugPrint("Reconnecting Chat WS in $delay seconds...");
+    _reconnectTimer = Timer(Duration(seconds: delay), () {
+      _connectChat();
+    });
+  }
+
+  void _connectPresence() async {
+    final token = await Helpers.getString("token");
+    if (token.isEmpty) return;
+    
+    final url = '$baseMessagesWsUrl/ws/presence/?token=$token';
+    try {
+      _presenceChannel = IOWebSocketChannel.connect(Uri.parse(url));
+      _presenceSubscription = _presenceChannel?.stream.listen(
+        (data) {
+          _presenceRetryCount = 0;
+        },
+        onError: (error) {
+          debugPrint("Presence WS Error: $error");
+          _reconnectPresence();
+        },
+        onDone: () {
+          debugPrint("Presence WS Closed");
+          _reconnectPresence();
+        },
+      );
+    } catch (e) {
+      debugPrint("Presence WS Connect Error: $e");
+      _reconnectPresence();
+    }
+  }
+
+  void _reconnectPresence() {
+    _presenceReconnectTimer?.cancel();
+    _presenceRetryCount++;
+    final delay = min(pow(2, _presenceRetryCount).toInt(), 30);
+    debugPrint("Reconnecting Presence WS in $delay seconds...");
+    _presenceReconnectTimer = Timer(Duration(seconds: delay), () {
+      _connectPresence();
+    });
   }
 
   Future<void> _closeWebSocket() async {
+    _reconnectTimer?.cancel();
     await _wsSubscription?.cancel();
     await _messageChannel?.sink.close();
     _messageChannel = null;
     _wsSubscription = null;
   }
 
+  Future<void> _closePresenceWebSocket() async {
+    _presenceReconnectTimer?.cancel();
+    await _presenceSubscription?.cancel();
+    await _presenceChannel?.sink.close();
+    _presenceChannel = null;
+    _presenceSubscription = null;
+  }
+
   @override
   Future<void> close() async {
     await _closeWebSocket();
+    await _closePresenceWebSocket();
     return super.close();
-  }
-
-  @override
-  MessageState? fromJson(Map<String, dynamic> json) {
-    try {
-      if (json.containsKey('messages')) {
-        _currentMessages = (json['messages'] as List)
-            .map((e) => ChatMessage.fromJson(e))
-            .toList();
-      }
-      if (json.containsKey('chats')) {
-        _myChats = (json['chats'] as List)
-            .map((e) => Chat.fromJson(e))
-            .toList();
-      }
-      return SuccessGetMyMessagesState(
-        myMessages: _myChats,
-        unreadMessageCount: json['unreadCount'] ?? 0,
-      );
-    } catch (_) {
-      return null;
-    }
-  }
-
-  @override
-  Map<String, dynamic>? toJson(MessageState state) {
-    return {
-      'messages': _currentMessages.map((e) => e.toJson()).toList(),
-      'chats': _myChats.map((e) => e.toJson()).toList(),
-      'unreadCount': _unreadCount,
-    };
   }
 }

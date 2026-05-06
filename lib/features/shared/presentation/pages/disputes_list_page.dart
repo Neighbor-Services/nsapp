@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -55,13 +53,9 @@ class _DisputesListPageState extends State<DisputesListPage> {
                             GestureDetector(
                               onTap: () {
                                 if (isProvider) {
-                                  context.read<ProviderBloc>().add(
-                                        ProviderBackPressedEvent(),
-                                      );
+                                  Get.back();
                                 } else {
-                                  context.read<SeekerBloc>().add(
-                                        SeekerBackPressedEvent(),
-                                      );
+                                  Get.back();
                                 }
                               },
                               child: Container(

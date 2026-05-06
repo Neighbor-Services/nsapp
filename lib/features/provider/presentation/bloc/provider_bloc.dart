@@ -1,5 +1,4 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/core/models/request.dart';
@@ -21,18 +20,12 @@ import 'package:nsapp/features/provider/domain/usecase/reload_profile_use_case.d
 import 'package:nsapp/features/provider/domain/usecase/add_portfolio_item_use_case.dart';
 import 'package:nsapp/features/provider/domain/usecase/add_service_package_use_case.dart';
 import 'package:nsapp/features/provider/domain/usecase/verify_appointment_code_use_case.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
-import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_appointment_calendar_page.dart';
-import 'package:nsapp/core/models/service_package.dart';
+import 'dart:io';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/core/models/request_search_params.dart';
 import 'package:nsapp/core/models/request_accept.dart';
-import 'dart:io';
-
-import '../../../../core/models/visited_pages.dart';
+import 'package:nsapp/core/models/service_package.dart';
+// Removed UI imports and visited_pages.dart since BLoC no longer stores Widgets
 
 part 'provider_event.dart';
 part 'provider_state.dart';
@@ -56,18 +49,15 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
   final AddServicePackageUseCase addServicePackageUseCase;
   final VerifyAppointmentCodeUseCase verifyAppointmentCodeUseCase;
 
-  // Local storage for navigation and data to avoid static members
-  Widget _currentWidget = const ProviderHomePage();
-  int _currentPage = 1;
-  final List<VisitedPages> _visitedPages = [];
+  // Local storage for data and active tab
+  int _currentTab = 1;
   List<RequestData> _recentRequests = [];
   List<RequestData> _allRequests = [];
   List<RequestAcceptance> _myAcceptedRequests = [];
   List<AppointmentData> _appointments = [];
   
-  // Getters for navigation state
-  Widget get currentWidget => _currentWidget;
-  int get currentPage => _currentPage;
+  // Getter for active tab
+  int get currentTab => _currentTab;
 
   ProviderBloc(
     this.getRecentRequestUseCase,
@@ -89,26 +79,12 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
     this.verifyAppointmentCodeUseCase,
   ) : super(ProviderInitial()) {
     
-    on<NavigateProviderEvent>((event, emit) {
-      _visitedPages.add(
-        VisitedPages(
-          widget: _currentWidget,
-          page: _currentPage,
-        ),
-      );
-      _currentPage = event.page;
-      _currentWidget = event.widget;
-      emit(NavigatorProviderState(widget: _currentWidget, page: _currentPage));
+    on<ChangeProviderTabEvent>((event, emit) {
+      _currentTab = event.tabIndex;
+      emit(ProviderTabChangedState(tabIndex: _currentTab));
     });
 
-    on<ProviderBackPressedEvent>((event, emit) {
-      if (_visitedPages.isNotEmpty) {
-        final last = _visitedPages.removeLast();
-        _currentPage = last.page;
-        _currentWidget = last.widget;
-        emit(NavigatorProviderState(widget: _currentWidget, page: _currentPage));
-      }
-    });
+    // ProviderBackPressedEvent removed
 
     on<GetRecentRequestEvent>((event, emit) async {
       final params = RequestSearchParams(
@@ -321,26 +297,9 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
             .toList();
       }
       
-      if (json.containsKey('currentPage')) {
-        _currentPage = json['currentPage'];
-        // Restore widget based on page
-        switch (_currentPage) {
-          case 2:
-            _currentWidget = const NotificationsPage();
-            break;
-          case 3:
-            _currentWidget = const ProviderAcceptedRequestPage();
-            break;
-          case 4:
-            _currentWidget = const MyMessagesPage();
-            break;
-          case 5:
-            _currentWidget = const ProviderAppointmentCalendarPage();
-            break;
-          default:
-            _currentWidget = const ProviderHomePage();
-        }
-        return NavigatorProviderState(widget: _currentWidget, page: _currentPage);
+      if (json.containsKey('currentTab')) {
+        _currentTab = json['currentTab'];
+        return ProviderTabChangedState(tabIndex: _currentTab);
       }
       return SuccessGetRecentRequestState(myRequests: _recentRequests);
     } catch (_) {
@@ -355,7 +314,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       'allRequests': _allRequests.map((e) => e.toJson()).toList(),
       'myAcceptedRequests': _myAcceptedRequests.map((e) => e.toJson()).toList(),
       'appointments': _appointments.map((e) => e.toJson()).toList(),
-      'currentPage': _currentPage,
+      'currentTab': _currentTab,
     };
   }
 }

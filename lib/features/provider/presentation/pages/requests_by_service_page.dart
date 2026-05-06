@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,9 +67,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<ProviderBloc>().add(
-                          ProviderBackPressedEvent(),
-                        );
+                        Get.back();
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -174,7 +173,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             SizedBox(height: 16.h),
                         itemBuilder: (context, index) {
                           final requestData = requestsData[index];
-                          return _buildRequestCard(context, requestData);
+                          return _buildRequestCard(context, requestData, index);
                         },
                       );
                     }
@@ -198,7 +197,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     );
   }
 
-  Widget _buildRequestCard(BuildContext context, RequestData requestData) {
+  Widget _buildRequestCard(BuildContext context, RequestData requestData, int index) {
     final request = requestData.request;
     if (request == null) return const SizedBox.shrink();
 
@@ -206,22 +205,27 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     final secondaryTextColor = context.appColors.glassBorder;
     final locationIconColor = context.appColors.glassBorder;
 
-    return GestureDetector(
-      onTap: () {
-        // Set request detail state before navigation
-        context.read<ProviderBloc>().add(
-          RequestDetailEvent(request: requestData),
-        );
-        context.read<ProviderBloc>().add(
-          ReloadProfileEvent(request: request.id!),
-        );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 1,
-            widget: const ProviderRequestDetailPage(),
-          ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 80)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
         );
       },
+      child: GestureDetector(
+        onTap: () {
+          // Set request detail state before navigation
+          context.read<ProviderBloc>().add(
+            RequestDetailEvent(request: requestData),
+          );
+          context.read<ProviderBloc>().add(
+            ReloadProfileEvent(request: request.id!),
+          );
+          Get.to(() => const ProviderRequestDetailPage());
+        },
       child: SolidContainer(
         padding: EdgeInsets.all(16.r),
         borderColor: context.appColors.glassBorder,
@@ -307,6 +311,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
           ],
         ),
       ),
+    ),
     );
   }
 

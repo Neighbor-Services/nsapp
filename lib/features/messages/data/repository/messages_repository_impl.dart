@@ -17,40 +17,54 @@ class MessagesRepositoryImpl extends MessagesRepository {
 
   @override
   Future<Either<Failure, List<ChatMessage>>> getMessages(
-    String receiver,
-  ) async {
+    String receiver, {
+    String? before,
+  }) async {
     try {
       final cacheBox = hiveService.getBox(HiveService.messageBox);
       final cacheKey = 'messages_$receiver';
       final cached = cacheBox.get(cacheKey);
       
       List<ChatMessage> cachedMessages = [];
-      String? afterDate;
-
       if (cached != null) {
         cachedMessages = List<ChatMessage>.from(cached);
-        if (cachedMessages.isNotEmpty) {
-          final lastMsg = cachedMessages.last.message;
-          if (lastMsg != null && lastMsg.createdAt != null) {
-            afterDate = lastMsg.createdAt!.toUtc().toIso8601String();
-          }
+      }
+
+      String? afterDate;
+      // If we are NOT fetching older messages, fetch only messages AFTER our latest one
+      if (before == null && cachedMessages.isNotEmpty) {
+        final lastMsg = cachedMessages.last.message;
+        if (lastMsg != null && lastMsg.createdAt != null) {
+          afterDate = lastMsg.createdAt!.toUtc().toIso8601String();
         }
       }
 
-      // 1. Fetch NEW messages from remote
       final results = await messageRemoteDatasource.getMessages(
         receiver: receiver,
         after: afterDate,
+        before: before,
       );
 
-      // 2. Merge and Update Cache
       if (results.isNotEmpty) {
-        cachedMessages.addAll(results);
+        if (before != null) {
+          // Fetching older messages: prepend them
+          cachedMessages.insertAll(0, results);
+        } else {
+          // Fetching newer messages: append them
+          cachedMessages.addAll(results);
+        }
+        // Deduplicate just in case (based on message ID)
+        final seenIds = <String>{};
+        cachedMessages = cachedMessages.where((m) {
+          final id = m.message?.id;
+          if (id == null) return true;
+          return seenIds.add(id);
+        }).toList();
+        
         await cacheBox.put(cacheKey, cachedMessages);
       }
       return Right(cachedMessages);
     } catch (e) {
-      // 3. Fallback to Cache on error
       final cached = hiveService
           .getBox(HiveService.messageBox)
           .get('messages_$receiver');

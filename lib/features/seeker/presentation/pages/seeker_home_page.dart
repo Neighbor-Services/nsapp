@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,6 +56,24 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     super.dispose();
   }
 
+  Widget _buildAnimatedSection(int index, Widget child) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 400 + (index * 150)),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 50 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
@@ -84,38 +103,42 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                     ),
                     children: [
                       // AI-Powered Hero Section
-                      _buildHero(context, isLargeScreen),
+                      _buildAnimatedSection(0, _buildHero(context, isLargeScreen)),
                       SizedBox(height: 32.h),
 
                       // Active Request Section
-                      _buildActiveRequestSection(context),
-                      SizedBox(height: 32.h),
-
+                      _buildAnimatedSection(1, _buildActiveRequestSection(context)),
+                      
                       // Popular Providers Section
-                      _buildSectionHeader(context, "Top Rated Professionals"),
-                      SizedBox(height: 16.h),
-                      SizedBox(height: 200.h, child: PopularProviderWidget()),
+                      _buildAnimatedSection(2, Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionHeader(context, "Top Rated Professionals"),
+                          SizedBox(height: 16.h),
+                          SizedBox(height: 200.h, child: PopularProviderWidget()),
+                        ],
+                      )),
                       SizedBox(height: 32.h),
 
                       // Available Services Section
-                      _buildSectionHeader(
-                        context,
-                        "Explore Categories",
-                        onViewAll: () {
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 1,
-                              widget: const SeekerAllServicesPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(height: 16.h),
-                      BlocBuilder<CommonBloc, CommonState>(
-                        builder: (context, state) {
-                          return _buildServicesGrid(context, state);
-                        },
-                      ),
+                      _buildAnimatedSection(3, Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionHeader(
+                            context,
+                            "Explore Categories",
+                            onViewAll: () {
+                              Get.to(() => const SeekerAllServicesPage());
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          BlocBuilder<CommonBloc, CommonState>(
+                            builder: (context, state) {
+                              return _buildServicesGrid(context, state);
+                            },
+                          ),
+                        ],
+                      )),
                       SizedBox(height: 40.h),
                     ],
                   ),
@@ -193,12 +216,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   Widget _buildHeroSearchBar(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(
-            page: 1,
-            widget: const SeekerProviderSearchPage(),
-          ),
-        );
+        Get.to(() => const SeekerProviderSearchPage());
       },
       child: Container(
         height: 56.h,
@@ -229,9 +247,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
             VerticalDivider(width: 20.w, indent: 15, endIndent: 15),
             GestureDetector(
               onTap: () {
-                context.read<SeekerBloc>().add(
-                  NavigateSeekerEvent(page: 1, widget: const AISearchPage()),
-                );
+                Get.to(() => const AISearchPage());
               },
               child:  FaIcon(FontAwesomeIcons.wandMagicSparkles, color: context.appColors.primaryColor),
             ),
@@ -283,24 +299,30 @@ class _SeekerHomePageState extends State<SeekerHomePage>
       services = state.services;
     }
 
-    if (state is CommonLoading && services.isEmpty) {
-      return const Center(child: LoadingWidget());
-    }
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 500),
+      child: () {
+        if (state is CommonLoading && services.isEmpty) {
+          return const Center(
+            key: ValueKey('loading'),
+            child: LoadingWidget(),
+          );
+        }
 
-    final displayServices = services.take(6).toList();
+        final displayServices = services.take(6).toList();
 
-    final icons = [
-      FontAwesomeIcons.wrench,
-      FontAwesomeIcons.broom,
-      FontAwesomeIcons.plug,
-      FontAwesomeIcons.wrench,
-      FontAwesomeIcons.truck,
-      FontAwesomeIcons.toolbox,
-    ];
+        final icons = [
+          FontAwesomeIcons.wrench,
+          FontAwesomeIcons.broom,
+          FontAwesomeIcons.plug,
+          FontAwesomeIcons.wrench,
+          FontAwesomeIcons.truck,
+          FontAwesomeIcons.toolbox,
+        ];
 
-    final cardColor = context.appColors.cardBackground;
-    final borderColor = context.appColors.glassBorder;
-    final textColor = context.appColors.primaryTextColor;
+        final cardColor = context.appColors.cardBackground;
+        final borderColor = context.appColors.glassBorder;
+        final textColor = context.appColors.primaryTextColor;
 
     return GridView.builder(
       shrinkWrap: true,
@@ -316,64 +338,74 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         final service = displayServices[index];
         final icon = icons[index % icons.length];
 
-        return GestureDetector(
-          onTap: () {
-            context.read<SeekerBloc>().add(
-              NavigateSeekerEvent(
-                page: 1,
-                widget: ProvidersByServicePage(
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: Duration(milliseconds: 500 + (index * 100)),
+          curve: Curves.easeOut,
+          builder: (context, value, child) {
+            return Transform.translate(
+              offset: Offset(0, 20 * (1 - value)),
+              child: Opacity(opacity: value, child: child),
+            );
+          },
+          child: GestureDetector(
+            onTap: () {
+              Get.to(
+                () => ProvidersByServicePage(
                   serviceId: service.id ?? '',
                   serviceName: service.name ?? 'Service',
                 ),
-              ),
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: cardColor,
-              borderRadius: BorderRadius.circular(24.r),
-              border: Border.all(
-                color: borderColor,
-                width: 1.5.r,
-              ),
-            ),
-            child: Stack(
-              children: [
-                
-                Padding(
-                  padding: EdgeInsets.all(20.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(10.r),
-                        decoration: BoxDecoration(
-                          color: context.appColors.primaryColor.withAlpha(40),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Icon(icon, color: context.appColors.primaryColor, size: 24.r),
-                      ),
-                      Text(
-                        (service.name ?? "SERVICE").toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
-                          height: 1.2,
-                          letterSpacing: 0.8,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: cardColor,
+                borderRadius: BorderRadius.circular(24.r),
+                border: Border.all(
+                  color: borderColor,
+                  width: 1.5.r,
                 ),
-              ],
+              ),
+              child: Stack(
+                children: [
+                  
+                  Padding(
+                    padding: EdgeInsets.all(20.r),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10.r),
+                          decoration: BoxDecoration(
+                            color: context.appColors.primaryColor.withAlpha(40),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(icon, color: context.appColors.primaryColor, size: 24.r),
+                        ),
+                        Text(
+                          (service.name ?? "SERVICE").toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: textColor,
+                            height: 1.2,
+                            letterSpacing: 0.8,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       },
+    );
+      }(),
     );
   }
 
@@ -411,12 +443,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 context.read<SeekerBloc>().add(
                   SeekerRequestDetailEvent(request: activeRequest!),
                 );
-                context.read<SeekerBloc>().add(
-                  NavigateSeekerEvent(
-                    page: 1,
-                    widget: const SeekerRequestDetailsPage(),
-                  ),
-                );
+                Get.to(() => const SeekerRequestDetailsPage());
               },
               child: SolidContainer(
                 padding: EdgeInsets.all(20.r),

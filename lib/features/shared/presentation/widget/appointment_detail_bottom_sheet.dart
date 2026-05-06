@@ -289,9 +289,7 @@ class _AppointmentDetailBottomSheetState
                 context.read<MessageBloc>().add(
                   SetMessageReceiverEvent(profile: user!),
                 );
-                context.read<ProviderBloc>().add(
-                  NavigateProviderEvent(page: 4, widget: const ChatPage()),
-                );
+                Get.to(() => const ChatPage());
               },
               child: _buildInfoSection(
                 context,
@@ -557,12 +555,7 @@ class _AppointmentDetailBottomSheetState
                       context.read<SeekerBloc>().add(
                         SeekerRequestDetailEvent(request: requestData),
                       );
-                      context.read<SeekerBloc>().add(
-                        NavigateSeekerEvent(
-                          page: 1,
-                          widget: const SeekerRequestDetailsPage(),
-                        ),
-                      );  
+                      Get.to(() => const SeekerRequestDetailsPage());  
                     } else if (isProvider) {
                       final requestData = RequestData(
                         request: req,
@@ -574,12 +567,7 @@ class _AppointmentDetailBottomSheetState
                       context.read<ProviderBloc>().add(
                         ReloadProfileEvent(request: requestData.request!.id!),
                       );
-                      context.read<ProviderBloc>().add(
-                        NavigateProviderEvent(
-                          page: 1,
-                          widget: const ProviderRequestDetailPage(),
-                        ),
-                      );
+                      Get.to(() => const ProviderRequestDetailPage());
                     }
                   },
                   icon: Icon(

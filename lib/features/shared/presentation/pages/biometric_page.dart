@@ -12,7 +12,6 @@ import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 
 class BiometricPage extends StatefulWidget {
@@ -78,7 +77,6 @@ class _BiometricPageState extends State<BiometricPage> {
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is SuccessLoginAuthenticationState) {
-            BackgroundNotificationService.connectForeground();
             DeviceTokenService.tryRegisterStoredToken();
             context.read<ProfileBloc>().add(GetProfileEvent());
             Future.delayed(const Duration(seconds: 2), () {

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,152 +49,162 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
         }
       },
       builder: (context, state) {
-        return Container(
-          height: 200.h,
-          width: size(context).width,
-          decoration: BoxDecoration(),
-          child: () {
-              if (state is SuccessPopularProvidersState) {
-                final providers = state.providers;
-                if (providers.isNotEmpty) {
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: providers.length,
-                    itemBuilder: (context, index) {
-                      Profile profile = providers[index];
-
-                      return GestureDetector(
-                        onTap: () {
-                          context.read<SeekerBloc>().add(
-                            SetProviderToReviewEvent(
-                              provider: profile,
-                              providerUserId: profile.user!.id!,
-                            ),
-                          );
-                          context.read<ProfileBloc>().add(
-                            AboutUserEvent(userID: profile.user!.id!),
-                          );
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 1,
-                              widget: const AboutPage(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 200.w,
-                          margin: EdgeInsets.only(
-                            right: 20.w,
-                            bottom: 10.h,
-                            top: 4.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: context.appColors.cardBackground,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color: context.appColors.glassBorder,
-                              width: 1.5.r,
-                            ),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Positioned(
-                                  top: 12.h,
-                                  left: 12.w,
-                                  child: _buildFloatingRating(
-                                    profile.rating ?? "0.0",
-                                  ),
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          child: Container(
+            key: ValueKey(state.runtimeType),
+            height: 200.h,
+            width: size(context).width,
+            decoration: const BoxDecoration(),
+            child: () {
+                if (state is SuccessPopularProvidersState) {
+                  final providers = state.providers;
+                  if (providers.isNotEmpty) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: providers.length,
+                      itemBuilder: (context, index) {
+                        Profile profile = providers[index];
+  
+                        return TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0.0, end: 1.0),
+                          duration: Duration(milliseconds: 600 + (index * 150)),
+                          curve: Curves.easeOut,
+                          builder: (context, value, child) {
+                            return Transform.translate(
+                              offset: Offset(30 * (1 - value), 0),
+                              child: Opacity(opacity: value, child: child),
+                            );
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              context.read<SeekerBloc>().add(
+                                SetProviderToReviewEvent(
+                                  provider: profile,
+                                  providerUserId: profile.user!.id!,
                                 ),
-                                Positioned(
-                                  top: 12.h,
-                                  right: 12.w,
-                                  child: _buildFavoriteAction(profile, _favorites),
+                              );
+                              context.read<ProfileBloc>().add(
+                                AboutUserEvent(userID: profile.user!.id!),
+                              );
+                              Get.to(() => const AboutPage());
+                            },
+                            child: Container(
+                              width: 200.w,
+                              margin: EdgeInsets.only(
+                                right: 20.w,
+                                bottom: 10.h,
+                                top: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.appColors.cardBackground,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: context.appColors.glassBorder,
+                                  width: 1.5.r,
                                 ),
-
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Container(
-                                    height: 100.h,
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    Positioned(
+                                      top: 12.h,
+                                      left: 12.w,
+                                      child: _buildFloatingRating(
+                                        profile.rating ?? "0.0",
+                                      ),
                                     ),
-                                  ),
-                                ),
-
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(16.r),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Row(
+                                    Positioned(
+                                      top: 12.h,
+                                      right: 12.w,
+                                      child: _buildFavoriteAction(profile, _favorites),
+                                    ),
+        
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        height: 100.h,
+                                        decoration: BoxDecoration(
+                                          color: context.appColors.cardBackground,
+                                        ),
+                                      ),
+                                    ),
+        
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.r),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Expanded(
-                                              child: Text(
-                                                profile.firstName ?? "User",
-                                                style: TextStyle(
-                                                  color: context.appColors.primaryTextColor,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 16.sp,
-                                                  letterSpacing: 0.5,
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    profile.firstName ?? "User",
+                                                    style: TextStyle(
+                                                      color: context.appColors.primaryTextColor,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 16.sp,
+                                                      letterSpacing: 0.5,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                                if (profile.isIdentityVerified ==
+                                                    true)
+                                                   Icon(
+                                                    FontAwesomeIcons.circleCheck,
+                                                    color: context.appColors.primaryColor,
+                                                    size: 16.r,
+                                                  ),
+                                              ],
                                             ),
-                                            if (profile.isIdentityVerified ==
-                                                true)
-                                               Icon(
-                                                FontAwesomeIcons.circleCheck,
-                                                color: context.appColors.primaryColor,
-                                                size: 16.r,
+                                            SizedBox(height: 2.h),
+                                            Text(
+                                              getServiceName(profile.service ?? "").toUpperCase(),
+                                              style: TextStyle(
+                                                color: context.appColors.primaryTextColor,
+                                                fontSize: 10.sp,
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: 0.5,
                                               ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ],
                                         ),
-                                        SizedBox(height: 2.h),
-                                        Text(
-                                          getServiceName(profile.service ?? "").toUpperCase(),
-                                          style: TextStyle(
-                                            color: context.appColors.primaryTextColor,
-                                            fontSize: 10.sp,
-                                            fontWeight: FontWeight.w500,
-                                            letterSpacing: 0.5,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
+                        );
+                      },
+                    );
+                  } else {
+                     return  EmptyWidget(
+                      message: "No popular providers available",
+                      height: 180.h,
+                    );
+                  }
                 } else {
-                   return  EmptyWidget(
-                    message: "No popular providers available",
-                    height: 180.h,
-                  );
+                  return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
                 }
-              } else {
-                return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
-              }
-            }()
+              }()
+          ),
         );
       },
     );

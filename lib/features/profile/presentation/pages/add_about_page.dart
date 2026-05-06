@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
@@ -75,9 +75,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             );
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                context.read<ProviderBloc>().add(
-                  NavigateProviderEvent(page: 1, widget: ProviderHomePage()),
-                );
+                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
               }
             });
           } else if (state is FailureAddAboutState) {
@@ -174,8 +172,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () =>
-              context.read<ProviderBloc>().add(ProviderBackPressedEvent()),
+          onTap: () => Get.back(),
           child: Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(

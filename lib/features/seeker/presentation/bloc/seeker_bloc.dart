@@ -1,5 +1,4 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -29,13 +28,7 @@ import 'package:nsapp/features/seeker/domain/usecase/reload_request_use_case.dar
 import 'package:nsapp/features/seeker/domain/usecase/remove_from_favorite_use_case.dart';
 import 'package:nsapp/features/seeker/domain/usecase/search_provider_use_case.dart';
 import 'package:nsapp/features/seeker/domain/usecase/update_request_use_case.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_new_request_page.dart';
-import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_favorite_page.dart';
-
-import '../../../../core/models/visited_pages.dart';
+// Removed UI imports and visited_pages.dart since BLoC no longer stores Widgets
 import 'package:nsapp/features/seeker/domain/usecase/match_providers_use_case.dart';
 import 'package:nsapp/features/seeker/domain/usecase/complete_appointment_use_case.dart';
 import 'package:nsapp/features/seeker/domain/usecase/update_appointment_use_case.dart';
@@ -65,19 +58,16 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
   final CompleteAppointmentUseCase completeAppointmentUseCase;
   final UpdateSeekerAppointmentUseCase updateSeekerAppointmentUseCase;
 
-  // Local storage for navigation and data
-  Widget _currentWidget = const SeekerHomePage();
-  int _currentPage = 1;
-  final List<VisitedPages> _visitedPages = [];
+  // Local storage for data and active tab
+  int _currentTab = 1;
   XFile? _selectedPicture;
   
   List<RequestData> _myRequests = [];
   List<Favorite> _myFavorites = [];
   List<AppointmentData> _appointments = [];
   
-  // Getters for navigation state
-  Widget get currentWidget => _currentWidget;
-  int get currentPage => _currentPage;
+  // Getter for active tab
+  int get currentTab => _currentTab;
 
   SeekerBloc(
     this.createRequestUseCase,
@@ -102,16 +92,9 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     this.updateSeekerAppointmentUseCase,
   ) : super(InitialSeekerState()) {
     
-    on<NavigateSeekerEvent>((event, emit) {
-      _visitedPages.add(
-        VisitedPages(
-          widget: _currentWidget,
-          page: _currentPage,
-        ),
-      );
-      _currentPage = event.page;
-      _currentWidget = event.widget;
-      emit(NavigatorSeekerState(widget: _currentWidget, page: _currentPage));
+    on<ChangeSeekerTabEvent>((event, emit) {
+      _currentTab = event.tabIndex;
+      emit(SeekerTabChangedState(tabIndex: _currentTab));
     });
 
     on<RequestPriceEvent>((event, emit) {
@@ -255,14 +238,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       );
     }, transformer: sequential());
 
-    on<SeekerBackPressedEvent>((event, emit) {
-      if (_visitedPages.isNotEmpty) {
-        final last = _visitedPages.removeLast();
-        _currentPage = last.page;
-        _currentWidget = last.widget;
-        emit(NavigatorSeekerState(widget: _currentWidget, page: _currentPage));
-      }
-    });
+    // SeekerBackPressedEvent removed
 
     on<CancelApprovedRequestEvent>((event, emit) async {
       final results = await cancelApprovedRequestUseCase(event.request);
@@ -400,26 +376,9 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
             .map((e) => AppointmentData.fromJson(e))
             .toList();
       }
-      if (json.containsKey('currentPage')) {
-        _currentPage = json['currentPage'];
-        // Restore widget based on page
-        switch (_currentPage) {
-          case 2:
-            _currentWidget = const NotificationsPage();
-            break;
-          case 3:
-            _currentWidget = const SeekerNewRequestPage();
-            break;
-          case 4:
-            _currentWidget = const MyMessagesPage();
-            break;
-          case 5:
-            _currentWidget = const SeekerFavoritePage();
-            break;
-          default:
-            _currentWidget = const SeekerHomePage();
-        }
-        return NavigatorSeekerState(widget: _currentWidget, page: _currentPage);
+      if (json.containsKey('currentTab')) {
+        _currentTab = json['currentTab'];
+        return SeekerTabChangedState(tabIndex: _currentTab);
       }
       return SuccessGetMyRequestState(myRequests: _myRequests);
     } catch (_) {
@@ -433,7 +392,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       'myRequests': _myRequests.map((e) => e.toJson()).toList(),
       'myFavorites': _myFavorites.map((e) => e.toJson()).toList(),
       'appointments': _appointments.map((e) => e.toJson()).toList(),
-      'currentPage': _currentPage,
+      'currentTab': _currentTab,
     };
   }
 }
