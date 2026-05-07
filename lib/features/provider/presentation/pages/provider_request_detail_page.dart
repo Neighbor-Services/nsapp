@@ -111,7 +111,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
 
             if (requestData == null) {
               if (state is LoadingProviderState) {
-                return const Scaffold(body: Center(child: ProfileSkeletonLoader()));
+                return const Scaffold(body: ProfileSkeletonLoader());
               }
               return const Scaffold(body: Center(child: Text("Request not found")));
             }

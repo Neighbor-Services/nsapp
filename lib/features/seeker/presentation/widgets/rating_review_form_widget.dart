@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:get/get.dart';
+import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -13,7 +14,8 @@ import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widge
 import 'package:nsapp/core/core.dart';
 
 class RatingReviewFormWidget extends StatefulWidget {
-  const RatingReviewFormWidget({super.key});
+  final Profile? profile;
+  const RatingReviewFormWidget({super.key, this.profile});
 
   @override
   State<RatingReviewFormWidget> createState() => _RatingReviewFormWidgetState();
@@ -31,11 +33,18 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final seekerState = context.watch<SeekerBloc>().state;
-    if (seekerState is! ProviderToReviewState) {
+    Profile? providerProfile = widget.profile;
+    
+    if (providerProfile == null) {
+      final seekerState = context.watch<SeekerBloc>().state;
+      if (seekerState is ProviderToReviewState) {
+        providerProfile = seekerState.profile;
+      }
+    }
+
+    if (providerProfile == null) {
       return const SizedBox.shrink();
     }
-    final providerProfile = seekerState.profile;
 
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
@@ -101,7 +110,7 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
                   ),
                   SizedBox(height: 8.h),
                   CustomTextWidget(
-                    text: "How was your service with ${providerProfile.firstName}?",
+                    text: "How was your service with ${providerProfile?.firstName}?",
                     fontSize: 14.sp,
                     color: context.appColors.secondaryTextColor,
                     textAlign: TextAlign.center,
@@ -157,7 +166,7 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
                       SizedBox(width: 16.w),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: isLoading ? null : _submitReview,
+                          onPressed: isLoading ? null : () => _submitReview(providerProfile!),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.appColors.secondaryColor,
                             disabledBackgroundColor:
@@ -195,7 +204,7 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
     );
   }
 
-  void _submitReview() {
+  void _submitReview(Profile providerProfile) {
     if (_reviewController.text.trim().isEmpty) {
       Get.snackbar(
         "Review Required",
@@ -210,11 +219,10 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
     }
 
     final seekerState = context.read<SeekerBloc>().state;
-    if (seekerState is! ProviderToReviewState) return;
+    String? providerUserId = (seekerState is ProviderToReviewState) ? seekerState.providerUserId : null;
 
-    final providerProfile = seekerState.profile;
     final providerId =
-        seekerState.providerUserId ??
+        providerUserId ??
         providerProfile.user?.id ??
         providerProfile.id;
 

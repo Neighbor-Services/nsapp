@@ -1090,7 +1090,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             if (val == 1) {
               if (userId != null) {
                 context.read<ProfileBloc>().add(AboutUserEvent(userID: userId));
-                Get.to(() => const AboutPage());
+                Get.to(() => AboutPage(profile: provider));
               }
             } else if (val == 2) {
               if (provider != null) {

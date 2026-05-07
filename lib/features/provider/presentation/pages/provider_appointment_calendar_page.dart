@@ -224,7 +224,7 @@ class _ProviderAppointmentCalendarPageState
         final isDark = Theme.of(context).brightness == Brightness.dark;
         context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
         Get.bottomSheet(
-          _buildAddAppointmentSheet(context, isDark),
+          _buildAddAppointmentSheet(),
           isScrollControlled: true,
         );
       },
@@ -318,7 +318,7 @@ class _ProviderAppointmentCalendarPageState
                 tileColor: context.appColors.secondaryColor,
                 onTileTap: (event, date) {
                   Get.bottomSheet(
-                    _buildEventDetailsSheet(event, context, isDark),
+                    _buildEventDetailsSheet(event, isDark),
                     isScrollControlled: true,
                     barrierColor: Colors.black.withAlpha(150),
                   );
@@ -352,7 +352,7 @@ class _ProviderAppointmentCalendarPageState
               
               if (events.isNotEmpty) {
                 Get.bottomSheet(
-                  _buildEventDetailsSheet(events[0], context, isDark),
+                  _buildEventDetailsSheet(events[0], isDark),
                   isScrollControlled: true,
                   barrierColor: Colors.black.withAlpha(150),
                 );
@@ -360,7 +360,7 @@ class _ProviderAppointmentCalendarPageState
             },
             onEventTap: (event, date) {
               Get.bottomSheet(
-                _buildEventDetailsSheet(event, context, isDark),
+                _buildEventDetailsSheet(event, isDark),
                 isScrollControlled: true,
                 barrierColor: Colors.black.withAlpha(150),
               );
@@ -384,14 +384,14 @@ class _ProviderAppointmentCalendarPageState
 
   Widget _buildEventDetailsSheet(
     CalendarEventData data,
-    BuildContext context,
     bool isDark,
   ) {
+    // Use the State's own context to ensure Provider access inside Get.bottomSheet
     final textColor = context.appColors.primaryTextColor;
     final handleColor = context.appColors.glassBorder;
 
     return BlocBuilder<ProviderBloc, ProviderState>(
-      builder: (context, state) {
+      builder: (_, state) {
         return SolidContainer(
           padding: EdgeInsets.all(24.r),
           borderRadius: BorderRadius.vertical(top: Radius.circular(25.r)),
@@ -705,7 +705,9 @@ class _ProviderAppointmentCalendarPageState
     );
   }
 
-  Widget _buildAddAppointmentSheet(BuildContext context, bool isDark) {
+  Widget _buildAddAppointmentSheet() {
+    // Use the State's own context to ensure Provider access inside Get.bottomSheet
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = context.appColors.primaryTextColor;
     final handleColor = context.appColors.glassBorder;
 
@@ -840,7 +842,7 @@ class _ProviderAppointmentCalendarPageState
               },
             ),
             SizedBox(height: 16.h),
-            _buildProposalDropdown(context, isDark),
+            _buildProposalDropdown(isDark),
             SizedBox(height: 32.h),
             SolidButton(
               onPressed: () async {
@@ -921,9 +923,9 @@ class _ProviderAppointmentCalendarPageState
     );
   }
 
-  Widget _buildProposalDropdown(BuildContext context, bool isDark) {
+  Widget _buildProposalDropdown(bool isDark) {
     return BlocBuilder<ProviderBloc, ProviderState>(
-      builder: (context, state) {
+      builder: (_, state) {
         return FutureBuilder<List<RequestAcceptance>>(
           future: (state is SuccessGetAcceptRequestState) ? Future.value(state.accepts) : Future.value([]),
           builder: (context, snapshot) {

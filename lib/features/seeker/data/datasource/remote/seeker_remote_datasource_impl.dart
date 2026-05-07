@@ -52,7 +52,16 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         return true;
       }
       throw Exception('Failed');
-    } catch (e) { rethrow; }
+    } catch (e) {
+      debugPrint("==== CREATE REQUEST ERROR ====");
+      debugPrint(e.toString());
+      if (e is DioException && e.response != null) {
+        debugPrint("DIO RESPONSE STATUS: ${e.response?.statusCode}");
+        debugPrint("DIO RESPONSE DATA: ${e.response?.data}");
+      }
+      debugPrint("===============================");
+      rethrow;
+    }
   }
 
   @override

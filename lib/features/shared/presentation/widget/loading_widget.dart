@@ -16,6 +16,7 @@ class LoadingWidget extends StatelessWidget {
         padding: EdgeInsets.all(16.r),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(count, (index) => Padding(
             padding: EdgeInsets.only(bottom: index == count - 1 ? 0 : 16.h),
             child: Row(

@@ -14,7 +14,8 @@ import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/core.dart';
 
 class ReviewsWidget extends StatefulWidget {
-  const ReviewsWidget({super.key});
+  final String? userId;
+  const ReviewsWidget({super.key, this.userId});
 
   @override
   State<ReviewsWidget> createState() => _ReviewsWidgetState();
@@ -24,13 +25,29 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
   @override
   void initState() {
     super.initState();
-    final seekerState = context.read<SeekerBloc>().state;
-    final userId = seekerState is ProviderToReviewState
-        ? (seekerState.providerUserId ?? '')
-        : '';
-    context.read<ProfileBloc>().add(
-      GetReviewsEvent(user: userId),
-    );
+    String userId = widget.userId ?? '';
+    
+    if (userId.isEmpty) {
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is PortfolioUserState) {
+        userId = profileState.userId;
+      }
+    }
+
+    if (userId.isEmpty) {
+      final seekerState = context.read<SeekerBloc>().state;
+      if (seekerState is ProviderToReviewState) {
+        userId = seekerState.providerUserId ?? '';
+      }
+    }
+
+    if (userId.isNotEmpty) {
+      context.read<ProfileBloc>().add(
+        GetReviewsEvent(user: userId),
+      );
+    } else {
+      debugPrint("ReviewsWidget: No userId found, skipping GetReviewsEvent");
+    }
   }
 
   @override
@@ -38,13 +55,18 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is SuccessAddReviewState) {
-          final seekerState = context.read<SeekerBloc>().state;
-          final userId = seekerState is ProviderToReviewState
-              ? (seekerState.providerUserId ?? '')
-              : '';
-          context.read<ProfileBloc>().add(
-            GetReviewsEvent(user: userId),
-          );
+          String userId = widget.userId ?? '';
+          if (userId.isEmpty) {
+            final seekerState = context.read<SeekerBloc>().state;
+            userId = seekerState is ProviderToReviewState
+                ? (seekerState.providerUserId ?? '')
+                : '';
+          }
+          if (userId.isNotEmpty) {
+            context.read<ProfileBloc>().add(
+              GetReviewsEvent(user: userId),
+            );
+          }
           Get.snackbar(
             "Success",
             "Review sent",
@@ -61,13 +83,12 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
           );
         }
         if (state is PortfolioUserState) {
-          final seekerState = context.read<SeekerBloc>().state;
-          final userId = seekerState is ProviderToReviewState
-              ? (seekerState.providerUserId ?? '')
-              : '';
-          context.read<ProfileBloc>().add(
-            GetReviewsEvent(user: userId),
-          );
+          String userId = state.userId;
+          if (userId.isNotEmpty) {
+            context.read<ProfileBloc>().add(
+              GetReviewsEvent(user: userId),
+            );
+          }
           setState(() {});
         }
       },

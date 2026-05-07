@@ -106,14 +106,20 @@ class _NotificationsPageState extends State<NotificationsPage>
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        if (isProvider) {
-                                          context.read<ProviderBloc>().add(
-                                                ChangeProviderTabEvent(tabIndex: 1),
-                                              );
+                                        if (Navigator.of(context).canPop()) {
+                                          Get.back();
                                         } else {
-                                          context.read<SeekerBloc>().add(
-                                                ChangeSeekerTabEvent(tabIndex: 1),
-                                              );
+                                          if (isProvider) {
+                                            context.read<ProviderBloc>().add(
+                                                  ChangeProviderTabEvent(
+                                                      tabIndex: 1),
+                                                );
+                                          } else {
+                                            context.read<SeekerBloc>().add(
+                                                  ChangeSeekerTabEvent(
+                                                      tabIndex: 1),
+                                                );
+                                          }
                                         }
                                       },
                                       child: Container(
@@ -268,7 +274,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         );
       },
       child: GestureDetector(
-        onTap: () => _showNotificationDetails(context, notificationData),
+        onTap: () => _showNotificationDetails(notificationData),
         child: Builder(
           builder: (context) {
             return Container(
@@ -406,10 +412,13 @@ class _NotificationsPageState extends State<NotificationsPage>
   }
 
   void _showNotificationDetails(
-    BuildContext context,
     not.NotificationData notificationData,
   ) {
-    context.read<NotificationBloc>().add(
+    // Read from the page's own context (State.context), not from the bottom
+    // sheet, because Get.bottomSheet renders in GetX's root overlay and does
+    // not inherit Provider widgets.
+    final pageContext = context;
+    pageContext.read<NotificationBloc>().add(
       SetNotificationSeenEvent(
         notificationID: notificationData.notification!.id!,
       ),
@@ -418,10 +427,10 @@ class _NotificationsPageState extends State<NotificationsPage>
       Container(
         padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 40.h),
         decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
+          color: pageContext.appColors.cardBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
           border: Border.all(
-            color: context.appColors.glassBorder,
+            color: pageContext.appColors.glassBorder,
             width: 1.r,
           ),
         ),
@@ -432,7 +441,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               width: 45.w,
               height: 5.h,
               decoration: BoxDecoration(
-                color: context.appColors.glassBorder,
+                color: pageContext.appColors.glassBorder,
                 borderRadius: BorderRadius.circular(10.r),
               ),
             ),
@@ -462,7 +471,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w500,
-                color: context.appColors.primaryTextColor,
+                color: pageContext.appColors.primaryTextColor,
                 letterSpacing: 1.0,
               ),
               textAlign: TextAlign.center,
@@ -472,7 +481,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               notificationData.notification!.message ?? "",
               style: TextStyle(
                 fontSize: 16.sp,
-                color: context.appColors.hintTextColor,
+                color: pageContext.appColors.hintTextColor,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -485,8 +494,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 width: double.infinity,
                 height: 56.h,
                 child: ElevatedButton(
-                  onPressed: () =>
-                      _navigateToDetails(context, notificationData),
+                  onPressed: () => _navigateToDetails(notificationData),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _getNotificationColor(
                       notificationData.notification!.notificationType,
@@ -517,7 +525,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   onPressed: () => Get.back(),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: context.appColors.glassBorder,
+                      color: pageContext.appColors.glassBorder,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.r),
@@ -526,7 +534,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   child: Text(
                     "DISMISS",
                     style: TextStyle(
-                      color: context.appColors.primaryTextColor,
+                      color: pageContext.appColors.primaryTextColor,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 1.0,
@@ -543,40 +551,52 @@ class _NotificationsPageState extends State<NotificationsPage>
   }
 
   Future<void> _navigateToDetails(
-    BuildContext context,
     not.NotificationData notificationData,
   ) async {
     final notification = notificationData.notification;
     final data = notification?.data;
     final type = notification?.notificationType?.toLowerCase();
+
+    // Capture all BLoC references from the page's own mounted context.
     final isProvider = context.read<SettingsBloc>().state.isProvider;
+    final messageBloc = context.read<MessageBloc>();
+    final providerBloc = context.read<ProviderBloc>();
+    final seekerBloc = context.read<SeekerBloc>();
 
     Get.back(); // Close bottom sheet
 
+    if (!mounted) return;
+    final pageContext = context;
+
+    BuildContext? dialogContext;
     showDialog(
-      context: context,
+      context: pageContext,
       barrierDismissible: false,
-      builder: (context) => const ListSkeletonLoader(),
+      builder: (ctx) {
+        dialogContext = ctx;
+        return const ListSkeletonLoader();
+      },
     );
+
+    void dismissLoader() {
+      if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+        Navigator.of(dialogContext!).pop();
+      }
+    }
 
     switch (type) {
       case "message":
         if (notificationData.from != null) {
-          context.read<MessageBloc>().add(
+          messageBloc.add(
             SetMessageReceiverEvent(profile: notificationData.from!),
           );
-          await context.read<MessageBloc>().stream.firstWhere(
+          await messageBloc.stream.firstWhere(
                 (state) => state is MessageReceiverState,
               ).timeout(const Duration(seconds: 5), onTimeout: () => MessageReceiverState(profile: Profile()));
         }
         
-        Navigator.pop(context); // Remove loading
-
-        if (isProvider) {
-          Get.to(() => const ChatPage());
-        } else {
-          Get.to(() => const ChatPage());
-        }
+        dismissLoader();
+        Get.to(() => const ChatPage());
         break;
 
       case "proposal":
@@ -585,77 +605,67 @@ class _NotificationsPageState extends State<NotificationsPage>
         final requestId = data?['request_id']?.toString();
         if (isProvider) {
           if (requestId != null && requestId.isNotEmpty) {
-            context.read<ProviderBloc>().add(
-              GetRequestDetailEvent(id: requestId),
-            );
+            providerBloc.add(GetRequestDetailEvent(id: requestId));
 
-            final state = await context.read<ProviderBloc>().stream.firstWhere(
+            final state = await providerBloc.stream.firstWhere(
               (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
             ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
 
-            Navigator.pop(context); // Remove loading
+            dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
               Get.to(() => const ProviderRequestDetailPage());
-            } else {
-              customAlert(context, AlertType.error, "Failed to load request details");
+            } else if (mounted) {
+              customAlert(pageContext, AlertType.error, "Failed to load request details");
             }
           } else {
-             Navigator.pop(context);
-             context.read<ProviderBloc>().add(
-              ChangeProviderTabEvent(tabIndex: 3),
-            );
+            dismissLoader();
+            providerBloc.add(ChangeProviderTabEvent(tabIndex: 3));
           }
         } else {
           if (requestId != null && requestId.isNotEmpty) {
-            context.read<ProviderBloc>().add(
-              GetRequestDetailEvent(id: requestId),
-            );
+            providerBloc.add(GetRequestDetailEvent(id: requestId));
 
-            final state = await context.read<ProviderBloc>().stream.firstWhere(
+            final state = await providerBloc.stream.firstWhere(
               (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
             ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
 
-            Navigator.pop(context); // Remove loading
+            dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
               final requestData = state.request; 
               requestData.user = notificationData.from;
               
               if (requestData.request?.userId != _currentProfile?.user?.id) {
-                customAlert(context, AlertType.error, "You can't view this request");
+                if (mounted) customAlert(pageContext, AlertType.error, "You can't view this request");
                 return;
               }
               
-              context.read<SeekerBloc>().add(
-                SeekerRequestDetailEvent(request: requestData),
-              );
+              seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
               Get.to(() => const SeekerRequestDetailsPage());
-            } else {
-              customAlert(context, AlertType.error, "Failed to load request details");
+            } else if (mounted) {
+              customAlert(pageContext, AlertType.error, "Failed to load request details");
             }
           } else {
-            Navigator.pop(context);
+            dismissLoader();
             Get.to(() => const SeekerRequestPage());
           }
         }
         break;
 
       case "appointment":
-        Navigator.pop(context);
+        dismissLoader();
         if (isProvider) {
-          context.read<ProviderBloc>().add(provider_bloc.GetAppointmentsEvent());
-          context.read<ProviderBloc>().add(
-            ChangeProviderTabEvent(tabIndex: 5),
-          );
+          providerBloc.add(provider_bloc.GetAppointmentsEvent());
+          providerBloc.add(ChangeProviderTabEvent(tabIndex: 5));
         } else {
-          context.read<SeekerBloc>().add(seeker_bloc.GetAppointmentsEvent());
+          seekerBloc.add(seeker_bloc.GetAppointmentsEvent());
           Get.to(() => const SeekerRequestPage());
         }
         break;
 
       default:
-        Navigator.pop(context);
+        dismissLoader();
         break;
     }
   }

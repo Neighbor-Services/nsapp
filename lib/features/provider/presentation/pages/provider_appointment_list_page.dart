@@ -107,7 +107,7 @@ class _ProviderAppointmentListPageState
                           : context.read<ProviderBloc>().appointments;
 
                       if (state is LoadingProviderState && appointments.isEmpty) {
-                        return const Center(child: LoadingWidget());
+                        return const LoadingWidget();
                       }
 
                       if (appointments.isEmpty) {

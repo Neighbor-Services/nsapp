@@ -114,16 +114,45 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "APPOINTMENTS",
-                                  style: TextStyle(
-                                    fontSize: 24.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: textColor,
-                                    letterSpacing: 1.5,
-                                  ),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (Navigator.of(context).canPop()) {
+                                          Get.back();
+                                        } else {
+                                          context.read<SeekerBloc>().add(
+                                              ChangeSeekerTabEvent(tabIndex: 1));
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(12.r),
+                                        decoration: BoxDecoration(
+                                          color: context.appColors.cardBackground,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: context.appColors.glassBorder),
+                                        ),
+                                        child: FaIcon(
+                                          FontAwesomeIcons.chevronLeft,
+                                          size: 20.r,
+                                          color: context.appColors.primaryTextColor,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 16.w),
+                                    Text(
+                                      "APPOINTMENTS",
+                                      style: TextStyle(
+                                        fontSize: 24.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: textColor,
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(height: 4.h),
+                                SizedBox(height: 12.h),
                                 Text(
                                   "MANAGE YOUR SCHEDULED MEETINGS",
                                   style: TextStyle(

@@ -335,9 +335,8 @@ class _SeekerHomePageState extends State<SeekerHomePage>
       duration: const Duration(milliseconds: 500),
       child: () {
         if (state is CommonLoading && services.isEmpty) {
-          return const Center(
+          return const LoadingWidget(
             key: ValueKey('loading'),
-            child: LoadingWidget(),
           );
         }
 
@@ -869,7 +868,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                         context.read<ProfileBloc>().add(
                               AboutUserEvent(userID: providerId),
                             );
-                        Get.to(() => const AboutPage());
+                        Get.to(() => AboutPage(profile: profile));
                       }
                     },
                     child: Container(

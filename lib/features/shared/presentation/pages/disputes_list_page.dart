@@ -124,7 +124,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                       child: Builder(
                         builder: (context) {
                           if (state is DisputeLoading) {
-                            return const Center(child: LoadingWidget());
+                            return const LoadingWidget();
                           }
 
                           if (state is SuccessGetMyDisputesState) {

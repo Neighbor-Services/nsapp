@@ -135,7 +135,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
 
                     if (requestsData.isEmpty) {
                       if (state is LoadingProviderState || _isLoading) {
-                        return const Center(child: LoadingWidget());
+                        return const LoadingWidget();
                       }
                       return Center(
                         child: Column(

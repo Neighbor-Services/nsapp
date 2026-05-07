@@ -160,7 +160,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                                     userID: profile.user?.id ?? "",
                                   ),
                                 );
-                                Get.to(() => const AboutPage());
+                                Get.to(() => AboutPage(profile: profile));
                               },
                               isDark: isDark,
                               textColor: textColor,

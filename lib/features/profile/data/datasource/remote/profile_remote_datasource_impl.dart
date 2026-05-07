@@ -202,6 +202,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<AboutData?> getAboutStream(String userId) async {
+    if (userId.isEmpty) {
+      debugPrint("getAboutStream: userId is empty, skipping request.");
+      return null;
+    }
     final token = await Helpers.getString("token");
     try {
       final response = await _dio.get(
@@ -240,6 +244,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<List<ReviewData>?> getReviews(String user) async {
+    if (user.isEmpty) {
+      debugPrint("getReviews: user ID is empty, skipping request.");
+      return [];
+    }
     final token = await Helpers.getString("token");
     try {
       final response = await _dio.get(

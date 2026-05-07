@@ -191,7 +191,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
             shape: BoxShape.circle,
            
           ),
-          child: FaIcon(FontAwesomeIcons.check, color: Colors.white, size: 60.r),
+          child: Center(child: FaIcon(FontAwesomeIcons.check, color: Colors.white, size: 60.r)),
         ),
         SizedBox(height: 40.h),
         Text(

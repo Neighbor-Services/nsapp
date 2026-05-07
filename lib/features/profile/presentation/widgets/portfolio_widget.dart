@@ -14,7 +14,8 @@ import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class PortfolioWidget extends StatefulWidget {
-  const PortfolioWidget({super.key});
+  final String? userId;
+  const PortfolioWidget({super.key, this.userId});
 
   @override
   State<PortfolioWidget> createState() => _PortfolioWidgetState();
@@ -24,13 +25,29 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
   @override
   void initState() {
     super.initState();
-    final seekerState = context.read<SeekerBloc>().state;
-    final userId = seekerState is ProviderToReviewState
-        ? (seekerState.providerUserId ?? '')
-        : '';
-    context.read<ProfileBloc>().add(
-      GetAboutEvent(user: userId),
-    );
+    String userId = widget.userId ?? '';
+
+    if (userId.isEmpty) {
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is PortfolioUserState) {
+        userId = profileState.userId;
+      }
+    }
+
+    if (userId.isEmpty) {
+      final seekerState = context.read<SeekerBloc>().state;
+      if (seekerState is ProviderToReviewState) {
+        userId = seekerState.providerUserId ?? '';
+      }
+    }
+
+    if (userId.isNotEmpty) {
+      context.read<ProfileBloc>().add(
+        GetAboutEvent(user: userId),
+      );
+    } else {
+      debugPrint("PortfolioWidget: No userId found, skipping GetAboutEvent");
+    }
   }
 
   @override
@@ -38,13 +55,12 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is PortfolioUserState) {
-          final seekerState = context.read<SeekerBloc>().state;
-          final userId = seekerState is ProviderToReviewState
-              ? (seekerState.providerUserId ?? '')
-              : '';
-          context.read<ProfileBloc>().add(
-            GetAboutEvent(user: userId),
-          );
+          String userId = state.userId;
+          if (userId.isNotEmpty) {
+            context.read<ProfileBloc>().add(
+              GetAboutEvent(user: userId),
+            );
+          }
           setState(() {});
         }
       },
@@ -52,10 +68,13 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
-            final seekerState = context.read<SeekerBloc>().state;
-            final userId = seekerState is ProviderToReviewState
-                ? (seekerState.providerUserId ?? '')
-                : '';
+            String userId = widget.userId ?? '';
+            if (userId.isEmpty) {
+              final seekerState = context.read<SeekerBloc>().state;
+              userId = seekerState is ProviderToReviewState
+                  ? (seekerState.providerUserId ?? '')
+                  : '';
+            }
             return FutureBuilder<Profile?>(
               future: userId.isNotEmpty
                   ? Helpers.getSeekerProfile(userId)

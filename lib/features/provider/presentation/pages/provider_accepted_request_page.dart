@@ -125,7 +125,7 @@ class _ProviderAcceptedRequestPageState
                                 final accepts = context.read<ProviderBloc>().myAcceptedRequests;
 
                                 if (providerState is LoadingProviderState && accepts.isEmpty) {
-                                  return const Center(child: LoadingWidget());
+                                  return const LoadingWidget();
                                 }
 
                                 if (accepts.isEmpty) {

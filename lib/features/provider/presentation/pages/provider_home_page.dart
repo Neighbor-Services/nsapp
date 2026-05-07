@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:nsapp/features/provider/presentation/widgets/provider_recent_req
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -121,10 +123,13 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                           vertical: 20.h,
                         ),
                         children: [
+                          _buildAnimatedSection(0, _buildHeader(context)),
+                          SizedBox(height: 16.h),
+                          _buildAnimatedSection(1, _buildGamificationBar(context, profile)),
                           SizedBox(height: 24.h),
 
                           // Performance Dashboard
-                          _buildAnimatedSection(0, _buildDashboard(context, isLargeScreen)),
+                          _buildAnimatedSection(2, _buildDashboard(context, isLargeScreen)),
                           SizedBox(height: 32.h),
 
                           // Search Bar
@@ -277,65 +282,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         ),
                         SizedBox(height: 24.h),
                       ],
-                      Row(
-                        children: [
-                          _buildDashboardStat(
-                            "Level",
-                            "LVL ${profile.level ?? 1}",
-                            FontAwesomeIcons.bolt,
-                            Colors.yellowAccent,
-                          ),
-                          SizedBox(width: 16.w),
-                          _buildDashboardStat(
-                            "Streak",
-                            "${profile.streakCount ?? 0} DAYS",
-                            FontAwesomeIcons.fire,
-                            Colors.orangeAccent,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16.h),
-                      // XP Progress Bar
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "NEXT LEVEL",
-                                style: TextStyle(
-                                  color: context.appColors.primaryTextColor.withAlpha(200),
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.0,
-                                ),
-                              ),
-                              Text(
-                                "${(profile.xp ?? 0) % 1000}/1000 XP",
-                                style: TextStyle(
-                                  color: context.appColors.primaryTextColor,
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.h),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10.r),
-                            child: LinearProgressIndicator(
-                              value: ((profile.xp ?? 0) % 1000) / 1000,
-                              backgroundColor: Colors.white.withAlpha(40),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                context.appColors.primaryTextColor,
-                              ),
-                              minHeight: 6.h,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
+                      // Removed duplicate _buildGamificationBar
                       Row(
                         children: [
                           _buildDashboardStat(
@@ -361,6 +308,256 @@ class _ProviderHomePageState extends State<ProviderHomePage>
           },
         );
       },
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    String greeting = "Good Day";
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      greeting = "Good Morning";
+    } else if (hour < 17) {
+      greeting = "Good Afternoon";
+    } else {
+      greeting = "Good Evening";
+    }
+
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => 
+        current is SuccessGetProfileState || 
+        current is SuccessGetProfileStreamState,
+      builder: (context, state) {
+        String name = "Neighbor";
+        if (state is SuccessGetProfileState) {
+          name = state.profile.firstName ?? "Neighbor";
+        } else if (state is SuccessGetProfileStreamState) {
+          name = state.profile.firstName ?? "Neighbor";
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "$greeting, $name! 👋",
+                    style: TextStyle(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.bold,
+                      color: context.appColors.primaryTextColor,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  _buildLocationHeader(context),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                Get.toNamed("/notifications");
+              },
+              child: Container(
+                padding: EdgeInsets.all(12.r),
+                decoration: BoxDecoration(
+                  color: context.appColors.cardBackground,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: context.appColors.glassBorder),
+                ),
+                child: Stack(
+                  children: [
+                    FaIcon(FontAwesomeIcons.bell, size: 20.r, color: context.appColors.primaryTextColor),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 8.r,
+                        height: 8.r,
+                        decoration: const BoxDecoration(
+                          color: Colors.redAccent,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLocationHeader(BuildContext context) {
+    return BlocBuilder<LocationBloc, LocationState>(
+      builder: (context, state) {
+        final address = (state.location.city.isNotEmpty)
+            ? "${state.location.city}, ${state.location.state}"
+            : "Locating...";
+        
+        return GestureDetector(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            Get.toNamed("/map-location");
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.locationDot,
+                color: context.appColors.primaryColor,
+                size: 12.r,
+              ),
+              SizedBox(width: 6.w),
+              Text(
+                address.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: context.appColors.secondaryTextColor,
+                  letterSpacing: 0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(width: 4.w),
+              Icon(
+                FontAwesomeIcons.chevronDown,
+                size: 10.r,
+                color: context.appColors.secondaryTextColor,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGamificationBar(BuildContext context, Profile? profile) {
+    final streak = profile?.streakCount ?? 0;
+    final score = profile?.neighborScore ?? 500;
+    final level = profile?.level ?? 1;
+
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(16.r),
+          decoration: BoxDecoration(
+            color: context.appColors.cardBackground,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(color: context.appColors.glassBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(20),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildGamificationItem(
+                icon: FontAwesomeIcons.fire,
+                iconColor: Colors.orangeAccent,
+                label: "$streak DAY STREAK",
+                value: "STREAK",
+              ),
+              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+              _buildGamificationItem(
+                icon: FontAwesomeIcons.shieldHeart,
+                iconColor: Colors.blueAccent,
+                label: "NEIGHBOR SCORE",
+                value: "$score",
+              ),
+              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+              _buildGamificationItem(
+                icon: FontAwesomeIcons.bolt,
+                iconColor: Colors.yellowAccent,
+                label: "LVL $level",
+                value: "PROVIDER",
+              ),
+            ],
+          ),
+        ),
+        if (profile != null) ...[
+          SizedBox(height: 12.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "PROGRESS TO NEXT LEVEL",
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.bold,
+                        color: context.appColors.primaryTextColor.withAlpha(180),
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    Text(
+                      "${(profile.xp ?? 0) % 1000} / 1000 XP",
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.bold,
+                        color: context.appColors.primaryTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6.h),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: LinearProgressIndicator(
+                    value: ((profile.xp ?? 0) % 1000) / 1000,
+                    backgroundColor: Colors.white.withAlpha(40),
+                    valueColor: AlwaysStoppedAnimation<Color>(context.appColors.primaryTextColor),
+                    minHeight: 4.h,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildGamificationItem({
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      children: [
+        FaIcon(icon, color: iconColor, size: 20.r),
+        SizedBox(height: 6.h),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+            color: context.appColors.primaryTextColor,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 8.sp,
+            fontWeight: FontWeight.w600,
+            color: context.appColors.primaryTextColor.withAlpha(150),
+            letterSpacing: 0.5,
+          ),
+        ),
+      ],
     );
   }
 

@@ -168,7 +168,7 @@ class _ProviderTargetedRequestsPageState
     }
 
     if (state is LoadingProviderState && requests.isEmpty) {
-      return const Center(child: LoadingWidget());
+      return const LoadingWidget();
     }
 
     if (requests.isEmpty && state is! LoadingProviderState) {
@@ -228,7 +228,7 @@ class _ProviderTargetedRequestsPageState
         } else {
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 24.h),
-            child: const Center(child: LoadingWidget()),
+            child: const LoadingWidget(),
           );
         }
       },

@@ -124,7 +124,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
               context.read<ProfileBloc>().add(
                     AboutUserEvent(userID: profile.user!.id!),
                   );
-              Get.to(() => const AboutPage());
+              Get.to(() => AboutPage(profile: profile));
             },
             child: Container(
               width: 200.w,

@@ -280,6 +280,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     });
 
     on<SearchProviderEvent>((event, emit) async {
+      emit(LoadingSeekerState());
       final results = await searchProviderUseCase(SearchProviderParams(
         ratingMin: event.ratingMin,
         priceMin: event.priceMin,

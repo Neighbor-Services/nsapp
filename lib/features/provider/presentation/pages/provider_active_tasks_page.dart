@@ -154,7 +154,7 @@ class _ProviderActiveTasksPageState
                                 }).toList();
 
                                 if (providerState is LoadingProviderState && activeTasks.isEmpty) {
-                                  return const Center(child: LoadingWidget());
+                                  return const LoadingWidget();
                                 }
 
                                 if (activeTasks.isEmpty) {

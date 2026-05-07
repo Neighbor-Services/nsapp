@@ -285,10 +285,11 @@ class _AppointmentDetailBottomSheetState
             SizedBox(height: 20.h),
             GestureDetector(
               onTap: () {
+                if (user == null) return;
+                // Capture BLoC reference before Get.back() unmounts the context
+                final messageBloc = context.read<MessageBloc>();
                 Get.back();
-                context.read<MessageBloc>().add(
-                  SetMessageReceiverEvent(profile: user!),
-                );
+                messageBloc.add(SetMessageReceiverEvent(profile: user));
                 Get.to(() => const ChatPage());
               },
               child: _buildInfoSection(
@@ -361,7 +362,7 @@ class _AppointmentDetailBottomSheetState
                   label: 'LIVE TRACKING',
                   icon: FontAwesomeIcons.locationDot,
                   color: context.appColors.primaryColor.withAlpha(40),
-                  textColor: context.appColors.primaryColor,
+                  textColor: Colors.white,
                   isPrimary: false,
                 ),
                 SizedBox(height: 32.h),
@@ -540,19 +541,24 @@ class _AppointmentDetailBottomSheetState
                 child: TextButton.icon(
                   onPressed: () {
                     final req = appt.serviceRequest;
-                    Get.back();
                     if (req == null) return;
+                    // Capture all BLoC state BEFORE Get.back() dismisses this sheet
+                    // and unmounts its context.
                     final settingsState = context.read<SettingsBloc>().state;
                     final profileState = context.read<ProfileBloc>().state;
+                    final seekerBloc = context.read<SeekerBloc>();
+                    final providerBloc = context.read<ProviderBloc>();
                     final isProvider = settingsState.isProvider;
                     final profile = profileState is SuccessGetProfileState ? profileState.profile : null;
+
+                    Get.back();
 
                     if (req.userId == profile?.user?.id && !isProvider) {
                       final requestData = RequestData(
                         request: req,
                         user: widget.data.user,
                       );
-                      context.read<SeekerBloc>().add(
+                      seekerBloc.add(
                         SeekerRequestDetailEvent(request: requestData),
                       );
                       Get.to(() => const SeekerRequestDetailsPage());  
@@ -561,10 +567,10 @@ class _AppointmentDetailBottomSheetState
                         request: req,
                         user: widget.data.user,
                       );
-                      context.read<ProviderBloc>().add(
+                      providerBloc.add(
                         RequestDetailEvent(request: requestData),
                       );
-                      context.read<ProviderBloc>().add(
+                      providerBloc.add(
                         ReloadProfileEvent(request: requestData.request!.id!),
                       );
                       Get.to(() => const ProviderRequestDetailPage());

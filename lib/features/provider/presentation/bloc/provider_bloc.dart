@@ -155,6 +155,7 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
     }, transformer: sequential());
 
     on<SearchRequestEvent>((event, emit) async {
+      emit(LoadingProviderState());
       final params = RequestSearchParams(
         query: event.query,
         lat: event.lat,

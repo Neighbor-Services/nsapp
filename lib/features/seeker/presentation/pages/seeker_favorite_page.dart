@@ -103,7 +103,14 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                               Row(
                                 children: [
                                   GestureDetector(
-                                    onTap: () => Get.back(),
+                                    onTap: () {
+                                      if (Navigator.of(context).canPop()) {
+                                        Get.back();
+                                      } else {
+                                        context.read<SeekerBloc>().add(
+                                            ChangeSeekerTabEvent(tabIndex: 1));
+                                      }
+                                    },
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
@@ -203,7 +210,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
       return _buildFavoriteList(context, favorites, isLargeScreen);
     }
 
-    return const Center(child: LoadingWidget());
+    return const LoadingWidget();
   }
 
   Widget _buildFavoriteList(BuildContext context, List<Favorite> profiles, bool isLargeScreen) {
@@ -312,7 +319,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                 userID: providerId,
               ),
             );
-            Get.to(() => const AboutPage());
+            Get.to(() => AboutPage(profile: favorite.favoriteUser));
           }
         },
         child: Container(
@@ -397,7 +404,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         profile: favorite.favoriteUser!,
                       ),
                     );
-                    Get.to(() => const ChatPage());
+                    Get.to(() => ChatPage());
                   },
                 ),
                  SizedBox(width: 8.w),

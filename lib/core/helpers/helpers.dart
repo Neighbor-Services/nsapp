@@ -223,9 +223,14 @@ class Helpers {
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 200) {
-        if (response.data["providers"] is List &&
-            (response.data["providers"] as List).isNotEmpty) {
-          return Profile.fromJson(response.data["providers"][0]);
+        var data = (response.data is List)
+            ? response.data
+            : (response.data is Map 
+                ? (response.data["results"] ?? response.data["providers"]) 
+                : null);
+
+        if (data is List && data.isNotEmpty) {
+          return Profile.fromJson(data[0]);
         }
       }
       return null;

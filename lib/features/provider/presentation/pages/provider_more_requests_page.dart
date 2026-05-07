@@ -171,7 +171,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
         : context.read<ProviderBloc>().allRequests;
 
     if (state is LoadingProviderState && requests.isEmpty) {
-      return const Center(child: LoadingWidget());
+      return const LoadingWidget();
     }
 
     if (requests.isEmpty) {
@@ -226,7 +226,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
         } else {
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 24.h),
-            child: Center(child: LoadingWidget()),
+            child: const LoadingWidget(),
           );
         }
       },

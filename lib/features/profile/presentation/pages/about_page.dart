@@ -18,7 +18,8 @@ import '../../../seeker/presentation/widgets/rating_review_form_widget.dart';
 import '../../../seeker/presentation/pages/seeker_new_request_page.dart';
 
 class AboutPage extends StatefulWidget {
-  const AboutPage({super.key});
+  final Profile? profile;
+  const AboutPage({super.key, this.profile});
 
   @override
   State<AboutPage> createState() => _AboutPageState();
@@ -41,12 +42,17 @@ class _AboutPageState extends State<AboutPage>
       });
     });
     
-    // Get viewing user ID from current ProfileBloc state
-    final profileState = context.read<ProfileBloc>().state;
-    if (profileState is PortfolioUserState) {
-      _viewingUserId = profileState.userId;
+    if (widget.profile != null) {
+      _viewingUserId = widget.profile!.user?.id ?? "";
+      _profileFuture = Future.value(widget.profile);
+    } else {
+      // Get viewing user ID from current ProfileBloc state
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is PortfolioUserState) {
+        _viewingUserId = profileState.userId;
+      }
+      _loadProfile();
     }
-    _loadProfile();
   }
 
   void _loadProfile() {
@@ -340,7 +346,10 @@ class _AboutPageState extends State<AboutPage>
                   },
                   body: TabBarView(
                     controller: controller,
-                    children: const [PortfolioWidget(), ReviewsWidget()],
+                    children: [
+                      PortfolioWidget(userId: _viewingUserId),
+                      ReviewsWidget(userId: _viewingUserId)
+                    ],
                   ),
                 );
               },
@@ -353,7 +362,7 @@ class _AboutPageState extends State<AboutPage>
                     child: FloatingActionButton.extended(
                       onPressed: () {
                         Get.dialog(
-                          const RatingReviewFormWidget(),
+                          RatingReviewFormWidget(profile: widget.profile),
                           barrierColor: Colors.black.withAlpha(180),
                         );
                       },

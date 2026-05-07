@@ -50,7 +50,10 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
       body: BlocConsumer<SeekerBloc, SeekerState>(
         listener: (context, state) {
           if (state is SuccessSearchProviderState) {
-            // Providers loaded — handled in builder
+            // Cache providers locally for client-side search filtering
+            if (state.providers.isNotEmpty) {
+              setState(() => providers = state.providers);
+            }
           }
           if (state is SuccessGetMyFavoritesState) {
             setState(() {}); // Refresh to update favorite icons
@@ -62,6 +65,11 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
               ? state.profiles
               : <Favorite>[];
 
+          // Resolve the canonical provider list from state first, fallback to cached
+          final List<Profile> stateProviders = state is SuccessSearchProviderState
+              ? state.providers
+              : providers;
+
           return GradientBackground(
             child: SafeArea(
               child: Padding(
@@ -71,6 +79,40 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                 ),
                 child: Column(
                   children: [
+                    // Header with back button
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Get.back(),
+                          child: Container(
+                            padding: EdgeInsets.all(12.r),
+                            decoration: BoxDecoration(
+                              color: context.appColors.cardBackground,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color: context.appColors.glassBorder,
+                              ),
+                            ),
+                            child: Icon(
+                              FontAwesomeIcons.chevronLeft,
+                              color: context.appColors.primaryTextColor,
+                              size: 18.r,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Text(
+                          "SEARCH PROVIDERS",
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                            color: context.appColors.primaryTextColor,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.h),
                     SolidTextField(
                       controller: searchController,
                       hintText: "SEARCH PROVIDERS",
@@ -102,28 +144,17 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         });
                       },
                     ),
-                    SizedBox(height: 20.h),                    Expanded(
+                    SizedBox(height: 20.h),
+                    Expanded(
                       child: Builder(
                         builder: (context) {
-                          if (state is SuccessSearchProviderState) {
-                            final List<Profile> stateProviders = state.providers;
-                            if (providers.isEmpty && stateProviders.isNotEmpty) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (mounted) {
-                                  setState(() {
-                                    providers = stateProviders;
-                                  });
-                                }
-                              });
-                            }
-                          }
-
-                          if (providers.isEmpty && state is LoadingSeekerState) {
-                            return const Center(child: LoadingWidget());
+                          // Show loader only when actively fetching and nothing cached yet
+                          if (state is LoadingSeekerState && stateProviders.isEmpty) {
+                            return const LoadingWidget();
                           }
 
                           final List<Profile> displayList =
-                              isSearching ? searchedProviders : providers;
+                              isSearching ? searchedProviders : stateProviders;
 
                           if (isSearching && displayList.isEmpty) {
                             return Center(
@@ -137,38 +168,8 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                             );
                           }
 
-                          if (displayList.isNotEmpty) {
-                            return GridView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              shrinkWrap: true,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 16.w,
-                                mainAxisSpacing: 16.h,
-                                childAspectRatio: 0.75,
-                              ),
-                              itemCount: displayList.length,
-                              itemBuilder: (context, index) {
-                                return TweenAnimationBuilder<double>(
-                                  tween: Tween(begin: 0.0, end: 1.0),
-                                  duration: Duration(milliseconds: 300 + (index * 100)),
-                                  curve: Curves.easeOut,
-                                  builder: (context, value, child) {
-                                    return Transform.translate(
-                                      offset: Offset(0, 30 * (1 - value)),
-                                      child: Opacity(opacity: value, child: child),
-                                    );
-                                  },
-                                  child: _buildProviderCard(
-                                    displayList[index],
-                                    context,
-                                    favorites,
-                                  ),
-                                );
-                              },
-                            );
-                          } else if (state is SuccessSearchProviderState || providers.isNotEmpty) {
-                             return Center(
+                          if (displayList.isEmpty) {
+                            return Center(
                               child: SolidContainer(
                                 padding: EdgeInsets.all(24),
                                 child: EmptyWidget(
@@ -179,11 +180,38 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                             );
                           }
 
-                          return const Center(child: LoadingWidget());
+                          return GridView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 16.w,
+                              mainAxisSpacing: 16.h,
+                              childAspectRatio: 0.75,
+                            ),
+                            itemCount: displayList.length,
+                            itemBuilder: (context, index) {
+                              return TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: Duration(milliseconds: 300 + (index * 100)),
+                                curve: Curves.easeOut,
+                                builder: (context, value, child) {
+                                  return Transform.translate(
+                                    offset: Offset(0, 30 * (1 - value)),
+                                    child: Opacity(opacity: value, child: child),
+                                  );
+                                },
+                                child: _buildProviderCard(
+                                  displayList[index],
+                                  context,
+                                  favorites,
+                                ),
+                              );
+                            },
+                          );
                         },
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -210,7 +238,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
         context.read<ProfileBloc>().add(
           AboutUserEvent(userID: profile.user!.id!),
         );
-        Get.to(() => const AboutPage());
+      Get.to(() => AboutPage(profile: profile));
       },
       child: SolidContainer(
         padding: EdgeInsets.zero,
@@ -476,7 +504,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
       context.read<ProfileBloc>().add(
         AboutUserEvent(userID: profile.user!.id!),
       );
-      Get.to(() => const AboutPage());
+      Get.to(() => AboutPage(profile: profile));
     } else if (val == 2) {
       context.read<MessageBloc>().add(
         SetMessageReceiverEvent(profile: profile),

@@ -45,7 +45,15 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         ToggleThemeModeEvent(themeMode: ThemeMode.light),
       );
     }
-    final hasInternet = await InternetConnection().hasInternetAccess;
+    // Retry up to 3 times before concluding there's no internet.
+    // A single check can fail on many networks (ISP ICMP blocks, slow
+    // network init on startup, corporate firewalls, etc.).
+    bool hasInternet = false;
+    for (int attempt = 0; attempt < 3; attempt++) {
+      hasInternet = await InternetConnection().hasInternetAccess;
+      if (hasInternet) break;
+      if (attempt < 2) await Future.delayed(const Duration(milliseconds: 800));
+    }
     if (!hasInternet) {
       Get.offAllNamed('/no-internet');
       return;

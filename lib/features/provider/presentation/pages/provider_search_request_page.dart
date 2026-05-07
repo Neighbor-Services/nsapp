@@ -44,7 +44,11 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: BlocConsumer<ProviderBloc, ProviderState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is SuccessSearchRequestState && state.requests.isNotEmpty) {
+            setState(() => requests = state.requests);
+          }
+        },
         builder: (context, state) {
           return GradientBackground(
             child: SafeArea(
@@ -53,6 +57,40 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                 padding: EdgeInsets.all(20.0.r),
                 child: Column(
                   children: [
+                    // Header with back button
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Get.back(),
+                          child: Container(
+                            padding: EdgeInsets.all(12.r),
+                            decoration: BoxDecoration(
+                              color: context.appColors.cardBackground,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color: context.appColors.glassBorder,
+                              ),
+                            ),
+                            child: Icon(
+                              FontAwesomeIcons.chevronLeft,
+                              color: context.appColors.primaryTextColor,
+                              size: 18.r,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Text(
+                          "SEARCH REQUESTS",
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                            color: context.appColors.primaryTextColor,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
                     // Glassmorphic Search Bar
                     SolidTextField(
                       controller: searchController,
@@ -94,19 +132,18 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                     SizedBox(
                       height: size(context).height - 200.h,
                       child: () {
-                        List<RequestData> searchResults = [];
-                        if (state is SuccessSearchRequestState) {
-                          searchResults = state.requests;
-                          if (requests.isEmpty) requests = searchResults;
-                        }
+                        // Read from state directly; fall back to locally cached list
+                        final List<RequestData> stateResults = state is SuccessSearchRequestState
+                            ? state.requests
+                            : requests;
 
-                        if (state is LoadingProviderState && searchResults.isEmpty) {
-                          return const Center(child: LoadingWidget());
+                        if (state is LoadingProviderState && stateResults.isEmpty) {
+                          return const LoadingWidget();
                         }
 
                         final displayList = searchController.text.isNotEmpty
                             ? searchedRequests
-                            : searchResults;
+                            : stateResults;
 
                         if (displayList.isEmpty && searchController.text.isNotEmpty) {
                           return Center(

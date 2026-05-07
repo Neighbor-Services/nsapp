@@ -402,7 +402,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
               }
 
               if (state is LoadingMessageState) {
-                return const Center(child: LoadingWidget());
+                return const LoadingWidget();
               }
 
               return ListView.builder(

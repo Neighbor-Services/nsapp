@@ -17,8 +17,8 @@ class SkeletonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: context.appColors.glassBorder.withAlpha(40),
-      highlightColor: context.appColors.glassBorder.withAlpha(80),
+      baseColor: context.appColors.glassBorder.withAlpha(120),
+      highlightColor: context.appColors.glassBorder.withAlpha(150),
       child: Container(
         width: width,
         height: height,
@@ -93,23 +93,26 @@ class ProfileSkeletonLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(24.r),
-      child: Column(
-        children: [
-          SkeletonWidget(width: 120.r, height: 120.r, borderRadius: 60.r),
-          SizedBox(height: 24.h),
-          SkeletonWidget(width: 200.w, height: 28.h),
-          SizedBox(height: 12.h),
-          SkeletonWidget(width: 150.w, height: 16.h),
-          SizedBox(height: 32.h),
-          Column(
-            children: List.generate(4, (index) => Padding(
-              padding: EdgeInsets.only(bottom: 16.h),
-              child: SkeletonWidget(width: double.infinity, height: 80.h, borderRadius: 16.r),
-            )),
-          ),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(24.r),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SkeletonWidget(width: 120.r, height: 120.r, borderRadius: 60.r),
+            SizedBox(height: 24.h),
+            SkeletonWidget(width: 200.w, height: 28.h),
+            SizedBox(height: 12.h),
+            SkeletonWidget(width: 150.w, height: 16.h),
+            SizedBox(height: 32.h),
+            Column(
+              children: List.generate(4, (index) => Padding(
+                padding: EdgeInsets.only(bottom: 16.h),
+                child: SkeletonWidget(width: double.infinity, height: 80.h, borderRadius: 16.r),
+              )),
+            ),
+          ],
+        ),
       ),
     );
   }

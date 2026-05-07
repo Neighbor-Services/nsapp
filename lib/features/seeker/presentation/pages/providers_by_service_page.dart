@@ -125,7 +125,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                     }
 
                     if ((state is LoadingSeekerState || _isLoading) && _providers.isEmpty) {
-                      return const Center(child: LoadingWidget());
+                      return const LoadingWidget();
                     }
 
                     final providers = _providers;
@@ -222,7 +222,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
           context.read<ProfileBloc>().add(
             AboutUserEvent(userID: profile.user!.id!),
           );
-          Get.to(() => const AboutPage());
+          Get.to(() => AboutPage(profile: profile));
         },
       child: SolidContainer(
         padding: EdgeInsets.all(16.r),
