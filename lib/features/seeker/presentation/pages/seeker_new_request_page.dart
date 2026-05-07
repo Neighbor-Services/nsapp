@@ -359,6 +359,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
         latitude: (_useMap && _mapLocation != null) ? _mapLocation!.latitude : userLoc.position.latitude,
         longitude: (_useMap && _mapLocation != null) ? _mapLocation!.longitude : userLoc.position.longitude,
         targetProviderId: widget.targetProviderId,
+        withImage: context.read<SeekerBloc>().selectedPicture != null,
       );
 
       final seekerState = context.read<SeekerBloc>().state;

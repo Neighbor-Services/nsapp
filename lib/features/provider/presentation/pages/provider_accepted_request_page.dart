@@ -190,10 +190,12 @@ class _ProviderAcceptedRequestPageState
                                 return RefreshIndicator(
                                   onRefresh: () async {
                                     context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
+                                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                                    context.read<ProfileBloc>().add(GetProfileEvent());
                                     await Future.delayed(const Duration(seconds: 1));
                                   },
                                   child: ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
+                                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                                     padding: EdgeInsets.symmetric(
                                       horizontal: isLargeScreen ? 32.w : 16.w,
                                       vertical: 8.h,

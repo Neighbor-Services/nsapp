@@ -9,8 +9,6 @@ import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
-
-import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/pages/about_page.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -120,9 +118,6 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                       provider: profile,
                       providerUserId: profile.user!.id!,
                     ),
-                  );
-              context.read<ProfileBloc>().add(
-                    AboutUserEvent(userID: profile.user!.id!),
                   );
               Get.to(() => AboutPage(profile: profile));
             },

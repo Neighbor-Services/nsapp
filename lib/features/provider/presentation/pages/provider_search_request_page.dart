@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_data.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -52,9 +53,18 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
         builder: (context, state) {
           return GradientBackground(
             child: SafeArea(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.all(20.0.r),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  context.read<ProviderBloc>().add(SearchRequestEvent());
+                  context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                  await Future.delayed(const Duration(seconds: 1));
+                },
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  padding: EdgeInsets.all(20.0.r),
                 child: Column(
                   children: [
                     // Header with back button
@@ -208,7 +218,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                 ),
               ),
             ),
-          );
+          ),);
         },
       ),
     );
@@ -449,15 +459,9 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                 ),
               ],
             ),
-          ),
-        );
+          ),);
+      
       },
     );
   }
 }
-
-
-
-
-
-

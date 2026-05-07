@@ -27,7 +27,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201) {
-        if (request.withImage!) {
+        if (request.withImage ?? false) {
           final id =
               response.data["id"] ??
               (response.data["request"] != null

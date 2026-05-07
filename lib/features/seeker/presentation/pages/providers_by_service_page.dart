@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -118,8 +118,15 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
 
               // Providers List
               Expanded(
-                child: BlocBuilder<SeekerBloc, SeekerState>(
-                  builder: (context, state) {
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<SeekerBloc>().add(SearchProviderEvent());
+                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                    context.read<ProfileBloc>().add(GetProfileEvent());
+                    await Future.delayed(const Duration(seconds: 1));
+                  },
+                  child: BlocBuilder<SeekerBloc, SeekerState>(
+                    builder: (context, state) {
                     if (state is SuccessSearchProviderState) {
                       _providers = state.providers;
                     }
@@ -186,11 +193,13 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           color: secondaryTextColor,
                         ),
                       ),
+                    
                     );
                   },
                 ),
               ),
-            ],
+          )],
+          
           ),
         ),
       ),
@@ -218,9 +227,6 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
               provider: profile,
               providerUserId: profile.user!.id!,
             ),
-          );
-          context.read<ProfileBloc>().add(
-            AboutUserEvent(userID: profile.user!.id!),
           );
           Get.to(() => AboutPage(profile: profile));
         },

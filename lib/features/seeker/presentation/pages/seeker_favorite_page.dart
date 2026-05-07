@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/favorite.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
@@ -12,7 +13,6 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 
 import '../../../messages/presentation/bloc/message_bloc.dart';
 import '../../../messages/presentation/pages/chat_page.dart';
-import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/pages/about_page.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -162,6 +162,9 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                           child: RefreshIndicator(
                             onRefresh: () async {
                               context.read<SeekerBloc>().add(GetMyFavoritesEvent());
+                              context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                              context.read<ProfileBloc>().add(GetProfileEvent());
+                              await Future.delayed(const Duration(seconds: 1));
                             },
                             child: _buildContent(context, state, isLargeScreen, textColor, secondaryTextColor),
                           ),
@@ -314,11 +317,6 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
         onTap: (){
           final String? providerId = favorite.favoriteUser?.user?.id;
           if (providerId != null) {
-            context.read<ProfileBloc>().add(
-              AboutUserEvent(
-                userID: providerId,
-              ),
-            );
             Get.to(() => AboutPage(profile: favorite.favoriteUser));
           }
         },

@@ -281,12 +281,19 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
   @override
   Map<String, dynamic>? toJson(ProfileState state) {
+    // Always persist the cached profile, regardless of which transient
+    // state (e.g. PortfolioUserState, LoadingProfileState) is currently active.
+    // This prevents profile data from being wiped when navigating to provider cards.
     final Map<String, dynamic> data = {};
     if (_cachedProfile != null) {
       data['profile'] = _cachedProfile!.toJson();
     }
     if (_cachedAuditLogs.isNotEmpty) {
       data['audit_logs'] = _cachedAuditLogs.map((e) => e.toJson()).toList();
+    }
+    // Also update _cachedProfile if the current state carries a profile
+    if (state is SuccessGetProfileState) {
+      data['profile'] = state.profile.toJson();
     }
     return data.isNotEmpty ? data : null;
   }

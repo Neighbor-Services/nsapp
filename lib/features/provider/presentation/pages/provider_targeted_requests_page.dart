@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -138,9 +139,15 @@ class _ProviderTargetedRequestsPageState
                       children: [
                         // Requests List
                         Expanded(
-                          child: _buildRequestsList(
-                            context,
-                            state,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              setState(() { currentPage = 1; hasReachedMax = false; });
+                              context.read<ProviderBloc>().add(GetTargetedRequestsEvent());
+                              context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                              context.read<ProfileBloc>().add(GetProfileEvent());
+                              await Future.delayed(const Duration(seconds: 1));
+                            },
+                            child: _buildRequestsList(context, state),
                           ),
                         ),
                       ],
@@ -211,7 +218,9 @@ class _ProviderTargetedRequestsPageState
 
     return ListView.builder(
       controller: scrollController,
-      physics: const BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: isLargeScreen ? 32.w : 16.w,
         vertical: 16.h,

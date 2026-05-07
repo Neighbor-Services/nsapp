@@ -116,12 +116,25 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     constraints: BoxConstraints(maxWidth: 800.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isLargeScreen ? 32.w : 20.w,
-                          vertical: 20.h,
-                        ),
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<ProviderBloc>().add(SearchRequestEvent());
+                          context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
+                          context.read<CommonBloc>().add(GetServicesEvent());
+                          context.read<WalletBloc>().add(GetMyWalletEvent());
+                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                          context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+                          await Future.delayed(const Duration(seconds: 1));
+                        },
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isLargeScreen ? 32.w : 20.w,
+                            vertical: 20.h,
+                          ),
                         children: [
                           _buildAnimatedSection(0, _buildHeader(context)),
                           SizedBox(height: 16.h),
@@ -168,6 +181,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
                           SizedBox(height: 40.h),
                         ],
+                        ),
                       ),
                     ),
                   ),

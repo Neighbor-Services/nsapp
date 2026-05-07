@@ -146,9 +146,16 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                     ),
                     SizedBox(height: 20.h),
                     Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          // Show loader only when actively fetching and nothing cached yet
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<SeekerBloc>().add(SearchProviderEvent());
+                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                          await Future.delayed(const Duration(seconds: 1));
+                        },
+                        child: Builder(
+                          builder: (context) {
+                            // Show loader only when actively fetching and nothing cached yet
                           if (state is LoadingSeekerState && stateProviders.isEmpty) {
                             return const LoadingWidget();
                           }
@@ -181,7 +188,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                           }
 
                           return GridView.builder(
-                            physics: const BouncingScrollPhysics(),
+                            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                             shrinkWrap: true,
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
@@ -212,6 +219,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         },
                       ),
                     ),
+                    ),
                   ],
                 ),
               ),
@@ -234,9 +242,6 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
             provider: profile,
             providerUserId: profile.user!.id!,
           ),
-        );
-        context.read<ProfileBloc>().add(
-          AboutUserEvent(userID: profile.user!.id!),
         );
       Get.to(() => AboutPage(profile: profile));
       },
@@ -500,9 +505,6 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
           provider: profile,
           providerUserId: profile.user!.id!,
         ),
-      );
-      context.read<ProfileBloc>().add(
-        AboutUserEvent(userID: profile.user!.id!),
       );
       Get.to(() => AboutPage(profile: profile));
     } else if (val == 2) {

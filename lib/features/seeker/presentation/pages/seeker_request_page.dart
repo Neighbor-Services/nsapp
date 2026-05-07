@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
@@ -202,6 +203,8 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     return RefreshIndicator(
       onRefresh: () async {
         context.read<SeekerBloc>().add(GetMyRequestEvent());
+        context.read<ProfileBloc>().add(GetProfileStreamEvent());
+        context.read<ProfileBloc>().add(GetProfileEvent());
         await Future.delayed(const Duration(seconds: 1));
       },
       child: ListView.builder(

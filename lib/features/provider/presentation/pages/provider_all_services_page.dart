@@ -3,7 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
@@ -132,22 +134,31 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
                         );
                       }
 
-                      return GridView.builder(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 10.h,
-                        ),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: isLargeScreen ? 3 : 2,
-                          crossAxisSpacing: 12.w,
-                          mainAxisSpacing: 12.h,
-                          childAspectRatio: 1.3,
-                        ),
-                        itemCount: services.length,
-                        itemBuilder: (context, index) {
-                          final service = services[index];
-                          return _buildServiceCard(context, service, index);
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<CommonBloc>().add(GetServicesEvent());
+                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                          await Future.delayed(const Duration(seconds: 1));
                         },
+                        child: GridView.builder(
+                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 10.h,
+                          ),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: isLargeScreen ? 3 : 2,
+                            crossAxisSpacing: 12.w,
+                            mainAxisSpacing: 12.h,
+                            childAspectRatio: 1.3,
+                          ),
+                          itemCount: services.length,
+                          itemBuilder: (context, index) {
+                            final service = services[index];
+                            return _buildServiceCard(context, service, index);
+                          },
+                        ),
                       );
                     },
                   ),

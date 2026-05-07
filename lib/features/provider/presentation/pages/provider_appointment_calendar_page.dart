@@ -221,7 +221,6 @@ class _ProviderAppointmentCalendarPageState
   Widget _buildAddButton() {
     return GestureDetector(
       onTap: () {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
         context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
         Get.bottomSheet(
           _buildAddAppointmentSheet(),

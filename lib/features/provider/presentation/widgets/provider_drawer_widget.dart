@@ -155,11 +155,6 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Portfolio",
                               onTap: () {
                                 Navigator.pop(context);
-                                context.read<ProfileBloc>().add(
-                                  AboutUserEvent(
-                                    userID: profile.user?.id ?? "",
-                                  ),
-                                );
                                 Get.to(() => AboutPage(profile: profile));
                               },
                               isDark: isDark,

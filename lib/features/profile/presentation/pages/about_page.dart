@@ -19,7 +19,8 @@ import '../../../seeker/presentation/pages/seeker_new_request_page.dart';
 
 class AboutPage extends StatefulWidget {
   final Profile? profile;
-  const AboutPage({super.key, this.profile});
+  final String? userId;
+  const AboutPage({super.key, this.profile, this.userId});
 
   @override
   State<AboutPage> createState() => _AboutPageState();
@@ -45,8 +46,11 @@ class _AboutPageState extends State<AboutPage>
     if (widget.profile != null) {
       _viewingUserId = widget.profile!.user?.id ?? "";
       _profileFuture = Future.value(widget.profile);
+    } else if (widget.userId != null) {
+      _viewingUserId = widget.userId!;
+      _loadProfile();
     } else {
-      // Get viewing user ID from current ProfileBloc state
+      // Fallback
       final profileState = context.read<ProfileBloc>().state;
       if (profileState is PortfolioUserState) {
         _viewingUserId = profileState.userId;
@@ -69,16 +73,7 @@ class _AboutPageState extends State<AboutPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ProfileBloc, ProfileState>(
-      listener: (context, state) {
-        if (state is PortfolioUserState) {
-          setState(() {
-            _viewingUserId = state.userId;
-            _loadProfile();
-          });
-        }
-      },
-      child: BlocBuilder<SettingsBloc, SettingsState>(
+    return BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settingsState) {
           final isProvider = settingsState.isProvider;
           final profileState = context.read<ProfileBloc>().state;
@@ -392,8 +387,7 @@ class _AboutPageState extends State<AboutPage>
                 : null,
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _buildActionBtn({

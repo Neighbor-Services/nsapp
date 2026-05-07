@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -117,10 +118,12 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                         return RefreshIndicator(
                           onRefresh: () async {
                             context.read<SeekerBloc>().add(GetAppointmentsEvent());
+                            context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                            context.read<ProfileBloc>().add(GetProfileEvent());
                             await Future.delayed(const Duration(seconds: 1));
                           },
                           child: ListView.separated(
-                          physics: const BouncingScrollPhysics(),
+                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                           itemCount: appointments.length,
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: 16),

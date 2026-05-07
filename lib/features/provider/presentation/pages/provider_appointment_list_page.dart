@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -119,11 +120,18 @@ class _ProviderAppointmentListPageState
                         );
                       }
 
-                      return ListView.separated(
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: appointments.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 16.h),
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<ProviderBloc>().add(GetAppointmentsEvent());
+                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                          await Future.delayed(const Duration(seconds: 1));
+                        },
+                        child: ListView.separated(
+                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                          itemCount: appointments.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 16.h),
                         itemBuilder: (context, index) {
                           final data = appointments[index];
                           final appt = data.appointment;
@@ -257,7 +265,8 @@ class _ProviderAppointmentListPageState
                             ),
                           );
                         },
-                      );
+                      ),
+                    );
                     }(),
                   ),
                 ),

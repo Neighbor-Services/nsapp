@@ -144,96 +144,108 @@ class _ProviderActiveTasksPageState
                               ),
                             ),
                             Expanded(
-                              child: () {
-                                final accepts = context.read<ProviderBloc>().myAcceptedRequests;
+                              child: RefreshIndicator(
+                                onRefresh: () async {
+                                  context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
+                                  context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                                  context.read<ProfileBloc>().add(GetProfileEvent());
+                                  await Future.delayed(const Duration(seconds: 1));
+                                },
+                                child: Builder(
+                                  builder: (context) {
+                                    final accepts = context.read<ProviderBloc>().myAcceptedRequests;
 
-                                final activeTasks = accepts.where((r) {
-                                  final request = r.acceptance?.request;
-                                  return request?.approved == true &&
-                                         request?.approvedUser == myId;
-                                }).toList();
+                                    final activeTasks = accepts.where((r) {
+                                      final request = r.acceptance?.request;
+                                      return request?.approved == true &&
+                                             request?.approvedUser == myId;
+                                    }).toList();
 
-                                if (providerState is LoadingProviderState && activeTasks.isEmpty) {
-                                  return const LoadingWidget();
-                                }
+                                    if (providerState is LoadingProviderState && activeTasks.isEmpty) {
+                                      return const LoadingWidget();
+                                    }
 
-                                if (activeTasks.isEmpty) {
-                                  return Center(
-                                    child: Padding(
+                                    if (activeTasks.isEmpty) {
+                                      return Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 24.w,
+                                          ),
+                                          child: Container(
+                                            padding: EdgeInsets.all(48.r),
+                                            decoration: BoxDecoration(
+                                              color: cardColor,
+                                              borderRadius: BorderRadius.circular(
+                                                32.r,
+                                              ),
+                                              border: Border.all(
+                                                color: borderColor,
+                                                width: 1.5.r,
+                                              ),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.all(24.r),
+                                                  decoration: BoxDecoration(
+                                                    color: context.appColors.cardBackground,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Icon(
+                                                    FontAwesomeIcons.briefcase,
+                                                    size: 64.r,
+                                                    color: context.appColors.glassBorder,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 32.h),
+                                                Text(
+                                                  "No active tasks",
+                                                  style: TextStyle(
+                                                    fontSize: 22.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: textColor,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 12.h),
+                                                Text(
+                                                  "You have no tasks approved for you yet.",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 15.sp,
+                                                    color: context.appColors.glassBorder,
+                                                    height: 1.5,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    return ListView.builder(
+                                      physics: const BouncingScrollPhysics(
+                                        parent: AlwaysScrollableScrollPhysics(),
+                                      ),
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: 24.w,
+                                        horizontal: isLargeScreen ? 32.w : 16.w,
+                                        vertical: 8.h,
                                       ),
-                                      child: Container(
-                                        padding: EdgeInsets.all(48.r),
-                                        decoration: BoxDecoration(
-                                          color: cardColor,
-                                          borderRadius: BorderRadius.circular(
-                                            32.r,
-                                          ),
-                                          border: Border.all(
-                                            color: borderColor,
-                                            width: 1.5.r,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.all(24.r),
-                                              decoration: BoxDecoration(
-                                                color: context.appColors.cardBackground,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Icon(
-                                                FontAwesomeIcons.briefcase,
-                                                size: 64.r,
-                                                color: context.appColors.glassBorder,
-                                              ),
-                                            ),
-                                            SizedBox(height: 32.h),
-                                            Text(
-                                              "No active tasks",
-                                              style: TextStyle(
-                                                fontSize: 22.sp,
-                                                fontWeight: FontWeight.w500,
-                                                color: textColor,
-                                                letterSpacing: 0.5,
-                                              ),
-                                            ),
-                                            SizedBox(height: 12.h),
-                                            Text(
-                                              "You have no tasks approved for you yet.",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 15.sp,
-                                                color: context.appColors.glassBorder,
-                                                height: 1.5,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                      itemCount: activeTasks.length,
+                                      itemBuilder: (context, index) {
+                                        return _buildRequestCard(
+                                          context,
+                                          activeTasks[index],
+                                          index,
+                                          myId,
+                                        );
+                                      },
                                   );
-                                }
-
-                                return ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isLargeScreen ? 32.w : 16.w,
-                                    vertical: 8.h,
-                                  ),
-                                  itemCount: activeTasks.length,
-                                  itemBuilder: (context, index) {
-                                    return _buildRequestCard(
-                                      context,
-                                      activeTasks[index],
-                                      index,
-                                      myId,
-                                    );
                                   },
-                                );
-                              }(),
+                                ),
+                              ),
                             ),
                           ],
                         ),

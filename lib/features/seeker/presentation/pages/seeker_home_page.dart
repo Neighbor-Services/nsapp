@@ -98,6 +98,10 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                   onRefresh: () async {
                     context.read<CommonBloc>().add(GetServicesEvent());
                     context.read<SeekerBloc>().add(GetMyRequestEvent());
+                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                    context.read<ProfileBloc>().add(GetProfileEvent());
+                    context.read<SeekerBloc>().add(GetPopularProvidersEvent());
+                    context.read<SeekerBloc>().add(GetMyFavoritesEvent());
                     await Future.delayed(const Duration(seconds: 1));
                   },
                   child: ListView(
@@ -865,9 +869,6 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                     onTap: () {
                       final String? providerId = profile?.user?.id;
                       if (providerId != null) {
-                        context.read<ProfileBloc>().add(
-                              AboutUserEvent(userID: providerId),
-                            );
                         Get.to(() => AboutPage(profile: profile));
                       }
                     },
