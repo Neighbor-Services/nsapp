@@ -27,6 +27,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
   late GlobalKey<FormState> formKey;
   String? serviceType;
   bool isOthersSelected = false;
+  String selectedServiceName = "";
 
   @override
   void initState() {
@@ -199,6 +200,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                     onServiceSelected: (serviceId, serviceName) {
                                       setState(() {
                                         serviceType = serviceId;
+                                        selectedServiceName = serviceName;
                                       });
                                       context.read<ProfileBloc>().add(
                                         ChooseOtherServiceEvent(others: false),
@@ -240,7 +242,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                         child: Text(
                                           (serviceType == null || serviceType == "")
                                               ? "Select Service Category"
-                                              : getServiceName(serviceType!),
+                                              : selectedServiceName,
                                           style: TextStyle(
                                             color: serviceType != null &&
                                                     serviceType != ""
