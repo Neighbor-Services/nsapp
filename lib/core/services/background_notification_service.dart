@@ -61,16 +61,19 @@ class BackgroundNotificationService {
     });
 
     // 5. Handle cold-start (app launched from a terminated state by tapping a notification)
-    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      debugPrint(
-        "DEBUG [FCM]: App launched via notification tap (cold start): "
-        "${initialMessage.data}",
-      );
-      // Store the data in PendingNotificationStore. The home screen will
-      // consume it in initState once BLoCs are ready and navigate accordingly.
-      NotificationNavigator.handleTap(initialMessage.data, isColdStart: true);
-    }
+    FirebaseMessaging.instance.getInitialMessage().then((initialMessage) {
+      if (initialMessage != null) {
+        debugPrint(
+          "DEBUG [FCM]: App launched via notification tap (cold start): "
+          "${initialMessage.data}",
+        );
+        // Store the data in PendingNotificationStore. The home screen will
+        // consume it in initState once BLoCs are ready and navigate accordingly.
+        NotificationNavigator.handleTap(initialMessage.data, isColdStart: true);
+      }
+    }).catchError((e) {
+      debugPrint("DEBUG [FCM]: Error getting initial message: $e");
+    });
   }
 
   static void _showLocalNotification(RemoteMessage message) {
