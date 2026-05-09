@@ -223,20 +223,10 @@ class Profile {
     data['latitude'] = (latitude != null && latitude!.isNotEmpty)
         ? latitude
         : null;
-    data['average_rating'] = averageRating;
-    data['total_reviews'] = totalReviews;
     data['bio'] = bio;
     data['subscription_tier'] = subscriptionTier ?? 'NONE';
     data['preferred_payment_mode'] = preferredPaymentMode ?? 'ON_SITE';
-    if (performanceBadges != null) {
-      data['performance_badges'] = performanceBadges!
-          .map((v) => v.toJson())
-          .toList();
-    }
-    data['streak_count'] = streakCount;
-    data['xp'] = xp;
-    data['level'] = level;
-    data['neighbor_score'] = neighborScore;
+    
     return data;
   }
 }

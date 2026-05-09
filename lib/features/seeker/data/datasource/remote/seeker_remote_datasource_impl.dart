@@ -365,6 +365,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
     double? priceMax,
     String? categoryName,
     String? serviceName,
+    String? serviceId,
     String? city,
   }) async {
     final token = await Helpers.getString("token");
@@ -375,6 +376,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
       if (priceMax != null) queryString += "&price_max=$priceMax";
       if (categoryName != null) queryString += "&category_name=$categoryName";
       if (serviceName != null) queryString += "&service_name=$serviceName";
+      if (serviceId != null) queryString += "&service_id=$serviceId";
       if (city != null) queryString += "&city=$city";
 
       final response = await _dio.get(

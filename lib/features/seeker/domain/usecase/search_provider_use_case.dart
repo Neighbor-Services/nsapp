@@ -20,6 +20,7 @@ class SearchProviderUseCase extends UseCase {
       priceMax: params.priceMax,
       categoryName: params.categoryName,
       serviceName: params.serviceName,
+      serviceId: params.serviceId,
       city: params.city,
     );
     return results.fold((l) => Left(l), (r) => Right(r));
@@ -32,6 +33,7 @@ class SearchProviderParams {
   final double? priceMax;
   final String? categoryName;
   final String? serviceName;
+  final String? serviceId;
   final String? city;
 
   SearchProviderParams({
@@ -40,6 +42,7 @@ class SearchProviderParams {
     this.priceMax,
     this.categoryName,
     this.serviceName,
+    this.serviceId,
     this.city,
   });
 }

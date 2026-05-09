@@ -28,10 +28,12 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart
 import '../../../shared/presentation/widget/custom_text_widget.dart';
 import '../../../shared/presentation/widget/loading_view.dart';
 import '../bloc/seeker_bloc.dart';
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerRequestDetailsPage extends StatefulWidget {
-  const SeekerRequestDetailsPage({super.key});
+  final RequestData? requestData;
+  const SeekerRequestDetailsPage({super.key, this.requestData});
 
   @override
   State<SeekerRequestDetailsPage> createState() =>
@@ -45,7 +47,9 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
 
   @override
   void initState() {
-    final requestId = ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : "");
+    super.initState();
+    _cachedRequestData = widget.requestData;
+    final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
     context.read<SeekerBloc>().add(ReloadRequestEvent(request: requestId));
     context.read<SeekerBloc>().add(
       GetAcceptedUsersSeekerEvent(request: requestId),
@@ -134,6 +138,15 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final profileState = context.read<ProfileBloc>().state;
+    String userType = "seeker";
+    if (profileState is SuccessGetProfileState) {
+      userType = profileState.profile.userType ?? "seeker";
+    } else if (profileState is SuccessGetProfileStreamState) {
+      userType = profileState.profile.userType ?? "seeker";
+    }
+    final isProvider = Helpers.isProvider(userType);
+    
     final textColor = context.appColors.primaryTextColor;
     final buttonColor = context.appColors.glassBorder;
     final borderColor = context.appColors.glassBorder;
@@ -166,7 +179,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
+                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
                   ),
                 );
                 customAlert(
@@ -178,7 +191,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is FailureApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
+                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
                   ),
                 );
                 customAlert(context, AlertType.error, "Unable to Approve");
@@ -186,7 +199,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessCancelApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
+                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
                   ),
                 );
                 customAlert(
@@ -198,9 +211,10 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is FailureCancelApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: ((context.read<SeekerBloc>().state is SeekerRequestDetailState) ? (context.read<SeekerBloc>().state as SeekerRequestDetailState).request.request?.id ?? "" : ""),
+                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
                   ),
                 );
+                customAlert(context, AlertType.error, "Unable to Cancel Approval");
               }
               if (state is SuccessMarkAsDoneState) {
                 HapticFeedback.heavyImpact();
@@ -227,9 +241,18 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                   child: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: 800.w),
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
+                          context.read<SeekerBloc>().add(ReloadRequestEvent(request: requestId));
+                          context.read<SeekerBloc>().add(GetAcceptedUsersSeekerEvent(request: requestId));
+                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                          await Future.delayed(const Duration(seconds: 1));
+                        },
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                          padding: EdgeInsets.symmetric(
                           horizontal: 16.w,
                           vertical: 20.h,
                         ),
@@ -239,7 +262,19 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  Get.back();
+                                  if (Navigator.of(context).canPop()) {
+                                    Get.back();
+                                  } else {
+                                    if (isProvider) {
+                                      context.read<ProviderBloc>().add(
+                                          ChangeProviderTabEvent(
+                                              tabIndex: 1));
+                                    } else {
+                                      context.read<SeekerBloc>().add(
+                                          ChangeSeekerTabEvent(
+                                              tabIndex: 1));
+                                    }
+                                  }
                                 },
                                 child: Container(
                                   padding: EdgeInsets.all(12.r),
@@ -254,7 +289,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                   child: Icon(
                                     FontAwesomeIcons.chevronLeft,
                                     color: textColor,
-                                    size: 20.r,
+                                    size: 18.r,
                                   ),
                                 ),
                               ),
@@ -554,6 +589,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                       ),
                     ),
                   ),
+                ),
                 );
               } else if (state is LoadingSeekerState) {
                 return const ProfileSkeletonLoader();
@@ -990,10 +1026,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     if (isApproved) {
       return IconButton(
         onPressed: () {
-          final requestId = (state is SuccessReloadRequestState) 
-              ? state.request.request?.id 
-              : (state is SeekerRequestDetailState) ? state.request.request?.id : null;
-          if (requestId != null) {
+          final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
+          if (requestId.isNotEmpty) {
             context.read<SeekerBloc>().add(
               CancelApprovedRequestEvent(request: requestId),
             );
@@ -1020,13 +1054,11 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
       }
       return IconButton(
         onPressed: () {
-          final requestId = (state is SuccessReloadRequestState) 
-              ? state.request.request?.id 
-              : (state is SeekerRequestDetailState) ? state.request.request?.id : null;
+          final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
           final proposalId = acceptedProvider.acceptance?.id;
           final userId = user?.id ?? provider?.id ?? "unknown";
 
-          if (requestId != null && proposalId != null) {
+          if (requestId.isNotEmpty && proposalId != null) {
             context.read<SeekerBloc>().add(
               ApprovedRequestEvent(
                 requestAccept: RequestAccept(

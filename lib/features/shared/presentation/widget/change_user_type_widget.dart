@@ -68,18 +68,23 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
         }
       },
       builder: (context, profileState) {
-        return BlocListener<CommonBloc, CommonState>(
-          listener: (context, commonState) {
-            if (commonState is SuccessAddServicesState) {
+        return BlocListener<SettingsBloc, SettingsState>(
+          listener: (context, settingsState) {
+            if (settingsState is SuccessChangeUserTypeState) {
               Navigator.pop(context);
-              context.read<SettingsBloc>().add(
-                ChangeUserTypeEvent({
-                  "type": userType,
-                  "service": commonState.id ?? "",
-                }),
-              );
             }
           },
+          child: BlocListener<CommonBloc, CommonState>(
+            listener: (context, commonState) {
+              if (commonState is SuccessAddServicesState) {
+                context.read<SettingsBloc>().add(
+                  ChangeUserTypeEvent({
+                    "type": userType,
+                    "service": commonState.id ?? "",
+                  }),
+                );
+              }
+            },
           child: TweenAnimationBuilder<double>(
             duration: const Duration(milliseconds: 400),
             tween: Tween(begin: 0.0, end: 1.0),
@@ -284,54 +289,59 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     ),
                   ),
                   SizedBox(height: 40.h),
-                  SolidButton(
-                    label: "Apply Changes",
-                    isPrimary: true,
-                    onPressed: () {
-                      if (userType != "") {
-                        if (isOthersSelected) {
-                          if (formKey.currentState!.validate()) {
-                            context.read<CommonBloc>().add(
-                              AddServiceEvent(
-                                model: Service(
-                                  description:
-                                      "Custom user service via Change User Type",
-                                  name: serviceTextController.text.trim(),
-                                ),
-                              ),
-                            );
-                          }
-                        } else {
-                          if (userType == "provider" &&
-                              (serviceType == null || serviceType == "")) {
+                  BlocBuilder<SettingsBloc, SettingsState>(
+                    builder: (context, settingsState) {
+                      return SolidButton(
+                        label: "Apply Changes",
+                        isPrimary: true,
+                        isLoading: settingsState is LoadingSettingsState,
+                        onPressed: () {
+                          if (userType != "") {
+                            if (isOthersSelected) {
+                              if (formKey.currentState!.validate()) {
+                                context.read<CommonBloc>().add(
+                                  AddServiceEvent(
+                                    model: Service(
+                                      description:
+                                          "Custom user service via Change User Type",
+                                      name: serviceTextController.text.trim(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              if (userType == "provider" &&
+                                  (serviceType == null || serviceType == "")) {
+                                customAlert(
+                                  context,
+                                  AlertType.warning,
+                                  "Please select a service",
+                                );
+                                return;
+                              }
+                              context.read<SettingsBloc>().add(
+                                ChangeUserTypeEvent({
+                                  "type": userType,
+                                  "service": serviceType ?? "",
+                                }),
+                              );
+                            }
+                          } else {
                             customAlert(
                               context,
                               AlertType.warning,
-                              "Please select a service",
+                              "No changes detected",
                             );
-                            return;
                           }
-                          Navigator.pop(context);
-                          context.read<SettingsBloc>().add(
-                            ChangeUserTypeEvent({
-                              "type": userType,
-                              "service": serviceType ?? "",
-                            }),
-                          );
-                        }
-                      } else {
-                        customAlert(
-                          context,
-                          AlertType.warning,
-                          "No changes detected",
-                        );
-                      }
+                        },
+                      );
                     },
                   ),
                 ],
               ),
             ),
           ),
+        )
         );
       },
     );

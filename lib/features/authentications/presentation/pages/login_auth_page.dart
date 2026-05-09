@@ -115,21 +115,20 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   _isLoading = true;
                   _errorMessage = null;
                 });
-              } else {
-                setState(() => _isLoading = false);
-              }
-
-              if (state is SuccessLoginAuthenticationState ||
-                  state is SuccessGoogleRegisterAuthenticationState) {
-                // Register device token for native push (iOS)
-                DeviceTokenService.tryRegisterStoredToken();
-                context.read<ProfileBloc>().add(GetProfileEvent());
-              }
-
-              if (state is FailureLoginAuthenticationState) {
+              } else if (state is FailureLoginAuthenticationState) {
                 setState(() {
+                  _isLoading = false;
                   _errorMessage = state.message;
                 });
+              } else if (state is SuccessLoginAuthenticationState ||
+                  state is SuccessGoogleRegisterAuthenticationState) {
+                // Keep _isLoading = true while we fetch the profile
+                // Register device token for native push (iOS)
+                DeviceTokenService.tryRegisterStoredToken();
+                context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                context.read<ProfileBloc>().add(GetProfileEvent());
+              } else {
+                setState(() => _isLoading = false);
               }
             },
           ),

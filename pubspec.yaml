@@ -59,7 +59,6 @@ dependencies:
   flutter_local_notifications: ^18.0.0
   permission_handler: ^11.3.1
   device_info_plus: ^11.1.0
-  agora_rtc_engine: ^6.4.0
   http: ^1.6.0
   objective_c: ^9.3.0
   sign_in_with_apple: ^7.0.1

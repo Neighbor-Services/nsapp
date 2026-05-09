@@ -111,19 +111,16 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
             listener: (context, state) {
               if (state is LoadingAuthenticationState) {
                 setState(() => _isLoading = true);
-              } else {
-                setState(() => _isLoading = false);
-              }
-
-              if (state is FailureRegisterAuthenticationState ||
+              } else if (state is FailureRegisterAuthenticationState ||
                   state is FailureLoginAuthenticationState) {
-                customAlert(
-                  context,
-                  AlertType.error,
-                  "Unable to complete authentication",
-                );
-              }
-              if (state is SuccessRegisterAuthenticationState) {
+                setState(() => _isLoading = false);
+                String message = "Unable to complete authentication";
+                if (state is FailureLoginAuthenticationState) {
+                  message = state.message;
+                }
+                customAlert(context, AlertType.error, message);
+              } else if (state is SuccessRegisterAuthenticationState) {
+                setState(() => _isLoading = false);
                 customAlert(
                   context,
                   AlertType.success,
@@ -134,9 +131,9 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                     Get.toNamed("/otp");
                   }
                 });
-              }
-              if (state is SuccessGoogleRegisterAuthenticationState ||
+              } else if (state is SuccessGoogleRegisterAuthenticationState ||
                   state is SuccessLoginAuthenticationState) {
+                // Keep _isLoading = true while we fetch the profile
                 customAlert(
                   context,
                   AlertType.success,
@@ -144,6 +141,8 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                 );
                 DeviceTokenService.tryRegisterStoredToken();
                 context.read<ProfileBloc>().add(GetProfileEvent());
+              } else {
+                setState(() => _isLoading = false);
               }
             },
           ),

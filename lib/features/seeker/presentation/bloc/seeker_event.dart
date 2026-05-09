@@ -103,14 +103,16 @@ class SearchProviderEvent extends SeekerEvent {
   final double? priceMax;
   final String? categoryName;
   final String? serviceName;
+  final String? serviceId;
   final String? city;
-
+  
   SearchProviderEvent({
     this.ratingMin,
     this.priceMin,
     this.priceMax,
     this.categoryName,
     this.serviceName,
+    this.serviceId,
     this.city,
   });
 }

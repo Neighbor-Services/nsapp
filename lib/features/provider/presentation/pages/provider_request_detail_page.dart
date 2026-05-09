@@ -132,8 +132,18 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                       constraints: BoxConstraints(maxWidth: 700.w),
                       child: FadeTransition(
                         opacity: _fadeAnimation,
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            final requestId = requestData.request?.id;
+                            if (requestId != null) {
+                              context.read<ProviderBloc>().add(GetRequestDetailEvent(id: requestId));
+                            }
+                            context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                            context.read<ProfileBloc>().add(GetProfileEvent());
+                            await Future.delayed(const Duration(seconds: 1));
+                          },
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                           padding: EdgeInsets.symmetric(
                             horizontal: isLargeScreen ? 32.w : 16.w,
                             vertical: 20.h,
@@ -217,6 +227,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                               SizedBox(height: 40.h),
                             ],
                           ),
+                        ),
                         ),
                       ),
                     ),
@@ -357,10 +368,6 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                         color: context.appColors.primaryTextColor,
                         letterSpacing: 0.5,
                       ),
-                    ),
-                    _buildStatusBadge(
-                      request.status ??
-                          (request.done == true ? "DONE" : "OPEN"),
                     ),
                   ],
                 ),

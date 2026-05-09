@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/service.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart' hide OtherServiceSelectState, ChooseOtherServiceEvent, SelectImageFromCameraEvent, SelectImageFromGalleryEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
@@ -45,6 +47,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   late Animation<double> _fadeAnimation;
   bool _useMap = false;
   LatLng? _mapLocation;
+  bool _isProvider = false;
 
   @override
   void initState() {
@@ -105,6 +108,14 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
 
   @override
   Widget build(BuildContext context) {
+    final profileState = context.read<ProfileBloc>().state;
+    String userType = "seeker";
+    if (profileState is SuccessGetProfileState) {
+      userType = profileState.profile.userType ?? "seeker";
+    } else if (profileState is SuccessGetProfileStreamState) {
+      userType = profileState.profile.userType ?? "seeker";
+    }
+    _isProvider = Helpers.isProvider(userType);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -151,14 +162,19 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                       child: Center(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(maxWidth: 550.w),
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isLargeScreen ? 32.w : 20.w,
-                              vertical: 24.h,
-                            ),
-                            child: FadeTransition(
-                              opacity: _fadeAnimation,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                              context.read<ProfileBloc>().add(GetProfileEvent());
+                              context.read<CommonBloc>().add(GetServicesEvent());
+                              await Future.delayed(const Duration(seconds: 1));
+                            },
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isLargeScreen ? 32.w : 20.w,
+                                vertical: 24.h,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -200,15 +216,34 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
     return Row(
       children: [
         GestureDetector(
-          onTap: () => Navigator.pop(context),
+          onTap: () {
+            if (Navigator.of(context).canPop()) {
+              Get.back();
+            } else {
+              if (_isProvider) {
+                context.read<ProviderBloc>().add(
+                    ChangeProviderTabEvent(tabIndex: 1));
+              } else {
+                context.read<SeekerBloc>().add(
+                    ChangeSeekerTabEvent(tabIndex: 1));
+              }
+            }
+          },
           child: Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: context.appColors.glassBorder),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+                width: 1.5.r,
+              ),
             ),
-            child: Icon(FontAwesomeIcons.chevronLeft, size: 20.r),
+            child: Icon(
+              FontAwesomeIcons.chevronLeft,
+              color: context.appColors.primaryTextColor,
+              size: 20.r,
+            ),
           ),
         ),
         SizedBox(width: 16.w),

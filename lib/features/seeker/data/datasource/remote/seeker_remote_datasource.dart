@@ -33,6 +33,7 @@ abstract class SeekerRemoteDatasource {
     double? priceMax,
     String? categoryName,
     String? serviceName,
+    String? serviceId,
     String? city,
   });
   Future<bool> cancelAppointment({required String id});

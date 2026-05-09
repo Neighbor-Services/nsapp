@@ -61,7 +61,9 @@ class _AboutPageState extends State<AboutPage>
 
   void _loadProfile() {
     if (_viewingUserId.isNotEmpty) {
-      _profileFuture = Helpers.getSeekerProfile(_viewingUserId);
+      setState(() {
+        _profileFuture = Helpers.getSeekerProfile(_viewingUserId);
+      });
     }
   }
 
@@ -93,7 +95,14 @@ class _AboutPageState extends State<AboutPage>
 
                 final profile = snapshot.data!;
 
-                return NestedScrollView(
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    _loadProfile();
+                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                    context.read<ProfileBloc>().add(GetProfileEvent());
+                  },
+                  child: NestedScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                   headerSliverBuilder: (context, innerBoxIsScrolled) {
                     return [
                      
@@ -346,6 +355,7 @@ class _AboutPageState extends State<AboutPage>
                       ReviewsWidget(userId: _viewingUserId)
                     ],
                   ),
+                ),
                 );
               },
             ),

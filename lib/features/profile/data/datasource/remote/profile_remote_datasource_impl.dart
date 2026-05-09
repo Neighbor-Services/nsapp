@@ -63,17 +63,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return false;
     } catch (e) {
       if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {
-          debugPrint("ADD PROFILE ERROR RESPONSE: ${e.response?.data}");
-          debugPrint("ADD PROFILE ERROR STATUS: ${e.response?.statusCode}");
-        } else {
-          debugPrint("ADD PROFILE ERROR: ${e.message}");
-        }
+        final errorData = e.response?.data;
+        debugPrint("ADD PROFILE ERROR: ${e.response?.statusCode} - $errorData");
       } else {
         debugPrint("ADD PROFILE UNKNOWN ERROR: $e");
       }
       return false;
     }
+
   }
 
   @override
@@ -104,17 +101,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return false;
     } catch (e) {
       if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {
-          debugPrint("UPDATE PROFILE ERROR RESPONSE: ${e.response?.data}");
-          debugPrint("UPDATE PROFILE ERROR STATUS: ${e.response?.statusCode}");
-        } else {
-          debugPrint("UPDATE PROFILE ERROR: ${e.message}");
-        }
+        final errorData = e.response?.data;
+        debugPrint("UPDATE PROFILE ERROR: ${e.response?.statusCode} - $errorData");
       } else {
         debugPrint("UPDATE PROFILE UNKNOWN ERROR: $e");
       }
       return false;
     }
+
   }
 
   @override

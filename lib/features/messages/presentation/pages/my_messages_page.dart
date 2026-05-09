@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -248,23 +249,32 @@ class _MyMessagesPageState extends State<MyMessagesPage>
       );
     }
 
-    return AnimationLimiter(
-      child: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-        itemCount: _chats.length,
-        itemBuilder: (context, index) => AnimationConfiguration.staggeredList(
-          position: index,
-          duration: const Duration(milliseconds: 450),
-          child: SlideAnimation(
-            verticalOffset: 50.0,
-            child: FadeInAnimation(
-              child: _buildMessageCard(context, _chats[index], index),
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<MessageBloc>().add(GetMyMessagesEvent());
+        context.read<ProfileBloc>().add(GetProfileStreamEvent());
+        context.read<ProfileBloc>().add(GetProfileEvent());
+        await Future.delayed(const Duration(seconds: 1));
+      },
+      child: AnimationLimiter(
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+          itemCount: _chats.length,
+          itemBuilder: (context, index) => AnimationConfiguration.staggeredList(
+            position: index,
+            duration: const Duration(milliseconds: 450),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: _buildMessageCard(context, _chats[index], index),
+              ),
             ),
           ),
         ),
       ),
     );
+
   }
 
   Widget _buildMessageCard(BuildContext context, Chat chat, int index) {

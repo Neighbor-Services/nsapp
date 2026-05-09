@@ -137,13 +137,17 @@ class _SettingsPageState extends State<SettingsPage>
                       constraints: BoxConstraints(maxWidth: 600.w),
                       child: FadeTransition(
                         opacity: _fadeAnimation,
-                        child: ListView(
-                          physics: const BouncingScrollPhysics(),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32.w : 20.w,
-                            vertical: 24.h,
-                          ),
-                          children: [
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            context.read<ProfileBloc>().add(GetProfileEvent());
+                          },
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isLargeScreen ? 32.w : 20.w,
+                              vertical: 24.h,
+                            ),
+                            children: [
                             Row(
                               children: [
                                 GestureDetector(
@@ -424,6 +428,7 @@ class _SettingsPageState extends State<SettingsPage>
                         ),
                       ),
                     ),
+                  ),
                   ),
                 ),
               ),

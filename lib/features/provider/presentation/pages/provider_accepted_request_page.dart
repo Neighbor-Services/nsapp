@@ -98,14 +98,45 @@ class _ProviderAcceptedRequestPageState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "ACCEPTED REQUESTS",
-                                    style: TextStyle(
-                                      fontSize: 22.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: textColor,
-                                      letterSpacing: 1.2,
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                    onTap: () {
+                                      if (Navigator.of(context).canPop()) {
+                                        Get.back();
+                                      } else {
+                                        context.read<ProviderBloc>().add(
+                                            ChangeProviderTabEvent(tabIndex: 0));
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(14.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
+                                      ),
                                     ),
+                                  ),
+                                  SizedBox(width: 16.w),
+                                      Text(
+                                        "ACCEPTED REQUESTS",
+                                        style: TextStyle(
+                                          fontSize: 22.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: textColor,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(height: 8.h),
                                   Text(

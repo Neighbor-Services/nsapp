@@ -51,9 +51,14 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           current is SuccessPopularProvidersState ||
           current is FailurePopularProviderState ||
           current is SuccessGetMyFavoritesState ||
+          current is PopularProvidersLoadingState ||
           current is LoadingSeekerState ||
           current is InitialSeekerState,
       builder: (context, state) {
+        // Resolve canonical providers list from bloc state or cache
+        final List<Profile> providers = context.read<SeekerBloc>().popularProviders;
+        final bool isLoading = state is PopularProvidersLoadingState;
+
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 500),
           child: Container(
@@ -62,7 +67,9 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
             width: size(context).width,
             decoration: const BoxDecoration(),
             child: () {
-                final popular = context.read<SeekerBloc>().popularProviders;
+                if (isLoading && providers.isEmpty) {
+                   return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
+                }
 
                 if (state is SuccessPopularProvidersState) {
                   if (state.providers.isNotEmpty) {
@@ -79,11 +86,20 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                     height: 180.h,
                   );
                 } else {
-                  // Fallback to cached data
-                  if (popular.isNotEmpty) {
-                    return _buildProviderList(popular);
+                  // Fallback to existing data if available
+                  if (providers.isNotEmpty) {
+                    return _buildProviderList(providers);
                   }
-                  return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
+                  
+                  // Show skeleton as ultimate fallback if still loading or initial
+                  if (state is InitialSeekerState || state is LoadingSeekerState || isLoading) {
+                    return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
+                  }
+
+                  return EmptyWidget(
+                    message: "No popular providers found",
+                    height: 180.h,
+                  );
                 }
               }()
           ),

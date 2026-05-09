@@ -56,6 +56,7 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
     });
 
     on<ChangeUserTypeEvent>((event, emit) async {
+      emit(LoadingSettingsState(state));
       final results = await changeUserTypeUseCase(event.type);
       results.fold(
         (l) => emit(SettingsFailure(l.message ?? 'Failed to change user type', state)),
@@ -64,6 +65,7 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
     });
 
     on<AddReportEvent>((event, emit) async {
+      emit(LoadingSettingsState(state));
       final results = await addReportUseCase(event.report);
       results.fold(
         (l) => emit(FailureAddReportState(l.message ?? 'Failed to send report', state)),

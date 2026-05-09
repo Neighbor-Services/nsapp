@@ -11,6 +11,7 @@ import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/chat.dart';
 import 'package:nsapp/core/models/message.dart';
 import 'package:nsapp/core/models/profile.dart';
+import 'package:nsapp/core/models/user.dart';
 import 'package:nsapp/features/messages/domain/usecase/delete_message_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/get_messages_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/get_my_messages_use_case.dart';
@@ -43,6 +44,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
   XFile? _selectedImage;
   bool _setAppointment = false;
   bool _isWithImage = false;
+  bool _isConnected = false;
 
   WebSocketChannel? _messageChannel;
   StreamSubscription? _wsSubscription;
@@ -64,6 +66,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
   ) : super(MessageInitial()) {
     
     on<ConnectWebSocketEvent>((event, emit) async {
+      debugPrint("DEBUG: ConnectWebSocketEvent for receiver: ${event.receiver}");
       if (_targetUserId != event.receiver) {
         _currentMessages = [];
         _isTyping = false;
@@ -75,13 +78,15 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       _retryCount = 0;
       _connectChat();
       
-      emit(SuccessGetMessageState(messages: _currentMessages));
+      emit(SuccessGetMessageState(messages: List.from(_currentMessages)));
     });
 
     on<SendTypingEvent>((event, emit) async {
-      _messageChannel?.sink.add(
-        json.encode({'type': 'typing', 'is_typing': event.isTyping}),
-      );
+      if (_messageChannel != null && _isConnected) {
+        _messageChannel?.sink.add(
+          json.encode({'type': 'typing', 'is_typing': event.isTyping}),
+        );
+      }
     });
 
     on<GetChatStatusEvent>((event, emit) async {
@@ -89,30 +94,58 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
         isTyping: _isTyping,
         isOnline: _isOnline,
         targetUserId: _targetUserId,
+        isConnected: _isConnected,
       ));
       if (_currentMessages.isNotEmpty) {
-        emit(SuccessGetMessageState(messages: _currentMessages));
+        emit(SuccessGetMessageState(messages: List.from(_currentMessages)));
       }
     });
 
     on<ChatEvent>((event, emit) async {
-      final jsonMsg = json.encode(event.message.toJson());
-      _messageChannel?.sink.add(jsonMsg);
+      if (_messageChannel == null || !_isConnected) {
+        debugPrint("DEBUG: Cannot send message, WebSocket not connected. Attempting reconnection...");
+        _connectChat();
+      }
+      
+      // Optimistic update: Add to local list immediately
+      final tempId = "temp_${DateTime.now().millisecondsSinceEpoch}";
+      final optimisticMsg = ChatMessage(
+        message: event.message.copyWith(
+          id: tempId,
+          isDelivered: false,
+          createdAt: DateTime.now(),
+        ),
+        // Use a minimal profile for the sender (Me)
+        sender: Profile(user: User(id: _currentSenderId)),
+        receiver: _receiverProfile,
+      );
+
+      _currentMessages = List.from(_currentMessages)..add(optimisticMsg);
+      add(GetChatStatusEvent());
+
+      try {
+        final jsonMsg = json.encode(event.message.toJson());
+        debugPrint("DEBUG: Sending message JSON: $jsonMsg");
+        _messageChannel?.sink.add(jsonMsg);
+      } catch (e) {
+        debugPrint("DEBUG: Error sending message via WS: $e");
+        // Remove optimistic message on hard error
+        _currentMessages.removeWhere((m) => m.message?.id == tempId);
+        add(GetChatStatusEvent());
+      }
     });
 
     on<DeleteMessageEvent>((event, emit) async {
-      if (_messageChannel != null) {
+      if (_messageChannel != null && _isConnected) {
         _messageChannel?.sink.add(json.encode({
           'type': 'delete_message',
           'message_id': event.message.id
         }));
       }
-      // Optimistic delete from local list if needed, 
-      // but we'll wait for the WS confirmation for full consistency
     });
 
     on<UpdateMessageEvent>((event, emit) async {
-       if (_messageChannel != null) {
+       if (_messageChannel != null && _isConnected) {
         _messageChannel?.sink.add(json.encode({
           'type': 'update_message',
           'message_id': event.message.id,
@@ -153,8 +186,10 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       results.fold(
         (l) => emit(FailureGetMessageState(message: l.message ?? "")),
         (r) {
+          // If we have local optimistic messages, we might need to merge.
+          // For now, trust the server list.
           _currentMessages = r;
-          emit(SuccessGetMessageState(messages: _currentMessages));
+          emit(SuccessGetMessageState(messages: List.from(_currentMessages)));
         },
       );
     }, transformer: sequential());
@@ -212,7 +247,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     });
 
     on<SendMessageStatusEvent>((event, emit) async {
-      if (_messageChannel != null) {
+      if (_messageChannel != null && _isConnected) {
         _messageChannel?.sink.add(json.encode({
           'type': 'message_status',
           'message_id': event.messageId,
@@ -226,24 +261,56 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     if (_currentSenderId == null || _targetUserId == null) return;
     
     final token = await Helpers.getString("token");
-    final url = '$baseMessagesWsUrl/ws/${Helpers.createChatRoom(sender: _currentSenderId!, receiver: _targetUserId!)}/?token=$token';
+    if (token.isEmpty) {
+      debugPrint("DEBUG: Token is empty, skipping Chat WS connection");
+      return;
+    }
+
+    final roomId = Helpers.createChatRoom(sender: _currentSenderId!, receiver: _targetUserId!);
+    final url = '$baseMessagesWsUrl/ws/$roomId/?token=$token';
+    
+    debugPrint("DEBUG: Connecting to Chat WS: $url");
     
     try {
+      // Close existing before opening new one
+      await _closeWebSocket();
+      
       _messageChannel = IOWebSocketChannel.connect(Uri.parse(url));
+      _isConnected = true; // Optimistic, will be verified on first message or listen
+      
       _wsSubscription = _messageChannel?.stream.listen(
         (dataString) {
+          debugPrint("DEBUG: Chat WS Data received: $dataString");
           _retryCount = 0;
+          _isConnected = true;
+          
           final data = json.decode(dataString);
           final type = data['type'];
 
           if (type == 'message') {
             final chatMessage = ChatMessage.fromJson(data);
-            _currentMessages = List.from(_currentMessages)..add(chatMessage);
             
+            // Deduplication/Replacement logic for optimistic updates
+            final tempIndex = _currentMessages.indexWhere((m) => 
+              m.message?.id?.startsWith("temp_") == true && 
+              m.message?.message == chatMessage.message?.message &&
+              m.message?.sender == chatMessage.message?.sender
+            );
+
+            if (tempIndex != -1) {
+              // Replace the optimistic message with the real one from server
+              _currentMessages[tempIndex] = chatMessage;
+            } else {
+              // Only add if it doesn't already exist (rare race condition)
+              final exists = _currentMessages.any((m) => m.message?.id == chatMessage.message?.id);
+              if (!exists) {
+                _currentMessages = List.from(_currentMessages)..add(chatMessage);
+              }
+            }
+
             if (chatMessage.message?.sender == _targetUserId && chatMessage.message?.id != null) {
                 add(SendMessageStatusEvent(messageId: chatMessage.message!.id!, status: "seen"));
             }
-            
             add(GetChatStatusEvent());
           } else if (type == 'message_status') {
             final msgId = data['message_id'];
@@ -283,16 +350,22 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
           }
         },
         onError: (error) {
-          debugPrint("Chat WS Error: $error");
+          debugPrint("DEBUG: Chat WS Error: $error");
+          _isConnected = false;
+          add(GetChatStatusEvent());
           _reconnectChat();
         },
         onDone: () {
-          debugPrint("Chat WS Closed");
+          debugPrint("DEBUG: Chat WS Closed");
+          _isConnected = false;
+          add(GetChatStatusEvent());
           _reconnectChat();
         },
       );
     } catch (e) {
-      debugPrint("Chat WS Connect Error: $e");
+      debugPrint("DEBUG: Chat WS Connect Error: $e");
+      _isConnected = false;
+      add(GetChatStatusEvent());
       _reconnectChat();
     }
   }
@@ -301,7 +374,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     _reconnectTimer?.cancel();
     _retryCount++;
     final delay = min(pow(2, _retryCount).toInt(), 30);
-    debugPrint("Reconnecting Chat WS in $delay seconds...");
+    debugPrint("DEBUG: Reconnecting Chat WS in $delay seconds...");
     _reconnectTimer = Timer(Duration(seconds: delay), () {
       _connectChat();
     });
@@ -312,23 +385,26 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     if (token.isEmpty) return;
     
     final url = '$baseMessagesWsUrl/ws/presence/?token=$token';
+    debugPrint("DEBUG: Connecting to Presence WS: $url");
+    
     try {
+      await _closePresenceWebSocket();
       _presenceChannel = IOWebSocketChannel.connect(Uri.parse(url));
       _presenceSubscription = _presenceChannel?.stream.listen(
         (data) {
           _presenceRetryCount = 0;
         },
         onError: (error) {
-          debugPrint("Presence WS Error: $error");
+          debugPrint("DEBUG: Presence WS Error: $error");
           _reconnectPresence();
         },
         onDone: () {
-          debugPrint("Presence WS Closed");
+          debugPrint("DEBUG: Presence WS Closed");
           _reconnectPresence();
         },
       );
     } catch (e) {
-      debugPrint("Presence WS Connect Error: $e");
+      debugPrint("DEBUG: Presence WS Connect Error: $e");
       _reconnectPresence();
     }
   }
@@ -337,7 +413,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     _presenceReconnectTimer?.cancel();
     _presenceRetryCount++;
     final delay = min(pow(2, _presenceRetryCount).toInt(), 30);
-    debugPrint("Reconnecting Presence WS in $delay seconds...");
+    debugPrint("DEBUG: Reconnecting Presence WS in $delay seconds...");
     _presenceReconnectTimer = Timer(Duration(seconds: delay), () {
       _connectPresence();
     });
@@ -345,18 +421,21 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
 
   Future<void> _closeWebSocket() async {
     _reconnectTimer?.cancel();
+    _reconnectTimer = null;
     await _wsSubscription?.cancel();
+    _wsSubscription = null;
     await _messageChannel?.sink.close();
     _messageChannel = null;
-    _wsSubscription = null;
+    _isConnected = false;
   }
 
   Future<void> _closePresenceWebSocket() async {
     _presenceReconnectTimer?.cancel();
+    _presenceReconnectTimer = null;
     await _presenceSubscription?.cancel();
+    _presenceSubscription = null;
     await _presenceChannel?.sink.close();
     _presenceChannel = null;
-    _presenceSubscription = null;
   }
 
   @override

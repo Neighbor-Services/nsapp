@@ -38,6 +38,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   late AnimationController _headerController;
   late Animation<double> _headerAnimation;
+  String? receiverId;
   
   Profile _receiver = Profile();
   List<ChatMessage> _messages = [];
@@ -58,17 +59,17 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       _receiver = messageState.profile;
     }
 
-    final receiverId = _receiver.user?.id;
+    receiverId = _receiver.user?.id;
     final profileState = context.read<ProfileBloc>().state;
     if (profileState is SuccessGetProfileState) {
       _currentSenderId = profileState.profile.user?.id;
     }
 
     if (receiverId != null) {
-      context.read<MessageBloc>().add(GetMessagesEvent(receiver: receiverId));
+      context.read<MessageBloc>().add(GetMessagesEvent(receiver: receiverId!));
       if (_currentSenderId != null) {
         context.read<MessageBloc>().add(
-          ConnectWebSocketEvent(sender: _currentSenderId!, receiver: receiverId),
+          ConnectWebSocketEvent(sender: _currentSenderId!, receiver: receiverId!),
         );
       }
     }
@@ -109,35 +110,56 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MessageBloc, MessageState>(
-      listener: (context, state) {
-        if (state is SuccessGetMessageState) {
-          final wasLoadingOlder = _isLoadingOlder;
-          setState(() {
-            _messages = state.messages;
-            _isLoadingOlder = false;
-          });
-          if (!wasLoadingOlder) {
-            _scrollToBottom();
-          }
-        } else if (state is SuccessSendMessageState) {
-          _scrollToBottom();
-        } else if (state is FailureGetMessageState) {
-          setState(() => _isLoadingOlder = false);
-        } else if (state is MessageImageState) {
-          if (state.image != null) {
-            _handleSendImage(state.image!);
-          }
-        } else if (state is MessageReceiverState) {
-          setState(() => _receiver = state.profile);
-        } else if (state is ChatStatusState) {
-          setState(() {
-            _isTyping = state.isTyping;
-            _isOnline = state.isOnline;
-          });
-        }
-      },
-      builder: (context, state) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if (state is SuccessGetProfileState) {
+              final newSenderId = state.profile.user?.id;
+              if (_currentSenderId == null && newSenderId != null) {
+                setState(() => _currentSenderId = newSenderId);
+                final receiverId = _receiver.user?.id;
+                if (receiverId != null) {
+                  context.read<MessageBloc>().add(
+                    ConnectWebSocketEvent(sender: newSenderId, receiver: receiverId),
+                  );
+                }
+              }
+            }
+          },
+        ),
+        BlocListener<MessageBloc, MessageState>(
+          listener: (context, state) {
+            if (state is SuccessGetMessageState) {
+              final wasLoadingOlder = _isLoadingOlder;
+              setState(() {
+                _messages = state.messages;
+                _isLoadingOlder = false;
+              });
+              if (!wasLoadingOlder) {
+                _scrollToBottom();
+              }
+            } else if (state is SuccessSendMessageState) {
+              _scrollToBottom();
+            } else if (state is FailureGetMessageState) {
+              setState(() => _isLoadingOlder = false);
+            } else if (state is MessageImageState) {
+              if (state.image != null) {
+                _handleSendImage(state.image!);
+              }
+            } else if (state is MessageReceiverState) {
+              setState(() => _receiver = state.profile);
+            } else if (state is ChatStatusState) {
+              setState(() {
+                _isTyping = state.isTyping;
+                _isOnline = state.isOnline;
+              });
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<MessageBloc, MessageState>(
+        builder: (context, state) {
         return GradientBackground(
           child: Scaffold(
             backgroundColor: Colors.transparent,
@@ -153,8 +175,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           ),
         );
       },
-    );
-  }
+    ),
+  );
+}
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -309,15 +332,25 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       myId = profileState.profile.user?.id;
     }
 
-    return ListView.builder(
-      controller: _scrollController,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      itemCount: _messages.length,
-      itemBuilder: (context, index) {
-        final chatMessage = _messages[index];
-        final isMe = chatMessage.message?.sender == myId;
-        return _buildMessageItem(chatMessage, isMe);
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<MessageBloc>().add(GetMessagesEvent(receiver: receiverId!));
+        context.read<ProfileBloc>().add(GetProfileStreamEvent());
+        context.read<ProfileBloc>().add(GetProfileEvent());
+        await Future.delayed(const Duration(seconds: 1));
       },
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        controller: _scrollController,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        itemCount: _messages.length,
+        itemBuilder: (context, index) {
+          final chatMessage = _messages[index];
+          final isMe = chatMessage.message?.sender == myId;
+          return _buildMessageItem(chatMessage, isMe);
+        },
+      ),
+
     );
   }
 
@@ -602,6 +635,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           ),
         );
         _messageController.clear();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Unable to send message: Profile or receiver not found. Please wait a moment.")),
+        );
+        // Attempt to re-fetch profile or re-connect if possible
+        context.read<ProfileBloc>().add(GetProfileEvent());
       }
     }
   }

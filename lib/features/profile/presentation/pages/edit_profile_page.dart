@@ -105,7 +105,7 @@ class _EditProfilePageState extends State<EditProfilePage>
 
   void _initializeWithProfile(Profile profile) {
     _currentProfile = profile;
-    nameTextController.text = profile.firstName ?? "";
+    nameTextController.text = "${profile.firstName} ${profile.lastName}";
     locController.text = profile.address ?? "";
     contactTextController.text = profile.phone ?? "";
     zipCodeTextController.text = profile.zipCode ?? "";
@@ -233,291 +233,300 @@ class _EditProfilePageState extends State<EditProfilePage>
                     constraints: BoxConstraints(maxWidth: 700.w),
                     child: FadeTransition(
                       opacity: _fadeAnimation,
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 24.h,
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                context.read<ProfileBloc>().add(GetProfileEvent());
+                await Future.delayed(const Duration(seconds: 1));
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                  vertical: 24.h,
+                ),
+                child: Form(
+                  key: key,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(12.r),
+                          decoration: BoxDecoration(
+                            color: context.appColors.cardBackground,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(
+                              color: context.appColors.glassBorder,
+                              width: 1.5.r,
+                            ),
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.chevronLeft,
+                            color: context.appColors.primaryTextColor,
+                            size: 20.r,
+                          ),
                         ),
-                        child: Form(
-                          key: key,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                      SizedBox(height: 32.h),
+                      Text(
+                        "EDIT PROFILE",
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w500,
+                          color: context.appColors.primaryTextColor,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      Text(
+                        "UPDATE YOUR INFORMATION TO KEEP IT ACCURATE",
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w500,
+                          color: context.appColors.secondaryTextColor,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      SizedBox(height: 30.h),
+                      
+                      // Profile Picture Section
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            _showImageSourceSheet(context);
+                          },
+                          child: Stack(
                             children: [
-                              GestureDetector(
-                                onTap: () => Navigator.pop(context),
+                              Container(
+                                padding: EdgeInsets.all(4.r),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: context.appColors.glassBorder,
+                                    width: 2.r,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: context.appColors.primaryColor.withAlpha(50),
+                                      blurRadius: 40.r,
+                                      spreadRadius: -5.r,
+                                    ),
+                                  ],
+                                ),
                                 child: Container(
-                                  padding: EdgeInsets.all(12.r),
+                                  padding: EdgeInsets.all(2.r),
                                   decoration: BoxDecoration(
-                                    color: context.appColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(12.r),
+                                    shape: BoxShape.circle,
                                     border: Border.all(
                                       color: context.appColors.glassBorder,
-                                      width: 1.5.r,
+                                      width: 1.r,
+                                    ),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 60.r,
+                                    backgroundColor: Colors.white.withAlpha(10),
+                                    backgroundImage: _buildProfileImageProvider(),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 4.r,
+                                right: 4.r,
+                                child: Container(
+                                  padding: EdgeInsets.all(10.r),
+                                  decoration: BoxDecoration(
+                                    color: context.appColors.primaryColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white.withAlpha(40),
+                                      width: 2.r,
                                     ),
                                   ),
                                   child: Icon(
-                                    FontAwesomeIcons.chevronLeft,
-                                    color: context.appColors.primaryTextColor,
-                                    size: 20.r,
+                                    FontAwesomeIcons.camera,
+                                    color: Colors.white,
+                                    size: 18.r,
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 32.h),
-                              Text(
-                                "EDIT PROFILE",
-                                style: TextStyle(
-                                  fontSize: 24.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: context.appColors.primaryTextColor,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                "UPDATE YOUR INFORMATION TO KEEP IT ACCURATE",
-                                style: TextStyle(
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: context.appColors.secondaryTextColor,
-                                  letterSpacing: 1.0,
-                                ),
-                              ),
-                              SizedBox(height: 30.h),
-                              
-                              // Profile Picture Section
-                              Center(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _showImageSourceSheet(context);
-                                  },
-                                  child: Stack(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(4.r),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: context.appColors.glassBorder,
-                                            width: 2.r,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: context.appColors.primaryColor.withAlpha(50),
-                                              blurRadius: 40.r,
-                                              spreadRadius: -5.r,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Container(
-                                          padding: EdgeInsets.all(2.r),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: context.appColors.glassBorder,
-                                              width: 1.r,
-                                            ),
-                                          ),
-                                          child: CircleAvatar(
-                                            radius: 60.r,
-                                            backgroundColor: Colors.white.withAlpha(10),
-                                            backgroundImage: _buildProfileImageProvider(),
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: 4.r,
-                                        right: 4.r,
-                                        child: Container(
-                                          padding: EdgeInsets.all(10.r),
-                                          decoration: BoxDecoration(
-                                            color: context.appColors.primaryColor,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.white.withAlpha(40),
-                                              width: 2.r,
-                                            ),
-                                          ),
-                                          child: Icon(
-                                            FontAwesomeIcons.camera,
-                                            color: Colors.white,
-                                            size: 18.r,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 40.h),
-                              
-                              // Main Form Container
-                              Container(
-                                padding: EdgeInsets.all(24.r),
-                                decoration: BoxDecoration(
-                                  color: context.appColors.cardBackground,
-                                  borderRadius: BorderRadius.circular(24.r),
-                                  border: Border.all(
-                                    color: context.appColors.glassBorder,
-                                    width: 1.5.r,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    SolidTextField(
-                                      controller: nameTextController,
-                                      hintText: "ENTER YOUR NAME",
-                                      label: "FULL NAME",
-                                      prefixIcon: FontAwesomeIcons.user,
-                                      validator: ValidationUtil.validateName,
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    _buildLabel("Gender"),
-                                    SizedBox(height: 12.h),
-                                    CustomSegmentedControl<String>(
-                                      buttonLables: const ["MALE", "FEMALE"],
-                                      buttonValues: const ["Male", "Female"],
-                                      defaultSelected: gender.capitalizeFirst ?? "Male",
-                                      onValueChanged: (val) {
-                                        setState(() => gender = val.toUpperCase());
-                                      },
-                                      width: 240.w,
-                                      height: 50.h,
-                                      radius: 16.r,
-                                      selectedColor: context.appColors.primaryColor.withAlpha(40),
-                                      textColor: context.appColors.primaryTextColor,
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    _buildLabel("Account Type"),
-                                    SizedBox(height: 12.h),
-                                    CustomSegmentedControl<String>(
-                                      buttonLables: const ["SEEKER", "PROVIDER"],
-                                      buttonValues: const [userTypeSeeker, userTypeProvider],
-                                      defaultSelected: userType,
-                                      onValueChanged: (val) {
-                                        context.read<ProfileBloc>().add(SetUserTypeEvent(userType: val));
-                                      },
-                                      width: 240.w,
-                                      height: 50.h,
-                                      radius: 16.r,
-                                      selectedColor: context.appColors.primaryColor.withAlpha(40),
-                                      textColor: context.appColors.primaryTextColor,
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    
-                                    // Location Field with Map Picker
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: SolidTextField(
-                                            controller: locController,
-                                            hintText: "LOCATION",
-                                            label: "LOCATION",
-                                            prefixIcon: FontAwesomeIcons.locationDot,
-                                            validator: (val) => ValidationUtil.validateRequired(val, "Location"),
-                                          ),
-                                        ),
-                                        SizedBox(width: 16.w),
-                                        GestureDetector(
-                                          onTap: () => _showLocationSheet(context),
-                                          child: Column(
-                                            children: [
-                                              SizedBox(height: 25.h),
-                                              Container(
-                                                width: 58.r,
-                                                height: 58.r,
-                                                decoration: BoxDecoration(
-                                                  color: context.appColors.primaryColor.withAlpha(40),
-                                                  borderRadius: BorderRadius.circular(18.r),
-                                                  border: Border.all(color: context.appColors.primaryColor),
-                                                ),
-                                                child: Icon(FontAwesomeIcons.map, color: context.appColors.primaryColor),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    
-                                    SolidTextField(
-                                      controller: contactTextController,
-                                      hintText: "PHONE NUMBER",
-                                      label: "PHONE NUMBER",
-                                      prefixIcon: FontAwesomeIcons.phone,
-                                      keyboardType: TextInputType.phone,
-                                      validator: ValidationUtil.validatePhone,
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    
-                                    SolidTextField(
-                                      controller: countryTextController,
-                                      hintText: "COUNTRY",
-                                      label: "COUNTRY",
-                                      prefixIcon: FontAwesomeIcons.globe,
-                                      validator: (val) => ValidationUtil.validateRequired(val, "Country"),
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    
-                                    SolidTextField(
-                                      controller: stateTextController,
-                                      hintText: "STATE",
-                                      label: "STATE",
-                                      prefixIcon: FontAwesomeIcons.building,
-                                      validator: (val) => ValidationUtil.validateRequired(val, "State"),
-                                    ),
-                                    SizedBox(height: 24.h),
-                                    
-                                    SolidTextField(
-                                      controller: zipCodeTextController,
-                                      hintText: "ZIP CODE",
-                                      label: "ZIP CODE",
-                                      prefixIcon: FontAwesomeIcons.mapPin,
-                                    ),
-                                    
-                                    // Provider Specific Fields
-                                    if (Helpers.isProvider(userType)) ...[
-                                      SizedBox(height: 24.h),
-                                      _buildLabel("Primary Service"),
-                                      SizedBox(height: 12.h),
-                                      _buildServicePicker(),
-                                      
-                                      if (isOthersSelected) ...[
-                                        SizedBox(height: 24.h),
-                                        SolidTextField(
-                                          controller: serviceTextController,
-                                          hintText: "SPECIFY SERVICE",
-                                          label: "SPECIFY SERVICE",
-                                          prefixIcon: FontAwesomeIcons.buildingCircleCheck,
-                                          validator: (val) => ValidationUtil.validateRequired(val, "Service"),
-                                        ),
-                                      ],
-                                      
-                                      SizedBox(height: 24.h),
-                                      _buildLabel("Preferred Payment Mode"),
-                                      SizedBox(height: 12.h),
-                                      CustomSegmentedControl<String>(
-                                        buttonLables: const ["In-App", "On-Site"],
-                                        buttonValues: const ["IN_APP", "ON_SITE"],
-                                        defaultSelected: preferredPaymentMode,
-                                        onValueChanged: (val) => setState(() => preferredPaymentMode = val),
-                                        width: 240.w,
-                                        height: 50.h,
-                                        radius: 16.r,
-                                        selectedColor: context.appColors.primaryColor.withAlpha(40),
-                                        textColor: context.appColors.primaryTextColor,
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 40.h),
-                              
-                              // Save Button
-                              _buildSaveButton(),
                             ],
                           ),
                         ),
                       ),
+                      SizedBox(height: 40.h),
+                      
+                      // Main Form Container
+                      Container(
+                        padding: EdgeInsets.all(24.r),
+                        decoration: BoxDecoration(
+                          color: context.appColors.cardBackground,
+                          borderRadius: BorderRadius.circular(24.r),
+                          border: Border.all(
+                            color: context.appColors.glassBorder,
+                            width: 1.5.r,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            SolidTextField(
+                              controller: nameTextController,
+                              hintText: "ENTER YOUR NAME",
+                              label: "FULL NAME",
+                              prefixIcon: FontAwesomeIcons.user,
+                              validator: ValidationUtil.validateName,
+                            ),
+                            SizedBox(height: 24.h),
+                            _buildLabel("Gender"),
+                            SizedBox(height: 12.h),
+                            CustomSegmentedControl<String>(
+                              buttonLables: const ["MALE", "FEMALE"],
+                              buttonValues: const ["Male", "Female"],
+                              defaultSelected: gender.capitalizeFirst ?? "Male",
+                              onValueChanged: (val) {
+                                setState(() => gender = val.toUpperCase());
+                              },
+                              width: 240.w,
+                              height: 50.h,
+                              radius: 16.r,
+                              selectedColor: context.appColors.primaryColor.withAlpha(40),
+                              textColor: context.appColors.primaryTextColor,
+                            ),
+                            SizedBox(height: 24.h),
+                            _buildLabel("Account Type"),
+                            SizedBox(height: 12.h),
+                            CustomSegmentedControl<String>(
+                              buttonLables: const ["SEEKER", "PROVIDER"],
+                              buttonValues: const [userTypeSeeker, userTypeProvider],
+                              defaultSelected: userType,
+                              onValueChanged: (val) {
+                                context.read<ProfileBloc>().add(SetUserTypeEvent(userType: val));
+                              },
+                              width: 240.w,
+                              height: 50.h,
+                              radius: 16.r,
+                              selectedColor: context.appColors.primaryColor.withAlpha(40),
+                              textColor: context.appColors.primaryTextColor,
+                            ),
+                            SizedBox(height: 24.h),
+                            
+                            // Location Field with Map Picker
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SolidTextField(
+                                    controller: locController,
+                                    hintText: "LOCATION",
+                                    label: "LOCATION",
+                                    prefixIcon: FontAwesomeIcons.locationDot,
+                                    validator: (val) => ValidationUtil.validateRequired(val, "Location"),
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                GestureDetector(
+                                  onTap: () => _showLocationSheet(context),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: 25.h),
+                                      Container(
+                                        width: 58.r,
+                                        height: 58.r,
+                                        decoration: BoxDecoration(
+                                          color: context.appColors.primaryColor.withAlpha(40),
+                                          borderRadius: BorderRadius.circular(18.r),
+                                          border: Border.all(color: context.appColors.primaryColor),
+                                        ),
+                                        child: Icon(FontAwesomeIcons.map, color: context.appColors.primaryColor),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 24.h),
+                            
+                            SolidTextField(
+                              controller: contactTextController,
+                              hintText: "PHONE NUMBER",
+                              label: "PHONE NUMBER",
+                              prefixIcon: FontAwesomeIcons.phone,
+                              keyboardType: TextInputType.phone,
+                              validator: ValidationUtil.validatePhone,
+                            ),
+                            SizedBox(height: 24.h),
+                            
+                            SolidTextField(
+                              controller: countryTextController,
+                              hintText: "COUNTRY",
+                              label: "COUNTRY",
+                              prefixIcon: FontAwesomeIcons.globe,
+                              validator: (val) => ValidationUtil.validateRequired(val, "Country"),
+                            ),
+                            SizedBox(height: 24.h),
+                            
+                            SolidTextField(
+                              controller: stateTextController,
+                              hintText: "STATE",
+                              label: "STATE",
+                              prefixIcon: FontAwesomeIcons.building,
+                              validator: (val) => ValidationUtil.validateRequired(val, "State"),
+                            ),
+                            SizedBox(height: 24.h),
+                            
+                            SolidTextField(
+                              controller: zipCodeTextController,
+                              hintText: "ZIP CODE",
+                              label: "ZIP CODE",
+                              prefixIcon: FontAwesomeIcons.mapPin,
+                            ),
+                            
+                            // Provider Specific Fields
+                            if (Helpers.isProvider(userType)) ...[
+                              SizedBox(height: 24.h),
+                              _buildLabel("Primary Service"),
+                              SizedBox(height: 12.h),
+                              _buildServicePicker(),
+                              
+                              if (isOthersSelected) ...[
+                                SizedBox(height: 24.h),
+                                SolidTextField(
+                                  controller: serviceTextController,
+                                  hintText: "SPECIFY SERVICE",
+                                  label: "SPECIFY SERVICE",
+                                  prefixIcon: FontAwesomeIcons.buildingCircleCheck,
+                                  validator: (val) => ValidationUtil.validateRequired(val, "Service"),
+                                ),
+                              ],
+                              
+                              SizedBox(height: 24.h),
+                              _buildLabel("Preferred Payment Mode"),
+                              SizedBox(height: 12.h),
+                              CustomSegmentedControl<String>(
+                                buttonLables: const ["In-App", "On-Site"],
+                                buttonValues: const ["IN_APP", "ON_SITE"],
+                                defaultSelected: preferredPaymentMode,
+                                onValueChanged: (val) => setState(() => preferredPaymentMode = val),
+                                width: 240.w,
+                                height: 50.h,
+                                radius: 16.r,
+                                selectedColor: context.appColors.primaryColor.withAlpha(40),
+                                textColor: context.appColors.primaryTextColor,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 40.h),
+                      
+                      // Save Button
+                      _buildSaveButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
                     ),
                   ),
                 ),
@@ -792,9 +801,13 @@ class _EditProfilePageState extends State<EditProfilePage>
   /// [SuccessAddServicesState], so we can dispatch the update directly.
   void _submitForm() {
     final profileData = _currentProfile ?? Profile();
+    final nameParts = nameTextController.text.trim().split(" ");
+    final firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+    final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+
     final profile = Profile(
-      firstName: nameTextController.text.trim(),
-      lastName: nameTextController.text.trim(),
+      firstName: firstName,
+      lastName: lastName,
       phone: contactTextController.text.trim(),
       city: profileData.city,
       rating: profileData.rating,
@@ -831,9 +844,13 @@ class _EditProfilePageState extends State<EditProfilePage>
     }
     if (key.currentState?.validate() ?? false) {
       final profileData = _currentProfile ?? Profile();
+      final nameParts = nameTextController.text.trim().split(" ");
+      final firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
+      
       Profile profile = Profile(
-        firstName: nameTextController.text.trim(),
-        lastName: nameTextController.text.trim(),
+        firstName: firstName,
+        lastName: lastName,
         phone: contactTextController.text.trim(),
         city: profileData.city,
         rating: profileData.rating,

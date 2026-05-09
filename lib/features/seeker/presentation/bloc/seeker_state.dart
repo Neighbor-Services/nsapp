@@ -59,6 +59,8 @@ class SuccessPopularProvidersState extends SeekerState {
   SuccessPopularProvidersState({required this.providers});
 }
 
+class PopularProvidersLoadingState extends SeekerState {}
+
 class SuccessGetMyFavoritesState extends SeekerState {
   final List<Favorite> profiles;
   SuccessGetMyFavoritesState({required this.profiles});

@@ -177,22 +177,30 @@ class _NotificationsPageState extends State<NotificationsPage>
     if (state is SuccessGetMyNotificationsState) {
       final notifications = state.notifications;
       if (notifications.isNotEmpty) {
-        return ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.only(
-            left: isLargeScreen ? 32.w : 16.w,
-            right: isLargeScreen ? 32.w : 16.w,
-            bottom: 24.h,
-          ),
-          itemCount: notifications.length,
-          itemBuilder: (context, index) {
-            return _buildNotificationCard(
-              context,
-              notifications[index],
-              index,
-            );
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<ProfileBloc>().add(GetProfileStreamEvent());
+            context.read<ProfileBloc>().add(GetProfileEvent());
+            await Future.delayed(const Duration(seconds: 1));
           },
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            padding: EdgeInsets.only(
+              left: isLargeScreen ? 32.w : 16.w,
+              right: isLargeScreen ? 32.w : 16.w,
+              bottom: 24.h,
+            ),
+            itemCount: notifications.length,
+            itemBuilder: (context, index) {
+              return _buildNotificationCard(
+                context,
+                notifications[index],
+                index,
+              );
+            },
+          ),
         );
+
       } else {
         return _buildEmptyState();
       }
@@ -642,7 +650,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               }
               
               seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
-              Get.to(() => const SeekerRequestDetailsPage());
+              Get.to(() => SeekerRequestDetailsPage(requestData: requestData));
             } else if (mounted) {
               customAlert(pageContext, AlertType.error, "Failed to load request details");
             }

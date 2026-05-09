@@ -124,68 +124,74 @@ class _ProfilePageState extends State<ProfilePage>
                       constraints: BoxConstraints(maxWidth: 600.w),
                       child: FadeTransition(
                         opacity: _fadeAnimation,
-                        child: ListView(
-                          physics: const BouncingScrollPhysics(),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32.w : 20.w,
-                            vertical: 24.h,
-                          ),
-                          children: [
-                            // Back & Edit Buttons
-                            Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => Navigator.pop(context),
-                                  child: Container(
-                                    padding: EdgeInsets.all(12.r),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
-                                        width: 1.5.r,
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      FontAwesomeIcons.chevronLeft,
-                                      color: context.appColors.primaryTextColor,
-                                      size: 20.r,
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () => Get.toNamed("/edit-profile"),
-                                  child: Container(
-                                    padding: EdgeInsets.all(12.r),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
-                                        width: 1.5.r,
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      FontAwesomeIcons.penToSquare,
-                                      color: context.appColors.primaryTextColor,
-                                      size: 20.r,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                            context.read<ProfileBloc>().add(GetProfileEvent());
+                          },
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isLargeScreen ? 32.w : 20.w,
+                              vertical: 24.h,
                             ),
-                            SizedBox(height: 32.h),
-
-                            // Profile Header
-                            _buildProfileHeader(profile, isProvider),
-                            SizedBox(height: 32.h),
-
-                            // Info Section
-                            _buildInfoSection(profile),
-                            SizedBox(height: 24.h),
-                          ],
+                            children: [
+                              // Back & Edit Buttons
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => Get.toNamed("/edit-profile"),
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.penToSquare,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 32.h),
+    
+                              // Profile Header
+                              _buildProfileHeader(profile, isProvider),
+                              SizedBox(height: 32.h),
+    
+                              // Info Section
+                              _buildInfoSection(profile),
+                              SizedBox(height: 24.h),
+                            ],
+                          ),
                         ),
                       ),
                     ),

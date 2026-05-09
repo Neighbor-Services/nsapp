@@ -24,6 +24,16 @@ class SettingsState {
   }
 }
 
+/// Emitted when a settings operation is in progress.
+class LoadingSettingsState extends SettingsState {
+  LoadingSettingsState(SettingsState from)
+      : super(
+          isProvider: from.isProvider,
+          themeMode: from.themeMode,
+          useBiometric: from.useBiometric,
+        );
+}
+
 /// Emitted when a user-type change completes successfully.
 class SuccessChangeUserTypeState extends SettingsState {
   SuccessChangeUserTypeState(SettingsState from)

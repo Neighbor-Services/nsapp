@@ -40,6 +40,7 @@ abstract class SeekerRepository {
     double? priceMax,
     String? categoryName,
     String? serviceName,
+    String? serviceId,
     String? city,
   });
   Future<Either<Failure, bool>> cancelAppointment({required String id});

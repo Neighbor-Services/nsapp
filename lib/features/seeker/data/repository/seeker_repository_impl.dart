@@ -159,20 +159,26 @@ class SeekerRepositoryImpl extends SeekerRepository {
   @override
   Future<Either<Failure, List<Profile>>> getPopularProviders() async {
     try {
-      final cached = hiveService
-          .getBox(HiveService.settingsBox)
-          .get('popular_providers');
+      final box = hiveService.getBox(HiveService.settingsBox);
+      final cached = box.get('popular_providers');
+      
       if (cached != null) {
-        _syncPopularProviders();
-        return Right(List<Profile>.from(cached));
+        try {
+          final List<Profile> providers = (cached as List).map((e) {
+            if (e is Profile) return e;
+            return Profile.fromJson(Map<String, dynamic>.from(e as Map));
+          }).toList();
+          
+          _syncPopularProviders(); // Background sync
+          return Right(providers);
+        } catch (e) {
+          debugPrint("SeekerRepository: Cache processing failed: $e");
+          // Fall through to network sync
+        }
       }
       return await _syncPopularProviders();
     } catch (e) {
-      final cached = hiveService
-          .getBox(HiveService.settingsBox)
-          .get('popular_providers');
-      if (cached != null) return Right(List<Profile>.from(cached));
-      return Left(Failure(message: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -287,6 +293,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
     double? priceMax,
     String? categoryName,
     String? serviceName,
+    String? serviceId,
     String? city,
   }) async {
     try {
@@ -296,6 +303,7 @@ class SeekerRepositoryImpl extends SeekerRepository {
         priceMax: priceMax,
         categoryName: categoryName,
         serviceName: serviceName,
+        serviceId: serviceId,
         city: city,
       );
       return Right(results);

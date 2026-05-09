@@ -528,9 +528,12 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                               }
 
                               final userLoc = context.read<LocationBloc>().state.location;
+                              final nameParts = nameTextController.text.trim().split(" ");
+                              final firstName = nameParts.isNotEmpty ? nameParts[0] : "";
+                              final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
                               Profile profile = Profile(
-                                firstName: nameTextController.text.trim(),
-                                lastName: nameTextController.text.trim(),
+                                firstName: firstName,
+                                lastName: lastName,
                                 phone: contactTextController.text.trim(),
                                 city: userLoc.city,
                                 rating: "0.0",

@@ -80,7 +80,8 @@ class AuthenticationBloc
           await secureStorage.write(key: "password", value: event.password);
         }
         // Register device token after login
-        await DeviceTokenService.tryRegisterStoredToken();
+                DeviceTokenService.tryRegisterStoredToken();
+
         emit(SuccessLoginAuthenticationState());
       } else {
         emit(FailureLoginAuthenticationState(message: message!));
@@ -128,12 +129,13 @@ class AuthenticationBloc
       
       bool isSuccess = false;
       results.fold(
-        (l) => emit(FailureLoginAuthenticationState()),
+        (l) => emit(FailureLoginAuthenticationState(message: "Google login failed.")),
         (r) => isSuccess = true,
       );
 
       if (isSuccess) {
-        await DeviceTokenService.tryRegisterStoredToken();
+        // Register device token in background
+        DeviceTokenService.tryRegisterStoredToken();
         emit(SuccessLoginAuthenticationState());
       }
     });
@@ -183,12 +185,12 @@ class AuthenticationBloc
       
       bool isSuccess = false;
       results.fold(
-        (l) => emit(FailureLoginAuthenticationState()),
+        (l) => emit(FailureLoginAuthenticationState(message: "Apple login failed.")),
         (r) => isSuccess = true,
       );
 
       if (isSuccess) {
-        await DeviceTokenService.tryRegisterStoredToken();
+        DeviceTokenService.tryRegisterStoredToken();
         emit(SuccessLoginAuthenticationState());
       }
     });

@@ -113,45 +113,53 @@ class _AddAboutPageState extends State<AddAboutPage> {
             child: SizedBox.expand(
               child: GradientBackground(
                 child: SafeArea(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                      vertical: 10.h,
-                    ),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 600.w),
-                        child: Form(
-                          key: key,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildHeader(
-                                context,
-                                textColor,
-                                secondaryTextColor,
-                                buttonColor,
-                                borderColor,
-                              ),
-                              SizedBox(height: 32.h),
-                              _buildFormSection(),
-                              SizedBox(height: 24.h),
-                              _buildPortfolioImagesSection(
-                                context,
-                                isDark,
-                                textColor,
-                                state,
-                              ),
-                              SizedBox(height: 48.h),
-                              _buildSaveButton(context),
-                              SizedBox(height: 100.h),
-                            ],
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                      context.read<ProfileBloc>().add(GetProfileEvent());
+                      await Future.delayed(const Duration(seconds: 1));
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24.w,
+                        vertical: 10.h,
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 600.w),
+                          child: Form(
+                            key: key,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildHeader(
+                                  context,
+                                  textColor,
+                                  secondaryTextColor,
+                                  buttonColor,
+                                  borderColor,
+                                ),
+                                SizedBox(height: 32.h),
+                                _buildFormSection(),
+                                SizedBox(height: 24.h),
+                                _buildPortfolioImagesSection(
+                                  context,
+                                  isDark,
+                                  textColor,
+                                  state,
+                                ),
+                                SizedBox(height: 48.h),
+                                _buildSaveButton(context),
+                                SizedBox(height: 100.h),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
+
                 ),
               ),
             ),

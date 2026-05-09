@@ -18,8 +18,7 @@ Map<String, dynamic> dioMultiPartHeaders(String token) => {
   "Authorization": "Bearer $token",
 };
 
-// Agora Configuration
-final String agoraAppId = dotenv.env["AGORA_APP_ID"] ?? "";
+// Agora Configuration removed
 
 
 

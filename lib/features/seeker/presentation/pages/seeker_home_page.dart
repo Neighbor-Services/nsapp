@@ -478,7 +478,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 context.read<SeekerBloc>().add(
                   SeekerRequestDetailEvent(request: activeRequest!),
                 );
-                Get.to(() => const SeekerRequestDetailsPage());
+                Get.to(() => SeekerRequestDetailsPage(requestData: activeRequest!));
               },
               child: SolidContainer(
                 padding: EdgeInsets.all(20.r),

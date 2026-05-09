@@ -561,7 +561,7 @@ class _AppointmentDetailBottomSheetState
                       seekerBloc.add(
                         SeekerRequestDetailEvent(request: requestData),
                       );
-                      Get.to(() => const SeekerRequestDetailsPage());  
+                      Get.to(() => SeekerRequestDetailsPage(requestData: requestData));  
                     } else if (isProvider) {
                       final requestData = RequestData(
                         request: req,

@@ -561,7 +561,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
     context.read<NotificationBloc>().add(
       SendNotificationEvent(
         notificationModel: Notify(
-          userId: profile.id!,
+          userId: profile.user!.id!,
           title: title,
           body: "$myName $bodySuffix",
         ),

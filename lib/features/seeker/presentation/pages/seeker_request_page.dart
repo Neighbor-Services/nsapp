@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
@@ -99,12 +100,22 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             Row(
                               children: [
                                 GestureDetector(
-                                  onTap: () => Get.back(),
+                                  onTap: () {
+                                    if (Navigator.of(context).canPop()) {
+                                      Get.back();
+                                    } else {
+                                      
+                                        context.read<SeekerBloc>().add(
+                                            ChangeSeekerTabEvent(
+                                                tabIndex: 0));
+                                      
+                                    }
+                                  },
                                   child: Container(
                                     padding: EdgeInsets.all(12.r),
                                     decoration: BoxDecoration(
                                       color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12.r),
+                                      borderRadius: BorderRadius.circular(14.r),
                                       border: Border.all(
                                         color: context.appColors.glassBorder,
                                         width: 1.5.r,
@@ -233,7 +244,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
           SeekerRequestDetailEvent(request: requestData),
         );
 
-        Get.to(() => const SeekerRequestDetailsPage());
+        Get.to(() => SeekerRequestDetailsPage(requestData: requestData));
       },
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
@@ -359,7 +370,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),
                             );
-                            Get.to(() => const SeekerRequestDetailsPage());
+                            Get.to(() => SeekerRequestDetailsPage(requestData: requestData));
                           } else if (val == 'edit') {
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),

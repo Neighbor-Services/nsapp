@@ -129,13 +129,15 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                         padding: EdgeInsets.all(12.r),
                                         decoration: BoxDecoration(
                                           color: context.appColors.cardBackground,
-                                          shape: BoxShape.circle,
+                                          borderRadius: BorderRadius.circular(14.r),
                                           border: Border.all(
-                                              color: context.appColors.glassBorder),
+                                            color: context.appColors.glassBorder,
+                                            width: 1.5.r,
+                                          ),
                                         ),
                                         child: FaIcon(
                                           FontAwesomeIcons.chevronLeft,
-                                          size: 20.r,
+                                          size: 18.r,
                                           color: context.appColors.primaryTextColor,
                                         ),
                                       ),
@@ -215,76 +217,91 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: isLargeScreen ? 32.w : 16.w),
-      child: CalendarControllerProvider(
-        controller: EventController()..addAll(events),
-        child: SolidContainer(
-          backgroundColor: context.appColors.cardBackground,
-          child: MonthView(
-            borderColor: borderColor,
-            cellBuilder:
-                (date, events, isToday, isInMonth, hideDaysNotInMonth) {
-                  return FilledCell(
-                    date: date,
-                    shouldHighlight: isToday,
-                    backgroundColor: isInMonth
-                        ? context.appColors.cardBackground
-                        : context.appColors.primaryBackground,
-                    events: events,
-                    isInMonth: isInMonth,
-                    hideDaysNotInMonth: hideDaysNotInMonth,
-                    titleColor: isInMonth
-                        ? context.appColors.primaryTextColor
-                        : context.appColors.secondaryTextColor,
-                    highlightColor: context.appColors.secondaryColor,
-                    tileColor: context.appColors.secondaryColor,
-                    onTileTap: (event, date) {
-                      _showAppointmentDetails(context, [event], appointments);
-                    },
-                  );
-                },
-            weekDayBuilder: (day) {
-              return Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: context.appColors.cardBackground,
-                  border: Border.all(color: borderColor, width: 0.5.r),
-                ),
-                child: Text(
-                  ["M", "T", "W", "T", "F", "S", "S"][day],
-                  style: TextStyle(
-                    color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12.sp,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+          context.read<ProfileBloc>().add(GetProfileEvent());
+          context.read<SeekerBloc>().add(GetAppointmentsEvent());
+          await Future.delayed(const Duration(seconds: 1));
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          child: SizedBox(
+            height: 600.h,
+            child: CalendarControllerProvider(
+              controller: EventController()..addAll(events),
+              child: SolidContainer(
+                backgroundColor: context.appColors.cardBackground,
+                child: MonthView(
+                  borderColor: borderColor,
+                  cellBuilder:
+                      (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+                        return FilledCell(
+                          date: date,
+                          shouldHighlight: isToday,
+                          backgroundColor: isInMonth
+                              ? context.appColors.cardBackground
+                              : context.appColors.primaryBackground,
+                          events: events,
+                          isInMonth: isInMonth,
+                          hideDaysNotInMonth: hideDaysNotInMonth,
+                          titleColor: isInMonth
+                              ? context.appColors.primaryTextColor
+                              : context.appColors.secondaryTextColor,
+                          highlightColor: context.appColors.secondaryColor,
+                          tileColor: context.appColors.secondaryColor,
+                          onTileTap: (event, date) {
+                            _showAppointmentDetails(context, [event], appointments);
+                          },
+                        );
+                      },
+                  weekDayBuilder: (day) {
+                    return Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      decoration: BoxDecoration(
+                        color: context.appColors.cardBackground,
+                        border: Border.all(color: borderColor, width: 0.5.r),
+                      ),
+                      child: Text(
+                        ["M", "T", "W", "T", "F", "S", "S"][day],
+                        style: TextStyle(
+                          color: context.appColors.primaryTextColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    );
+                  },
+                  onCellTap: (events, date) {
+                    if (events.isNotEmpty) {
+                      _showAppointmentDetails(context, events, appointments);
+                    }
+                  },
+                  onEventTap: (event, date) {
+                    _showAppointmentDetails(context, [event], appointments);
+                  },
+                  headerStyle: HeaderStyle(
+                    headerTextStyle: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.sp,
+                      letterSpacing: 0.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.appColors.cardBackground,
+                    ),
+                    leftIconConfig: IconDataConfig(color: textColor),
+                    rightIconConfig: IconDataConfig(color: textColor),
                   ),
                 ),
-              );
-            },
-            onCellTap: (events, date) {
-              if (events.isNotEmpty) {
-                _showAppointmentDetails(context, events, appointments);
-              }
-            },
-            onEventTap: (event, date) {
-              _showAppointmentDetails(context, [event], appointments);
-            },
-            headerStyle: HeaderStyle(
-              headerTextStyle: TextStyle(
-                color: textColor,
-                fontWeight: FontWeight.w500,
-                fontSize: 18.sp,
-                letterSpacing: 0.5,
               ),
-              decoration: BoxDecoration(
-                color: context.appColors.cardBackground,
-              ),
-              leftIconConfig: IconDataConfig(color: textColor),
-              rightIconConfig: IconDataConfig(color: textColor),
             ),
           ),
         ),
       ),
     );
+
   }
 
   void _handleAddToCalendar(String appointmentId, List<AppointmentData> appointments) async {
@@ -516,7 +533,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 SeekerRequestDetailEvent(request: request),
                               );
 
-                              Get.to(() => const SeekerRequestDetailsPage());
+                              Get.to(() => SeekerRequestDetailsPage(requestData: request));
                              
                             } else {
                               customAlert(context, AlertType.error, "You are not authorized to view this request");

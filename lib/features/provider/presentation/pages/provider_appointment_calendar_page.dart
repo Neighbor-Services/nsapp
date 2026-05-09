@@ -147,36 +147,63 @@ class _ProviderAppointmentCalendarPageState
                               horizontal: 24.w,
                               vertical: 32.h,
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: [
-                                    Text(
-                                      "CALENDAR",
-                                      style: TextStyle(
-                                        fontSize: 22.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: textColor,
-                                        letterSpacing: 1.2,
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (Navigator.of(context).canPop()) {
+                                          Get.back();
+                                        } else {
+                                          context.read<ProviderBloc>().add(
+                                              ChangeProviderTabEvent(tabIndex: 0));
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(12.r),
+                                        decoration: BoxDecoration(
+                                          color: context.appColors.cardBackground,
+                                          borderRadius: BorderRadius.circular(14.r),
+                                          border: Border.all(
+                                            color: context.appColors.glassBorder,
+                                            width: 1.5.r,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          FontAwesomeIcons.chevronLeft,
+                                          color: context.appColors.primaryTextColor,
+                                          size: 20.r,
+                                        ),
                                       ),
                                     ),
-                                    SizedBox(height: 4.h),
-                                    Text(
-                                      "MANAGE YOUR SCHEDULE",
-                                      style: TextStyle(
-                                        fontSize: 9.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: secondaryTextColor,
-                                        letterSpacing: 0.8,
-                                      ),
+                                    SizedBox(width: 16.w),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "CALENDAR",
+                                          style: TextStyle(
+                                            fontSize: 22.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: textColor,
+                                            letterSpacing: 1.2,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4.h),
+                                        Text(
+                                          "MANAGE YOUR SCHEDULE",
+                                          style: TextStyle(
+                                            fontSize: 9.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: secondaryTextColor,
+                                            letterSpacing: 0.8,
+                                          ),
+                                        ),
+                                      ],
                                     ),
+                                    const Spacer(),
+                                    _buildAddButton(),
                                   ],
                                 ),
-                                _buildAddButton(),
-                              ],
-                            ),
                           ),
 
                           // Calendar
@@ -295,90 +322,105 @@ class _ProviderAppointmentCalendarPageState
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: CalendarControllerProvider(
-        controller: EventController()..addAll(events),
-        child: SolidContainer(
-          child: MonthView(
-            borderColor: borderColor,
-            cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
-              return FilledCell(
-                date: date,
-                shouldHighlight: isToday,
-                backgroundColor: isInMonth
-                    ? context.appColors.cardBackground
-                    : context.appColors.primaryBackground,
-                events: events,
-                isInMonth: isInMonth,
-                hideDaysNotInMonth: hideDaysNotInMonth,
-                titleColor: isInMonth
-                    ? context.appColors.primaryTextColor
-                    : context.appColors.secondaryTextColor,
-                highlightColor: context.appColors.secondaryColor,
-                tileColor: context.appColors.secondaryColor,
-                onTileTap: (event, date) {
-                  Get.bottomSheet(
-                    _buildEventDetailsSheet(event, isDark),
-                    isScrollControlled: true,
-                    barrierColor: Colors.black.withAlpha(150),
-                  );
-                },
-              );
-            },
-            weekDayBuilder: (day) {
-              return Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(color: borderColor, width: 0.5.r),
-                ),
-                child: Text(
-                  ["M", "T", "W", "T", "F", "S", "S"][day],
-                  style: TextStyle(
-                    color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12.sp,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+          context.read<ProfileBloc>().add(GetProfileEvent());
+          context.read<ProviderBloc>().add(GetAppointmentsEvent());
+          await Future.delayed(const Duration(seconds: 1));
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          child: SizedBox(
+            height: 600.h,
+            child: CalendarControllerProvider(
+              controller: EventController()..addAll(events),
+              child: SolidContainer(
+                child: MonthView(
+                  borderColor: borderColor,
+                  cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+                    return FilledCell(
+                      date: date,
+                      shouldHighlight: isToday,
+                      backgroundColor: isInMonth
+                          ? context.appColors.cardBackground
+                          : context.appColors.primaryBackground,
+                      events: events,
+                      isInMonth: isInMonth,
+                      hideDaysNotInMonth: hideDaysNotInMonth,
+                      titleColor: isInMonth
+                          ? context.appColors.primaryTextColor
+                          : context.appColors.secondaryTextColor,
+                      highlightColor: context.appColors.primaryColor,
+                      tileColor: context.appColors.primaryColor,
+                      onTileTap: (event, date) {
+                        Get.bottomSheet(
+                          _buildEventDetailsSheet(event, isDark),
+                          isScrollControlled: true,
+                          barrierColor: Colors.black.withAlpha(150),
+                        );
+                      },
+                    );
+                  },
+                  weekDayBuilder: (day) {
+                    return Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(color: borderColor, width: 0.5.r),
+                      ),
+                      child: Text(
+                        ["M", "T", "W", "T", "F", "S", "S"][day],
+                        style: TextStyle(
+                          color: context.appColors.primaryTextColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    );
+                  },
+                  onCellTap: (events, date) {
+                    setState(() {
+                      _calendarSelectedDate = date;
+                      appointmentDate = date;
+                      dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(date);
+                    });
+                    
+                    if (events.isNotEmpty) {
+                      Get.bottomSheet(
+                        _buildEventDetailsSheet(events[0], isDark),
+                        isScrollControlled: true,
+                        barrierColor: Colors.black.withAlpha(150),
+                      );
+                    }
+                  },
+                  onEventTap: (event, date) {
+                    Get.bottomSheet(
+                      _buildEventDetailsSheet(event, isDark),
+                      isScrollControlled: true,
+                      barrierColor: Colors.black.withAlpha(150),
+                    );
+                  },
+                  headerStyle: HeaderStyle(
+                    headerTextStyle: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.sp,
+                      letterSpacing: 0.5,
+                    ),
+                    decoration: const BoxDecoration(color: Colors.transparent),
+                    leftIconConfig: IconDataConfig(color: textColor),
+                    rightIconConfig: IconDataConfig(color: textColor),
                   ),
                 ),
-              );
-            },
-            onCellTap: (events, date) {
-              setState(() {
-                _calendarSelectedDate = date;
-                appointmentDate = date;
-                dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(date);
-              });
-              
-              if (events.isNotEmpty) {
-                Get.bottomSheet(
-                  _buildEventDetailsSheet(events[0], isDark),
-                  isScrollControlled: true,
-                  barrierColor: Colors.black.withAlpha(150),
-                );
-              }
-            },
-            onEventTap: (event, date) {
-              Get.bottomSheet(
-                _buildEventDetailsSheet(event, isDark),
-                isScrollControlled: true,
-                barrierColor: Colors.black.withAlpha(150),
-              );
-            },
-            headerStyle: HeaderStyle(
-              headerTextStyle: TextStyle(
-                color: textColor,
-                fontWeight: FontWeight.w500,
-                fontSize: 18.sp,
-                letterSpacing: 0.5,
               ),
-              decoration: const BoxDecoration(color: Colors.transparent),
-              leftIconConfig: IconDataConfig(color: textColor),
-              rightIconConfig: IconDataConfig(color: textColor),
             ),
           ),
         ),
       ),
     );
+
   }
 
   Widget _buildEventDetailsSheet(

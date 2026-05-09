@@ -6,11 +6,13 @@ class ChatStatusState extends MessageState {
   final bool isTyping;
   final bool isOnline;
   final String? targetUserId;
+  final bool isConnected;
 
   ChatStatusState({
     this.isTyping = false,
     this.isOnline = false,
     this.targetUserId,
+    this.isConnected = false,
   });
 }
 

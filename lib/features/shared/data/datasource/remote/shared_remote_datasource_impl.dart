@@ -207,6 +207,29 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
     }
   }
 
+  void _handleDioError(Object e) {
+    if (e is DioException) {
+      if (e.type == DioExceptionType.badResponse) {
+        final response = e.response;
+        if (response != null && response.data != null) {
+          final data = response.data;
+          if (data is Map) {
+            if (data.containsKey('non_field_errors')) {
+              throw data['non_field_errors'][0];
+            } else if (data.containsKey('detail')){
+              throw data['detail'];
+            } else if (data.containsKey('error')){
+              throw data['error'];
+            }
+          } else if (data is List && data.isNotEmpty) {
+            throw data[0].toString();
+          }
+        }
+      }
+    }
+    throw e;
+  }
+
   @override
   Future<bool> updateUserType(String userType, String service) async {
     try {
@@ -216,13 +239,9 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
         data: json.encode({"user_type": userType, "catalog_service": service}),
         options: Options(headers: dioHeaders(token)),
       );
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return true;
-      }
-      return false;
+      return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (e) {
-      if (e is DioException) {}
-
+      _handleDioError(e);
       return false;
     }
   }

@@ -9,6 +9,13 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/services_model.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart'
+    hide
+        ChooseOtherServiceEvent,
+        OtherServiceSelectState,
+        SelectImageFromCameraEvent,
+        SelectImageFromGalleryEvent;
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
@@ -64,7 +71,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     context.read<CommonBloc>().add(GetServicesEvent());
     context.read<SeekerBloc>().add(ChooseOtherServiceEvent(other: false));
     context.read<SeekerBloc>().add(ClearImageEvent());
-    
+
     final commonState = context.read<CommonBloc>().state;
     if (commonState is MapLocationState) {
       locController.text = commonState.address;
@@ -116,8 +123,8 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 if (_pendingRequest != null) {
                   _pendingRequest!.serviceID = state.id ?? serviceType;
                   context.read<SeekerBloc>().add(
-                        CreateRequestEvent(request: _pendingRequest!),
-                      );
+                    CreateRequestEvent(request: _pendingRequest!),
+                  );
                   _pendingRequest = null;
                 }
               }
@@ -141,7 +148,11 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 });
               }
               if (state is FailureCreateRequestState) {
-                customAlert(context, AlertType.error, state.message ?? "Failed to create request");
+                customAlert(
+                  context,
+                  AlertType.error,
+                  state.message ?? "Failed to create request",
+                );
               }
             },
           ),
@@ -151,20 +162,35 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             return BlocBuilder<CommonBloc, CommonState>(
               builder: (context, commonState) {
                 return LoadingView(
-                  isLoading: (seekerState is LoadingSeekerState) || (commonState is CommonLoading),
+                  isLoading:
+                      (seekerState is LoadingSeekerState) ||
+                      (commonState is CommonLoading),
                   child: GradientBackground(
                     child: SafeArea(
                       child: Center(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(maxWidth: 550.w),
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isLargeScreen ? 32.w : 20.w,
-                              vertical: 24.h,
-                            ),
-                            child: FadeTransition(
-                              opacity: _fadeAnimation,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              context.read<ProfileBloc>().add(
+                                GetProfileStreamEvent(),
+                              );
+                              context.read<ProfileBloc>().add(
+                                GetProfileEvent(),
+                              );
+                              context.read<CommonBloc>().add(
+                                GetServicesEvent(),
+                              );
+                              await Future.delayed(const Duration(seconds: 1));
+                            },
+                            child: SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isLargeScreen ? 32.w : 20.w,
+                                vertical: 24.h,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -173,18 +199,30 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                                   RequestFormWidget(
                                     formKey: key,
                                     titleController: titleTextController,
-                                    descriptionController: descriptionTextController,
-                                    serviceTextController: serviceTextController,
+                                    descriptionController:
+                                        descriptionTextController,
+                                    serviceTextController:
+                                        serviceTextController,
                                     locController: locController,
-                                    scheduledTimeController: scheduledTimeController,
-                                    servicePicker: _buildServicePicker(commonState),
-                                    isOtherServiceSelected: context.watch<SeekerBloc>().state is OtherServiceSelectState &&
-                                              (context.watch<SeekerBloc>().state as OtherServiceSelectState).others,
-                                    onLocationTap: () => _showLocationSheet(context),
-                                    onScheduleTap: () => _selectDateTime(context),
+                                    scheduledTimeController:
+                                        scheduledTimeController,
+                                    servicePicker: _buildServicePicker(
+                                      commonState,
+                                    ),
+                                    isOtherServiceSelected:
+                                        context.watch<SeekerBloc>().state
+                                            is OtherServiceSelectState &&
+                                        (context.watch<SeekerBloc>().state
+                                                as OtherServiceSelectState)
+                                            .others,
+                                    onLocationTap: () =>
+                                        _showLocationSheet(context),
+                                    onScheduleTap: () =>
+                                        _selectDateTime(context),
                                     imageSelector: _buildImageSelector(),
                                     submitButtonLabel: "CREATE REQUEST",
-                                    onSubmit: () => _handleCreateRequest(context),
+                                    onSubmit: () =>
+                                        _handleCreateRequest(context),
                                   ),
                                 ],
                               ),
@@ -207,15 +245,32 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     return Row(
       children: [
         GestureDetector(
-          onTap: () => Navigator.pop(context),
+          onTap: () {
+            if (Navigator.of(context).canPop()) {
+              Get.back();
+            } else {
+              
+                context.read<SeekerBloc>().add(
+                  ChangeSeekerTabEvent(tabIndex: 1),
+                );
+              
+            }
+          },
           child: Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: context.appColors.glassBorder),
+              border: Border.all(
+                color: context.appColors.glassBorder,
+                width: 1.5.r,
+              ),
             ),
-            child: Icon(FontAwesomeIcons.chevronLeft, size: 20.r),
+            child: Icon(
+              FontAwesomeIcons.chevronLeft,
+              color: context.appColors.primaryTextColor,
+              size: 16.r,
+            ),
           ),
         ),
         SizedBox(width: 16.w),
@@ -231,9 +286,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
     );
   }
 
-
   Widget _buildServicePicker(CommonState state) {
-    final services = state is SuccessGetServicesState ? state.services : <Service>[];
+    final services = state is SuccessGetServicesState
+        ? state.services
+        : <Service>[];
     return GestureDetector(
       onTap: () {
         showServiceSelector(
@@ -245,10 +301,14 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               serviceType = id;
               selectedService = name;
             });
-            context.read<SeekerBloc>().add(ChooseOtherServiceEvent(other: false));
+            context.read<SeekerBloc>().add(
+              ChooseOtherServiceEvent(other: false),
+            );
           },
           onOthersSelected: () {
-            context.read<SeekerBloc>().add(ChooseOtherServiceEvent(other: true));
+            context.read<SeekerBloc>().add(
+              ChooseOtherServiceEvent(other: true),
+            );
           },
         );
       },
@@ -261,17 +321,27 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
         ),
         child: Row(
           children: [
-            Icon(FontAwesomeIcons.briefcase, color: context.appColors.primaryColor, size: 20.r),
+            Icon(
+              FontAwesomeIcons.briefcase,
+              color: context.appColors.primaryColor,
+              size: 20.r,
+            ),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 selectedService ?? "Select a service",
                 style: TextStyle(
-                  color: selectedService == null ? context.appColors.hintTextColor : context.appColors.primaryTextColor,
+                  color: selectedService == null
+                      ? context.appColors.hintTextColor
+                      : context.appColors.primaryTextColor,
                 ),
               ),
             ),
-            Icon(FontAwesomeIcons.chevronDown, size: 16.r, color: context.appColors.hintTextColor),
+            Icon(
+              FontAwesomeIcons.chevronDown,
+              size: 16.r,
+              color: context.appColors.hintTextColor,
+            ),
           ],
         ),
       ),
@@ -301,7 +371,9 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
             pickedTime.hour,
             pickedTime.minute,
           );
-          scheduledTimeController.text = DateFormat('yyyy-MM-dd HH:mm').format(selectedScheduledTime!);
+          scheduledTimeController.text = DateFormat(
+            'yyyy-MM-dd HH:mm',
+          ).format(selectedScheduledTime!);
         });
       }
     }
@@ -356,8 +428,12 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
         serviceID: serviceType,
         scheduledTime: selectedScheduledTime!,
         address: locController.text.trim(),
-        latitude: (_useMap && _mapLocation != null) ? _mapLocation!.latitude : userLoc.position.latitude,
-        longitude: (_useMap && _mapLocation != null) ? _mapLocation!.longitude : userLoc.position.longitude,
+        latitude: (_useMap && _mapLocation != null)
+            ? _mapLocation!.latitude
+            : userLoc.position.latitude,
+        longitude: (_useMap && _mapLocation != null)
+            ? _mapLocation!.longitude
+            : userLoc.position.longitude,
         targetProviderId: widget.targetProviderId,
         withImage: context.read<SeekerBloc>().selectedPicture != null,
       );
@@ -381,9 +457,11 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
 
   // ignore: unused_element
   void _createRequest(String id) {
-     if (_pendingRequest != null) {
+    if (_pendingRequest != null) {
       _pendingRequest!.serviceID = id;
-      context.read<SeekerBloc>().add(CreateRequestEvent(request: _pendingRequest!));
+      context.read<SeekerBloc>().add(
+        CreateRequestEvent(request: _pendingRequest!),
+      );
       _pendingRequest = null;
     }
   }

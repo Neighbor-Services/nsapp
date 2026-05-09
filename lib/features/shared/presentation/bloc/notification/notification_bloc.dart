@@ -70,10 +70,24 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
 
     on<SendNotificationEvent>((event, emit) {
+      final model = event.notificationModel;
+      
+      // If a userId is provided, sync it to the backend as well
+      if (model.userId != null) {
+        add(AddNotificationEvent(
+          notification: not.Notification(
+            title: model.title,
+            message: model.body,
+            notificationType: "SYSTEM",
+            targetUserId: model.userId,
+          )
+        ));
+      }
+
       LocalNotificationService.showNotification(
         id: DateTime.now().microsecondsSinceEpoch % 1000000,
-        title: event.notificationModel.title ?? "New Notification",
-        body: event.notificationModel.body ?? "",
+        title: model.title ?? "New Notification",
+        body: model.body ?? "",
       );
     });
   }

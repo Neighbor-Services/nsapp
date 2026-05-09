@@ -206,6 +206,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
 
     on<GetPopularProvidersEvent>((event, emit) async {
       debugPrint("SeekerBloc: Fetching popular providers...");
+      emit(PopularProvidersLoadingState());
       final results = await getPopularProviderRequestUseCase(event);
       results.fold(
         (l) {
@@ -287,6 +288,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         priceMax: event.priceMax,
         categoryName: event.categoryName,
         serviceName: event.serviceName,
+        serviceId: event.serviceId,
         city: event.city,
       ));
       results.fold(

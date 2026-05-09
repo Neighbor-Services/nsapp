@@ -41,7 +41,10 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
 
     // Use the existing search logic with category name filter
     context.read<SeekerBloc>().add(
-      SearchProviderEvent(serviceName: widget.serviceName),
+      SearchProviderEvent(
+        serviceName: widget.serviceName,
+        serviceId: widget.serviceId,
+      ),
     );
 
     // Listen for state changes
@@ -66,7 +69,13 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.back();
+                        if (Navigator.of(context).canPop()) {
+                          Get.back();
+                        } else {
+                          context.read<SeekerBloc>().add(
+                                ChangeSeekerTabEvent(tabIndex: 1),
+                              );
+                        }
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -120,7 +129,12 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async {
-                    context.read<SeekerBloc>().add(SearchProviderEvent());
+                    context.read<SeekerBloc>().add(
+                          SearchProviderEvent(
+                            serviceName: widget.serviceName,
+                            serviceId: widget.serviceId,
+                          ),
+                        );
                     context.read<ProfileBloc>().add(GetProfileStreamEvent());
                     context.read<ProfileBloc>().add(GetProfileEvent());
                     await Future.delayed(const Duration(seconds: 1));
