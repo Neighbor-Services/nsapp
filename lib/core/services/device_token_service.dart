@@ -12,11 +12,22 @@ class DeviceTokenService {
   static void initialize() {
     // Both iOS and Android can use FirebaseMessaging.instance.getToken()
     // once APNs is properly configured in the Firebase Console for iOS.
-    FirebaseMessaging.instance.getToken().then((token) async {
-      if (token != null) {
-        final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
-        debugPrint("DEBUG [Dart]: Received FCM token from $platform: $token");
-        await _handleTokenUpdate(token, platform);
+    Future(() async {
+      try {
+        if (Platform.isIOS) {
+          final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+          if (apnsToken == null) {
+            debugPrint("DEBUG [Dart]: APNS token is null. FCM token request may fail.");
+          }
+        }
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
+          debugPrint("DEBUG [Dart]: Received FCM token from $platform: $token");
+          await _handleTokenUpdate(token, platform);
+        }
+      } catch (e) {
+        debugPrint("DEBUG [Dart]: Error fetching FCM token: $e");
       }
     });
 
@@ -25,6 +36,8 @@ class DeviceTokenService {
       final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
       debugPrint("DEBUG [Dart]: FCM token refreshed: $token");
       await _handleTokenUpdate(token, platform);
+    }).onError((error) {
+      debugPrint("DEBUG [Dart]: Error on token refresh: $error");
     });
   }
 
