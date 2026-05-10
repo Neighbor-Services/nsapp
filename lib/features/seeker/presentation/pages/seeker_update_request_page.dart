@@ -44,7 +44,6 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   Request? _pendingRequest;
 
   late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
   bool _useMap = false;
   LatLng? _mapLocation;
   bool _isProvider = false;
@@ -60,10 +59,6 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _fadeController.forward();
 
     final currentState = context.read<SeekerBloc>().state;

@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';

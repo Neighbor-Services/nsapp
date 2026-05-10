@@ -15,7 +15,6 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart'
         OtherServiceSelectState,
         SelectImageFromCameraEvent,
         SelectImageFromGalleryEvent;
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
@@ -56,7 +55,6 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   Request? _pendingRequest;
 
   late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
   bool _useMap = false;
   LatLng? _mapLocation;
 
@@ -81,10 +79,6 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _fadeController.forward();
 
     if (widget.initialServiceId != null) {

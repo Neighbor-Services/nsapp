@@ -552,52 +552,52 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
     );
   }
 
-  Widget _buildStatusBadge(String status) {
-    Color color;
-    IconData icon;
-    switch (status.toUpperCase()) {
-      case 'DONE':
-        color = context.appColors.infoColor;
-        icon = FontAwesomeIcons.circleCheck;
-        break;
-      case 'IN_PROGRESS':
-        color = context.appColors.warningColor;
-        icon = FontAwesomeIcons.hourglass;
-        break;
-      case 'CANCELLED':
-        color = context.appColors.errorColor;
-        icon = FontAwesomeIcons.circleXmark;
-        break;
-      default:
-        color = context.appColors.successColor;
-        icon = FontAwesomeIcons.certificate;
-    }
+  // Widget _buildStatusBadge(String status) {
+  //   Color color;
+  //   IconData icon;
+  //   switch (status.toUpperCase()) {
+  //     case 'DONE':
+  //       color = context.appColors.infoColor;
+  //       icon = FontAwesomeIcons.circleCheck;
+  //       break;
+  //     case 'IN_PROGRESS':
+  //       color = context.appColors.warningColor;
+  //       icon = FontAwesomeIcons.hourglass;
+  //       break;
+  //     case 'CANCELLED':
+  //       color = context.appColors.errorColor;
+  //       icon = FontAwesomeIcons.circleXmark;
+  //       break;
+  //     default:
+  //       color = context.appColors.successColor;
+  //       icon = FontAwesomeIcons.certificate;
+  //   }
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: color.withAlpha(150), width: 1.5.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14.r, color: color),
-          SizedBox(width: 6.w),
-          Text(
-            status.toUpperCase(),
-            style: TextStyle(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w500,
-              color: color,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+  //     decoration: BoxDecoration(
+  //       color: context.appColors.cardBackground,
+  //       borderRadius: BorderRadius.circular(10.r),
+  //       border: Border.all(color: color.withAlpha(150), width: 1.5.r),
+  //     ),
+  //     child: Row(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Icon(icon, size: 14.r, color: color),
+  //         SizedBox(width: 6.w),
+  //         Text(
+  //           status.toUpperCase(),
+  //           style: TextStyle(
+  //             fontSize: 10.sp,
+  //             fontWeight: FontWeight.w500,
+  //             color: color,
+  //             letterSpacing: 0.5,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 

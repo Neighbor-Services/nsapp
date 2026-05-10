@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 const String domaineUrl = "https://neighborservice.com";
 const String baseUrl = "$domaineUrl/api/v1";
