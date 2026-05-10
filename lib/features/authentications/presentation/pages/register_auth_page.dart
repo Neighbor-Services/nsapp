@@ -99,7 +99,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                     Get.offAllNamed("/home");
                   }
                 } else {
-                  Get.offAllNamed("/add-profile");
+                  Get.offAllNamed("/add-profile");S
                 }
               }
               if (state is FailureGetProfileState) {

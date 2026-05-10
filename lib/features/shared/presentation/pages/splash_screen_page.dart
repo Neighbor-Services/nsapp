@@ -157,7 +157,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       listener: (context, state) async {
         if (state is SuccessGetProfileState) {
           final profile = state.profile;
-          if (profile.firstName != null) {
+          if (profile.firstName != null || profile.phone != null || profile.phone != "") {
             bool isProvider = Helpers.isProvider(profile.userType);
             if (isProvider) {
               context.read<SettingsBloc>().add(
