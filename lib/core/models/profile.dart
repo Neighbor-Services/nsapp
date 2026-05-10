@@ -227,6 +227,7 @@ class Profile {
     data['subscription_tier'] = subscriptionTier ?? 'NONE';
     data['preferred_payment_mode'] = preferredPaymentMode ?? 'ON_SITE';
     
+    data.removeWhere((key, value) => value == null);
     return data;
   }
 }

@@ -321,6 +321,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                   ],
                                   defaultSelected: _userType == 'provider' ? userTypeProvider : userTypeSeeker,
                                   onValueChanged: (val) {
+                                    setState(() {
+                                      _userType = val;
+                                    });
                                     context.read<ProfileBloc>().add(
                                       SetUserTypeEvent(
                                         userType: Helpers.isProvider(val)

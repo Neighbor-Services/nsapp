@@ -293,7 +293,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       final String deviceToken = await Helpers.getToken();
       final token = await Helpers.getString("token");
-      Map<String, dynamic> data = {"token": deviceToken};
+      Map<String, dynamic> data = {"device_token": deviceToken};
       final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
         options: Options(headers: dioHeaders(token)),

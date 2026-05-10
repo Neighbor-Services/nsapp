@@ -17,7 +17,8 @@ class DeviceTokenService {
         if (Platform.isIOS) {
           final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
           if (apnsToken == null) {
-            debugPrint("DEBUG [Dart]: APNS token is null. FCM token request may fail.");
+            debugPrint("DEBUG [Dart]: APNS token is null. Skipping FCM token request to prevent exception.");
+            return;
           }
         }
         final token = await FirebaseMessaging.instance.getToken();
