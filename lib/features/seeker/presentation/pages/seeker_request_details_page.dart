@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/request_accept.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/core/models/request_data.dart';
@@ -315,7 +316,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             SizedBox(width: 16.w),
                             Expanded(
                               child: SolidButton(
-                                label: "Confirm & Approve",
+                                label: "",
+                                icon: FontAwesomeIcons.check,
                                 onPressed: tempSelectedDate == null
                                     ? null
                                     : () {
@@ -1324,20 +1326,22 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           final userId = user?.id ?? provider?.id ?? "unknown";
 
           if (requestId.isNotEmpty && proposalId != null) {
-            final requestObj = acceptedProvider.acceptance?.request;
-            final scheduledTime = requestObj?.scheduledTime;
-            final now = DateTime.now();
-            
-            if (scheduledTime != null && scheduledTime.isBefore(now)) {
-              // Store pending approval parameters
-              _pendingApproval = RequestAccept(
-                serviceRequestId: requestId,
-                proposalId: proposalId,
-                uid: userId,
-              );
-              // Show prompt dialog to reschedule before proceeding
-              _showReschedulePromptDialog(context, requestObj);
-              return;
+            final requestObj = _cachedRequestData?.request;
+            if (requestObj != null) {
+              final scheduledTime = requestObj.scheduledTime;
+              final now = DateTime.now();
+              
+              if (scheduledTime != null && scheduledTime.isBefore(now)) {
+                // Store pending approval parameters
+                _pendingApproval = RequestAccept(
+                  serviceRequestId: requestId,
+                  proposalId: proposalId,
+                  uid: userId,
+                );
+                // Show prompt dialog to reschedule before proceeding
+                _showReschedulePromptDialog(context, requestObj);
+                return;
+              }
             }
 
             context.read<SeekerBloc>().add(
