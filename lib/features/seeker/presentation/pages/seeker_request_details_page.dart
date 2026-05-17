@@ -41,6 +41,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
   late TextEditingController amountController;
   late GlobalKey<FormState> formKey;
   RequestData? _cachedRequestData;
+  RequestAccept? _pendingApproval;
 
   @override
   void initState() {
@@ -131,6 +132,241 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
         ),
       ),
     );
+  void _showReschedulePromptDialog(BuildContext context, Request request) {
+    DateTime? tempSelectedDate;
+    final textColor = context.appColors.primaryTextColor;
+    final hintColor = context.appColors.hintTextColor;
+    final borderColor = context.appColors.glassBorder;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Center(
+              child: FadeInUp(
+                duration: const Duration(milliseconds: 300),
+                child: Material(
+                  color: Colors.transparent,
+                  child: SolidContainer(
+                    padding: EdgeInsets.all(24.r),
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    borderRadius: BorderRadius.circular(28.r),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16.r),
+                          decoration: BoxDecoration(
+                            color: context.appColors.warningColor.withAlpha(30),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            FontAwesomeIcons.clock,
+                            color: context.appColors.warningColor,
+                            size: 36.r,
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+                        Text(
+                          "Schedule Time Due",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          "The scheduled time for this request has passed. Please select a new date and time before you accept the provider.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: textColor.withAlpha(160),
+                            fontSize: 13.sp,
+                            height: 1.5,
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+                        GestureDetector(
+                          onTap: () async {
+                            DateTime? date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now().add(const Duration(minutes: 5)),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2100),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: ColorScheme.dark(
+                                      primary: context.appColors.primaryColor,
+                                      onPrimary: Colors.white,
+                                      surface: context.appColors.cardBackground,
+                                      onSurface: textColor,
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            if (date != null) {
+                              if (!context.mounted) return;
+                              TimeOfDay? time = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                                builder: (context, child) {
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      colorScheme: ColorScheme.dark(
+                                        primary: context.appColors.primaryColor,
+                                        onPrimary: Colors.white,
+                                        surface: context.appColors.cardBackground,
+                                        onSurface: textColor,
+                                      ),
+                                    ),
+                                    child: child!,
+                                  );
+                                },
+                              );
+                              if (time != null) {
+                                setDialogState(() {
+                                  tempSelectedDate = DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    time.hour,
+                                    time.minute,
+                                  );
+                                });
+                              }
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                            decoration: BoxDecoration(
+                              color: context.appColors.cardBackground,
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: tempSelectedDate != null
+                                    ? context.appColors.primaryColor
+                                    : borderColor,
+                                width: 1.5.r,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.calendarDay,
+                                  color: tempSelectedDate != null
+                                      ? context.appColors.primaryColor
+                                      : hintColor,
+                                  size: 18.r,
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Text(
+                                    tempSelectedDate != null
+                                        ? DateFormat("EEEE, MMM dd, yyyy | h:mm a").format(tempSelectedDate!)
+                                        : "Select New Date & Time",
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: tempSelectedDate != null
+                                          ? FontWeight.w600
+                                          : FontWeight.w400,
+                                      color: tempSelectedDate != null
+                                          ? textColor
+                                          : hintColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 28.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  _pendingApproval = null;
+                                  Navigator.of(dialogContext).pop();
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    side: BorderSide(color: borderColor),
+                                  ),
+                                ),
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: textColor.withAlpha(200),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16.w),
+                            Expanded(
+                              child: SolidButton(
+                                label: "Confirm & Approve",
+                                onPressed: tempSelectedDate == null
+                                    ? null
+                                    : () {
+                                        final updatedRequest = Request(
+                                          id: request.id,
+                                          title: request.title,
+                                          description: request.description,
+                                          userId: request.userId,
+                                          service: request.service,
+                                          serviceID: request.serviceID,
+                                          approved: request.approved,
+                                          address: request.address,
+                                          longitude: request.longitude,
+                                          latitude: request.latitude,
+                                          withImage: request.withImage,
+                                          done: request.done,
+                                          imageUrl: request.imageUrl,
+                                          approvedUser: request.approvedUser,
+                                          createdAt: request.createdAt,
+                                          updatedAt: request.updatedAt,
+                                          version: request.version,
+                                          distance: request.distance,
+                                          status: request.status,
+                                          proposalsCount: request.proposalsCount,
+                                          appointmentId: request.appointmentId,
+                                          isFunded: request.isFunded,
+                                          price: request.price,
+                                          targetProviderId: request.targetProviderId,
+                                          paymentMode: request.paymentMode,
+                                          scheduledTime: tempSelectedDate,
+                                        );
+                                        Navigator.of(dialogContext).pop();
+                                        context.read<SeekerBloc>().add(
+                                              UpdateRequestEvent(request: updatedRequest),
+                                            );
+                                      },
+                                height: 50.h,
+                                color: context.appColors.primaryColor,
+                                textColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -160,7 +396,9 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 current is SeekerRequestDetailState ||
                 current is SuccessMarkAsDoneState ||
                 current is SuccessApprovedProviderState ||
-                current is SuccessCancelApprovedProviderState,
+                current is SuccessCancelApprovedProviderState ||
+                current is SuccessUpdateRequestState ||
+                current is FailureUpdateRequestState,
             listener: (context, state) {
               if (state is SuccessDeleteRequestState) {
                 context.push('/seeker-requests');
@@ -221,6 +459,33 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               }
               if (state is FailureMarkAsDoneState) {
                 customAlert(context, AlertType.error, state.message ?? "Failed to mark as done");
+              }
+              if (state is SuccessUpdateRequestState) {
+                final requestId = widget.requestData?.request?.id ?? widget.requestId ?? "";
+                if (requestId.isNotEmpty) {
+                  context.read<SeekerBloc>().add(ReloadRequestEvent(request: requestId));
+                }
+                if (_pendingApproval != null) {
+                  final pending = _pendingApproval!;
+                  _pendingApproval = null;
+                  context.read<SeekerBloc>().add(
+                    ApprovedRequestEvent(requestAccept: pending),
+                  );
+                } else {
+                  customAlert(
+                    context,
+                    AlertType.success,
+                    "Service Rescheduled Successfully",
+                  );
+                }
+              }
+              if (state is FailureUpdateRequestState) {
+                _pendingApproval = null;
+                customAlert(
+                  context,
+                  AlertType.error,
+                  state.message ?? "Rescheduling Failed",
+                );
               }
             },
             builder: (context, state) {
@@ -1057,6 +1322,22 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           final userId = user?.id ?? provider?.id ?? "unknown";
 
           if (requestId.isNotEmpty && proposalId != null) {
+            final requestObj = acceptedProvider.acceptance?.request;
+            final scheduledTime = requestObj?.scheduledTime;
+            final now = DateTime.now();
+            
+            if (scheduledTime != null && scheduledTime.isBefore(now)) {
+              // Store pending approval parameters
+              _pendingApproval = RequestAccept(
+                serviceRequestId: requestId,
+                proposalId: proposalId,
+                uid: userId,
+              );
+              // Show prompt dialog to reschedule before proceeding
+              _showReschedulePromptDialog(context, requestObj);
+              return;
+            }
+
             context.read<SeekerBloc>().add(
               ApprovedRequestEvent(
                 requestAccept: RequestAccept(
