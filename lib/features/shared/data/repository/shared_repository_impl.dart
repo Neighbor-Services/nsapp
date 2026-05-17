@@ -36,25 +36,31 @@ class SharedRepositoryImpl extends SharedRepository {
   }
 
   @override
-  Future<Either<Failure, List<NotificationData>>> getMyNotifications() async {
+  Future<Either<Failure, List<NotificationData>>> getMyNotifications({int page = 1}) async {
     try {
-      final results = await datasource.getMyNotifications();
+      final results = await datasource.getMyNotifications(page: page);
       if (results != null) {
-        await hiveService
-            .getBox(HiveService.settingsBox)
-            .put('my_notifications', results);
+        if (page == 1) {
+          await hiveService
+              .getBox(HiveService.settingsBox)
+              .put('my_notifications', results);
+        }
         return Right(results);
       }
-      final cached = hiveService
-          .getBox(HiveService.settingsBox)
-          .get('my_notifications');
-      if (cached != null) return Right(List<NotificationData>.from(cached));
+      if (page == 1) {
+        final cached = hiveService
+            .getBox(HiveService.settingsBox)
+            .get('my_notifications');
+        if (cached != null) return Right(List<NotificationData>.from(cached));
+      }
       return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      final cached = hiveService
-          .getBox(HiveService.settingsBox)
-          .get('my_notifications');
-      if (cached != null) return Right(List<NotificationData>.from(cached));
+      if (page == 1) {
+        final cached = hiveService
+            .getBox(HiveService.settingsBox)
+            .get('my_notifications');
+        if (cached != null) return Right(List<NotificationData>.from(cached));
+      }
       return Left(Failure(message: "An error occurred"));
     }
   }

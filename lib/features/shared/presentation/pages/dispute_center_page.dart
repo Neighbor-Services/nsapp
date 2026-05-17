@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/constants/urls.dart';
@@ -117,8 +118,8 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // close dialog
-                  Navigator.pop(context); // close dispute page
+                  context.pop(); // close dialog
+                  context.pop(); // close dispute page
                 },
                 child: Text('OK', style: TextStyle(color: context.appColors.primaryColor)),
               )

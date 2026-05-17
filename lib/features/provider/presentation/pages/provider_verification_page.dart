@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -43,7 +44,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () => context.pop(),
           child: Container(
             margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
@@ -121,7 +122,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                             AlertType.success,
                             "Documents submitted for review",
                           );
-                          Get.back();
+                          context.pop();
                         },
                 ),
               ],

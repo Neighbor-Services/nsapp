@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nsapp/core/routes/app_router.dart';
 
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' hide GetAppointmentsEvent;
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' as provider_bloc show GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' hide GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as seeker_bloc show GetAppointmentsEvent;
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
 
 /// Holds a pending notification payload that arrived when the app was
 /// terminated or in the background, so the home screen can act on it
@@ -43,8 +42,14 @@ class NotificationNavigator {
 
   /// Determine whether we can navigate right now (home page is in the stack).
   static bool get _isHomeReady {
-    final current = Get.currentRoute;
-    return current == '/home' || current.startsWith('/app/');
+    final context = rootNavigatorKey.currentContext;
+    if (context == null) return false;
+    try {
+      final location = GoRouterState.of(context).matchedLocation;
+      return location == '/home' || location.startsWith('/app/');
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Navigate immediately or stash for later consumption by the home screen.
@@ -74,9 +79,9 @@ class NotificationNavigator {
   }
 
   static Future<void> _navigate(Map<String, dynamic> data) async {
-    final context = Get.context;
+    final context = rootNavigatorKey.currentContext;
     if (context == null) {
-      debugPrint("DEBUG [NotificationNavigator]: Get.context is null, cannot navigate.");
+      debugPrint("DEBUG [NotificationNavigator]: rootNavigatorKey context is null, cannot navigate.");
       return;
     }
 
@@ -87,10 +92,9 @@ class NotificationNavigator {
       "DEBUG [NotificationNavigator]: Navigating for type=$type, request_id=$requestId",
     );
 
-    // Make sure we are actually on the home route layout before dispatching tab events
-    if (Get.currentRoute != '/home' && !Get.currentRoute.startsWith('/app/')) {
-      Get.until((route) => route.settings.name == '/home');
-    }
+    // If we are not on home, we might need to go there first. 
+    // However, context.go('/home') might clear the stack. 
+    // For now, we'll assume the home is ready as per _isHomeReady check.
 
     final isProvider = context.read<SettingsBloc>().state.isProvider;
 
@@ -112,15 +116,15 @@ class NotificationNavigator {
             context.read<ProviderBloc>().add(
                   GetRequestDetailEvent(id: requestId),
                 );
-            Get.to(() => const ProviderRequestDetailPage());
+            context.push('/app/provider/requests/$requestId');
           } else {
-            Get.to(() => const SeekerRequestPage());
+            context.push('/seeker-requests');
           }
         } else {
           if (isProvider) {
             context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 3));
           } else {
-            Get.to(() => const SeekerRequestPage());
+            context.push('/seeker-requests');
           }
         }
         break;
@@ -131,7 +135,7 @@ class NotificationNavigator {
           context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 5));
         } else {
           context.read<SeekerBloc>().add(seeker_bloc.GetAppointmentsEvent());
-          Get.to(() => const SeekerRequestPage());
+          context.push('/seeker-requests');
         }
         break;
 

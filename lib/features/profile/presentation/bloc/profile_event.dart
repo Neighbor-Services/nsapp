@@ -87,4 +87,10 @@ class InitiateBackgroundCheckEvent extends ProfileEvent {
   InitiateBackgroundCheckEvent({required this.paymentIntentId});
 }
 
+class CreateStripeCustomerEvent extends ProfileEvent {
+  final String userId;
+  CreateStripeCustomerEvent({required this.userId});
+}
+
+
 

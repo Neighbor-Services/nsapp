@@ -7,6 +7,7 @@ import 'package:nsapp/core/helpers/use_case.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
+import 'package:nsapp/core/models/user.dart';
 import 'package:nsapp/core/models/rate.dart';
 import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/request_accept.dart';
@@ -222,10 +223,29 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     });
 
     on<AddToFavoriteEvent>((event, emit) async {
+      // Optimistic Update: Add a temporary favorite object
+      final tempFavorite = Favorite(
+        id: "temp_${event.userId}",
+        favoriteUser: Profile(
+          id: event.userId,
+          user: User(id: event.userId),
+        ),
+      );
+      _myFavorites.add(tempFavorite);
+      emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+
       final results = await addToFavoriteUseCase(event.userId);
       results.fold(
-        (l) => emit(FailureAddToFavoriteState(message: l.message)),
+        (l) {
+          // Rollback on failure
+          _myFavorites.removeWhere((f) => f.id == "temp_${event.userId}");
+          emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+          emit(FailureAddToFavoriteState(message: l.message));
+        },
         (r) {
+          // Success: No need to reload full list immediately unless we need more data
+          // But we should replace the temp ID with the real one if possible, 
+          // or just trigger a background refresh.
           add(GetMyFavoritesEvent());
           emit(SuccessAddToFavoriteState());
         },
@@ -233,11 +253,26 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     });
 
     on<RemoveFromFavoriteEvent>((event, emit) async {
+      // Optimistic Update: Remove from local list
+      final removedIndex = _myFavorites.indexWhere((f) => f.id == event.userId);
+      Favorite? removedFavorite;
+      if (removedIndex != -1) {
+        removedFavorite = _myFavorites.removeAt(removedIndex);
+      }
+      emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+
       final results = await removeFromFavoriteUseCase(event.userId);
       results.fold(
-        (l) => emit(FailureRemoveFromFavoriteState(message: l.message)),
+        (l) {
+          // Rollback on failure
+          if (removedFavorite != null) {
+            _myFavorites.add(removedFavorite);
+            emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+          }
+          emit(FailureRemoveFromFavoriteState(message: l.message));
+        },
         (r) {
-          add(GetMyFavoritesEvent());
+          // Success
           emit(SuccessRemoveFromFavoriteState());
         },
       );

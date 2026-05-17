@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -138,7 +138,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                 );
                 Future.delayed(const Duration(seconds: 3), () {
                   context.read<SeekerBloc>().add(GetMyRequestEvent());
-                  Get.offAllNamed("/home");
+                  context.go('/home');
                 });
               }
               if (state is FailureCreateRequestState) {
@@ -241,7 +241,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
         GestureDetector(
           onTap: () {
             if (Navigator.of(context).canPop()) {
-              Get.back();
+              context.pop();
             } else {
               
                 context.read<SeekerBloc>().add(
@@ -374,8 +374,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   }
 
   void _showLocationSheet(BuildContext context) {
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
@@ -395,7 +397,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
                     locController.text = loc.address;
                   });
                 }
-                Get.back();
+                Navigator.of(context).pop();
               },
             ),
             ListTile(
@@ -403,8 +405,8 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               title: const Text("Pick from Map"),
               onTap: () {
                 context.read<CommonBloc>().add(UseMapEvent(useMap: true));
-                Get.back();
-                Get.toNamed("map-location");
+                Navigator.of(context).pop();
+                context.push('/map-location');
               },
             ),
           ],
@@ -508,8 +510,10 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
   }
 
   void _showImageSourceSheet(BuildContext context) {
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
@@ -523,7 +527,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               title: const Text("Camera"),
               onTap: () {
                 context.read<SeekerBloc>().add(SelectImageFromCameraEvent());
-                Get.back();
+                Navigator.of(context).pop();
               },
             ),
             ListTile(
@@ -531,7 +535,7 @@ class _SeekerNewRequestPageState extends State<SeekerNewRequestPage>
               title: const Text("Gallery"),
               onTap: () {
                 context.read<SeekerBloc>().add(SelectImageFromGalleryEvent());
-                Get.back();
+                Navigator.of(context).pop();
               },
             ),
           ],

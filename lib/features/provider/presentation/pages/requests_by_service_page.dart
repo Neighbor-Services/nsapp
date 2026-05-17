@@ -1,14 +1,14 @@
-import 'package:get/get.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -70,7 +70,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.back();
+                        context.pop();
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -235,7 +235,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: request.id!),
           );
-          Get.to(() => const ProviderRequestDetailPage());
+          context.push('/app/provider/requests/${request.id}', extra: requestData);
         },
       child: SolidContainer(
         padding: EdgeInsets.all(16.r),

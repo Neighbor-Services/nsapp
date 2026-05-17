@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -61,9 +61,9 @@ class _WalletPageState extends State<WalletPage> {
               onTap: () {
                 if (state is SuccessGetProfileState &&
                     Helpers.isProvider(state.profile.userType)) {
-                  Get.back();
+                  context.pop();
                 } else {
-                  Get.back();
+                  context.pop();
                 }
               },
               child: Container(
@@ -419,7 +419,7 @@ class _WalletPageState extends State<WalletPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: Text(
               "CANCEL",
               style: TextStyle(
@@ -437,7 +437,7 @@ class _WalletPageState extends State<WalletPage> {
                 context.read<WalletBloc>().add(
                   RequestPayoutEvent(amount: amount),
                 );
-                Navigator.pop(context);
+                context.pop();
               }
             },
             label: "Confirm",
@@ -503,7 +503,7 @@ class _WalletPageState extends State<WalletPage> {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(dialogContext),
+                    onPressed: () => context.pop(),
                     child: Text(
                       "Cancel",
                       style: TextStyle(
@@ -513,7 +513,7 @@ class _WalletPageState extends State<WalletPage> {
                   ),
                   SolidButton(
                     onPressed: () {
-                      Navigator.pop(dialogContext);
+                      context.pop();
                       context.read<WalletBloc>().add(
                         CreateConnectAccountEvent(),
                       );

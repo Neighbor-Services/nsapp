@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -48,12 +49,13 @@ class ProviderListItem extends StatelessWidget {
                   (profile.profilePictureUrl != null &&
                       profile.profilePictureUrl != "" &&
                       profile.profilePictureUrl != "picture")
-                  ? Image.network(
-                      profile.profilePictureUrl!,
+                  ? CachedNetworkImage(
+                      imageUrl: profile.profilePictureUrl!,
                       width: 80.w,
                       height: 80.h,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, _, _) => Image.asset(
+                      placeholder: (context, url) => Container(width: 80.w, height: 80.h, color: Colors.grey[200]),
+                      errorWidget: (context, url, error) => Image.asset(
                         logo2Assets,
                         width: 80.w,
                         height: 80.h,

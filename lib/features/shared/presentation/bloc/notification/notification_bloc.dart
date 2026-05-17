@@ -1,5 +1,5 @@
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/notification.dart' as not;
 import 'package:nsapp/features/shared/domain/usecase/add_notification_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_notifications_use_case.dart';
@@ -11,7 +11,7 @@ import 'package:nsapp/core/services/local_notification_service.dart';
 part 'notification_event.dart';
 part 'notification_state.dart';
 
-class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
+class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState> {
   final AddNotificationUseCase addNotificationUseCase;
   final GetMyNotificationsUseCase getMyNotificationsUseCase;
   final SetSeenNotificationUseCase seenNotificationUseCase;
@@ -33,24 +33,90 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
 
     on<GetMyNotificationsEvent>((event, emit) async {
-      final results = await getMyNotificationsUseCase(null);
+      final results = await getMyNotificationsUseCase(event.page);
       results.fold(
         (l) => emit(NotificationFailure(l.message)),
         (r) {
           emit(SuccessGetMyNotificationsState(
             notifications: r,
             unreadCount: r.where((n) => n.notification?.isRead == false).length,
+            hasReachedMax: r.length < 10, // Assuming PAGE_SIZE is 10
+            currentPage: event.page,
           ));
         },
       );
     }, transformer: sequential());
 
+    on<LoadMoreNotificationsEvent>((event, emit) async {
+      final currentState = state;
+      if (currentState is SuccessGetMyNotificationsState && !currentState.hasReachedMax) {
+        final results = await getMyNotificationsUseCase(event.page);
+        results.fold(
+          (l) => emit(NotificationFailure(l.message)),
+          (r) {
+            if (r.isEmpty) {
+              emit(SuccessGetMyNotificationsState(
+                notifications: currentState.notifications,
+                unreadCount: currentState.unreadCount,
+                hasReachedMax: true,
+                currentPage: currentState.currentPage,
+              ));
+            } else {
+              final updatedNotifications = List<not.NotificationData>.from(currentState.notifications)..addAll(r);
+              emit(SuccessGetMyNotificationsState(
+                notifications: updatedNotifications,
+                unreadCount: updatedNotifications.where((n) => n.notification?.isRead == false).length,
+                hasReachedMax: r.length < 10,
+                currentPage: event.page,
+              ));
+            }
+          },
+        );
+      }
+    }, transformer: sequential());
+
     on<SetNotificationSeenEvent>((event, emit) async {
+      final currentState = state;
+      if (currentState is SuccessGetMyNotificationsState) {
+        // Optimistic update
+        final updatedNotifications = currentState.notifications.map((n) {
+          if (n.notification?.id == event.notificationID) {
+            // Create a new notification object with isRead = true
+            final updatedNotif = not.Notification(
+              id: n.notification?.id,
+              notificationType: n.notification?.notificationType,
+              title: n.notification?.title,
+              message: n.notification?.message,
+              data: n.notification?.data,
+              isRead: true,
+              createdAt: n.notification?.createdAt,
+            );
+            return not.NotificationData(
+              notification: updatedNotif,
+              from: n.from,
+              to: n.to,
+            );
+          }
+          return n;
+        }).toList();
+
+        emit(SuccessGetMyNotificationsState(
+          notifications: updatedNotifications,
+          unreadCount: (currentState.unreadCount - 1).clamp(0, 999),
+          hasReachedMax: currentState.hasReachedMax,
+          currentPage: currentState.currentPage,
+        ));
+      }
+
       final results = await seenNotificationUseCase(event.notificationID);
       results.fold(
-        (l) => emit(NotificationFailure(l.message)),
-        (r) {
+        (l) {
+          // If server fails, we refresh to get the true state
           add(GetMyNotificationsEvent());
+          emit(NotificationFailure(l.message));
+        },
+        (r) {
+          // No need to reload full list on success as we already updated optimistically
           emit(SuccessSetSeentState());
         },
       );
@@ -90,5 +156,38 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         body: model.body ?? "",
       );
     });
+  }
+
+  @override
+  NotificationState? fromJson(Map<String, dynamic> json) {
+    try {
+      if (json['notifications'] != null) {
+        final notifications = (json['notifications'] as List)
+            .map((e) => not.NotificationData.fromJson(e))
+            .toList();
+        return SuccessGetMyNotificationsState(
+          notifications: notifications,
+          unreadCount: json['unreadCount'] ?? 0,
+          hasReachedMax: json['hasReachedMax'] ?? false,
+          currentPage: json['currentPage'] ?? 1,
+        );
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(NotificationState state) {
+    if (state is SuccessGetMyNotificationsState) {
+      return {
+        'notifications': state.notifications.map((e) => e.toJson()).toList(),
+        'unreadCount': state.unreadCount,
+        'hasReachedMax': state.hasReachedMax,
+        'currentPage': state.currentPage,
+      };
+    }
+    return null;
   }
 }

@@ -1,10 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'dart:io';
 
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/services_model.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
@@ -204,7 +206,7 @@ class _EditProfilePageState extends State<EditProfilePage>
             
             Future.delayed(const Duration(seconds: 2), () {
               if (mounted) {
-                Navigator.pop(context);
+                context.pop();
               }
             });
           }
@@ -251,7 +253,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(12.r),
                           decoration: BoxDecoration(
@@ -383,7 +385,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                             CustomSegmentedControl<String>(
                               buttonLables: const ["MALE", "FEMALE"],
                               buttonValues: const ["Male", "Female"],
-                              defaultSelected: gender.capitalizeFirst ?? "Male",
+                              defaultSelected: gender.isNotEmpty 
+                                  ? "${gender[0].toUpperCase()}${gender.substring(1).toLowerCase()}" 
+                                  : "Male",
                               onValueChanged: (val) {
                                 setState(() => gender = val.toUpperCase());
                               },
@@ -548,7 +552,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     if (_currentProfile?.profilePictureUrl != null &&
         _currentProfile!.profilePictureUrl!.isNotEmpty &&
         !_currentProfile!.profilePictureUrl!.startsWith("file:///")) {
-      return NetworkImage(_currentProfile!.profilePictureUrl!);
+      return CachedNetworkImageProvider(_currentProfile!.profilePictureUrl!);
     }
     return const AssetImage(logo2Assets) as ImageProvider;
   }
@@ -651,8 +655,11 @@ class _EditProfilePageState extends State<EditProfilePage>
 
   void _showImageSourceSheet(BuildContext context) {
     final handleColor = context.appColors.glassBorder;
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
@@ -676,7 +683,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               label: "Choose from Gallery",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromGalleryEvent());
-                Get.back();
+                context.pop();
               },
             ),
             SizedBox(height: 12.h),
@@ -685,7 +692,7 @@ class _EditProfilePageState extends State<EditProfilePage>
               label: "Take a Photo",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromCameraEvent());
-                Get.back();
+                context.pop();
               },
             ),
             SizedBox(height: 20.h),
@@ -732,8 +739,11 @@ class _EditProfilePageState extends State<EditProfilePage>
 
   void _showLocationSheet(BuildContext context) {
     final handleColor = context.appColors.glassBorder;
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
@@ -763,11 +773,11 @@ class _EditProfilePageState extends State<EditProfilePage>
                   if (mounted) {
                     context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
                     locController.text = userLocation.address;
-                    Get.back();
+                    context.pop();
                   }
                 } else {
                   if (mounted) {
-                    Get.back();
+                    context.pop();
                     customAlert(context, AlertType.error, "Unable to get location.");
                   }
                 }
@@ -779,10 +789,10 @@ class _EditProfilePageState extends State<EditProfilePage>
               label: "Choose from Map",
               onTap: () {
                 context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
-                Get.back();
+                context.pop();
                 context.read<CommonBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
-                Get.toNamed("map-location")?.then((result) {
+                context.push("/map-location").then((result) {
                   if (result != null && result is String) {
                     locController.text = result;
                   }

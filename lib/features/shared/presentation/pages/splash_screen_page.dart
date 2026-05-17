@@ -3,7 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -55,7 +55,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       if (attempt < 2) await Future.delayed(const Duration(milliseconds: 800));
     }
     if (!hasInternet) {
-      Get.offAllNamed('/no-internet');
+      context.go('/no-internet');
       return;
     }
 
@@ -74,14 +74,14 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         final password = await Helpers.getString("password");
 
         if (email.isNotEmpty && password.isNotEmpty) {
-          Get.offAllNamed('/biometric');
+          context.go('/biometric');
           return;
         }
       }
 
       await Future.delayed(const Duration(seconds: 3));
       if (mounted) {
-        Get.offAllNamed('/login');
+        context.go('/login');
       }
     }
   }
@@ -167,24 +167,24 @@ class _SplashScreenPageState extends State<SplashScreenPage>
             
             final usebiometric = await Helpers.getBool("usebiometric");
             if (isProvider && profile.isIdentityVerified != true) {
-              Get.offAllNamed("/home");
-              //  Get.offAllNamed("/pending-verification");
+              context.go('/home');
+              //  context.go("/pending-verification");
             } else if (usebiometric) {
               context.read<SettingsBloc>().add(
                 UseBiometricEvent(useBiometric: true),
               );
-              Get.offAllNamed('/biometric');
+              context.go('/biometric');
             } else {
               context.read<SettingsBloc>().add(
                 UseBiometricEvent(useBiometric: false),
               );
-              Get.offAllNamed("/home");
+              context.go("/home");
             }
           } else {
-            Get.offAllNamed('/add-profile');
+            context.go('/add-profile');
           }
         } else if (state is FailureGetProfileState) {
-          Get.offAllNamed('/add-profile');
+          context.go('/add-profile');
         }
       },
       child: Scaffold(

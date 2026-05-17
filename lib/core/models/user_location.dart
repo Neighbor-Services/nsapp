@@ -56,4 +56,38 @@ class UserLocation {
       zipCode: zipCode ?? this.zipCode,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'latitude': position.latitude,
+      'longitude': position.longitude,
+      'address': address,
+      'city': city,
+      'state': state,
+      'country': country,
+      'zipCode': zipCode,
+    };
+  }
+
+  factory UserLocation.fromJson(Map<String, dynamic> json) {
+    return UserLocation(
+      position: Position(
+        latitude: json['latitude'] ?? 0.0,
+        longitude: json['longitude'] ?? 0.0,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
+      ),
+      address: json['address'] ?? "",
+      city: json['city'] ?? "",
+      state: json['state'] ?? "",
+      country: json['country'] ?? "",
+      zipCode: json['zipCode'] ?? "",
+    );
+  }
 }

@@ -1,15 +1,13 @@
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_more_requests_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_search_request_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_targeted_requests_page.dart';
 import 'package:nsapp/features/provider/presentation/widgets/provider_recent_request_widget.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
@@ -19,7 +17,6 @@ import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart'
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
-import 'package:nsapp/features/wallet/presentation/pages/wallet_page.dart';
 
 import '../bloc/provider_bloc.dart';
 
@@ -31,7 +28,7 @@ class ProviderHomePage extends StatefulWidget {
 }
 
 class _ProviderHomePageState extends State<ProviderHomePage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   bool _isSubscriptionValid = false;
@@ -62,6 +59,9 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     super.dispose();
   }
 
+  @override
+  bool get wantKeepAlive => true;
+
   Widget _buildAnimatedSection(int index, Widget child) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
@@ -82,6 +82,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -102,12 +103,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               current is LoadingProfileState ||
               current is InitialProfileState,
           builder: (context, profileState) {
-            Profile? profile;
-            if (profileState is SuccessGetProfileState) {
-              profile = profileState.profile;
-            } else if (profileState is SuccessGetProfileStreamState) {
-              profile = profileState.profile;
-            }
+            final profile = profileState.profile;
 
             return GradientBackground(
               child: SafeArea(
@@ -128,6 +124,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                           await Future.delayed(const Duration(seconds: 1));
                         },
                         child: ListView(
+                          key: const PageStorageKey('provider_home_list'),
                           physics: const BouncingScrollPhysics(
                             parent: AlwaysScrollableScrollPhysics(),
                           ),
@@ -138,8 +135,8 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                         children: [
                           _buildAnimatedSection(0, _buildHeader(context)),
                           SizedBox(height: 16.h),
-                          _buildAnimatedSection(1, _buildGamificationBar(context, profile)),
-                          SizedBox(height: 24.h),
+                          // _buildAnimatedSection(1, _buildGamificationBar(context, profile)),
+                          // SizedBox(height: 24.h),
 
                           // Performance Dashboard
                           _buildAnimatedSection(2, _buildDashboard(context, isLargeScreen)),
@@ -205,12 +202,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     ? walletState.wallet
                     : null;
                 
-                Profile? profile;
-                if (profileState is SuccessGetProfileState) {
-                  profile = profileState.profile;
-                } else if (profileState is SuccessGetProfileStreamState) {
-                  profile = profileState.profile;
-                }
+                Profile? profile = profileState.profile;
 
                 if (profile == null) return const SizedBox.shrink();
 
@@ -256,7 +248,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                             ),
                             GestureDetector(
                               onTap: () {
-                                Get.to(() => const WalletPage());
+                                  context.push("/wallet");
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -341,12 +333,8 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         current is SuccessGetProfileState || 
         current is SuccessGetProfileStreamState,
       builder: (context, state) {
-        String name = "Neighbor";
-        if (state is SuccessGetProfileState) {
-          name = state.profile.firstName ?? "Neighbor";
-        } else if (state is SuccessGetProfileStreamState) {
-          name = state.profile.firstName ?? "Neighbor";
-        }
+        final profile = state.profile;
+        String name = profile?.firstName ?? "Neighbor";
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -371,7 +359,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
             GestureDetector(
               onTap: () {
                 HapticFeedback.mediumImpact();
-                Get.toNamed("/notifications");
+                context.push("/notifications");
               },
               child: Container(
                 padding: EdgeInsets.all(12.r),
@@ -415,7 +403,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         return GestureDetector(
           onTap: () {
             HapticFeedback.selectionClick();
-            Get.toNamed("/map-location");
+            context.push("/map-location");
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -641,7 +629,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     return GestureDetector(
       onTap: () {
         if (_isSubscriptionValid) {
-          Get.to(() => const ProviderSearchRequestPage());
+          context.push("/provider-search-request");
         } else {
           showDialog(
             context: context,
@@ -732,7 +720,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => const ProviderTargetedRequestsPage());
+        context.push("/provider-targeted-requests");
       },
       child: Container(
         padding: EdgeInsets.all(12.r),
@@ -795,7 +783,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     return GestureDetector(
       onTap: () {
         if (_isSubscriptionValid) {
-          Get.to(() => const ProviderMoreRequestsPage());
+          context.push("/provider-more-requests");
         } else {
           showDialog(
             context: context,
@@ -863,7 +851,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => const WalletPage());
+        context.push("/wallet");
       },
       child: Container(
         padding: EdgeInsets.all(12.r),

@@ -16,8 +16,8 @@ class AddProfileUseCase extends UseCase {
         (failure) => left(failure),
         (success) => right(success),
       );
-    } on Exception {
-      return left(Failure(message: 'Failed to add profile'));
+    } catch (e) {
+      return left(Failure(message: e.toString().replaceAll("Exception: ", "")));
     }
   }
 }

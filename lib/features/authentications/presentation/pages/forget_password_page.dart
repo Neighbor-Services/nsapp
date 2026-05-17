@@ -1,7 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -80,7 +80,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
             );
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                Get.offAndToNamed("/login");
+                context.go("/login");
               }
             });
           }
@@ -101,7 +101,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                       child: Row(
                         children: [
                           IconButton(
-                            onPressed: () => Get.back(),
+                            onPressed: () => context.pop(),
                             icon: Container(
                               padding: EdgeInsets.all(8.r),
                               decoration: BoxDecoration(

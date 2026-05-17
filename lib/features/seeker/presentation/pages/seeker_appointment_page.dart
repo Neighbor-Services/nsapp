@@ -2,7 +2,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -14,10 +14,7 @@ import '../../../shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/appointment.dart';
 import '../../../../core/models/request_data.dart';
-import '../../../../features/shared/presentation/pages/create_dispute_page.dart';
-import '../../../../features/shared/presentation/pages/live_tracking_page.dart';
 import 'package:nsapp/core/core.dart';
-import 'seeker_request_details_page.dart';
 
 class SeekerAppointmentPage extends StatefulWidget {
   const SeekerAppointmentPage({super.key});
@@ -119,7 +116,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                     GestureDetector(
                                       onTap: () {
                                         if (Navigator.of(context).canPop()) {
-                                          Get.back();
+                                          context.pop();
                                         } else {
                                           context.read<SeekerBloc>().add(
                                               ChangeSeekerTabEvent(tabIndex: 1));
@@ -328,8 +325,11 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.glassBorder;
 
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
@@ -519,7 +519,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                         alignment: Alignment.centerRight,
                         child: TextButton.icon(
                           onPressed: () {
-                            Get.back();
+                            Navigator.of(context).pop();
                             RequestData request = RequestData(
                               request: req,
                               user: appointmentData.user,
@@ -533,7 +533,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                 SeekerRequestDetailEvent(request: request),
                               );
 
-                              Get.to(() => SeekerRequestDetailsPage(requestData: request));
+                              context.push('/app/requests/${request.request?.id}', extra: request);
                              
                             } else {
                               customAlert(context, AlertType.error, "You are not authorized to view this request");
@@ -572,15 +572,10 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           element.appointment?.id == data[0].event.toString(),
                     );
                     if (appointmentData.appointment != null) {
-                      Get.back();
-                      Get.to(
-                        () => LiveTrackingPage(
-                          appointmentId: appointmentData.appointment!.id!,
-                          providerName:
-                              "${appointmentData.user?.firstName ?? ''} ${appointmentData.user?.lastName ?? ''}"
-                                  .trim(),
-                        ),
-                      );
+                      Navigator.of(context).pop();
+                      context.push('/live-tracking/${appointmentData.appointment!.id}', extra: {
+                        'providerName': "${appointmentData.user?.firstName ?? ''} ${appointmentData.user?.lastName ?? ''}".trim(),
+                      });
                     }
                   } catch (e) {
                     debugPrint("Appointment not found: $e");
@@ -597,7 +592,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               SizedBox(height: 16.h),
               SolidButton(
                 onPressed: () {
-                  Get.back();
+                  Navigator.of(context).pop();
                   _handleAddToCalendar(data[0].event.toString(), appointments);
                 },
                 icon: FontAwesomeIcons.calendarCheck,
@@ -619,15 +614,10 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       final providerName =
                           "${dataApp.user?.firstName ?? ''} ${dataApp.user?.lastName ?? ''}"
                               .trim();
-                      Get.to(
-                        () => CreateDisputePage(
-                          appointmentId: dataApp.appointment!.id!,
-                          providerName: providerName.isNotEmpty
-                              ? providerName
-                              : "Provider",
-                          defendantId: dataApp.user?.id,
-                        ),
-                      );
+                      context.push('/create-dispute/${dataApp.appointment!.id}', extra: {
+                        'providerName': providerName.isNotEmpty ? providerName : "Provider",
+                        'defendantId': dataApp.user?.id,
+                      });
                     }
                   } catch (e) {
                     debugPrint("Appointment not found: $e");
@@ -646,7 +636,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                   context.read<SeekerBloc>().add(
                     CancelAppointmentEvent(id: data[0].event.toString()),
                   );
-                  Get.back();
+                  Navigator.of(context).pop();
                 },
                 label: "CANCEL APPOINTMENT",
                 isPrimary: true,
@@ -660,7 +650,6 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
           ),
         ),
       ),
-      isScrollControlled: true,
     );
   }
 

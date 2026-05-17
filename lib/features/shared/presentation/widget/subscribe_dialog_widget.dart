@@ -1,8 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:nsapp/core/core.dart';
-import '../pages/subscription_page.dart';
 
 class SubscribeDialogWidget extends StatelessWidget {
   const SubscribeDialogWidget({super.key});
@@ -71,7 +71,7 @@ class SubscribeDialogWidget extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextButton(
-                        onPressed: () => Get.back(),
+                        onPressed: () => context.pop(),
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                         ),
@@ -89,8 +89,8 @@ class SubscribeDialogWidget extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          Get.back();
-                          Get.to(() => const SubscriptionPage());
+                          context.pop();
+                          context.push('/subscription');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: context.appColors.warningColor,

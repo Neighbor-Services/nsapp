@@ -1,24 +1,19 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_live_tracking_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/dispute_center_page.dart';
 
 class AppointmentDetailBottomSheet extends StatefulWidget {
   final AppointmentData data;
@@ -101,7 +96,7 @@ class _AppointmentDetailBottomSheetState
       _isEditing = false;
     });
 
-    Navigator.pop(context);
+    context.pop();
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text("Updating appointment...")));
@@ -286,11 +281,10 @@ class _AppointmentDetailBottomSheetState
             GestureDetector(
               onTap: () {
                 if (user == null) return;
-                // Capture BLoC reference before Get.back() unmounts the context
                 final messageBloc = context.read<MessageBloc>();
-                Get.back();
+                context.pop();
                 messageBloc.add(SetMessageReceiverEvent(profile: user));
-                Get.to(() => const ChatPage());
+                context.push("/chat");
               },
               child: _buildInfoSection(
                 context,
@@ -350,14 +344,14 @@ class _AppointmentDetailBottomSheetState
               if (appt.status == 'SCHEDULED' || appt.status == 'IN_PROGRESS') ...[
                 SolidButton(
                   onPressed: () {
-                    Get.back();
-                    Get.to(() => SeekerLiveTrackingPage(
-                      appointmentId: appt.id ?? '',
-                      jobLocation: LatLng(
+                    context.pop();
+                    context.push('/live-tracking', extra: {
+                      'appointmentId': appt.id ?? '',
+                      'jobLocation': LatLng(
                         double.tryParse(widget.data.user?.latitude ?? '0.0') ?? 0.0,
                         double.tryParse(widget.data.user?.longitude ?? '0.0') ?? 0.0,
                       )
-                    ));
+                    });
                   },
                   label: 'LIVE TRACKING',
                   icon: FontAwesomeIcons.locationDot,
@@ -542,7 +536,7 @@ class _AppointmentDetailBottomSheetState
                   onPressed: () {
                     final req = appt.serviceRequest;
                     if (req == null) return;
-                    // Capture all BLoC state BEFORE Get.back() dismisses this sheet
+                    // Capture all BLoC state BEFORE context.pop() dismisses this sheet
                     // and unmounts its context.
                     final settingsState = context.read<SettingsBloc>().state;
                     final profileState = context.read<ProfileBloc>().state;
@@ -551,7 +545,7 @@ class _AppointmentDetailBottomSheetState
                     final isProvider = settingsState.isProvider;
                     final profile = profileState is SuccessGetProfileState ? profileState.profile : null;
 
-                    Get.back();
+                    context.pop();
 
                     if (req.userId == profile?.user?.id && !isProvider) {
                       final requestData = RequestData(
@@ -561,7 +555,7 @@ class _AppointmentDetailBottomSheetState
                       seekerBloc.add(
                         SeekerRequestDetailEvent(request: requestData),
                       );
-                      Get.to(() => SeekerRequestDetailsPage(requestData: requestData));  
+                      context.push('/app/requests/${req.id}', extra: requestData);  
                     } else if (isProvider) {
                       final requestData = RequestData(
                         request: req,
@@ -573,7 +567,7 @@ class _AppointmentDetailBottomSheetState
                       providerBloc.add(
                         ReloadProfileEvent(request: requestData.request!.id!),
                       );
-                      Get.to(() => const ProviderRequestDetailPage());
+                      context.push('/app/provider/requests/${req.id}', extra: requestData);
                     }
                   },
                   icon: Icon(
@@ -622,7 +616,7 @@ class _AppointmentDetailBottomSheetState
             else
               SolidButton(
                 label: "CLOSE",
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => context.pop(),
                 isPrimary: false,
                 color: context.appColors.hintTextColor,
                 textColor: Colors.white,
@@ -633,12 +627,12 @@ class _AppointmentDetailBottomSheetState
             if (appt.status != 'CANCELLED' && appt.status != 'RESOLVED') ...[
                SolidButton(
                   onPressed: () {
-                    Get.back(); // close bottom sheet
-                    Get.to(() => DisputeCenterPage(
-                      appointment: appt,
-                      currentUser: widget.data.user!,
-                      otherUser: user!,
-                    ));
+                    context.pop(); // close bottom sheet
+                    context.push("/dispute-center", extra: {
+                      'appointment': appt,
+                      'currentUser': widget.data.user!,
+                      'otherUser': user!,
+                    });
                   },
                   label: 'RAISE DISPUTE',
                   icon: FontAwesomeIcons.circleExclamation,

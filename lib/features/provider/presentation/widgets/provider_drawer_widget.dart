@@ -1,23 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
-import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
-import 'package:nsapp/features/profile/presentation/pages/add_about_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_active_tasks_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
-import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/subscription_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/disputes_list_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
-import '../../../wallet/presentation/pages/wallet_page.dart';
 import '../bloc/provider_bloc.dart';
-import '../pages/provider_appointment_list_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderDrawerWidget extends StatelessWidget {
@@ -82,7 +73,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "My Jobs",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const ProviderAcceptedRequestPage());
+                                context.push('/provider-jobs');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -93,7 +84,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Active Tasks",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const ProviderActiveTasksPage());
+                                context.push('/provider-tasks');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -104,7 +95,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Appointments",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const ProviderAppointmentListPage());
+                                context.push('/app/appointments');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -115,7 +106,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Subscription",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const SubscriptionPage());
+                                context.push('/subscription');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -126,7 +117,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                                 icon: FontAwesomeIcons.wallet,
                                 title: "Wallet",
                                 onTap: () {
-                                  Get.to(() => const WalletPage());
+                                  context.push('/wallet');
                                   Navigator.pop(context);
                                 },
                                 isDark: isDark,
@@ -138,7 +129,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Disputes",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const DisputesListPage());
+                                context.push('/dispute');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -155,7 +146,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Portfolio",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => AboutPage(profile: profile));
+                                context.push('/portfolio-view', extra: profile);
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -166,7 +157,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "About",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const AddAboutPage());
+                                context.push('/edit-portfolio');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -177,7 +168,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Settings",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const SettingsPage());
+                                context.push('/settings');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -188,7 +179,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Report Issue",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const ReportPage());
+                                context.push('/report');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -236,14 +227,14 @@ class ProviderDrawerWidget extends StatelessWidget {
                       (profile.profilePictureUrl != null &&
                           profile.profilePictureUrl!.isNotEmpty &&
                           !profile.profilePictureUrl!.startsWith("file:///"))
-                      ? NetworkImage(profile.profilePictureUrl!)
+                      ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                       : const AssetImage(logo2Assets) as ImageProvider,
                 ),
               ),
               const Spacer(),
               _buildIconButton(context, FontAwesomeIcons.penToSquare, () {
                 Navigator.pop(context);
-                Get.toNamed("/edit-profile");
+                context.push("/edit-profile");
               }, isDark),
             ],
           ),
@@ -431,7 +422,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: TextButton(
-                              onPressed: () => Get.back(),
+                              onPressed: () => context.pop(),
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
                                   vertical: 12.h,
@@ -461,7 +452,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                                 context.read<AuthenticationBloc>().add(
                                   LogoutAuthenticationEvent(),
                                 );
-                                Get.offAllNamed("/login");
+                                context.go("/login");
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.appColors.errorColor,

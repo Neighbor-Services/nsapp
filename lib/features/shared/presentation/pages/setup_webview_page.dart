@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SetupWebviewPage extends StatefulWidget {
-  const SetupWebviewPage({super.key});
+  final String? url;
+  const SetupWebviewPage({super.key, this.url});
 
   @override
   State<SetupWebviewPage> createState() => _SetupWebviewPageState();
@@ -17,8 +18,8 @@ class _SetupWebviewPageState extends State<SetupWebviewPage> {
   void initState() {
     super.initState();
     // URL is passed as a route argument when navigating to this page.
-    // e.g., Get.toNamed('/stripe-account', arguments: accountLink.url)
-    final String? url = Get.arguments as String?;
+    // e.g., context.push('/stripe-account', extra: accountLink.url)
+    final String? url = widget.url;
     
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)

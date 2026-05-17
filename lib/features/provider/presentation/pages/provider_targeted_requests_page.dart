@@ -1,12 +1,12 @@
-import 'package:get/get.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -81,7 +81,7 @@ class _ProviderTargetedRequestsPageState
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () => context.pop(),
           child: Container(
             margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
@@ -266,7 +266,7 @@ class _ProviderTargetedRequestsPageState
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: data.request?.id ?? ""),
           );
-          Get.to(() => const ProviderRequestDetailPage());
+          context.push('/app/provider/requests/${data.request!.id}', extra: data);
         },
         child: Padding(
           padding: EdgeInsets.only(bottom: 16.h),

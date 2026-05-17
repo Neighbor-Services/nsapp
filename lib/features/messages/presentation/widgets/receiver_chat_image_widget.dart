@@ -2,7 +2,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
@@ -82,7 +82,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
                       context.read<CommonBloc>().add(
                         SetViewImageEvent(url: finalUrl),
                       );
-                      Get.toNamed("/image");
+                      context.push("/image");
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(18.r),

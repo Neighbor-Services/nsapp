@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,9 +12,7 @@ import '../../../../core/models/notify.dart';
 import '../../../../core/models/profile.dart';
 import '../../../../core/models/favorite.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
-import '../../../profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 
 
@@ -58,6 +56,22 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
           if (state is SuccessGetMyFavoritesState) {
             setState(() {}); // Refresh to update favorite icons
           }
+          if (state is FailureAddToFavoriteState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to add favorite: ${state.message}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          if (state is FailureRemoveFromFavoriteState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to remove favorite: ${state.message}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         },
         builder: (context, state) {
           // Extract favorites list reactively for favorite checks
@@ -83,7 +97,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () => Get.back(),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(
@@ -243,7 +257,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
             providerUserId: profile.user!.id!,
           ),
         );
-      Get.to(() => AboutPage(profile: profile));
+      context.push('/portfolio-view', extra: profile);
       },
       child: SolidContainer(
         padding: EdgeInsets.zero,
@@ -506,12 +520,12 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
           providerUserId: profile.user!.id!,
         ),
       );
-      Get.to(() => AboutPage(profile: profile));
+      context.push('/portfolio-view', extra: profile);
     } else if (val == 2) {
       context.read<MessageBloc>().add(
         SetMessageReceiverEvent(profile: profile),
       );
-      Get.to(() => const ChatPage());
+      context.push('/chat');
     }
   }
 

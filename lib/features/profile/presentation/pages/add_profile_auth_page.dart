@@ -1,10 +1,11 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'dart:io';
 
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -115,12 +116,12 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                   const Duration(seconds: 3),
                   () {
                     if (mounted) {
-                      Get.offAllNamed("/home");
+                      context.go("/home");
                     }
                   },
                 );
               } else if (state is FailureCreateProfileState) {
-                customAlert(context, AlertType.error, "An error occurred");
+                customAlert(context, AlertType.error, state.message);
               }
             },
           ),
@@ -389,15 +390,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                         label: "Phone Number",
                                         prefixIcon: FontAwesomeIcons.phone,
                                         keyboardType: TextInputType.phone,
-                                        validator: (val) {
-                                          if (val!.isEmpty) {
-                                            return "Phone number is required";
-                                          }
-                                          if (!val.isPhoneNumber) {
-                                            return "Invalid phone number";
-                                          }
-                                          return null;
-                                        },
+                                        validator: (val) => ValidationUtil.validatePhone(val),
                                       ),
                                     ),
                                   ],
@@ -620,8 +613,11 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
   void _showImagePickerBottomSheet(BuildContext context) {
     final handleColor = context.appColors.glassBorder;
 
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
@@ -647,7 +643,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               label: "Choose from Gallery",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromGalleryEvent());
-                Get.back();
+                context.pop();
               },
             ),
             SizedBox(height: 16.h),
@@ -656,7 +652,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
               label: "Take a Photo",
               onTap: () {
                 context.read<ProfileBloc>().add(SelectImageFromCameraEvent());
-                Get.back();
+                context.pop();
               },
             ),
             SizedBox(height: 24.h),
@@ -669,8 +665,11 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
   void _showLocationBottomSheet(BuildContext context) {
     final handleColor = context.appColors.glassBorder;
 
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
         decoration: BoxDecoration(
           color: context.appColors.primaryBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
@@ -704,11 +703,11 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                   if (mounted) {
                     context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
                     locController.text = userLocation.address;
-                    Get.back();
+                    context.pop();
                   }
                 } else {
                   if (mounted) {
-                    Get.back();
+                    context.pop();
                     customAlert(
                       context,
                       AlertType.error,
@@ -726,10 +725,10 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                 context.read<s.SeekerBloc>().add(
                   s.ChangeLocationEvent(change: true),
                 );
-                Get.back();
+                context.pop();
                 context.read<CommonBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
-                Get.toNamed("map-location")?.then((result) {
+                context.push("/map-location").then((result) {
                   if (result != null && result is String) {
                     locController.text = result;
                   }

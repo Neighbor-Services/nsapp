@@ -5,14 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/helpers/helpers.dart';
@@ -101,7 +99,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                 GestureDetector(
                                   onTap: () {
                                     if (Navigator.of(context).canPop()) {
-                                      Get.back();
+                                      context.pop();
                                     } else {
                                       
                                         context.read<SeekerBloc>().add(
@@ -243,7 +241,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
           SeekerRequestDetailEvent(request: requestData),
         );
 
-        Get.to(() => SeekerRequestDetailsPage(requestData: requestData));
+        context.push('/app/requests/${requestData.request?.id}', extra: requestData);
       },
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
@@ -369,12 +367,12 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),
                             );
-                            Get.to(() => SeekerRequestDetailsPage(requestData: requestData));
+                            context.push('/app/requests/${requestData.request?.id}', extra: requestData);
                           } else if (val == 'edit') {
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),
                             );
-                            Get.to(() => const SeekerUpdateRequestPage());
+                            context.push('/update-request');
                           } else if (val == 'delete') {
                             context.read<SeekerBloc>().add(
                               DeleteRequestEvent(
@@ -484,7 +482,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                     if (val!.isEmpty) {
                                                       return "Required";
                                                     }
-                                                    if (!val.isNum) {
+                                                    if (double.tryParse(val) == null) {
                                                       return "Invalid";
                                                     }
                                                     return null;

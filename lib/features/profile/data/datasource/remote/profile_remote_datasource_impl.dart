@@ -41,7 +41,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final token = await Helpers.getString("token");
       final response = await _dio.post(
         "$baseUrl/accounts/profile/",
-        data: json.encode(profile.toJson()),
+        data: profile.toJson(),
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -65,10 +65,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (e is DioException) {
         final errorData = e.response?.data;
         debugPrint("ADD PROFILE ERROR: ${e.response?.statusCode} - $errorData");
+        throw Exception(errorData.toString());
       } else {
         debugPrint("ADD PROFILE UNKNOWN ERROR: $e");
+        throw Exception(e.toString());
       }
-      return false;
     }
 
   }
@@ -80,7 +81,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
         options: Options(headers: dioHeaders(token)),
-        data: json.encode(profile.toJson()),
+        data: profile.toJson(),
       );
       if (response.statusCode == 200) {
         if (profilePicturePath != null) {
@@ -182,7 +183,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final token = await Helpers.getString("token");
       final response = await _dio.post(
         "$baseUrl/accounts/about/",
-        data: json.encode(about.toJson()),
+        data: about.toJson(),
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201) {
@@ -224,7 +225,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       final response = await _dio.post(
         "$baseUrl/interactions/reviews/",
-        data: json.encode(review.toJson()),
+        data: review.toJson(),
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201) {
@@ -297,7 +298,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
         options: Options(headers: dioHeaders(token)),
-        data: json.encode(data),
+        data: data,
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
         return true;

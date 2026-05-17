@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
@@ -67,20 +69,10 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
               GetReviewsEvent(user: userId),
             );
           }
-          Get.snackbar(
-            "Success",
-            "Review sent",
-            colorText: Colors.white,
-            backgroundColor: context.appColors.successColor.withAlpha(150),
-          );
+          customAlert(context, AlertType.success, "Review sent");
         }
         if (state is FailureAddReviewState) {
-          Get.snackbar(
-            "Error",
-            "An error occurred",
-            colorText: Colors.white,
-            backgroundColor: context.appColors.errorColor.withAlpha(150),
-          );
+          customAlert(context, AlertType.error, "An error occurred");
         }
         if (state is PortfolioUserState) {
           String userId = state.userId;
@@ -150,7 +142,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                   ?.profilePictureUrl
                                                   ?.isNotEmpty ??
                                               false)
-                                          ? NetworkImage(
+                                          ? CachedNetworkImageProvider(
                                               review.from!.profilePictureUrl!,
                                             )
                                           : const AssetImage(logoAssets)

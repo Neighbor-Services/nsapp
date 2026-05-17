@@ -41,6 +41,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
   Profile? _cachedProfile;
   List<AuditLog> _cachedAuditLogs = [];
 
+  Profile? get currentProfile => _cachedProfile;
   List<AuditLog> get auditLogs => _cachedAuditLogs;
 
   ProfileBloc(
@@ -60,50 +61,50 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<SelectDateOfBirthEvent>((event, emit) async {
       final date = await Helpers.selectBirthDate(event.context);
       if (date != null) {
-        emit(DateOfBirthProfileState(dob: date));
+        emit(DateOfBirthProfileState(dob: date, profile: _cachedProfile));
       }
     });
     
     on<SelectImageFromGalleryEvent>((event, emit) async {
       final selectedImage = await Helpers.selectImageFromGallery();
       if (selectedImage != null) {
-        emit(ImageProfileState(profilePicture: selectedImage));
+        emit(ImageProfileState(profilePicture: selectedImage, profile: _cachedProfile));
       }
     });
 
     on<AboutUserEvent>((event, emit) async {
-      emit(PortfolioUserState(userId: event.userID));
+      emit(PortfolioUserState(userId: event.userID, profile: _cachedProfile));
     });
 
     on<SelectImagesFromGalleryEvent>((event, emit) async {
       final selectedImages = await Helpers.selectImagesFromGallery();
       if (selectedImages != null && selectedImages.isNotEmpty) {
-        emit(ImagesProfileState(images: selectedImages));
+        emit(ImagesProfileState(images: selectedImages, profile: _cachedProfile));
       }
     });
 
     on<SelectImageFromCameraEvent>((event, emit) async {
       final selectedImage = await Helpers.selectImageFromCamera();
       if (selectedImage != null) {
-        emit(ImageProfileState(profilePicture: selectedImage));
+        emit(ImageProfileState(profilePicture: selectedImage, profile: _cachedProfile));
       }
     });
 
     on<SetUserTypeEvent>((event, emit) async {
-      emit(UserTypeProfileState(userType: event.userType));
+      emit(UserTypeProfileState(userType: event.userType, profile: _cachedProfile));
     });
 
     on<AddProfileEvent>((event, emit) async {
-      emit(LoadingProfileState());
+      emit(LoadingProfileState(profile: _cachedProfile));
       final results = await addProfileUseCase.call(ProfileParams(
         profile: event.profile,
         profilePicturePath: event.profilePicturePath,
       ));
       results.fold(
-        (failure) => emit(FailureCreateProfileState(message: failure.message ?? 'Failed to create profile')),
+        (failure) => emit(FailureCreateProfileState(message: failure.message ?? 'Failed to create profile', profile: _cachedProfile)),
         (success) {
           _cachedProfile = event.profile;
-          emit(SuccessCreateProfileState());
+          emit(SuccessCreateProfileState(profile: _cachedProfile));
         },
       );
     });
@@ -111,49 +112,49 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<UpdateTokenEvent>((event, emit) async {
       final results = await updateDeviceTokenUseCase.call(event);
       results.fold(
-        (failure) => emit(FailureUpdateTokenState(message: failure.message ?? 'Failed to update token')),
-        (success) => emit(SuccessUpdateTokenState()),
+        (failure) => emit(FailureUpdateTokenState(message: failure.message ?? 'Failed to update token', profile: _cachedProfile)),
+        (success) => emit(SuccessUpdateTokenState(profile: _cachedProfile)),
       );
     });
 
     on<AddReviewEvent>((event, emit) async {
-      emit(LoadingProfileState());
+      emit(LoadingProfileState(profile: _cachedProfile));
       final results = await addReviewUseCase.call(event.review);
       results.fold(
-        (failure) => emit(FailureAddReviewState(message: failure.message ?? 'Failed to add review')),
-        (success) => emit(SuccessAddReviewState()),
+        (failure) => emit(FailureAddReviewState(message: failure.message ?? 'Failed to add review', profile: _cachedProfile)),
+        (success) => emit(SuccessAddReviewState(profile: _cachedProfile)),
       );
     });
 
     on<AddAboutEvent>((event, emit) async {
-      emit(LoadingProfileState());
+      emit(LoadingProfileState(profile: _cachedProfile));
       final results = await addAboutUseCase.call(event.about);
       results.fold(
-        (failure) => emit(FailureAddAboutState(message: failure.message ?? 'Failed to add about')),
-        (success) => emit(SuccessAddAboutState()),
+        (failure) => emit(FailureAddAboutState(message: failure.message ?? 'Failed to add about', profile: _cachedProfile)),
+        (success) => emit(SuccessAddAboutState(profile: _cachedProfile)),
       );
     });
 
     on<DeleteAboutUserEvent>((event, emit) async {
-      emit(LoadingProfileState());
+      emit(LoadingProfileState(profile: _cachedProfile));
       final results = await deleteAboutUseCase.call(event.id);
       results.fold(
-        (failure) => emit(FailureDeleteAboutState(message: failure.message ?? 'Failed to delete about')),
-        (success) => emit(SuccessDeleteAboutState()),
+        (failure) => emit(FailureDeleteAboutState(message: failure.message ?? 'Failed to delete about', profile: _cachedProfile)),
+        (success) => emit(SuccessDeleteAboutState(profile: _cachedProfile)),
       );
     });
 
     on<UpdateProfileEvent>((event, emit) async {
-      emit(LoadingProfileState());
+      emit(LoadingProfileState(profile: _cachedProfile));
       final results = await updateProfileUseCase.call(ProfileParams(
         profile: event.profile,
         profilePicturePath: event.profilePicturePath,
       ));
       results.fold(
-        (failure) => emit(FailureUpdateProfileState(message: failure.message ?? 'Failed to update profile')),
+        (failure) => emit(FailureUpdateProfileState(message: failure.message ?? 'Failed to update profile', profile: _cachedProfile)),
         (success) {
           _cachedProfile = event.profile;
-          emit(SuccessUpdateProfileState());
+          emit(SuccessUpdateProfileState(profile: _cachedProfile));
         },
       );
     });
@@ -199,10 +200,10 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
       final results = await getAboutUseCase.call(event.user);
       results.fold(
         (failure) {
-          emit(FailureGetAboutState(message: failure.message ?? 'Failed to fetch about info'));
+          emit(FailureGetAboutState(message: failure.message ?? 'Failed to fetch about info', profile: _cachedProfile));
         },
         (success) {
-          emit(SuccessGetAboutStreamState(about: success));
+          emit(SuccessGetAboutStreamState(about: success, profile: _cachedProfile));
         },
       );
     });
@@ -211,47 +212,52 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
       final results = await getReviewsUseCase.call(event.user);
       results.fold(
         (failure) {
-          emit(FailureGetReviewsStreamState(message: failure.message ?? 'Failed to fetch reviews'));
+          emit(FailureGetReviewsStreamState(message: failure.message ?? 'Failed to fetch reviews', profile: _cachedProfile));
         },
         (success) {
-          emit(SuccessGetReviewStreamState(reviews: success));
+          emit(SuccessGetReviewStreamState(reviews: success, profile: _cachedProfile));
         },
       );
     });
 
     on<ChooseOtherServiceEvent>((event, emit) {
-      emit(OtherServiceSelectState(others: event.others));
+      emit(OtherServiceSelectState(others: event.others, profile: _cachedProfile));
     });
 
     on<InitiateBackgroundCheckEvent>((event, emit) async {
-      emit(LoadingProfileState());
+      emit(LoadingProfileState(profile: _cachedProfile));
       final results = await initiateBackgroundCheckUseCase.call(
           BackgroundCheckParams(paymentIntentId: event.paymentIntentId));
       results.fold(
         (failure) => emit(FailureInitiateBackgroundCheckState(
-            message: failure.message ?? 'Failed to initiate background check')),
+            message: failure.message ?? 'Failed to initiate background check', profile: _cachedProfile)),
         (success) {
           if (success != null && success.isNotEmpty) {
-            emit(SuccessInitiateBackgroundCheckState(url: success));
+            emit(SuccessInitiateBackgroundCheckState(url: success, profile: _cachedProfile));
           } else {
             emit(FailureInitiateBackgroundCheckState(
-                message: 'Invalid response from server'));
+                message: 'Invalid response from server', profile: _cachedProfile));
           }
         },
       );
     });
 
     on<GetAuditLogsEvent>((event, emit) async {
-      emit(LoadingAuditLogsState());
+      emit(LoadingAuditLogsState(profile: _cachedProfile));
       final results = await getAuditLogsUseCase.call(NoParams());
       results.fold(
         (failure) => emit(FailureGetAuditLogsState(
-            message: failure.message ?? 'Failed to fetch audit logs')),
+            message: failure.message ?? 'Failed to fetch audit logs', profile: _cachedProfile)),
         (success) {
           _cachedAuditLogs = success;
-          emit(SuccessGetAuditLogsState(logs: success));
+          emit(SuccessGetAuditLogsState(logs: success, profile: _cachedProfile));
         },
       );
+    });
+
+    on<CreateStripeCustomerEvent>((event, emit) async {
+      // This is a fire-and-forget background task as per the original UI implementation
+      await Helpers.createStripeCustomer(userId: event.userId);
     });
 
     on<LogoutProfileEvent>((event, emit) {

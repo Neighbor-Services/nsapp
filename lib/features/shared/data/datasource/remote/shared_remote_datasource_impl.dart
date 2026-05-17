@@ -42,11 +42,12 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   }
 
   @override
-  Future<List<not.NotificationData>?> getMyNotifications() async {
+  Future<List<not.NotificationData>?> getMyNotifications({int page = 1}) async {
     try {
       final token = await Helpers.getString("token");
       final response = await _dio.get(
         "$baseUrl/notifications/",
+        queryParameters: {"page": page},
         options: Options(headers: dioHeaders(token)),
       );
 

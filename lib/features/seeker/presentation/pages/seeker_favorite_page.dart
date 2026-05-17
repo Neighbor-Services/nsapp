@@ -1,4 +1,5 @@
-import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,8 +13,6 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
-import '../../../profile/presentation/pages/about_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerFavoritePage extends StatefulWidget {
@@ -24,7 +23,7 @@ class SeekerFavoritePage extends StatefulWidget {
 }
 
 class _SeekerFavoritePageState extends State<SeekerFavoritePage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -51,7 +50,11 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     final textColor = context.appColors.primaryTextColor;
@@ -103,14 +106,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                               Row(
                                 children: [
                                   GestureDetector(
-                                    onTap: () {
-                                      if (Navigator.of(context).canPop()) {
-                                        Get.back();
-                                      } else {
-                                        context.read<SeekerBloc>().add(
-                                            ChangeSeekerTabEvent(tabIndex: 1));
-                                      }
-                                    },
+                                    onTap: () => context.pop(),
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
@@ -218,6 +214,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
 
   Widget _buildFavoriteList(BuildContext context, List<Favorite> profiles, bool isLargeScreen) {
     return ListView.builder(
+      key: const PageStorageKey('seeker_favorites_list'),
       physics: const AlwaysScrollableScrollPhysics(
         parent: BouncingScrollPhysics(),
       ),
@@ -317,7 +314,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
         onTap: (){
           final String? providerId = favorite.favoriteUser?.user?.id;
           if (providerId != null) {
-            Get.to(() => AboutPage(profile: favorite.favoriteUser));
+            context.push('/portfolio-view', extra: favorite.favoriteUser);
           }
         },
         child: Container(
@@ -344,7 +341,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                               favorite.favoriteUser!.profilePictureUrl!.startsWith(
                                 "http",
                               ))
-                          ? NetworkImage(favorite.favoriteUser!.profilePictureUrl!)
+                          ? CachedNetworkImageProvider(favorite.favoriteUser!.profilePictureUrl!)
                           : const AssetImage(logoAssets) as ImageProvider,
                     ),
                 ),
@@ -402,7 +399,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         profile: favorite.favoriteUser!,
                       ),
                     );
-                    Get.to(() => ChatPage());
+                    context.push('/chat');
                   },
                 ),
                  SizedBox(width: 8.w),

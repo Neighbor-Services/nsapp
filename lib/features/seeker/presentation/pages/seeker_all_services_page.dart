@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +8,6 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerAllServicesPage extends StatelessWidget {
@@ -31,7 +30,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Get.back();
+                        context.pop();
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -176,11 +175,12 @@ class SeekerAllServicesPage extends StatelessWidget {
       },
       child: GestureDetector(
         onTap: () {
-          Get.to(
-            () => ProvidersByServicePage(
-              serviceId: service.id ?? '',
-              serviceName: service.name ?? 'Service',
-            ),
+          context.push(
+            '/providers-by-service',
+            extra: {
+              'serviceId': service.id ?? '',
+              'serviceName': service.name ?? 'Service',
+            },
           );
         },
         child: Container(

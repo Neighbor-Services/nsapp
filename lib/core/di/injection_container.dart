@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nsapp/core/config/app_config.dart';
 import 'package:nsapp/core/utils/dio_interceptor.dart';
 import 'package:nsapp/core/services/hive_service.dart';
 import 'package:nsapp/features/authentications/data/datasource/remote/authentication_remote_data_source.dart';
@@ -133,6 +137,16 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart'
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  List<int>? rootCaBytes;
+  if (AppConfig.instance.isProd) {
+    try {
+      final ByteData data = await rootBundle.load('assets/certs/cloudflare_roots.pem');
+      rootCaBytes = data.buffer.asUint8List();
+    } catch (e) {
+      print("Warning: Could not load cloudflare_roots.pem: $e");
+    }
+  }
+
   // ! External
   sl.registerLazySingleton(() => const FlutterSecureStorage());
   sl.registerLazySingleton(() {
@@ -142,6 +156,22 @@ Future<void> init() async {
         receiveTimeout: const Duration(seconds: 15),
       ),
     );
+    
+    // dio.httpClientAdapter = IOHttpClientAdapter(
+    //   createHttpClient: () {
+    //     SecurityContext? context;
+    //     if (AppConfig.instance.isProd && rootCaBytes != null) {
+    //       context = SecurityContext(withTrustedRoots: false);
+    //       context.setTrustedCertificatesBytes(rootCaBytes);
+    //     }
+    //     final client = HttpClient(context: context);
+        
+    //     return client;
+    //   },
+    //   // Removed validateCertificate leaf fingerprint logic since we are now natively 
+    //   // restricting the trusted root CAs via the SecurityContext above.
+    // );
+
     dio.interceptors.add(GlobalDioInterceptor());
     return dio;
   });
@@ -379,7 +409,7 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(() => MessageBloc(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => MessageBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
 
   sl.registerFactory(

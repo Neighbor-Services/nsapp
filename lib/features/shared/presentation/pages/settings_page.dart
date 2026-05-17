@@ -2,7 +2,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -153,9 +153,9 @@ class _SettingsPageState extends State<SettingsPage>
                                 GestureDetector(
                                   onTap: () {
                                     if (isProvider) {
-                                      Get.back();
+                                      context.pop();
                                     } else {
-                                      Get.back();
+                                      context.pop();
                                     }
                                   },
                                   child: Container(
@@ -286,7 +286,7 @@ class _SettingsPageState extends State<SettingsPage>
                                 iconColor: context.appColors.infoColor,
                                 title: "Change Password",
                                 subtitle: "Update your account password",
-                                onTap: () => Get.toNamed("/change-password"),
+                                onTap: () => context.push("/change-password"),
                               ),
                             ]),
                             SizedBox(height: 24.h),
@@ -324,21 +324,23 @@ class _SettingsPageState extends State<SettingsPage>
                                   title: "Payment Account",
                                   subtitle: "Manage payout settings",
                                   onTap: () {
-                                    Get.bottomSheet(
-                                      Container(
-                                        width: size(context).width,
-                                        height: 350.h,
-                                        padding: EdgeInsets.all(24.r),
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.cardBackground,
-                                          borderRadius:
-                                              BorderRadius.vertical(
-                                                top: Radius.circular(25.r),
-                                              ),
-                                        ),
-                                        child: const ConnectAccountSetupWidget(),
+                                  showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) => Container(
+                                      width: size(context).width,
+                                      height: 350.h,
+                                      padding: EdgeInsets.all(24.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius:
+                                            BorderRadius.vertical(
+                                              top: Radius.circular(25.r),
+                                            ),
                                       ),
-                                    );
+                                      child: const ConnectAccountSetupWidget(),
+                                    ),
+                                  );
                                   },
                                 ),
                               ],
@@ -353,7 +355,7 @@ class _SettingsPageState extends State<SettingsPage>
                                 iconColor: Colors.deepOrange,
                                 title: "Terms of Service",
                                 subtitle: "Read our terms and conditions",
-                                onTap: () => Get.toNamed('/legal', arguments: 'TERMS'),
+                                onTap: () => context.push('/legal', extra: 'TERMS'),
                               ),
                               _buildDivider(context),
                               _buildSettingsTile(
@@ -362,7 +364,7 @@ class _SettingsPageState extends State<SettingsPage>
                                 iconColor: Colors.teal,
                                 title: "Privacy Policy",
                                 subtitle: "Learn how we handle your data",
-                                onTap: () => Get.toNamed('/legal', arguments: 'PRIVACY'),
+                                onTap: () => context.push('/legal', extra: 'PRIVACY'),
                               ),
                             ]),
                             SizedBox(height: 24.h),
@@ -376,8 +378,10 @@ class _SettingsPageState extends State<SettingsPage>
                                 title: "Change User Type",
                                 subtitle: "Switch between seeker and provider",
                                 onTap: () {
-                                  Get.bottomSheet(
-                                    Container(
+                                  showModalBottomSheet(
+                                    context: context,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) => Container(
                                       width: size(context).width,
                                       padding: EdgeInsets.all(24.r),
                                       decoration: BoxDecoration(
@@ -398,7 +402,7 @@ class _SettingsPageState extends State<SettingsPage>
                                 iconColor: Colors.blueGrey,
                                 title: "Audit Logs",
                                 subtitle: "View your account activity history",
-                                onTap: () => Get.toNamed("/audit-logs"),
+                                onTap: () => context.push("/audit-logs"),
                               ),
                               _buildDivider(context),
                               _buildSettingsTile(
@@ -563,7 +567,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           actions: [
             TextButton(
-              onPressed: () => Get.back(),
+              onPressed: () => context.pop(),
               child: Text(
                 "Cancel",
                 style: TextStyle(
@@ -578,7 +582,7 @@ class _SettingsPageState extends State<SettingsPage>
                 );
                 // Clear state through BLoC instead of static reset
                 context.read<ProfileBloc>().add(LogoutProfileEvent()); 
-                Get.offAllNamed("/login");
+                context.go("/login");
               },
               label: "LOGOUT",
               isPrimary: true,
@@ -614,7 +618,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           actions: [
             TextButton(
-              onPressed: () => Get.back(),
+              onPressed: () => context.pop(),
               child: Text(
                 "Cancel",
                 style: TextStyle(
@@ -628,7 +632,7 @@ class _SettingsPageState extends State<SettingsPage>
                   DeleteAccountEvent(),
                 );
                 context.read<ProfileBloc>().add(LogoutProfileEvent());
-                Get.offAllNamed("/login");
+                context.go("/login");
               },
               label: "DELETE",
               isPrimary: true,
@@ -643,8 +647,10 @@ class _SettingsPageState extends State<SettingsPage>
   void _showPaymentModeSheet(BuildContext context) {
     if (_currentProfile == null) return;
 
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(28.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
@@ -777,7 +783,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   void _updatePaymentMode(BuildContext context, String mode) {
     if (_currentProfile?.preferredPaymentMode == mode) {
-      Get.back();
+      context.pop();
       return;
     }
 
@@ -785,7 +791,7 @@ class _SettingsPageState extends State<SettingsPage>
     updatedProfile.preferredPaymentMode = mode;
 
     context.read<ProfileBloc>().add(UpdateProfileEvent(profile: updatedProfile));
-    Get.back();
+    context.pop();
     customAlert(context, AlertType.success, "Payment preference updated");
   }
 }

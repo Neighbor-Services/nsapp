@@ -1,18 +1,19 @@
-import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/chat.dart';
-import '../../../shared/presentation/bloc/settings/settings_bloc.dart';
+
 import '../bloc/message_bloc.dart';
-import 'chat_page.dart';
 
 class MyMessagesPage extends StatefulWidget {
   const MyMessagesPage({super.key});
@@ -22,7 +23,7 @@ class MyMessagesPage extends StatefulWidget {
 }
 
 class _MyMessagesPageState extends State<MyMessagesPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   
@@ -53,7 +54,11 @@ class _MyMessagesPageState extends State<MyMessagesPage>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -258,6 +263,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
       },
       child: AnimationLimiter(
         child: ListView.builder(
+          key: const PageStorageKey('my_messages_list'),
           physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
           itemCount: _chats.length,
@@ -294,12 +300,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
             SetSeenMessageEvent(reciever: chat.other!.user!.id!),
           );
           
-          final settingsState = context.read<SettingsBloc>().state;
-          if (settingsState.isProvider) {
-            Get.to(() => const ChatPage());
-          } else {
-            Get.to(() => const ChatPage());
-          }
+          context.push("/chat");
         },
         borderRadius: BorderRadius.circular(20.r),
         child: Container(
@@ -321,7 +322,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                 backgroundImage:
                     (chat.other!.profilePictureUrl != null &&
                         chat.other!.profilePictureUrl!.isNotEmpty)
-                    ? NetworkImage(chat.other!.profilePictureUrl!)
+                    ? CachedNetworkImageProvider(chat.other!.profilePictureUrl!)
                     : const AssetImage(logoAssets) as ImageProvider,
               ),
               SizedBox(width: 16.w),

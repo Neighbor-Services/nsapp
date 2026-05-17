@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/features/shared/presentation/bloc/legal/legal_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -9,7 +10,8 @@ import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/core.dart';
 
 class LegalDocumentPage extends StatefulWidget {
-  const LegalDocumentPage({super.key});
+  final String? docType;
+  const LegalDocumentPage({super.key, this.docType});
 
   @override
   State<LegalDocumentPage> createState() => _LegalDocumentPageState();
@@ -24,7 +26,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
   @override
   void initState() {
     super.initState();
-    _docType = (Get.arguments as String?) ?? 'TERMS';
+    _docType = widget.docType ?? 'TERMS';
 
     _fadeController = AnimationController(
       vsync: this,
@@ -75,7 +77,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                     child: Row(
                       children: [
                         GestureDetector(
-                          onTap: () => Get.back(),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -10,7 +10,6 @@ import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/service.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart' hide OtherServiceSelectState, ChooseOtherServiceEvent, SelectImageFromCameraEvent, SelectImageFromGalleryEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
@@ -212,17 +211,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
       children: [
         GestureDetector(
           onTap: () {
-            if (Navigator.of(context).canPop()) {
-              Get.back();
-            } else {
-              if (_isProvider) {
-                context.read<ProviderBloc>().add(
-                    ChangeProviderTabEvent(tabIndex: 1));
-              } else {
-                context.read<SeekerBloc>().add(
-                    ChangeSeekerTabEvent(tabIndex: 1));
-              }
-            }
+            context.pop();
           },
           child: Container(
             padding: EdgeInsets.all(12.r),
@@ -331,8 +320,10 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   }
 
   void _showLocationSheet(BuildContext context) {
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
@@ -352,7 +343,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                     locController.text = loc.address;
                   });
                 }
-                Get.back();
+                context.pop();
               },
             ),
             ListTile(
@@ -360,8 +351,8 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               title: const Text("Pick from Map"),
               onTap: () {
                 context.read<CommonBloc>().add(UseMapEvent(useMap: true));
-                Get.back();
-                Get.toNamed("map-location");
+                context.pop();
+                context.push("/map-location");
               },
             ),
           ],
@@ -464,8 +455,10 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
   }
 
   void _showImageSourceSheet(BuildContext context) {
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
@@ -479,7 +472,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               title: const Text("Camera"),
               onTap: () {
                 context.read<SeekerBloc>().add(SelectImageFromCameraEvent());
-                Get.back();
+                context.pop();
               },
             ),
             ListTile(
@@ -487,7 +480,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               title: const Text("Gallery"),
               onTap: () {
                 context.read<SeekerBloc>().add(SelectImageFromGalleryEvent());
-                Get.back();
+                context.pop();
               },
             ),
           ],

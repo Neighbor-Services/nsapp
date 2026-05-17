@@ -1,6 +1,6 @@
 // ignore_for_file: unused_local_variable
 
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -132,13 +132,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                               Align(
                                 alignment: Alignment.centerLeft,
                                 child: GestureDetector(
-                                  onTap: () {
-                                    if (Navigator.canPop(context)) {
-                                      Navigator.pop(context);
-                                    } else {
-                                      Get.back();
-                                    }
-                                  },
+                                  onTap: () => context.pop(),
                                   child: Container(
                                     padding: EdgeInsets.all(12.r),
                                     decoration: BoxDecoration(

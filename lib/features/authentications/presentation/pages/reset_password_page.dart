@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -66,7 +67,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
             );
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                Get.toNamed("/forgot-password");
+                context.push("/forgot-password");
               }
             });
           }
@@ -99,7 +100,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                           child: Row(
                             children: [
                               GestureDetector(
-                                onTap: () => Get.back(),
+                                onTap: () => context.pop(),
                                 child: Container(
                                   padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
@@ -165,14 +166,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                           prefixIcon: FontAwesomeIcons.envelope,
                                           keyboardType:
                                               TextInputType.emailAddress,
-                                          validator: (val) {
-                                            if (val!.isEmpty) {
-                                              return "Email is required";
-                                            } else if (!val.isEmail) {
-                                              return "Invalid email format";
-                                            }
-                                            return null;
-                                          },
+                                          validator: (val) => ValidationUtil.validateEmail(val),
                                         ),
                                         SizedBox(height: 32.h),
 
@@ -203,7 +197,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
 
                                 // Back to login
                                 GestureDetector(
-                                  onTap: () => Get.toNamed("/login"),
+                                  onTap: () => context.push("/login"),
                                   child: Text(
                                     "Back to Login",
                                     style: TextStyle(

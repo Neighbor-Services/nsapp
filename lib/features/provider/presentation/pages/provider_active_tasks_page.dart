@@ -1,17 +1,15 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/request_acceptance.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderActiveTasksPage extends StatefulWidget {
@@ -97,7 +95,7 @@ class _ProviderActiveTasksPageState
                               child: Row(
                                 children: [
                                   GestureDetector(
-                                    onTap: () => Get.back(),
+                                    onTap: () => context.pop(),
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
@@ -294,7 +292,10 @@ class _ProviderActiveTasksPageState
         context.read<ProviderBloc>().add(
           ReloadProfileEvent(request: request.id ?? ""),
         );
-        Get.to(() => const ProviderRequestDetailPage());
+        context.push('/app/provider/requests/${request.id}', extra: RequestData(
+          request: requestAcceptance.acceptance!.request,
+          user: requestAcceptance.user,
+        ));
       },
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
@@ -510,14 +511,17 @@ class _ProviderActiveTasksPageState
         context.read<ProviderBloc>().add(
           ReloadProfileEvent(request: ra.acceptance?.request?.id ?? ""),
         );
-        Get.to(() => const ProviderRequestDetailPage());
+        context.push('/app/provider/requests/${ra.acceptance!.request!.id}', extra: RequestData(
+          request: ra.acceptance!.request,
+          user: ra.user,
+        ));
         break;
       case 2:
         if (ra.user == null) break;
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        Get.to(() => const ChatPage());
+        context.push('/chat');
         break;
       case 3:
         context.read<MessageBloc>().add(
@@ -527,7 +531,7 @@ class _ProviderActiveTasksPageState
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        Get.to(() => const ChatPage());
+        context.push('/chat');
         break;
       case 5:
         if (ra.acceptance?.request == null) break;
@@ -535,7 +539,7 @@ class _ProviderActiveTasksPageState
         context.read<ProviderBloc>().add(
           RequestDirectionEvent(request: ra.acceptance!.request!),
         );
-        Get.toNamed("/map-direction");
+        context.push("/map-direction");
         break;
     }
   }

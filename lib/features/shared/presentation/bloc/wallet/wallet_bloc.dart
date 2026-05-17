@@ -1,4 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/account_link.dart';
 import 'package:nsapp/core/models/wallet.dart';
@@ -9,7 +9,7 @@ import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_u
 part 'wallet_event.dart';
 part 'wallet_state.dart';
 
-class WalletBloc extends Bloc<WalletEvent, WalletState> {
+class WalletBloc extends HydratedBloc<WalletEvent, WalletState> {
   final GetMyWalletUseCase getMyWalletUseCase;
   final RequestPayoutUseCase requestPayoutUseCase;
   final GetStripeDashboardLinkUseCase getStripeDashboardLinkUseCase;
@@ -55,5 +55,29 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         emit(WalletFailure("Failed to create connect account link"));
       }
     });
+  }
+
+  @override
+  WalletState? fromJson(Map<String, dynamic> json) {
+    try {
+      if (json['wallet'] != null) {
+        return SuccessGetMyWalletState(
+          wallet: Wallet.fromJson(json['wallet']),
+        );
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(WalletState state) {
+    if (state is SuccessGetMyWalletState && state.wallet != null) {
+      return {
+        'wallet': state.wallet!.toJson(),
+      };
+    }
+    return null;
   }
 }

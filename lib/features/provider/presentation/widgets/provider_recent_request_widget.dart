@@ -1,11 +1,12 @@
-import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 
@@ -80,7 +81,7 @@ class _ProviderRecentRequestWidgetState
                         context.read<ProviderBloc>().add(
                           ReloadProfileEvent(request: requestData.request!.id!),
                         );
-                        Get.to(() => const ProviderRequestDetailPage());
+                        context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
                       },
                       child: Container(
                         width: 300.w,
@@ -99,10 +100,11 @@ class _ProviderRecentRequestWidgetState
                                 Positioned.fill(
                                   child: Opacity(
                                     opacity: 0.7,
-                                    child: Image.network(
-                                      requestData.request!.imageUrl!,
+                                    child: CachedNetworkImage(
+                                      imageUrl: requestData.request!.imageUrl!,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) => 
+                                      placeholder: (context, url) => Container(color: Colors.black12),
+                                      errorWidget: (context, url, error) => 
                                           const SizedBox.shrink(),
                                     ),
                                   ),
@@ -160,7 +162,7 @@ class _ProviderRecentRequestWidgetState
                                             radius: 14.r,
                                             backgroundColor: Colors.white.withAlpha(40),
                                             backgroundImage: requestData.user?.profilePictureUrl != null 
-                                                ? NetworkImage(requestData.user!.profilePictureUrl!) 
+                                                ? CachedNetworkImageProvider(requestData.user!.profilePictureUrl!) 
                                                 : null,
                                             child: requestData.user?.profilePictureUrl == null 
                                                 ? FaIcon(FontAwesomeIcons.user, size: 12.r, color: Colors.white)

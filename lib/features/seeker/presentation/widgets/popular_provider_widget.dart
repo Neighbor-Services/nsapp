@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,7 @@ import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
-import '../../../profile/presentation/pages/about_page.dart';
+
 import 'package:nsapp/core/core.dart';
 
 
@@ -135,7 +136,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                       providerUserId: profile.user!.id!,
                     ),
                   );
-              Get.to(() => AboutPage(profile: profile));
+              context.push('/portfolio-view', extra: profile);
             },
             child: Container(
               width: 200.w,
@@ -159,9 +160,11 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                   children: [
                     // Background Image
                     (profile.profilePictureUrl != null && profile.profilePictureUrl!.isNotEmpty)
-                        ? Image.network(
-                            profile.profilePictureUrl!,
+                        ? CachedNetworkImage(
+                            imageUrl: profile.profilePictureUrl!,
                             fit: BoxFit.cover,
+                            placeholder: (context, url) => const HorizontalSkeletonLoader(height: 200, itemWidth: 200),
+                            errorWidget: (context, url, error) => Image.asset(logo2Assets, fit: BoxFit.contain),
                           )
                         : Image.asset(
                             logo2Assets,

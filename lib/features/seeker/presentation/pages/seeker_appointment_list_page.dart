@@ -1,7 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/appointment.dart';
@@ -54,7 +54,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
         elevation: 0,
         leading: GestureDetector(
           onTap: () {
-            Get.back();
+            context.pop();
           },
           child: Container(
             margin: EdgeInsets.all(10.r),
@@ -147,10 +147,11 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                               child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Get.bottomSheet(
-                                    AppointmentDetailBottomSheet(data: data),
+                                  showModalBottomSheet(
+                                    context: context,
                                     isScrollControlled: true,
                                     backgroundColor: Colors.transparent,
+                                    builder: (context) => AppointmentDetailBottomSheet(data: data),
                                   );
                                 },
                                 child: SolidContainer(

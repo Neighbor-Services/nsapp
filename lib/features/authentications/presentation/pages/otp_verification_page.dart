@@ -2,7 +2,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -70,7 +70,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
             customAlert(context, AlertType.success, "Verification successful!");
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                Get.offAndToNamed("login");
+                context.go("/login");
               }
             });
           }

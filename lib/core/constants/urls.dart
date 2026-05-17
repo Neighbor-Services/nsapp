@@ -1,12 +1,13 @@
+import 'package:nsapp/core/config/app_config.dart';
 
-const String domaineUrl = "https://neighborservice.com";
-const String baseUrl = "$domaineUrl/api/v1";
-const String baseRequestUrl = baseUrl;
-const String baseMessagesUrl = baseUrl;
-const String baseAccountsUrl = baseUrl;
-const String basePaymentUrl = baseUrl;
+String domaineUrl = 'https://neighborservice.com';
+String baseUrl = 'https://neighborservice.com/api/v1';
+String baseRequestUrl = baseUrl;
+String baseMessagesUrl = baseUrl;
+String baseAccountsUrl = baseUrl;
+String basePaymentUrl = baseUrl;
 
-const String baseMessagesWsUrl = "wss://neighborservice.com";
+String baseMessagesWsUrl = 'wss://neighborservice.com';
 
 Map<String, dynamic> dioHeaders(String token) => {
   "Authorization": "Bearer $token",

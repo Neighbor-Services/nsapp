@@ -1,12 +1,12 @@
-import 'package:get/get.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
@@ -14,7 +14,6 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
 import '../bloc/provider_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -71,7 +70,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () => Get.back(),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(
@@ -241,7 +240,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
             context.read<ProviderBloc>().add(
               ReloadProfileEvent(request: requestData.request!.id!),
             );
-            Get.to(() => const ProviderRequestDetailPage());
+            context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
           },
           child: SolidContainer(
             padding: EdgeInsets.zero,
@@ -396,13 +395,13 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               request: requestData.request!.id!,
                             ),
                           );
-                          Get.to(() => const ProviderRequestDetailPage());
+                          context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
                           break;
                         case 2:
                           context.read<MessageBloc>().add(
                             SetMessageReceiverEvent(profile: profile),
                           );
-                          Get.to(() => const ChatPage());
+                          context.push('/chat');
                           break;
                       }
                     },

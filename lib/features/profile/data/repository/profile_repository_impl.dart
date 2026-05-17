@@ -32,8 +32,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
         return right(true);
       }
       return left(Failure(message: 'Failed to create profile'));
-    } on Exception {
-      return left(Failure(message: 'Failed to create profile'));
+    } catch (e) {
+      return left(Failure(message: e.toString().replaceAll("Exception: ", "")));
     }
   }
 

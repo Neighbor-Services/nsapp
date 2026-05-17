@@ -16,7 +16,7 @@ import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dar
 import 'package:dio/dio.dart';
 import '../models/subscription.dart';
 import 'package:nsapp/features/shared/presentation/widget/searchable_service_selector.dart';
-import 'package:get/get.dart';
+
 import 'package:nsapp/core/services/payment_service.dart';
 import 'package:nsapp/core/services/dialog_utils.dart';
 import 'package:nsapp/core/services/location_service.dart';
@@ -84,15 +84,17 @@ Future<void> showServiceSelector({
     }
   }
   final List<Category> categories = categoriesMap.values.toList();
-  await Get.bottomSheet(
-    SearchableServiceSelector(
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => SearchableServiceSelector(
       services: services,
       categories: categories,
       selectedServiceId: selectedServiceId,
       onServiceSelected: onServiceSelected,
       onOthersSelected: onOthersSelected,
     ),
-    isScrollControlled: true,
   );
 }
 

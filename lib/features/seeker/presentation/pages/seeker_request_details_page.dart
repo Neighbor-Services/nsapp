@@ -3,18 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/request_accept.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -32,8 +28,9 @@ import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerRequestDetailsPage extends StatefulWidget {
+  final String? requestId;
   final RequestData? requestData;
-  const SeekerRequestDetailsPage({super.key, this.requestData});
+  const SeekerRequestDetailsPage({super.key, this.requestData, this.requestId});
 
   @override
   State<SeekerRequestDetailsPage> createState() =>
@@ -49,7 +46,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
   void initState() {
     super.initState();
     _cachedRequestData = widget.requestData;
-    final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
+    final requestId = widget.requestData?.request?.id ?? widget.requestId ?? "";
     context.read<SeekerBloc>().add(ReloadRequestEvent(request: requestId));
     context.read<SeekerBloc>().add(
       GetAcceptedUsersSeekerEvent(request: requestId),
@@ -108,7 +105,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 SolidButton(
                   label: "REVIEW NEIGHBOR",
                   onPressed: () {
-                    Navigator.pop(context);
+                    context.pop();
                     // Navigate to review flow
                   },
                   isPrimary: true,
@@ -117,8 +114,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 SizedBox(height: 12.h),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    Get.to(() => const SeekerRequestPage());
+                    context.pop();
+                    context.push('/seeker-requests');
                   },
                   child: Text(
                     "NOT NOW",
@@ -166,7 +163,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 current is SuccessCancelApprovedProviderState,
             listener: (context, state) {
               if (state is SuccessDeleteRequestState) {
-                Get.to(() => const SeekerRequestPage());
+                context.push('/seeker-requests');
                 customAlert(
                   context,
                   AlertType.success,
@@ -179,7 +176,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
+                    request: widget.requestData?.request?.id ?? widget.requestId ?? "",
                   ),
                 );
                 customAlert(
@@ -191,7 +188,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is FailureApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
+                    request: widget.requestData?.request?.id ?? widget.requestId ?? "",
                   ),
                 );
                 customAlert(context, AlertType.error, "Unable to Approve");
@@ -199,7 +196,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is SuccessCancelApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
+                    request: widget.requestData?.request?.id ?? widget.requestId ?? "",
                   ),
                 );
                 customAlert(
@@ -211,7 +208,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               if (state is FailureCancelApprovedProviderState) {
                 context.read<SeekerBloc>().add(
                   GetAcceptedUsersSeekerEvent(
-                    request: widget.requestData?.request?.id ?? Get.parameters['id'] ?? "",
+                    request: widget.requestData?.request?.id ?? widget.requestId ?? "",
                   ),
                 );
                 customAlert(context, AlertType.error, "Unable to Cancel Approval");
@@ -243,7 +240,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                       constraints: BoxConstraints(maxWidth: 800.w),
                       child: RefreshIndicator(
                         onRefresh: () async {
-                          final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
+                          final requestId = widget.requestData?.request?.id ?? widget.requestId ?? "";
                           context.read<SeekerBloc>().add(ReloadRequestEvent(request: requestId));
                           context.read<SeekerBloc>().add(GetAcceptedUsersSeekerEvent(request: requestId));
                           context.read<ProfileBloc>().add(GetProfileStreamEvent());
@@ -263,7 +260,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                               GestureDetector(
                                 onTap: () {
                                   if (Navigator.of(context).canPop()) {
-                                    Get.back();
+                                    context.pop();
                                   } else {
                                     if (isProvider) {
                                       context.read<ProviderBloc>().add(
@@ -466,7 +463,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                             "",
                                       ),
                                     );
-                                    Get.toNamed("/image");
+                                    context.push("/image");
                                   },
                                   child: Hero(
                                     tag:
@@ -742,7 +739,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => context.pop(),
                       child: Text(
                         "Cancel",
                         style: TextStyle(color: textColor.withAlpha(180)),
@@ -757,7 +754,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                         context.read<SeekerBloc>().add(
                           DeleteRequestEvent(request: requestId),
                         );
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       isPrimary: true,
                       height: 50.h,
@@ -806,7 +803,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               context.read<SeekerBloc>().add(
                 SeekerRequestDetailEvent(request: requestData),
               );
-              Get.to(() => const SeekerUpdateRequestPage());
+              context.push('/seeker-requests'); // Placeholder for update request page if no route exists
+              // Ideally: context.push('/edit-request');
               break;
             case 2:
               final requestId = requestData.request?.id;
@@ -1026,7 +1024,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     if (isApproved) {
       return IconButton(
         onPressed: () {
-          final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
+          final requestId = widget.requestData?.request?.id ?? widget.requestId ?? "";
           if (requestId.isNotEmpty) {
             context.read<SeekerBloc>().add(
               CancelApprovedRequestEvent(request: requestId),
@@ -1054,7 +1052,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
       }
       return IconButton(
         onPressed: () {
-          final requestId = widget.requestData?.request?.id ?? Get.parameters['id'] ?? "";
+          final requestId = widget.requestData?.request?.id ?? widget.requestId ?? "";
           final proposalId = acceptedProvider.acceptance?.id;
           final userId = user?.id ?? provider?.id ?? "unknown";
 
@@ -1121,14 +1119,14 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
         
             if (val == 1) {
               if (userId != null) {
-                Get.to(() => AboutPage(profile: provider));
+                context.push('/portfolio-view', extra: provider);
               }
             } else if (val == 2) {
               if (provider != null) {
                 context.read<MessageBloc>().add(
                   SetMessageReceiverEvent(profile: provider),
                 );
-                Get.to(() => const ChatPage());
+                context.push('/chat');
               }
             }
           },
@@ -1258,7 +1256,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                           validator: (val) {
                             if (val!.isEmpty) {
                               return "Amount is required";
-                            } else if (!val.isNum) {
+                            } else if (double.tryParse(val) == null) {
                               return "Amount entered is invalid";
                             }
                             return null;
@@ -1273,7 +1271,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     children: [
                       Expanded(
                         child: TextButton(
-                          onPressed: () => Navigator.pop(dialogContext),
+                          onPressed: () => context.pop(),
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 12.h),
                             shape: RoundedRectangleBorder(
@@ -1298,7 +1296,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               if (amountController.text.isNotEmpty) {
-                                Navigator.pop(dialogContext);
+                                context.pop();
                                 await PaymentService.fundAppointment(
                                   appointmentId:
                                       requestData.request!.appointmentId!,

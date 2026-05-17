@@ -2,7 +2,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/profile.dart';
@@ -12,15 +12,13 @@ import 'package:nsapp/features/shared/presentation/widget/solid_container_widget
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/appointment.dart';
 import '../../../../core/models/request_data.dart';
 import '../../../shared/presentation/widget/appointment_input_field_widget.dart';
 import '../../../shared/presentation/widget/custom_text_widget.dart';
 import '../bloc/provider_bloc.dart';
-import 'provider_on_the_way_page.dart';
-import 'provider_request_detail_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderAppointmentCalendarPage extends StatefulWidget {
@@ -33,7 +31,7 @@ class ProviderAppointmentCalendarPage extends StatefulWidget {
 
 class _ProviderAppointmentCalendarPageState
     extends State<ProviderAppointmentCalendarPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   DateTime? _calendarSelectedDate;
   final TextEditingController dateController = TextEditingController();
   final TextEditingController startTimeController = TextEditingController();
@@ -77,7 +75,11 @@ class _ProviderAppointmentCalendarPageState
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.secondaryTextColor;
@@ -152,10 +154,10 @@ class _ProviderAppointmentCalendarPageState
                                     GestureDetector(
                                       onTap: () {
                                         if (Navigator.of(context).canPop()) {
-                                          Get.back();
+                                          context.pop();
                                         } else {
                                           context.read<ProviderBloc>().add(
-                                              ChangeProviderTabEvent(tabIndex: 0));
+                                              ChangeProviderTabEvent(tabIndex: 1));
                                         }
                                       },
                                       child: Container(
@@ -249,9 +251,11 @@ class _ProviderAppointmentCalendarPageState
     return GestureDetector(
       onTap: () {
         context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
-        Get.bottomSheet(
-          _buildAddAppointmentSheet(),
+        showModalBottomSheet(
+          context: context,
           isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => _buildAddAppointmentSheet(),
         );
       },
       child: Container(
@@ -330,6 +334,7 @@ class _ProviderAppointmentCalendarPageState
           await Future.delayed(const Duration(seconds: 1));
         },
         child: SingleChildScrollView(
+          key: const PageStorageKey('provider_calendar_scroll'),
           physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           child: SizedBox(
             height: 600.h,
@@ -354,10 +359,12 @@ class _ProviderAppointmentCalendarPageState
                       highlightColor: context.appColors.primaryColor,
                       tileColor: context.appColors.primaryColor,
                       onTileTap: (event, date) {
-                        Get.bottomSheet(
-                          _buildEventDetailsSheet(event, isDark),
+                        showModalBottomSheet(
+                          context: context,
                           isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
                           barrierColor: Colors.black.withAlpha(150),
+                          builder: (context) => _buildEventDetailsSheet(event, isDark),
                         );
                       },
                     );
@@ -388,18 +395,22 @@ class _ProviderAppointmentCalendarPageState
                     });
                     
                     if (events.isNotEmpty) {
-                      Get.bottomSheet(
-                        _buildEventDetailsSheet(events[0], isDark),
+                      showModalBottomSheet(
+                        context: context,
                         isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
                         barrierColor: Colors.black.withAlpha(150),
+                        builder: (context) => _buildEventDetailsSheet(events[0], isDark),
                       );
                     }
                   },
                   onEventTap: (event, date) {
-                    Get.bottomSheet(
-                      _buildEventDetailsSheet(event, isDark),
+                    showModalBottomSheet(
+                      context: context,
                       isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
                       barrierColor: Colors.black.withAlpha(150),
+                      builder: (context) => _buildEventDetailsSheet(event, isDark),
                     );
                   },
                   headerStyle: HeaderStyle(
@@ -427,7 +438,7 @@ class _ProviderAppointmentCalendarPageState
     CalendarEventData data,
     bool isDark,
   ) {
-    // Use the State's own context to ensure Provider access inside Get.bottomSheet
+    // Use the State's own context to ensure Provider access inside showModalBottomSheet
     final textColor = context.appColors.primaryTextColor;
     final handleColor = context.appColors.glassBorder;
 
@@ -537,7 +548,7 @@ class _ProviderAppointmentCalendarPageState
                           alignment: Alignment.centerRight,
                           child: TextButton.icon(
                             onPressed: () {
-                              Get.back();
+                              context.pop();
                               final requestData = RequestData(
                                 request: req,
                                 user: appointmentData.user,
@@ -548,7 +559,7 @@ class _ProviderAppointmentCalendarPageState
                               context.read<ProviderBloc>().add(
                                 ReloadProfileEvent(request: requestData.request!.id!),
                               );
-                              Get.to(() => const ProviderRequestDetailPage());
+                              context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
                             },
                             icon: Icon(
                               FontAwesomeIcons.arrowUpRightFromSquare,
@@ -601,7 +612,7 @@ class _ProviderAppointmentCalendarPageState
                                 amount: appt.totalPrice ?? 0,
                               ),
                             );
-                            Get.back();
+                            context.pop();
                           },
                           icon: FontAwesomeIcons.circleCheck,
                           label: "Mark as Completed",
@@ -617,7 +628,7 @@ class _ProviderAppointmentCalendarPageState
 
                 SolidButton(
                   onPressed: () {
-                    Get.back();
+                    context.pop();
                     _handleAddToCalendar(state, data.event.toString());
                   },
                   icon: FontAwesomeIcons.calendarCheck,
@@ -638,11 +649,12 @@ class _ProviderAppointmentCalendarPageState
                             element.appointment?.id == data.event.toString(),
                       );
                       if (appointmentData.appointment != null) {
-                        Get.back();
-                        Get.to(
-                          () => ProviderOnTheWayPage(
-                            appointmentId: appointmentData.appointment?.id ?? "",
-                            destination: LatLng(
+                        context.pop();
+                        context.push(
+                          '/provider-on-the-way',
+                          extra: {
+                            'appointmentId': appointmentData.appointment?.id ?? "",
+                            'destination': LatLng(
                               double.tryParse(
                                     appointmentData.user?.latitude ?? "0.0",
                                   ) ??
@@ -652,7 +664,7 @@ class _ProviderAppointmentCalendarPageState
                                   ) ??
                                   0.0,
                             ),
-                          ),
+                          },
                         );
                       }
                     } catch (e) {
@@ -673,7 +685,7 @@ class _ProviderAppointmentCalendarPageState
                     context.read<ProviderBloc>().add(
                       CancelAppointmentEvent(id: data.event.toString()),
                     );
-                    Get.back();
+                    context.pop();
                   },
                   label: "Cancel Appointment",
                   isPrimary: false,
@@ -747,7 +759,7 @@ class _ProviderAppointmentCalendarPageState
   }
 
   Widget _buildAddAppointmentSheet() {
-    // Use the State's own context to ensure Provider access inside Get.bottomSheet
+    // Use the State's own context to ensure Provider access inside showModalBottomSheet
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = context.appColors.primaryTextColor;
     final handleColor = context.appColors.glassBorder;
@@ -951,7 +963,7 @@ class _ProviderAppointmentCalendarPageState
                     ),
                   ),
                 );
-                Get.back();
+                context.pop();
                 setState(() {
                   selectedProposalId = null;
                 });

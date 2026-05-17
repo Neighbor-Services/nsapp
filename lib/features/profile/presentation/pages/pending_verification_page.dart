@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
@@ -24,10 +24,8 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
   Future<void> _launchUrl(String urlString) async {
     final Uri url = Uri.parse(urlString);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      Get.snackbar(
-        "Error",
-        "Could not open the background check form. Please try again.",
-        snackPosition: SnackPosition.BOTTOM,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Could not open the background check form. Please try again.")),
       );
     }
   }
@@ -43,7 +41,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
             icon: const Icon(FontAwesomeIcons.arrowRightFromBracket),
             onPressed: () {
               context.read<AuthenticationBloc>().add(LogoutAuthenticationEvent());
-              Get.offAllNamed("/login");
+              context.go("/login");
             },
             tooltip: "Logout",
           )
@@ -63,12 +61,10 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
 
           if (state is SuccessGetProfileState) {
             if (state.profile.isIdentityVerified == true) {
-              Get.offAllNamed("/home");
+              context.go("/home");
             } else {
-              Get.snackbar(
-                "Pending",
-                "Your background check is still processing. Please check back later.",
-                snackPosition: SnackPosition.BOTTOM,
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Your background check is still processing. Please check back later.")),
               );
             }
           }
@@ -78,12 +74,11 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
           }
 
           if (state is FailureInitiateBackgroundCheckState) {
-            Get.snackbar(
-              "Error",
-              state.message,
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: context.appColors.errorColor.withAlpha(200),
-              colorText: Colors.white,
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: context.appColors.errorColor.withAlpha(200),
+              ),
             );
           }
         },

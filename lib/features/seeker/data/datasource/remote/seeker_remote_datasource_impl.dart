@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart' hide FormData, MultipartFile;
+
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/favorite.dart';
@@ -266,19 +266,26 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   @override
   Future<bool> addToFavorite({required String uid}) async {
     final token = await Helpers.getString("token");
+    final url = "$baseUrl/interactions/favorites/";
+    final payload = {"provider": uid};
 
+    debugPrint("DEBUG addToFavorite: POST $url | payload=$payload");
     try {
       final response = await _dio.post(
-        "$baseUrl/interactions/favorites/",
-        data: {"provider": uid},
+        url,
+        data: payload,
         options: Options(headers: dioHeaders(token)),
       );
 
-      if (response.statusCode == 201) {
+      debugPrint("DEBUG addToFavorite: status=${response.statusCode}");
+      if (response.statusCode == 201 || response.statusCode == 200) {
         return true;
       }
-      throw Exception('Failed');
-    } catch (e) { rethrow; }
+      throw Exception('Failed with status ${response.statusCode}');
+    } catch (e) {
+      debugPrint("DEBUG addToFavorite: ERROR $e");
+      rethrow;
+    }
   }
 
   @override
@@ -439,10 +446,7 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          "Rating Successful",
-        );
+
         return true;
       }
       throw Exception('Failed');

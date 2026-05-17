@@ -1,13 +1,13 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/request_accept.dart';
+import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
@@ -20,7 +20,9 @@ import 'package:nsapp/features/shared/presentation/bloc/subscription/subscriptio
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
 class ProviderRequestDetailPage extends StatefulWidget {
-  const ProviderRequestDetailPage({super.key});
+  final String? requestId;
+  final RequestData? requestData;
+  const ProviderRequestDetailPage({super.key, this.requestId, this.requestData});
 
   @override
   State<ProviderRequestDetailPage> createState() =>
@@ -43,8 +45,8 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
       uid = profileState.profile.user?.id;
     }
 
-    final selectedRequest = context.read<ProviderBloc>().selectedRequest;
-    final requestId = selectedRequest?.request?.id;
+    final selectedRequest = widget.requestData ?? context.read<ProviderBloc>().selectedRequest;
+    final requestId = selectedRequest?.request?.id ?? widget.requestId;
 
     if (requestId != null) {
       context.read<ProviderBloc>().add(
@@ -107,7 +109,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
         ],
         child: BlocBuilder<ProviderBloc, ProviderState>(
           builder: (context, state) {
-            final requestData = context.read<ProviderBloc>().selectedRequest;
+            final requestData = widget.requestData ?? context.read<ProviderBloc>().selectedRequest;
 
             if (requestData == null) {
               if (state is LoadingProviderState) {
@@ -156,7 +158,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      Get.back();
+                                      context.pop();
                                     },
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
@@ -191,7 +193,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                       context.read<MessageBloc>().add(
                                         SetMessageReceiverEvent(profile: user),
                                       );
-                                      Get.to(() => const ChatPage());
+                                      context.push('/chat');
                                     },
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
@@ -277,7 +279,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                         context.read<CommonBloc>().add(
                           SetViewImageEvent(url: request.imageUrl ?? ""),
                         );
-                        Get.toNamed("/image");
+                        context.push("/image");
                       },
                       child: Hero(
                         tag: 'request_image_${request.id}',

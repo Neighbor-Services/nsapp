@@ -3,7 +3,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 
@@ -165,8 +166,11 @@ class _MapLocationPageState extends State<MapLocationPage> {
                   top: 60.h,
                   child: GestureDetector(
                     onTap: () {
-                      Get.bottomSheet(
-                        Container(
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Container(
                           padding: EdgeInsets.all(24.r),
                           width: size(context).width,
                           height: size(context).height * 0.85,
@@ -178,7 +182,6 @@ class _MapLocationPageState extends State<MapLocationPage> {
                           ),
                           child: const SearchLocationMapWidget(),
                         ),
-                        isScrollControlled: true,
                       );
                     },
                     child: Hero(
@@ -283,7 +286,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
               locationTextController.text = await Helpers.getAddressFromMap(pos!);
             }
           }
-          Get.back(result: locationTextController.text);
+          context.pop(locationTextController.text);
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 16.h),

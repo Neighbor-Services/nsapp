@@ -1,8 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -93,17 +92,17 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: isProvider));
                   
                   if (isProvider && profile.isIdentityVerified != true) {
-                    Get.offAllNamed("/home");
-                    // Get.offAllNamed("/pending-verification");
+                    context.go("/home");
+                    // context.go("/pending-verification");
                   } else {
-                    Get.offAllNamed("/home");
+                    context.go("/home");
                   }
                 } else {
-                  Get.offAllNamed("/add-profile");
+                  context.go("/add-profile");
                 }
               }
               if (state is FailureGetProfileState) {
-                Get.offAllNamed("/add-profile");
+                context.go("/add-profile");
               }
             },
           ),
@@ -214,7 +213,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           alignment: Alignment.centerRight,
                                           child: GestureDetector(
                                             onTap: () =>
-                                                Get.toNamed("/reset-password"),
+                                                context.push("/reset-password"),
                                             child: Text(
                                               "Forgot Password?",
                                               style: TextStyle(
@@ -369,7 +368,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: () => Get.toNamed("/register"),
+                                    onTap: () => context.push("/register"),
                                     child: Text(
                                       "Sign Up",
                                       style: TextStyle(

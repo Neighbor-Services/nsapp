@@ -22,11 +22,11 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
 
   final List<Widget> _pages = const [
     SizedBox.shrink(), // 0: Unused
-    SeekerHomePage(), // 1: Home
-    NotificationsPage(), // 2: Notifications
-    SeekerNewRequestPage(), // 3: FAB/New Request
-    MyMessagesPage(), // 4: Chat
-    SeekerFavoritePage(), // 5: Favorites
+    SeekerHomePage(key: PageStorageKey('seeker_home')), // 1: Home
+    NotificationsPage(key: PageStorageKey('seeker_notifications')), // 2: Notifications
+    SeekerNewRequestPage(key: PageStorageKey('seeker_new_request')), // 3: FAB/New Request
+    MyMessagesPage(key: PageStorageKey('seeker_messages')), // 4: Chat
+    SeekerFavoritePage(key: PageStorageKey('seeker_favorites')), // 5: Favorites
   ];
 
   @override
@@ -46,6 +46,20 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
           setState(() {
             _currentTab = state.tabIndex;
           });
+        } else if (state is FailureAddToFavoriteState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to add favorite: ${state.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is FailureRemoveFromFavoriteState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to remove favorite: ${state.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       },
       builder: (context, state) {

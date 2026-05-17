@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +9,8 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
-import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:go_router/go_router.dart';
 
 class ProviderAllServicesPage extends StatefulWidget {
   const ProviderAllServicesPage({super.key});
@@ -54,7 +54,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Get.back();
+                          context.pop();
                         },
                         child: Container(
                           padding: EdgeInsets.all(12.r),
@@ -195,10 +195,10 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
       child: GestureDetector(
         onTap: () {
           if (_isSubscriptionValid) {
-            Get.to(() => RequestsByServicePage(
-              serviceId: service.id ?? '',
-              serviceName: service.name ?? 'Service',
-            ));
+            context.push('/requests-by-service', extra: {
+              'serviceId': service.id ?? '',
+              'serviceName': service.name ?? 'Service',
+            });
           } else {
             showDialog(
               context: context,

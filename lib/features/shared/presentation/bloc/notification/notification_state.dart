@@ -14,10 +14,14 @@ class NotificationFailure extends NotificationState {
 class SuccessGetMyNotificationsState extends NotificationState {
   final List<not.NotificationData> notifications;
   final int unreadCount;
+  final bool hasReachedMax;
+  final int currentPage;
 
   SuccessGetMyNotificationsState({
     required this.notifications,
     required this.unreadCount,
+    this.hasReachedMax = false,
+    this.currentPage = 1,
   });
 }
 

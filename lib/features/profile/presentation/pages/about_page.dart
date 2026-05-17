@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -10,12 +11,10 @@ import 'package:nsapp/features/profile/presentation/widgets/reviews_widget.dart'
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:get/get.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
+import 'package:go_router/go_router.dart';
 import '../../../shared/presentation/widget/loading_widget.dart';
 import '../../../shared/presentation/widget/solid_container_widget.dart';
 import '../../../seeker/presentation/widgets/rating_review_form_widget.dart';
-import '../../../seeker/presentation/pages/seeker_new_request_page.dart';
 
 class AboutPage extends StatefulWidget {
   final Profile? profile;
@@ -115,9 +114,9 @@ class _AboutPageState extends State<AboutPage>
                               GestureDetector(
                                 onTap: () {
                                   if (isProvider) {
-                                    Get.back();
+                                    context.pop();
                                   } else {
-                                    Get.back();
+                                    context.pop();
                                   }
                                 },
                                 child: Container(
@@ -187,7 +186,7 @@ class _AboutPageState extends State<AboutPage>
                                                           null &&
                                                       profile.profilePictureUrl!
                                                           .isNotEmpty)
-                                                  ? NetworkImage(
+                                                  ? CachedNetworkImageProvider(
                                                     profile.profilePictureUrl!,
                                                   )
                                                   : null,
@@ -279,8 +278,7 @@ class _AboutPageState extends State<AboutPage>
                                               reciever: profile.user!.id!,
                                             ),
                                           );
-                                          const chatPage = ChatPage();
-                                          Get.to(() => chatPage);
+                                          context.push('/chat');
                                         }
                                       },
                                     ),
@@ -302,13 +300,11 @@ class _AboutPageState extends State<AboutPage>
                                             );
                                             return;
                                           }
-                                          Get.to(() => SeekerNewRequestPage(
-                                                targetProviderId: profile.user!.id,
-                                                initialServiceId:
-                                                    profile.catalogServiceId,
-                                                initialServiceName:
-                                                    profile.catalogServiceName,
-                                              ));
+                                          context.push('/new-request', extra: {
+                                            'targetProviderId': profile.user!.id,
+                                            'initialServiceId': profile.catalogServiceId,
+                                            'initialServiceName': profile.catalogServiceName,
+                                          });
                                         }
                                       },
                                     ),
@@ -366,9 +362,10 @@ class _AboutPageState extends State<AboutPage>
                     margin: EdgeInsets.only(bottom: 100.h),
                     child: FloatingActionButton.extended(
                       onPressed: () {
-                        Get.dialog(
-                          RatingReviewFormWidget(profile: widget.profile),
+                        showDialog(
+                          context: context,
                           barrierColor: Colors.black.withAlpha(180),
+                          builder: (context) => RatingReviewFormWidget(profile: widget.profile),
                         );
                       },
                       label: Text(

@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -180,7 +180,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () => context.pop(),
           child: Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(

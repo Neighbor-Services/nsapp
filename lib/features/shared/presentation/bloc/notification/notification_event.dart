@@ -7,7 +7,15 @@ class AddNotificationEvent extends NotificationEvent {
   AddNotificationEvent({required this.notification});
 }
 
-class GetMyNotificationsEvent extends NotificationEvent {}
+class GetMyNotificationsEvent extends NotificationEvent {
+  final int page;
+  GetMyNotificationsEvent({this.page = 1});
+}
+
+class LoadMoreNotificationsEvent extends NotificationEvent {
+  final int page;
+  LoadMoreNotificationsEvent({required this.page});
+}
 
 class SetNotificationSeenEvent extends NotificationEvent {
   final String notificationID;

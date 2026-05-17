@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/portfolio_item.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:get/get.dart';
+
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -248,8 +248,12 @@ class PortfolioGallery extends StatelessWidget {
     final descriptionBorder = context.appColors.glassBorder;
     final labelColor = context.appColors.secondaryTextColor;
 
-    Get.bottomSheet(
-      BackdropFilter(
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withAlpha(180),
+      builder: (context) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           padding: EdgeInsets.all(24.r),
@@ -295,7 +299,7 @@ class PortfolioGallery extends StatelessWidget {
                         top: 16.h,
                         right: 16.w,
                         child: GestureDetector(
-                          onTap: () => Get.back(),
+                          onTap: () => Navigator.of(context).pop(),
                           child: Container(
                             padding: EdgeInsets.all(8.r),
                             decoration: BoxDecoration(
@@ -412,8 +416,6 @@ class PortfolioGallery extends StatelessWidget {
           ),
         ),
       ),
-      isScrollControlled: true,
-      barrierColor: Colors.black.withAlpha(180),
     );
   }
 }

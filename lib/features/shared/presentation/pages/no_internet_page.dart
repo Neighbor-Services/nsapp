@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
@@ -30,17 +30,17 @@ class _NoInternetPageState extends State<NoInternetPage> {
     });
 
     if (hasInternet) {
-      Get.offAllNamed('/'); // Restart via the registered splash route
+      context.go('/'); // Restart via the registered splash route
     } else {
       // Show brief snackbar that it's still offline
-      Get.snackbar(
-        "Still Offline",
-        "Please check your network settings.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: context.appColors.errorColor.withAlpha(200),
-        colorText: Colors.white,
-        margin: EdgeInsets.all(16.r),
-        borderRadius: 12.r,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Still Offline: Please check your network settings."),
+          backgroundColor: context.appColors.errorColor.withAlpha(200),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16.r),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+        ),
       );
     }
   }

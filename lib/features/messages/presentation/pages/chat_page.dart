@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 
@@ -5,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -18,7 +19,6 @@ import 'package:nsapp/features/messages/presentation/widgets/sender_appointment_
 import 'package:nsapp/features/messages/presentation/widgets/sender_chat_image_widget.dart';
 import 'package:nsapp/features/messages/presentation/widgets/sender_chat_text_widget.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/models/chat.dart';
@@ -159,6 +159,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         ),
       ],
       child: BlocBuilder<MessageBloc, MessageState>(
+        buildWhen: (previous, current) =>
+            current is SuccessGetMessageState ||
+            current is LoadingMessageState ||
+            current is FailureGetMessageState,
         builder: (context, state) {
         return GradientBackground(
           child: Scaffold(
@@ -212,12 +216,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           children: [
             IconButton(
               onPressed: () {
-                final settingsState = context.read<SettingsBloc>().state;
-                if (settingsState.isProvider) {
-                  Get.back();
-                } else {
-                  Get.back();
-                }
+                context.pop();
               },
               icon: const FaIcon(FontAwesomeIcons.chevronLeft),
               color: iconColor,
@@ -283,7 +282,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             (receiver.profilePictureUrl != null &&
                 receiver.profilePictureUrl != "" &&
                 receiver.profilePictureUrl != "picture")
-            ? NetworkImage(receiver.profilePictureUrl!)
+            ? CachedNetworkImageProvider(receiver.profilePictureUrl!)
             : const AssetImage(logo2Assets) as ImageProvider,
       ),
     );
@@ -414,8 +413,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final sheetColor = context.appColors.cardBackground;
     final textColor = context.appColors.primaryTextColor;
 
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
@@ -438,7 +439,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               title: "Copy Text",
               onTap: () {
                 Clipboard.setData(ClipboardData(text: message.message ?? ""));
-                Get.back();
+                context.pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Message copied to clipboard")),
                 );
@@ -450,7 +451,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 icon: FontAwesomeIcons.penToSquare,
                 title: "Edit Message",
                 onTap: () {
-                  Get.back();
+                  context.pop();
                   _showEditDialog(message);
                 },
                 color: textColor,
@@ -459,7 +460,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 icon: FontAwesomeIcons.trash,
                 title: "Delete Message",
                 onTap: () {
-                  Get.back();
+                  context.pop();
                   _showDeleteConfirmation(message);
                 },
                 color: Colors.redAccent,
@@ -473,21 +474,22 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   void _showDeleteConfirmation(Message message) {
-    Get.dialog(
-      AlertDialog(
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
         backgroundColor: context.appColors.cardBackground,
         title: Text("Delete Message", style: TextStyle(color: context.appColors.primaryTextColor)),
         content: Text("Are you sure you want to delete this message? This action cannot be undone.", 
           style: TextStyle(color: context.appColors.secondaryTextColor)),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => context.pop(),
             child: Text("Cancel", style: TextStyle(color: context.appColors.hintTextColor)),
           ),
           TextButton(
             onPressed: () {
               context.read<MessageBloc>().add(DeleteMessageEvent(message: message));
-              Get.back();
+              context.pop();
             },
             child: const Text("Delete", style: TextStyle(color: Colors.redAccent)),
           ),
@@ -498,8 +500,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   void _showEditDialog(Message message) {
     final controller = TextEditingController(text: message.message);
-    Get.dialog(
-      AlertDialog(
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
         backgroundColor: context.appColors.cardBackground,
         title: Text("Edit Message", style: TextStyle(color: context.appColors.primaryTextColor)),
         content: TextField(
@@ -515,7 +518,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => context.pop(),
             child: Text("Cancel", style: TextStyle(color: context.appColors.hintTextColor)),
           ),
           TextButton(
@@ -525,7 +528,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 final updatedMessage = message.copyWith(message: newText);
                 context.read<MessageBloc>().add(UpdateMessageEvent(message: updatedMessage));
               }
-              Get.back();
+              context.pop();
             },
             child: Text("Update", style: TextStyle(color: context.appColors.primaryColor)),
           ),
@@ -650,8 +653,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final sheetColor = context.appColors.cardBackground;
     final textColor = context.appColors.primaryTextColor;
 
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
@@ -673,13 +678,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildOptionButton(FontAwesomeIcons.camera, "Camera", () {
-                  Get.back();
+                  context.pop();
                   context.read<MessageBloc>().add(
                     ChooseMessageImageFromCameraEvent(),
                   );
                 }, isDark),
                 _buildOptionButton(FontAwesomeIcons.images, "Gallery", () {
-                  Get.back();
+                  context.pop();
                   context.read<MessageBloc>().add(
                     ChooseMessageImageFromGalleyEvent(),
                   );
@@ -765,8 +770,11 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     DateTime selectedDate = DateTime.now();
     TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
 
-    Get.bottomSheet(
-      StatefulBuilder(
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
         builder: (context, setSheetState) {
           return Container(
             padding: EdgeInsets.all(24.r),
@@ -826,7 +834,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   child: ElevatedButton(
                     onPressed: () {
                       _submitAppointment(selectedDate, startTime);
-                      Get.back();
+                      context.pop();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.appColors.secondaryColor,
@@ -851,7 +859,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           );
         },
       ),
-      isScrollControlled: true,
     );
   }
 

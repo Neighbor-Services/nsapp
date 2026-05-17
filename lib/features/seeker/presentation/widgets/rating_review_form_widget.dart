@@ -4,7 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating/flutter_rating.dart';
-import 'package:get/get.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
+
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -50,26 +51,18 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
       listener: (context, state) {
         if (state is SuccessAddReviewState) {
           Navigator.pop(context);
-          Get.snackbar(
-            "Thank You!",
+          customAlert(
+            context,
+            AlertType.success,
             "Your review has been submitted successfully.",
-            backgroundColor: context.appColors.successColor.withAlpha(200),
-            colorText: Colors.white,
-            snackPosition: SnackPosition.BOTTOM,
-            margin: EdgeInsets.all(16.r),
-            borderRadius: 12.r,
           );
         } else if (state is FailureAddReviewState) {
-          Get.snackbar(
-            "Submission Failed",
+          customAlert(
+            context,
+            AlertType.error,
             state.message.isNotEmpty
                 ? state.message
                 : "Could not submit your review. Please try again.",
-            backgroundColor: context.appColors.errorColor.withAlpha(200),
-            colorText: Colors.white,
-            snackPosition: SnackPosition.BOTTOM,
-            margin: EdgeInsets.all(16.r),
-            borderRadius: 12.r,
           );
         }
       },
@@ -78,7 +71,7 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
 
         return Center(
           child: Container(
-            width: context.width * 0.9,
+            width: MediaQuery.sizeOf(context).width * 0.9,
             padding: EdgeInsets.all(24.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
@@ -206,14 +199,10 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
 
   void _submitReview(Profile providerProfile) {
     if (_reviewController.text.trim().isEmpty) {
-      Get.snackbar(
-        "Review Required",
+      customAlert(
+        context,
+        AlertType.warning,
         "Please write a short review to share your experience.",
-        backgroundColor: context.appColors.errorColor.withAlpha(200),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: EdgeInsets.all(16.r),
-        borderRadius: 12.r,
       );
       return;
     }
@@ -227,14 +216,10 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
         providerProfile.id;
 
     if (providerId == null || providerId.isEmpty) {
-      Get.snackbar(
-        "Error",
+      customAlert(
+        context,
+        AlertType.error,
         "Unable to submit review. Provider information is incomplete.",
-        backgroundColor: context.appColors.errorColor.withAlpha(200),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: EdgeInsets.all(16.r),
-        borderRadius: 12.r,
       );
       return;
     }

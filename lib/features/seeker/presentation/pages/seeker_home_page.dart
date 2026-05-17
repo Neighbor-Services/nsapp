@@ -1,13 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/services_model.dart';
-import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_provider_search_page.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/popular_provider_widget.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/filter_drawer.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
@@ -15,10 +14,6 @@ import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart
 import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
 import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/seeker/presentation/pages/ai_search_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_all_services_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
@@ -34,7 +29,7 @@ class SeekerHomePage extends StatefulWidget {
 }
 
 class _SeekerHomePageState extends State<SeekerHomePage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -63,6 +58,9 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     super.dispose();
   }
 
+  @override
+  bool get wantKeepAlive => true;
+
   Widget _buildAnimatedSection(int index, Widget child) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
@@ -83,6 +81,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -105,6 +104,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                     await Future.delayed(const Duration(seconds: 1));
                   },
                   child: ListView(
+                    key: const PageStorageKey('seeker_home_list'),
                     physics: const BouncingScrollPhysics(
                       parent: AlwaysScrollableScrollPhysics(),
                     ),
@@ -117,25 +117,22 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                       _buildHeader(context),
                       SizedBox(height: 16.h),
                       
-                      // Gamification Dashboard
-                      BlocBuilder<ProfileBloc, ProfileState>(
-                        buildWhen: (previous, current) => 
-                          current is SuccessGetProfileState || 
-                          current is SuccessGetProfileStreamState,
-                        builder: (context, state) {
-                          Profile? profile;
-                          if (state is SuccessGetProfileState) {
-                            profile = state.profile;
-                          }
-                          return _buildAnimatedSection(0.2.toInt(), _buildGamificationBar(context, profile));
-                        },
-                      ),
-                      SizedBox(height: 24.h),
+                      // // Gamification Dashboard
+                      // BlocBuilder<ProfileBloc, ProfileState>(
+                      //   buildWhen: (previous, current) => 
+                      //     current is SuccessGetProfileState || 
+                      //     current is SuccessGetProfileStreamState,
+                      //   builder: (context, state) {
+                      //     final profile = state.profile;
+                      //     return _buildAnimatedSection(0.2.toInt(), _buildGamificationBar(context, profile));
+                      //   },
+                      // ),
+                      // SizedBox(height: 24.h),
 
                       // AI-Powered Hero Section
                       _buildAnimatedSection(0, _buildHero(context, isLargeScreen)),
                       _buildAnimatedSection(0.5.toInt(), _buildLiveStatusTicker(context)),
-                      SizedBox(height: 24.h),
+                     
 
                       // Active Request Section
                       _buildAnimatedSection(1, _buildActiveRequestSection(context)),
@@ -164,7 +161,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                             context,
                             "Explore Categories",
                             onViewAll: () {
-                              Get.to(() => const SeekerAllServicesPage());
+                              context.push('/all-services');
                             },
                           ),
                           SizedBox(height: 16.h),
@@ -252,7 +249,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   Widget _buildHeroSearchBar(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => const SeekerProviderSearchPage());
+        context.push('/provider-search');
       },
       child: Container(
         height: 56.h,
@@ -283,7 +280,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
             VerticalDivider(width: 20.w, indent: 15, endIndent: 15),
             GestureDetector(
               onTap: () {
-                Get.to(() => const AISearchPage());
+                context.push('/ai-search');
               },
               child:  FaIcon(FontAwesomeIcons.wandMagicSparkles, color: context.appColors.primaryColor),
             ),
@@ -385,11 +382,12 @@ class _SeekerHomePageState extends State<SeekerHomePage>
           },
           child: GestureDetector(
             onTap: () {
-              Get.to(
-                () => ProvidersByServicePage(
-                  serviceId: service.id ?? '',
-                  serviceName: service.name ?? 'Service',
-                ),
+              context.push(
+                '/providers-by-service',
+                extra: {
+                  'serviceId': service.id ?? '',
+                  'serviceName': service.name ?? 'Service',
+                },
               );
             },
             child: Container(
@@ -478,7 +476,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 context.read<SeekerBloc>().add(
                   SeekerRequestDetailEvent(request: activeRequest!),
                 );
-                Get.to(() => SeekerRequestDetailsPage(requestData: activeRequest!));
+                context.push('/app/requests/${activeRequest.request?.id}', extra: activeRequest);
               },
               child: SolidContainer(
                 padding: EdgeInsets.all(20.r),
@@ -554,12 +552,8 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         current is SuccessGetProfileState || 
         current is SuccessGetProfileStreamState,
       builder: (context, state) {
-        String name = "Neighbor";
-        if (state is SuccessGetProfileState) {
-          name = state.profile.firstName ?? "Neighbor";
-        } else if (state is SuccessGetProfileStreamState) {
-          name = state.profile.firstName ?? "Neighbor";
-        }
+        final profile = state.profile;
+        String name = profile?.firstName ?? "Neighbor";
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -584,7 +578,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
             GestureDetector(
               onTap: () {
                 HapticFeedback.mediumImpact();
-                Get.toNamed("/notifications");
+                context.push("/notifications");
               },
               child: Container(
                 padding: EdgeInsets.all(12.r),
@@ -671,7 +665,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         return GestureDetector(
           onTap: () {
             HapticFeedback.selectionClick();
-            Get.toNamed("/map-location");
+            context.push("/map-location");
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -706,99 +700,99 @@ class _SeekerHomePageState extends State<SeekerHomePage>
     );
   }
 
-  Widget _buildGamificationBar(BuildContext context, Profile? profile) {
-    final streak = profile?.streakCount ?? 0;
-    final score = profile?.neighborScore ?? 500;
-    final level = profile?.level ?? 1;
+  // Widget _buildGamificationBar(BuildContext context, Profile? profile) {
+  //   final streak = profile?.streakCount ?? 0;
+  //   final score = profile?.neighborScore ?? 500;
+  //   final level = profile?.level ?? 1;
 
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(16.r),
-          decoration: BoxDecoration(
-            color: context.appColors.cardBackground,
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(color: context.appColors.glassBorder),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(20),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildGamificationItem(
-                icon: FontAwesomeIcons.fire,
-                iconColor: Colors.orangeAccent,
-                label: "$streak DAY STREAK",
-                value: "STREAK",
-              ),
-              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
-              _buildGamificationItem(
-                icon: FontAwesomeIcons.shieldHeart,
-                iconColor: Colors.blueAccent,
-                label: "NEIGHBOR SCORE",
-                value: "$score",
-              ),
-              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
-              _buildGamificationItem(
-                icon: FontAwesomeIcons.bolt,
-                iconColor: Colors.yellowAccent,
-                label: "LVL $level",
-                value: "SEEKER",
-              ),
-            ],
-          ),
-        ),
-        if (profile != null) ...[
-          SizedBox(height: 12.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "PROGRESS TO NEXT LEVEL",
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.bold,
-                        color: context.appColors.secondaryTextColor,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                    Text(
-                      "${(profile.xp ?? 0) % 1000} / 1000 XP",
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.bold,
-                        color: context.appColors.primaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 6.h),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.r),
-                  child: LinearProgressIndicator(
-                    value: ((profile.xp ?? 0) % 1000) / 1000,
-                    backgroundColor: context.appColors.cardBackground,
-                    valueColor: AlwaysStoppedAnimation<Color>(context.appColors.primaryColor),
-                    minHeight: 4.h,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ],
-    );
-  }
+  //   return Column(
+  //     children: [
+  //       Container(
+  //         padding: EdgeInsets.all(16.r),
+  //         decoration: BoxDecoration(
+  //           color: context.appColors.cardBackground,
+  //           borderRadius: BorderRadius.circular(20.r),
+  //           border: Border.all(color: context.appColors.glassBorder),
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: Colors.black.withAlpha(20),
+  //               blurRadius: 10,
+  //               offset: const Offset(0, 4),
+  //             ),
+  //           ],
+  //         ),
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //           children: [
+  //             _buildGamificationItem(
+  //               icon: FontAwesomeIcons.fire,
+  //               iconColor: Colors.orangeAccent,
+  //               label: "$streak DAY STREAK",
+  //               value: "STREAK",
+  //             ),
+  //             Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+  //             _buildGamificationItem(
+  //               icon: FontAwesomeIcons.shieldHeart,
+  //               iconColor: Colors.blueAccent,
+  //               label: "NEIGHBOR SCORE",
+  //               value: "$score",
+  //             ),
+  //             Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+  //             _buildGamificationItem(
+  //               icon: FontAwesomeIcons.bolt,
+  //               iconColor: Colors.yellowAccent,
+  //               label: "LVL $level",
+  //               value: "SEEKER",
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       if (profile != null) ...[
+  //         SizedBox(height: 12.h),
+  //         Padding(
+  //           padding: EdgeInsets.symmetric(horizontal: 4.w),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   Text(
+  //                     "PROGRESS TO NEXT LEVEL",
+  //                     style: TextStyle(
+  //                       fontSize: 9.sp,
+  //                       fontWeight: FontWeight.bold,
+  //                       color: context.appColors.secondaryTextColor,
+  //                       letterSpacing: 1.0,
+  //                     ),
+  //                   ),
+  //                   Text(
+  //                     "${(profile.xp ?? 0) % 1000} / 1000 XP",
+  //                     style: TextStyle(
+  //                       fontSize: 9.sp,
+  //                       fontWeight: FontWeight.bold,
+  //                       color: context.appColors.primaryColor,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 6.h),
+  //               ClipRRect(
+  //                 borderRadius: BorderRadius.circular(10.r),
+  //                 child: LinearProgressIndicator(
+  //                   value: ((profile.xp ?? 0) % 1000) / 1000,
+  //                   backgroundColor: context.appColors.cardBackground,
+  //                   valueColor: AlwaysStoppedAnimation<Color>(context.appColors.primaryColor),
+  //                   minHeight: 4.h,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ],
+  //   );
+  // }
 
   Widget _buildGamificationItem({
     required IconData icon,
@@ -869,7 +863,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                     onTap: () {
                       final String? providerId = profile?.user?.id;
                       if (providerId != null) {
-                        Get.to(() => AboutPage(profile: profile));
+                        context.push('/portfolio-view', extra: profile);
                       }
                     },
                     child: Container(
@@ -890,7 +884,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                               radius: 30.r,
                               backgroundImage: (profile?.profilePictureUrl != null &&
                                       profile!.profilePictureUrl!.isNotEmpty)
-                                  ? NetworkImage(profile.profilePictureUrl!)
+                                  ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                                   : const AssetImage(logo2Assets) as ImageProvider,
                             ),
                           ),

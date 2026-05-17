@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:get/get.dart';
+
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -93,17 +94,17 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                   );
 
                   if (isProvider && profile.isIdentityVerified != true) {
-                    Get.offAllNamed("/home");
-                    // Get.offAllNamed("/pending-verification");
+                    context.go("/home");
+                    // context.go("/pending-verification");
                   } else {
-                    Get.offAllNamed("/home");
+                    context.go("/home");
                   }
                 } else {
-                  Get.offAllNamed("/add-profile");S
+                  context.go("/add-profile");
                 }
               }
               if (state is FailureGetProfileState) {
-                Get.offAllNamed("/add-profile");
+                context.go("/add-profile");
               }
             },
           ),
@@ -128,7 +129,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                 );
                 Future.delayed(const Duration(seconds: 3), () {
                   if (mounted) {
-                    Get.toNamed("/otp");
+                    context.push("/otp");
                   }
                 });
               } else if (state is SuccessGoogleRegisterAuthenticationState ||
@@ -216,14 +217,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                           prefixIcon: FontAwesomeIcons.envelope,
                                           keyboardType:
                                               TextInputType.emailAddress,
-                                          validator: (val) {
-                                            if (val!.isEmpty) {
-                                              return "Email is required";
-                                            } else if (!val.isEmail) {
-                                              return "Invalid email format";
-                                            }
-                                            return null;
-                                          },
+                                          validator: (val) => ValidationUtil.validateEmail(val),
                                         ),
                                         SizedBox(height: 24.h),
                                         // Password Field
@@ -273,16 +267,11 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                           isLoading: _isLoading,
                                           onPressed: () {
                                             if (!_acceptTerms) {
-                                              Get.snackbar(
-                                                "Required",
-                                                "Please accept our terms and conditions to proceed",
-                                                snackPosition:
-                                                    SnackPosition.BOTTOM,
-                                                backgroundColor: context
-                                                    .appColors
-                                                    .errorColor
-                                                    .withAlpha(200),
-                                                colorText: Colors.white,
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: const Text("Required: Please accept our terms and conditions to proceed"),
+                                                  backgroundColor: context.appColors.errorColor.withAlpha(200),
+                                                ),
                                               );
                                               return;
                                             }
@@ -352,16 +341,11 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                           isPrimary: false,
                                           onPressed: () {
                                             if (!_acceptTerms) {
-                                              Get.snackbar(
-                                                "Required",
-                                                "Please accept our terms and conditions to proceed",
-                                                snackPosition:
-                                                    SnackPosition.BOTTOM,
-                                                backgroundColor: context
-                                                    .appColors
-                                                    .errorColor
-                                                    .withAlpha(200),
-                                                colorText: Colors.white,
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: const Text("Required: Please accept our terms and conditions to proceed"),
+                                                  backgroundColor: context.appColors.errorColor.withAlpha(200),
+                                                ),
                                               );
                                               return;
                                             }
@@ -380,16 +364,11 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                           isPrimary: false,
                                           onPressed: () {
                                             if (!_acceptTerms) {
-                                              Get.snackbar(
-                                                "Required",
-                                                "Please accept our terms and conditions to proceed",
-                                                snackPosition:
-                                                    SnackPosition.BOTTOM,
-                                                backgroundColor: context
-                                                    .appColors
-                                                    .errorColor
-                                                    .withAlpha(200),
-                                                colorText: Colors.white,
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: const Text("Required: Please accept our terms and conditions to proceed"),
+                                                  backgroundColor: context.appColors.errorColor.withAlpha(200),
+                                                ),
                                               );
                                               return;
                                             }
@@ -420,7 +399,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: () => Get.toNamed("/login"),
+                                    onTap: () => context.push("/login"),
                                     child: Text(
                                       "Login",
                                       style: TextStyle(
@@ -519,7 +498,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                     fontWeight: FontWeight.w500,
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => Get.toNamed('/legal', arguments: 'TERMS'),
+                    ..onTap = () => context.push('/legal', extra: 'TERMS'),
                 ),
                 const TextSpan(text: " and "),
                 TextSpan(
@@ -529,7 +508,7 @@ class _RegisterAuthPageState extends State<RegisterAuthPage>
                     fontWeight: FontWeight.w500,
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => Get.toNamed('/legal', arguments: 'PRIVACY'),
+                    ..onTap = () => context.push('/legal', extra: 'PRIVACY'),
                 ),
               ],
             ),

@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/models/map_places.dart';
 import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
@@ -116,7 +117,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                         placeId: places[index].placeId ?? "",
                                       ),
                                     );
-                                    Get.back();
+                                    context.pop();
                                   },
                                   leading: Container(
                                     padding: EdgeInsets.all(12.r),

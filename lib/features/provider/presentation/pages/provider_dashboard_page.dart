@@ -28,11 +28,11 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
 
   final List<Widget> _pages = const [
     SizedBox.shrink(), // 0: Unused
-    ProviderHomePage(), // 1: Home
-    NotificationsPage(), // 2: Notifications
-    ProviderAcceptedRequestPage(), // 3: Accepted Requests
-    MyMessagesPage(), // 4: Chat
-    ProviderAppointmentCalendarPage(), // 5: Calendar
+    ProviderHomePage(key: PageStorageKey('provider_home')), // 1: Home
+    NotificationsPage(key: PageStorageKey('provider_notifications')), // 2: Notifications
+    ProviderAcceptedRequestPage(key: PageStorageKey('provider_accepted')), // 3: Accepted Requests
+    MyMessagesPage(key: PageStorageKey('provider_messages')), // 4: Chat
+    ProviderAppointmentCalendarPage(key: PageStorageKey('provider_calendar')), // 5: Calendar
   ];
 
   @override

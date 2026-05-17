@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/message.dart';
@@ -102,7 +102,7 @@ class MediaChatWidget extends StatelessWidget {
                             ChatEvent(message: message),
                           );
                           messageController.text = "";
-                          Get.back();
+                          Navigator.of(context).pop();
                         } else {
                           customAlert(context, AlertType.error, "User context lost. Please try again.");
                         }

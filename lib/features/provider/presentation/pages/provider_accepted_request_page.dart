@@ -1,18 +1,16 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/request_accept.dart';
 import '../../../../core/models/request_acceptance.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderAcceptedRequestPage extends StatefulWidget {
@@ -25,7 +23,7 @@ class ProviderAcceptedRequestPage extends StatefulWidget {
 
 class _ProviderAcceptedRequestPageState
     extends State<ProviderAcceptedRequestPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -52,7 +50,11 @@ class _ProviderAcceptedRequestPageState
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     final textColor = context.appColors.primaryTextColor;
@@ -103,10 +105,10 @@ class _ProviderAcceptedRequestPageState
                                       GestureDetector(
                                     onTap: () {
                                       if (Navigator.of(context).canPop()) {
-                                        Get.back();
+                                        context.pop();
                                       } else {
                                         context.read<ProviderBloc>().add(
-                                            ChangeProviderTabEvent(tabIndex: 0));
+                                            ChangeProviderTabEvent(tabIndex: 1));
                                       }
                                     },
                                     child: Container(
@@ -226,6 +228,7 @@ class _ProviderAcceptedRequestPageState
                                     await Future.delayed(const Duration(seconds: 1));
                                   },
                                   child: ListView.builder(
+                                    key: const PageStorageKey('provider_accepted_list'),
                                     physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                                     padding: EdgeInsets.symmetric(
                                       horizontal: isLargeScreen ? 32.w : 16.w,
@@ -301,7 +304,10 @@ class _ProviderAcceptedRequestPageState
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: request.id ?? ""),
           );
-          Get.to(() => const ProviderRequestDetailPage());
+          context.push('/app/provider/requests/${request.id}', extra: RequestData(
+            request: requestAcceptance.acceptance!.request,
+            user: requestAcceptance.user,
+          ));
         },
         child: Container(
         margin: EdgeInsets.only(bottom: 20.h),
@@ -507,14 +513,17 @@ class _ProviderAcceptedRequestPageState
         context.read<ProviderBloc>().add(
           ReloadProfileEvent(request: ra.acceptance?.request?.id ?? ""),
         );
-        Get.to(() => const ProviderRequestDetailPage());
+        context.push('/app/provider/requests/${ra.acceptance!.request!.id}', extra: RequestData(
+          request: ra.acceptance!.request,
+          user: ra.user,
+        ));
         break;
       case 2:
         if (ra.user == null) break;
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        Get.to(() => const ChatPage());
+        context.push('/chat');
         break;
       case 3:
         context.read<MessageBloc>().add(
@@ -524,7 +533,7 @@ class _ProviderAcceptedRequestPageState
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        Get.to(() => const ChatPage());
+        context.push('/chat');
         break;
       case 4:
         if (ra.acceptance?.request?.id == null) break;
@@ -536,7 +545,7 @@ class _ProviderAcceptedRequestPageState
         context.read<ProviderBloc>().add(
           RequestDirectionEvent(request: ra.acceptance!.request!),
         );
-        Get.toNamed("/map-direction");
+        context.push("/map-direction");
         break;
     }
   }

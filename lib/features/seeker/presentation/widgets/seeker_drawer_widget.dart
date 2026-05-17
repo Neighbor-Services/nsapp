@@ -1,18 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_list_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
-import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/disputes_list_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -78,7 +73,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               title: "My Requests",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const SeekerRequestPage());
+                                context.push('/seeker-requests');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -89,7 +84,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               title: "Calendar",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const SeekerAppointmentPage());
+                                context.push('/seeker-appointments');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -100,7 +95,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               title: "Appointments",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const SeekerAppointmentListPage());
+                                context.push('/seeker-appointment-list');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -111,7 +106,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               title: "Disputes",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const DisputesListPage());
+                                context.push('/dispute');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -128,7 +123,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               title: "Settings",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const SettingsPage());
+                                context.push('/settings');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -139,7 +134,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                               title: "Report Issue",
                               onTap: () {
                                 Navigator.pop(context);
-                                Get.to(() => const ReportPage());
+                                context.push('/report');
                               },
                               isDark: isDark,
                               textColor: textColor,
@@ -195,14 +190,14 @@ class SeekerDrawerWidget extends StatelessWidget {
                       (profile.profilePictureUrl != null &&
                           profile.profilePictureUrl!.isNotEmpty &&
                           !profile.profilePictureUrl!.startsWith("file:///"))
-                      ? NetworkImage(profile.profilePictureUrl!)
+                      ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                       : const AssetImage(logo2Assets) as ImageProvider,
                 ),
               ),
               const Spacer(),
               _buildIconButton(context, FontAwesomeIcons.penToSquare, () {
                 Navigator.pop(context);
-                Get.toNamed("/edit-profile");
+                context.push("/edit-profile");
               }, isDark),
             ],
           ),
@@ -390,7 +385,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: TextButton(
-                              onPressed: () => Get.back(),
+                              onPressed: () => context.pop(),
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
                                   vertical: 12.h,
@@ -421,7 +416,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                                   LogoutAuthenticationEvent(),
                                 );
                                 Navigator.pop(context);
-                                Get.offAllNamed("/login");
+                                context.go("/login");
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.appColors.errorColor,

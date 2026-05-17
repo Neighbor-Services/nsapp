@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +8,6 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -68,15 +67,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        if (Navigator.of(context).canPop()) {
-                          Get.back();
-                        } else {
-                          context.read<SeekerBloc>().add(
-                                ChangeSeekerTabEvent(tabIndex: 1),
-                              );
-                        }
-                      },
+                      onTap: () => context.pop(),
                       child: Container(
                         padding: EdgeInsets.all(12.r),
                         decoration: BoxDecoration(
@@ -242,7 +233,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
               providerUserId: profile.user!.id!,
             ),
           );
-          Get.to(() => AboutPage(profile: profile));
+          context.push('/portfolio-view', extra: profile);
         },
       child: SolidContainer(
         padding: EdgeInsets.all(16.r),

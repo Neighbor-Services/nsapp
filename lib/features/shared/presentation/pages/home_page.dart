@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (profileState is SuccessGetProfileState) {
       final userId = profileState.profile.user?.id;
       if (userId != null) {
-        Helpers.createStripeCustomer(userId: userId);
+        context.read<ProfileBloc>().add(CreateStripeCustomerEvent(userId: userId));
       }
       if (Helpers.isProvider(profileState.profile.userType)) {
         context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: true));
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 value: 1,
                 child: BlocBuilder<ProfileBloc, ProfileState>(
                   builder: (context, profileState) {
-                    final profile = profileState is SuccessGetProfileState ? profileState.profile : Profile();
+                    final profile = profileState.profile ?? Profile();
                     return Row(
                       children: [
                         CircleAvatar(
@@ -90,7 +91,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               (profile.profilePictureUrl != null &&
                                   profile.profilePictureUrl!.isNotEmpty &&
                                   !profile.profilePictureUrl!.startsWith("file:///"))
-                              ? NetworkImage(profile.profilePictureUrl!)
+                              ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                               : AssetImage(logo2Assets) as ImageProvider,
                         ),
                         const SizedBox(width: 10),
@@ -129,10 +130,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ? ProviderDrawerWidget()
               : SeekerDrawerWidget(),
           body: SafeArea(
-            child: Center(
-              child: state.isProvider
-                  ? ProviderDashboardPage()
-                  : SeekerDashboardPage(),
+            child: IndexedStack(
+              index: state.isProvider ? 0 : 1,
+              children: const [
+                ProviderDashboardPage(),
+                SeekerDashboardPage(),
+              ],
             ),
           ),
         );

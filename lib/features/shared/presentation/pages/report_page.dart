@@ -1,7 +1,8 @@
-import 'package:get/get.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/report.dart';
@@ -82,13 +83,7 @@ class _ReportPageState extends State<ReportPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               GestureDetector(
-                                onTap: () {
-                                  if (state.isProvider) {
-                                    Get.back();
-                                  } else {
-                                    Get.back();
-                                  }
-                                },
+                                onTap: () => context.pop(),
                                 child: Container(
                                   padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(

@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:local_auth/local_auth.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
@@ -37,7 +38,7 @@ class _BiometricPageState extends State<BiometricPage> {
 
       if (isAuthenticated) {
         if (await Helpers.isAuthenticated()) {
-          Get.offAllNamed("/home");
+          context.go("/home");
         } else {
           const secureStorage = FlutterSecureStorage();
           final email = await secureStorage.read(key: "email");
@@ -50,7 +51,7 @@ class _BiometricPageState extends State<BiometricPage> {
               );
             }
           } else {
-            Get.offAllNamed("/login");
+            context.go("/login");
           }
         }
       }
@@ -96,18 +97,18 @@ class _BiometricPageState extends State<BiometricPage> {
                     ToggleDashboardEvent(isProvider: false),
                   );
                 }
-                Get.offAllNamed("/home");
+                context.go("/home");
               } else {
-                Get.offAllNamed("/add-profile");
+                context.go("/add-profile");
               }
             });
           } else if (state is FailureLoginAuthenticationState) {
-            Get.snackbar(
-              "Login Failed",
+            customAlert(
+              context,
+              AlertType.error,
               "Biometric login failed. Please sign in with your password.",
-              snackPosition: SnackPosition.BOTTOM,
             );
-            Get.offAllNamed("/login");
+            context.go("/login");
           }
         },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(

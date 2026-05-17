@@ -1,7 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -55,7 +56,7 @@ AppBar homeAppBar({
                   current is SuccessGetProfileState || 
                   current is SuccessGetProfileStreamState,
                 builder: (context, state) {
-                  final profile = state is SuccessGetProfileState ? state.profile : Profile();
+                  final profile = state.profile ?? Profile();
                   return Container(
                     padding: EdgeInsets.all(2.r),
                     decoration: BoxDecoration(
@@ -72,7 +73,7 @@ AppBar homeAppBar({
                           (profile.profilePictureUrl != null &&
                               profile.profilePictureUrl!.isNotEmpty &&
                               !profile.profilePictureUrl!.startsWith("file:///"))
-                          ? NetworkImage(profile.profilePictureUrl!)
+                          ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                           : AssetImage(logo2Assets) as ImageProvider,
                     ),
                   );
@@ -111,7 +112,7 @@ AppBar homeAppBar({
         padding: EdgeInsets.symmetric(vertical: 20.0.h),
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, profileState) {
-            final profile = profileState is SuccessGetProfileState ? profileState.profile : null;
+            final profile = profileState.profile;
             return Helpers.isProvider(profile?.userType ?? "")
                 ? Transform.scale(
                     scale: 0.8,
@@ -182,7 +183,7 @@ class PlatformPopupMenu extends StatelessWidget {
       onSelected: (value) {
         switch (value) {
           case 1:
-            Get.toNamed("/profile");
+            context.push("/profile");
             break;
 
           case 2:
@@ -244,7 +245,7 @@ class PlatformPopupMenu extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: TextButton(
-                                  onPressed: () => Get.back(),
+                                  onPressed: () => context.pop(),
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.symmetric(
                                       vertical: 14.h,
@@ -276,7 +277,7 @@ class PlatformPopupMenu extends StatelessWidget {
                                       LogoutAuthenticationEvent(),
                                     );
                                     context.read<ProfileBloc>().add(LogoutProfileEvent());
-                                    Get.offAllNamed("/login");
+                                    context.go("/login");
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: context.appColors.errorColor,

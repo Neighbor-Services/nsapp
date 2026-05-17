@@ -1,16 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_verification_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/add_service_package_page.dart';
-import 'package:nsapp/features/profile/presentation/pages/audit_log_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/performance_badge_widget.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
@@ -64,25 +62,27 @@ class _ProfilePageState extends State<ProfilePage>
           BlocListener<ProviderBloc, ProviderState>(
             listener: (context, state) {
               if (state is SuccessAddPortfolioItemState) {
-                Get.back(); // Close loading dialog
+                context.pop(); // Close loading dialog
                 _fetchProfile();
-                Get.snackbar(
-                  "Success",
-                  "Portfolio item added! AI analysis started.",
-                  backgroundColor: context.appColors.successColor.withAlpha(100),
-                  colorText: Colors.white,
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text("Portfolio item added! AI analysis started."),
+                    backgroundColor: context.appColors.successColor.withAlpha(100),
+                  ),
                 );
               } else if (state is FailureAddPortfolioItemState) {
-                Get.back();
-                Get.snackbar(
-                  "Error",
-                  state.message ?? "Failed to upload image. Please try again.",
-                  backgroundColor: context.appColors.errorColor.withAlpha(100),
-                  colorText: Colors.white,
+                context.pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message ?? "Failed to upload image. Please try again."),
+                    backgroundColor: context.appColors.errorColor.withAlpha(100),
+                  ),
                 );
               } else if (state is LoadingProviderState) {
-                Get.dialog(
-                  Center(
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => Center(
                     child: Container(
                       padding: EdgeInsets.all(20.r),
                       decoration: BoxDecoration(
@@ -92,7 +92,6 @@ class _ProfilePageState extends State<ProfilePage>
                       child: const CircularProgressIndicator(),
                     ),
                   ),
-                  barrierDismissible: false,
                 );
               }
             },
@@ -142,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   GestureDetector(
-                                    onTap: () => Navigator.pop(context),
+                                    onTap: () => context.pop(),
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
@@ -161,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: () => Get.toNamed("/edit-profile"),
+                                    onTap: () => context.push("/edit-profile"),
                                     child: Container(
                                       padding: EdgeInsets.all(12.r),
                                       decoration: BoxDecoration(
@@ -297,7 +296,7 @@ class _ProfilePageState extends State<ProfilePage>
                   (profile.profilePictureUrl != null &&
                       profile.profilePictureUrl!.isNotEmpty &&
                       !profile.profilePictureUrl!.startsWith("file:///"))
-                  ? NetworkImage(profile.profilePictureUrl!)
+                  ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                   : const AssetImage(logoAssets) as ImageProvider,
             ),
           ),
@@ -456,7 +455,7 @@ class _ProfilePageState extends State<ProfilePage>
           
           // Audit Logs Link
           InkWell(
-            onTap: () => Get.to(() => const AuditLogPage()),
+            onTap: () => context.push("/audit-logs"),
             child: _buildInfoRow(
               "Activity History",
               "View your recent logs",
@@ -472,9 +471,7 @@ class _ProfilePageState extends State<ProfilePage>
               FontAwesomeIcons.creditCard,
             ),
             InkWell(
-              onTap: () {
-                Get.to(() => const AddServicePackagePage());
-              },
+              onTap: () => context.push("/add-service-package"),
               child: _buildInfoRow(
                 "Service Packages",
                 "Add New Package",
@@ -485,7 +482,7 @@ class _ProfilePageState extends State<ProfilePage>
                 profile.isIdentityVerified == false) ...[
               _buildGlassDivider(),
               InkWell(
-                onTap: () => Get.to(() => const ProviderVerificationPage()),
+                onTap: () => context.push("/provider-verification"),
                 child: _buildInfoRow(
                   "Verification",
                   "Verify Identity",

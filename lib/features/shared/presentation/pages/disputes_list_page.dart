@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 
@@ -35,7 +36,6 @@ class _DisputesListPageState extends State<DisputesListPage> {
     return Scaffold(
       body: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settingsState) {
-          final isProvider = settingsState.isProvider;
 
           return BlocBuilder<DisputeBloc, DisputeState>(
             builder: (context, state) {
@@ -51,13 +51,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
-                              onTap: () {
-                                if (isProvider) {
-                                  Get.back();
-                                } else {
-                                  Get.back();
-                                }
-                              },
+                              onTap: () => context.pop(),
                               child: Container(
                                 padding: EdgeInsets.all(12.r),
                                 margin: EdgeInsets.all(8.r),
@@ -86,7 +80,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Get.toNamed('/create-dispute');
+                                context.push('/create-dispute');
                               },
                               child: Container(
                                 margin: EdgeInsets.all(8.r),
@@ -203,7 +197,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                 label: 'RAISE A DISPUTE',
                 allCaps: true,
                 onPressed: () {
-                  Get.toNamed('/create-dispute');
+                  context.push('/create-dispute');
                 },
               ),
             ],
@@ -228,7 +222,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
         return Container(
           margin: EdgeInsets.only(bottom: 16.h),
           child: GestureDetector(
-            onTap: () => Get.toNamed('/dispute-details', arguments: dispute),
+            onTap: () => context.push('/dispute-details', extra: dispute),
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: SolidContainer(

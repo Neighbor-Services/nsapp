@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nsapp/core/routes/app_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' hide Transition;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:get/get.dart';
 import 'package:nsapp/core/constants/app_dark_theme.dart';
 import 'package:nsapp/core/constants/app_light_theme.dart';
-import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/di/injection_container.dart' as di;
-import 'package:nsapp/core/helpers/pages.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/utils/responsive_size.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
@@ -32,9 +30,29 @@ import 'package:hydrated_bloc/hydrated_bloc.dart' hide Transition;
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'package:nsapp/core/config/app_config.dart';
+
 Future<void> main() async {
+  await bootstrap(AppEnvironment.prod);
+}
+
+Future<void> bootstrap(AppEnvironment env) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: "assets/.env");
+  
+  String envFile = "assets/.env.dev";
+  if (env == AppEnvironment.stage) envFile = "assets/.env.stage";
+  if (env == AppEnvironment.prod) envFile = "assets/.env.prod";
+  
+  await dotenv.load(fileName: envFile);
+
+  AppConfig.setConfig(AppConfig(
+    environment: env,
+    baseUrl: dotenv.env['BASE_URL'] ?? domaineUrl,
+    wsUrl: dotenv.env['WS_URL'] ?? baseMessagesWsUrl,
+    stripePublishableKey: dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? "",
+    googleMapApiKey: dotenv.env['GOOGLE_MAP_API'] ?? "",
+    agoraAppId: dotenv.env['AGORA_APP_ID'] ?? "",
+  ));
 
   // Firebase Setup
   try {
@@ -53,7 +71,7 @@ Future<void> main() async {
 
   
   // Stripe Setup
-  Stripe.publishableKey = stripePublishableKey;
+  Stripe.publishableKey = AppConfig.instance.stripePublishableKey;
   Stripe.merchantIdentifier = "merchant.flutter.stripe.test";
   Stripe.urlScheme = 'flutterstripe';
   await Stripe.instance.applySettings();
@@ -62,7 +80,7 @@ Future<void> main() async {
   await di.init();
 
   // Dio Setup
-  dio.options.baseUrl = baseUrl;
+  dio.options.baseUrl = AppConfig.instance.baseUrl;
 
   // Local Notifications Init
   await LocalNotificationService.initialize();
@@ -116,15 +134,12 @@ class NeighborServiceApp extends StatelessWidget {
       child: BlocBuilder<SettingsBloc, SettingsState>(
         buildWhen: (previous, current) => previous.themeMode != current.themeMode,
         builder: (context, state) {
-          return GetMaterialApp(
+          return MaterialApp.router(
             title: "Neighbor Service App",
             theme: providerLightTheme,
             darkTheme: providerDarkTheme,
             themeMode: state.themeMode,
-            initialRoute: "/",
-            getPages: pages,
-            defaultTransition: Transition.fadeIn,
-            transitionDuration: const Duration(milliseconds: 300),
+            routerConfig: appRouter,
             debugShowCheckedModeBanner: false,
             builder: (context, child) {
               Responsive.init(context);

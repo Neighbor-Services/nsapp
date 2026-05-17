@@ -1,6 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/dispute.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -8,11 +9,11 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/core/core.dart';
 
 class DisputeDetailsPage extends StatelessWidget {
-  const DisputeDetailsPage({super.key});
+  final Dispute dispute;
+  const DisputeDetailsPage({super.key, required this.dispute});
 
   @override
   Widget build(BuildContext context) {
-    final Dispute dispute = Get.arguments as Dispute;
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.hintTextColor;
 
@@ -32,7 +33,7 @@ class DisputeDetailsPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () => context.pop(),
           child: Container(
             margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(

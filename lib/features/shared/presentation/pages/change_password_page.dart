@@ -1,7 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -62,7 +63,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () => Get.back(),
+                            onTap: () => context.pop(),
                             child: Container(
                               padding: EdgeInsets.all(10.r),
                               decoration: BoxDecoration(
@@ -139,14 +140,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                       label: "Email Address",
                                       prefixIcon: FontAwesomeIcons.envelope,
                                       keyboardType: TextInputType.emailAddress,
-                                      validator: (val) {
-                                        if (val!.isEmpty) {
-                                          return "Email field is required";
-                                        } else if (!val.isEmail) {
-                                          return "Email is invalid";
-                                        }
-                                        return null;
-                                      },
+                                      validator: (val) => ValidationUtil.validateEmail(val),
                                     ),
                                     SizedBox(height: 32.h),
                                     SolidButton(
