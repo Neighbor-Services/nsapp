@@ -12,10 +12,16 @@ import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' hide GetAppointmentsEvent;
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' as provider_bloc show GetAppointmentsEvent;
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' hide GetAppointmentsEvent;
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as seeker_bloc show GetAppointmentsEvent;
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart'
+    hide GetAppointmentsEvent;
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart'
+    as provider_bloc
+    show GetAppointmentsEvent;
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart'
+    hide GetAppointmentsEvent;
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart'
+    as seeker_bloc
+    show GetAppointmentsEvent;
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/core/core.dart';
@@ -44,7 +50,9 @@ class _NotificationsPageState extends State<NotificationsPage>
       if (pageKey == 1) {
         context.read<NotificationBloc>().add(GetMyNotificationsEvent(page: 1));
       } else {
-        context.read<NotificationBloc>().add(LoadMoreNotificationsEvent(page: pageKey));
+        context.read<NotificationBloc>().add(
+          LoadMoreNotificationsEvent(page: pageKey),
+        );
       }
     });
 
@@ -92,11 +100,15 @@ class _NotificationsPageState extends State<NotificationsPage>
                 final isLastPage = state.hasReachedMax;
                 if (isLastPage) {
                   _pagingController.appendLastPage(
-                    state.notifications.skip(_pagingController.itemList?.length ?? 0).toList(),
+                    state.notifications
+                        .skip(_pagingController.itemList?.length ?? 0)
+                        .toList(),
                   );
                 } else {
                   final nextPageKey = state.currentPage + 1;
-                  final newItems = state.notifications.skip(_pagingController.itemList?.length ?? 0).toList();
+                  final newItems = state.notifications
+                      .skip(_pagingController.itemList?.length ?? 0)
+                      .toList();
                   _pagingController.appendPage(newItems, nextPageKey);
                 }
               } else if (state is NotificationFailure) {
@@ -107,7 +119,6 @@ class _NotificationsPageState extends State<NotificationsPage>
         ],
         child: BlocBuilder<SettingsBloc, SettingsState>(
           builder: (context, settingsState) {
-
             return BlocBuilder<NotificationBloc, NotificationState>(
               builder: (context, state) {
                 return GradientBackground(
@@ -120,8 +131,12 @@ class _NotificationsPageState extends State<NotificationsPage>
                           child: RefreshIndicator(
                             onRefresh: () async {
                               _pagingController.refresh();
-                              context.read<ProfileBloc>().add(GetProfileStreamEvent());
-                              context.read<ProfileBloc>().add(GetProfileEvent());
+                              context.read<ProfileBloc>().add(
+                                GetProfileStreamEvent(),
+                              );
+                              context.read<ProfileBloc>().add(
+                                GetProfileEvent(),
+                              );
                             },
                             child: CustomScrollView(
                               physics: const AlwaysScrollableScrollPhysics(),
@@ -136,30 +151,47 @@ class _NotificationsPageState extends State<NotificationsPage>
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                      if (Navigator.of(context).canPop()) {
-                                        context.pop();
-                                      } else {
-                                        if(settingsState.isProvider) {
-                                          context.read<ProviderBloc>().add(
-                                              ChangeProviderTabEvent(tabIndex: 1));
-                                        } else {
-                                          context.read<SeekerBloc>().add(
-                                              ChangeSeekerTabEvent(tabIndex: 1));
-                                        }
-                                      }
-                                    },
+                                            if (Navigator.of(
+                                              context,
+                                            ).canPop()) {
+                                              context.pop();
+                                            } else {
+                                              if (settingsState.isProvider) {
+                                                context
+                                                    .read<ProviderBloc>()
+                                                    .add(
+                                                      ChangeProviderTabEvent(
+                                                        tabIndex: 1,
+                                                      ),
+                                                    );
+                                              } else {
+                                                context.read<SeekerBloc>().add(
+                                                  ChangeSeekerTabEvent(
+                                                    tabIndex: 1,
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          },
                                           child: Container(
                                             padding: EdgeInsets.all(12.r),
                                             decoration: BoxDecoration(
-                                              color: context.appColors.cardBackground,
-                                              borderRadius: BorderRadius.circular(12.r),
+                                              color: context
+                                                  .appColors
+                                                  .cardBackground,
+                                              borderRadius:
+                                                  BorderRadius.circular(12.r),
                                               border: Border.all(
-                                                color: context.appColors.glassBorder,
+                                                color: context
+                                                    .appColors
+                                                    .glassBorder,
                                               ),
                                             ),
                                             child: Icon(
                                               FontAwesomeIcons.chevronLeft,
-                                              color: context.appColors.primaryTextColor,
+                                              color: context
+                                                  .appColors
+                                                  .primaryTextColor,
                                               size: 20.r,
                                             ),
                                           ),
@@ -170,7 +202,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                                           style: TextStyle(
                                             fontSize: 18.sp,
                                             fontWeight: FontWeight.w500,
-                                            color: context.appColors.primaryTextColor,
+                                            color: context
+                                                .appColors
+                                                .primaryTextColor,
                                             letterSpacing: 1.2,
                                           ),
                                         ),
@@ -186,28 +220,38 @@ class _NotificationsPageState extends State<NotificationsPage>
                                   ),
                                   sliver: PagedSliverList<int, not.NotificationData>(
                                     pagingController: _pagingController,
-                                    builderDelegate: PagedChildBuilderDelegate<not.NotificationData>(
-                                      itemBuilder: (context, item, index) => _buildNotificationCard(
-                                        context,
-                                        item,
-                                        index,
-                                      ),
-                                      firstPageProgressIndicatorBuilder: (_) => const ListSkeletonLoader(),
-                                      newPageProgressIndicatorBuilder: (_) => const Padding(
-                                        padding: EdgeInsets.all(16.0),
-                                        child: Center(child: CircularProgressIndicator()),
-                                      ),
-                                      noItemsFoundIndicatorBuilder: (_) => _buildEmptyState(),
-                                    ),
+                                    builderDelegate:
+                                        PagedChildBuilderDelegate<
+                                          not.NotificationData
+                                        >(
+                                          itemBuilder: (context, item, index) =>
+                                              _buildNotificationCard(
+                                                context,
+                                                item,
+                                                index,
+                                              ),
+                                          firstPageProgressIndicatorBuilder:
+                                              (_) => const ListSkeletonLoader(),
+                                          newPageProgressIndicatorBuilder:
+                                              (_) => const Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                              ),
+                                          noItemsFoundIndicatorBuilder: (_) =>
+                                              _buildEmptyState(),
+                                        ),
                                   ),
                                 ),
                               ],
                             ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
                 );
               },
             );
@@ -217,18 +261,15 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
   }
 
-
   Widget _buildEmptyState() {
-     return Center(
+    return Center(
       child: Container(
-      padding: EdgeInsets.all(40.r),
-      decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(
-          color: context.appColors.glassBorder,
+        padding: EdgeInsets.all(40.r),
+        decoration: BoxDecoration(
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: context.appColors.glassBorder),
         ),
-      ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -302,7 +343,6 @@ class _NotificationsPageState extends State<NotificationsPage>
                   color: context.appColors.glassBorder,
                   width: isUnread ? 1.2.r : 0.8.r,
                 ),
-            
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,9 +466,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     return DateFormat("MMM dd, yyyy").format(date);
   }
 
-  void _showNotificationDetails(
-    not.NotificationData notificationData,
-  ) {
+  void _showNotificationDetails(not.NotificationData notificationData) {
     // sheet, because showModalBottomSheet can be tricky with context inheritance
     // if not using the correct context level.
     final pageContext = context;
@@ -484,7 +522,8 @@ class _NotificationsPageState extends State<NotificationsPage>
             ),
             SizedBox(height: 24.h),
             Text(
-              (notificationData.notification!.title ?? "NOTIFICATION").toUpperCase(),
+              (notificationData.notification!.title ?? "NOTIFICATION")
+                  .toUpperCase(),
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w500,
@@ -541,9 +580,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 child: OutlinedButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: pageContext.appColors.glassBorder,
-                    ),
+                    side: BorderSide(color: pageContext.appColors.glassBorder),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.r),
                     ),
@@ -566,9 +603,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
   }
 
-  Future<void> _navigateToDetails(
-    not.NotificationData notificationData,
-  ) async {
+  Future<void> _navigateToDetails(not.NotificationData notificationData) async {
     final notification = notificationData.notification;
     final data = notification?.data;
     final type = notification?.notificationType?.toLowerCase();
@@ -606,11 +641,14 @@ class _NotificationsPageState extends State<NotificationsPage>
           messageBloc.add(
             SetMessageReceiverEvent(profile: notificationData.from!),
           );
-          await messageBloc.stream.firstWhere(
-                (state) => state is MessageReceiverState,
-              ).timeout(const Duration(seconds: 5), onTimeout: () => MessageReceiverState(profile: Profile()));
+          await messageBloc.stream
+              .firstWhere((state) => state is MessageReceiverState)
+              .timeout(
+                const Duration(seconds: 5),
+                onTimeout: () => MessageReceiverState(profile: Profile()),
+              );
         }
-        
+
         dismissLoader();
         context.push('/chat');
         break;
@@ -623,16 +661,30 @@ class _NotificationsPageState extends State<NotificationsPage>
           if (requestId != null && requestId.isNotEmpty) {
             providerBloc.add(GetRequestDetailEvent(id: requestId));
 
-            final state = await providerBloc.stream.firstWhere(
-              (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
-            ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
+            final state = await providerBloc.stream
+                .firstWhere(
+                  (state) =>
+                      state is SuccessGetRequestDetailState ||
+                      state is FailureGetRecentRequestState,
+                )
+                .timeout(
+                  const Duration(seconds: 10),
+                  onTimeout: () => FailureGetRecentRequestState(),
+                );
 
             dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
-              context.push('/app/provider/requests/$requestId', extra: state.request);
+              context.push(
+                '/app/provider/requests/$requestId',
+                extra: state.request,
+              );
             } else if (mounted) {
-              customAlert(pageContext, AlertType.error, "Failed to load request details");
+              customAlert(
+                pageContext,
+                AlertType.error,
+                "Failed to load request details",
+              );
             }
           } else {
             dismissLoader();
@@ -642,25 +694,44 @@ class _NotificationsPageState extends State<NotificationsPage>
           if (requestId != null && requestId.isNotEmpty) {
             providerBloc.add(GetRequestDetailEvent(id: requestId));
 
-            final state = await providerBloc.stream.firstWhere(
-              (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
-            ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
+            final state = await providerBloc.stream
+                .firstWhere(
+                  (state) =>
+                      state is SuccessGetRequestDetailState ||
+                      state is FailureGetRecentRequestState,
+                )
+                .timeout(
+                  const Duration(seconds: 10),
+                  onTimeout: () => FailureGetRecentRequestState(),
+                );
 
             dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
-              final requestData = state.request; 
+              final requestData = state.request;
               requestData.user = notificationData.from;
-              
+
               if (requestData.request?.userId != _currentProfile?.user?.id) {
-                if (mounted) customAlert(pageContext, AlertType.error, "You can't view this request");
+                if (mounted)
+                  customAlert(
+                    pageContext,
+                    AlertType.error,
+                    "You can't view this request",
+                  );
                 return;
               }
-              
+
               seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
-              context.push('/app/requests/${requestData.request?.id}', extra: requestData);
+              context.push(
+                '/app/requests/${requestData.request?.id}',
+                extra: requestData,
+              );
             } else if (mounted) {
-              customAlert(pageContext, AlertType.error, "Failed to load request details");
+              customAlert(
+                pageContext,
+                AlertType.error,
+                "Failed to load request details",
+              );
             }
           } else {
             dismissLoader();
@@ -686,5 +757,3 @@ class _NotificationsPageState extends State<NotificationsPage>
     }
   }
 }
-
-

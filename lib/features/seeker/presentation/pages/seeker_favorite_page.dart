@@ -59,7 +59,6 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
 
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.secondaryTextColor;
-    final iconColor = context.appColors.primaryTextColor;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -105,25 +104,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                             children: [
                               Row(
                                 children: [
-                                  GestureDetector(
-                                    onTap: () => context.pop(),
-                                    child: Container(
-                                      padding: EdgeInsets.all(12.r),
-                                      decoration: BoxDecoration(
-                                        color: context.appColors.cardBackground,
-                                        borderRadius: BorderRadius.circular(14.r),
-                                        border: Border.all(
-                                          color: context.appColors.glassBorder,
-                                          width: 1.5.r,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        FontAwesomeIcons.chevronLeft,
-                                        color: iconColor,
-                                        size: 20.r,
-                                      ),
-                                    ),
-                                  ),
+                                 
                                   SizedBox(width: 16.w),
                                   Text(
                                     "FAVORITES",
