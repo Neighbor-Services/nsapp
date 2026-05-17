@@ -39,6 +39,14 @@ class BackgroundNotificationService {
       provisional: false,
       sound: true,
     );
+    
+    // Set foreground notification options for iOS
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
     debugPrint(
       "DEBUG [FCM]: Permission status: ${settings.authorizationStatus}",
     );

@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
+import 'package:nsapp/core/config/app_config.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,15 @@ class DeviceTokenService {
     Future(() async {
       try {
         if (Platform.isIOS) {
-          final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+          String? apnsToken;
+          // Retry fetching APNS token up to 10 times with 1-second delay
+          for (int i = 0; i < 10; i++) {
+            apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+            if (apnsToken != null) break;
+            await Future.delayed(const Duration(seconds: 1));
+          }
           if (apnsToken == null) {
-            debugPrint("DEBUG [Dart]: APNS token is null. Skipping FCM token request to prevent exception.");
+            debugPrint("DEBUG [Dart]: APNS token is null after retries. Skipping FCM token request to prevent exception.");
             return;
           }
         }
@@ -74,7 +81,7 @@ class DeviceTokenService {
 
       final deviceId = await _getDeviceId();
       // Use the centralized notifications endpoint
-      final url = Uri.parse("$baseUrl/notifications/tokens/");
+      final url = Uri.parse("${AppConfig.instance.baseUrl}/notifications/tokens/");
       
       debugPrint("DEBUG [DeviceTokenService]: Registering $platform token on backend...");
       
