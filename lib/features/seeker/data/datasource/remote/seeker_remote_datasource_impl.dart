@@ -292,18 +292,28 @@ class SeekerRemoteDatasourceImpl extends SeekerRemoteDatasource {
   Future<bool> removeFromFavorite({required String id}) async {
     final token = await Helpers.getString("token");
     try {
+      debugPrint("DEBUG removeFromFavorite: Sending DELETE to $baseUrl/interactions/favorites/$id/");
       final response = await _dio.delete(
         "$baseUrl/interactions/favorites/$id/",
         options: Options(headers: dioHeaders(token)),
       );
 
+      debugPrint("DEBUG removeFromFavorite: response status=${response.statusCode}, data=${response.data}");
       if (response.statusCode == 200 ||
           response.statusCode == 201 ||
-          response.statusCode == 204) {
+          response.statusCode == 204 ||
+          response.statusCode == 404) {
         return true;
       }
-      throw Exception('Failed');
-    } catch (e) { rethrow; }
+      throw Exception('Failed with status ${response.statusCode}');
+    } catch (e) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        debugPrint("DEBUG removeFromFavorite: 404 Not Found received. Treating as success as resource is already deleted.");
+        return true;
+      }
+      debugPrint("DEBUG removeFromFavorite: ERROR $e");
+      rethrow;
+    }
   }
 
   @override
