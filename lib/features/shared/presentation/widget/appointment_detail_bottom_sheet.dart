@@ -79,13 +79,12 @@ class _AppointmentDetailBottomSheetState
       isFunded: appt.isFunded,
     );
 
-    final seekerBloc = context.read<SeekerBloc>();
-    final providerBloc = context.read<ProviderBloc>();
-
     try {
+      final seekerBloc = context.read<SeekerBloc>();
       seekerBloc.add(UpdateSeekerAppointmentEvent(appointment: updatedAppt));
     } catch (_) {
       try {
+        final providerBloc = context.read<ProviderBloc>();
         providerBloc.add(
           UpdateProviderAppointmentEvent(appointment: updatedAppt),
         );

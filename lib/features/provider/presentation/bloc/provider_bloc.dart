@@ -249,7 +249,10 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       final results = await updateProviderAppointmentUseCase(event.appointment);
       results.fold(
         (l) => emit(FailureUpdateAppointmentState(message: l.message)),
-        (r) => emit(SuccessUpdateAppointmentState()),
+        (r) {
+          add(GetAppointmentsEvent());
+          emit(SuccessUpdateAppointmentState());
+        },
       );
     });
 

@@ -402,7 +402,10 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
       final results = await updateSeekerAppointmentUseCase(event.appointment);
       results.fold(
         (l) => emit(FailureUpdateAppointmentState(message: l.message)),
-        (r) => emit(SuccessUpdateAppointmentState()),
+        (r) {
+          add(GetAppointmentsEvent());
+          emit(SuccessUpdateAppointmentState());
+        },
       );
     });
 
