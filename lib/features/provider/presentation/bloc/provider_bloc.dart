@@ -308,7 +308,10 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       final results = await verifyAppointmentCodeUseCase(event.appointmentId, event.code);
       results.fold(
         (l) => emit(FailureVerifyAppointmentCodeState(message: l.message)),
-        (r) => emit(SuccessVerifyAppointmentCodeState()),
+        (r) {
+          add(GetAppointmentsEvent());
+          emit(SuccessVerifyAppointmentCodeState());
+        },
       );
     });
 

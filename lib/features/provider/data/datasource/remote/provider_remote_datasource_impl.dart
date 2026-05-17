@@ -22,7 +22,7 @@ class ProviderRemoteDatasourceImpl extends ProviderRemoteDatasource {
   Future<bool> verifyAppointmentCode(String appointmentId, String code) async {
     final token = await Helpers.getString("token");
     final response = await _dio.post(
-      "$baseUrl/interactions/appointments/$appointmentId/verify_code/",
+      "$baseUrl/interactions/appointments/$appointmentId/verify-code/",
       data: {'code': code},
       options: Options(headers: dioHeaders(token)),
     );
