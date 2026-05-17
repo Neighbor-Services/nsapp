@@ -132,6 +132,8 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
         ),
       ),
     );
+  }
+
   void _showReschedulePromptDialog(BuildContext context, Request request) {
     DateTime? tempSelectedDate;
     final textColor = context.appColors.primaryTextColor;
