@@ -1,0 +1,21 @@
+{
+    "appTitle": "Neighbor Service",
+    "@appTitle": {
+      "description": "The title of the application"
+    },
+    "activityHistory": "Activity History",
+    "@activityHistory": {
+      "description": "Title for the audit log page"
+    },
+    "noActivityFound": "No activity history found.",
+    "retry": "Retry",
+    "loading": "Loading...",
+    "error": "Error",
+    "profileUpdated": "Profile updated successfully",
+    "failedToUpdateProfile": "Failed to update profile",
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "requiredField": "This field is required"
+}
