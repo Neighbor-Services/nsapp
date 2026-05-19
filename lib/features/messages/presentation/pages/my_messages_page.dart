@@ -1,15 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/models/chat.dart';
-import '../../../provider/presentation/bloc/provider_bloc.dart';
-import '../../../shared/presentation/bloc/shared_bloc.dart';
+
 import '../bloc/message_bloc.dart';
-import 'chat_page.dart';
 
 class MyMessagesPage extends StatefulWidget {
   const MyMessagesPage({super.key});
@@ -19,9 +23,13 @@ class MyMessagesPage extends StatefulWidget {
 }
 
 class _MyMessagesPageState extends State<MyMessagesPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  
+  List<Chat> _chats = [];
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -46,14 +54,33 @@ class _MyMessagesPageState extends State<MyMessagesPage>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: BlocConsumer<MessageBloc, MessageState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is SuccessGetMyMessagesState) {
+            setState(() {
+              _chats = state.myMessages;
+              _isLoading = false;
+              _errorMessage = null;
+            });
+          } else if (state is LoadingMessageState) {
+            setState(() => _isLoading = true);
+          } else if (state is FailureGetMyMessagesState) {
+            setState(() {
+              _isLoading = false;
+              _errorMessage = state.message;
+            });
+          }
+        },
         builder: (context, state) {
           return GradientBackground(
             child: SafeArea(
@@ -98,7 +125,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                       "MESSAGES",
                                       style: TextStyle(
                                         fontSize: 18.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w500,
                                         color: context.appColors.primaryTextColor,
                                         letterSpacing: 1.2,
                                       ),
@@ -125,7 +152,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                     ),
                                   ),
                                   child:  Icon(
-                                    Icons.chat_bubble_rounded,
+                                    FontAwesomeIcons.comment,
                                     color: context.appColors.secondaryColor,
                                     size: 22.r,
                                   ),
@@ -143,18 +170,14 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                             "RECENT CHATS",
                             style: TextStyle(
                               fontSize: 12.sp,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w500,
                               color: context.appColors.primaryTextColor,
                               letterSpacing: 2,
                             ),
                           ),
                         ),
                         Expanded(
-                          child: _buildMessagesList(
-                            context,
-                            state,
-                            isLargeScreen,
-                          ),
+                          child: _buildMessagesList(context),
                         ),
                       ],
                     ),
@@ -168,16 +191,26 @@ class _MyMessagesPageState extends State<MyMessagesPage>
     );
   }
 
-  Widget _buildMessagesList(
-    BuildContext context,
-    MessageState state,
-    bool isLargeScreen,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    if (SuccessGetMyMessagesState.myMessages == null) {
-      if (state is FailureGetMyMessagesState) {
-        return Center(
+  Widget _buildMessagesList(BuildContext context) {
+    if (_isLoading && _chats.isEmpty) {
+      return const ListSkeletonLoader();
+    }
+
+    if (_errorMessage != null && _chats.isEmpty) {
+      return Center(
+        child: EmptyWidget(
+          message: _errorMessage!,
+          height: 400.h,
+        ),
+      );
+    }
+
+    if (_chats.isEmpty) {
+      return Center(
+        child: FadeInUp(
+          duration: const Duration(milliseconds: 600),
           child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 24.w),
             padding: EdgeInsets.all(40.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
@@ -185,21 +218,12 @@ class _MyMessagesPageState extends State<MyMessagesPage>
               border: Border.all(
                 color: context.appColors.glassBorder,
               ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(5),
-                        blurRadius: 20.r,
-                        spreadRadius: 2.r,
-                      ),
-                    ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.chat_bubble_outline_rounded,
+                  FontAwesomeIcons.comment,
                   size: 64.r,
                   color: context.appColors.secondaryColor.withAlpha(150),
                 ),
@@ -208,7 +232,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                   "NO CONVERSATIONS YET",
                   style: TextStyle(
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 1.0,
                   ),
@@ -219,55 +243,44 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: context.appColors.glassBorder,
+                    color: context.appColors.hintTextColor,
                     height: 1.5,
                   ),
                 ),
               ],
             ),
           ),
-        );
-      }
-      return const Center(child: LoadingWidget());
+        ),
+      );
     }
 
-    return FutureBuilder<List<Chat>>(
-      future: SuccessGetMyMessagesState.myMessages,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: LoadingWidget());
-        }
-        if (snapshot.hasError) {
-          return Center(
-            child: EmptyWidget(
-              message: "Error loading conversations",
-              height: 400.h,
-            ),
-          );
-        }
-        if (snapshot.hasData) {
-          final chats = snapshot.data!;
-          if (chats.isEmpty) {
-            return Center(
-              child: EmptyWidget(
-                message: "No conversations found",
-                height: 400.h,
-              ),
-            );
-          }
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-            itemCount: chats.length,
-            itemBuilder: (context, index) =>
-                _buildMessageCard(context, chats[index], index),
-          );
-        }
-        return Center(
-          child: EmptyWidget(message: "No messages found", height: 400.h),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<MessageBloc>().add(GetMyMessagesEvent());
+        context.read<ProfileBloc>().add(GetProfileStreamEvent());
+        context.read<ProfileBloc>().add(GetProfileEvent());
+        await Future.delayed(const Duration(seconds: 1));
       },
+      child: AnimationLimiter(
+        child: ListView.builder(
+          key: const PageStorageKey('my_messages_list'),
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+          itemCount: _chats.length,
+          itemBuilder: (context, index) => AnimationConfiguration.staggeredList(
+            position: index,
+            duration: const Duration(milliseconds: 450),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: _buildMessageCard(context, _chats[index], index),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
+
   }
 
   Widget _buildMessageCard(BuildContext context, Chat chat, int index) {
@@ -286,15 +299,8 @@ class _MyMessagesPageState extends State<MyMessagesPage>
           context.read<MessageBloc>().add(
             SetSeenMessageEvent(reciever: chat.other!.user!.id!),
           );
-          if (DashboardState.isProvider) {
-            context.read<ProviderBloc>().add(
-              NavigateProviderEvent(page: 4, widget: const ChatPage()),
-            );
-          } else {
-            context.read<SeekerBloc>().add(
-              NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-            );
-          }
+          
+          context.push("/chat");
         },
         borderRadius: BorderRadius.circular(20.r),
         child: Container(
@@ -316,7 +322,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                 backgroundImage:
                     (chat.other!.profilePictureUrl != null &&
                         chat.other!.profilePictureUrl!.isNotEmpty)
-                    ? NetworkImage(chat.other!.profilePictureUrl!)
+                    ? CachedNetworkImageProvider(chat.other!.profilePictureUrl!)
                     : const AssetImage(logoAssets) as ImageProvider,
               ),
               SizedBox(width: 16.w),
@@ -328,7 +334,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                         (chat.other!.firstName ?? "User").toUpperCase(),
                         style: TextStyle(
                           fontSize: 15.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w500,
                           color: context.appColors.primaryTextColor,
                           letterSpacing: 0.5,
                         ),
@@ -342,7 +348,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                             ? context.appColors.primaryTextColor
                             : context.appColors.hintTextColor,
                         fontWeight: unreadCount > 0
-                            ? FontWeight.w600
+                            ? FontWeight.w400
                             : FontWeight.w400,
                       ),
                       maxLines: 1,
@@ -366,13 +372,13 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 )
               else
                 Icon(
-                  Icons.chevron_right_rounded,
+                  FontAwesomeIcons.chevronRight,
                   color: context.appColors.glassBorder,
                   size: 24.r,
                 ),
@@ -383,3 +389,5 @@ class _MyMessagesPageState extends State<MyMessagesPage>
     );
   }
 }
+
+

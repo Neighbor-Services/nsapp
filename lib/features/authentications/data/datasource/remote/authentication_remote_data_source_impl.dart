@@ -6,16 +6,41 @@ import 'package:flutter/material.dart';
 import 'package:nsapp/core/services/google_sign_in_service.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/features/authentications/data/datasource/remote/authentication_remote_data_source.dart';
 
 class AuthenticationRemoteDataSourceImpl
     extends AuthenticationRemoteDataSource {
+  final Dio _dio;
+
+  AuthenticationRemoteDataSourceImpl(this._dio);
+  void _handleDioError(Object e) {
+    if (e is DioException) {
+      if (e.type == DioExceptionType.badResponse) {
+        final response = e.response;
+        if (response != null && response.data != null) {
+          final data = response.data;
+          if (data is Map) {
+            if (data.containsKey('non_field_errors')) {
+              throw data['non_field_errors'][0];
+            } else if (data.containsKey('detail')){
+              throw data['detail'];
+            } else if (data.containsKey('error')){
+              throw data['error'];
+            }
+          } else if (data is List && data.isNotEmpty) {
+            throw data[0].toString();
+          }
+        }
+      }
+    }
+    throw e;
+  }
+
   @override
   Future<bool> register(String email, String password) async {
     try {
       Map<String, dynamic> data = {"email": email, "password": password};
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/register/",
         data: jsonEncode(data),
       );
@@ -26,7 +51,8 @@ class AuthenticationRemoteDataSourceImpl
       }
       return false;
     } catch (e) {
-      return false;
+      _handleDioError(e);
+      return false; // Fallback
     }
   }
 
@@ -35,7 +61,7 @@ class AuthenticationRemoteDataSourceImpl
     try {
       Map<String, dynamic> data = {"email": email, "password": password};
 
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/login/",
         data: jsonEncode(data),
       );
@@ -43,34 +69,16 @@ class AuthenticationRemoteDataSourceImpl
       if (response.statusCode == 200) {
         final token = response.data;
 
-        final success = await Helpers.saveString("token", token["access"]);
-        if (success) {
-          return true;
+        await Helpers.saveString("token", token["access"]);
+        if (token.containsKey("refresh")) {
+          await Helpers.saveString("refresh_token", token["refresh"]);
         }
+        return true;
       }
       return null;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {
-          final response = e.response;
-          if (response != null && response.data != null) {
-            final data = response.data;
-            if (data is Map) {
-              // Handle common DRF error formats
-              if (data.containsKey('non_field_errors')) {
-                throw data['non_field_errors'][0];
-              } else if (data.containsKey('detail')) {
-                throw data['detail'];
-              } else if (data.containsKey('error')) {
-                throw data['error'];
-              }
-            } else if (data is List && data.isNotEmpty) {
-              throw data[0].toString();
-            }
-          }
-        }
-      }
-      rethrow;
+      _handleDioError(e);
+      return null;
     }
   }
 
@@ -97,7 +105,7 @@ class AuthenticationRemoteDataSourceImpl
         "otp_code": otp,
         "new_password": password,
       };
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/password-reset-otp-confirm/",
         data: jsonEncode(data),
       );
@@ -108,9 +116,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -120,7 +126,7 @@ class AuthenticationRemoteDataSourceImpl
     try {
       await Helpers.saveString("email", email);
       Map<String, dynamic> data = {"email": email};
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/password-reset/",
         data: jsonEncode(data),
       );
@@ -131,9 +137,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -156,7 +160,7 @@ class AuthenticationRemoteDataSourceImpl
 
       Map<String, dynamic> data = {"id_token": idToken};
 
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/login-google/",
         data: jsonEncode(data),
       );
@@ -165,13 +169,11 @@ class AuthenticationRemoteDataSourceImpl
         final token = response.data;
 
         await Helpers.saveString("email", googleUser.email);
-        final success = await Helpers.saveString(
-          "token",
-          token["access"], // Access token from backend
-        );
-        if (success) {
-          return true;
+        await Helpers.saveString("token", token["access"]);
+        if (token.containsKey("refresh")) {
+          await Helpers.saveString("refresh_token", token["refresh"]);
         }
+        return true;
       }
       return false;
     } catch (error) {
@@ -193,7 +195,7 @@ class AuthenticationRemoteDataSourceImpl
 
       if (email != "") {
         Map<String, dynamic> data = {"email": email, "otp_code": otp};
-        final response = await dio.post(
+        final response = await _dio.post(
           "$baseUrl/accounts/verify-otp/",
           data: jsonEncode(data),
         );
@@ -217,7 +219,7 @@ class AuthenticationRemoteDataSourceImpl
         "old_password": oldPassword,
         "new_password": nwPassword,
       };
-      final response = await dio.put(
+      final response = await _dio.put(
         "$baseUrl/accounts/change-password/",
         options: Options(headers: dioHeaders(token)),
         data: jsonEncode(data),
@@ -229,9 +231,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -241,7 +241,7 @@ class AuthenticationRemoteDataSourceImpl
     try {
       final email = await Helpers.getString("email");
       Map<String, dynamic> data = {"email": email, "otp_code": otp};
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/verify-otp/",
         data: jsonEncode(data),
       );
@@ -252,9 +252,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -264,7 +262,7 @@ class AuthenticationRemoteDataSourceImpl
     try {
       await Helpers.saveString("email", email);
       Map<String, dynamic> data = {"email": email};
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/resend-otp/",
         data: jsonEncode(data),
       );
@@ -275,9 +273,7 @@ class AuthenticationRemoteDataSourceImpl
 
       return false;
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {}
-      }
+      _handleDioError(e);
       return false;
     }
   }
@@ -291,7 +287,6 @@ class AuthenticationRemoteDataSourceImpl
           AppleIDAuthorizationScopes.fullName,
         ],
         webAuthenticationOptions: WebAuthenticationOptions(
-          // TODO: Replace with your actual Service ID (clientId) later
           clientId: 'com.neighborservicesolutionsllc.nsapp.service',
           redirectUri: Uri.parse(
             'https://api.neighborservice.com/callbacks/apple',
@@ -309,7 +304,7 @@ class AuthenticationRemoteDataSourceImpl
         "last_name": credential.familyName ?? ""
       };
 
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/login-apple/",
         data: jsonEncode(data),
       );
@@ -319,13 +314,11 @@ class AuthenticationRemoteDataSourceImpl
         if (credential.email != null) {
           await Helpers.saveString("email", credential.email!);
         }
-        final success = await Helpers.saveString(
-          "token",
-          token["access"], 
-        );
-        if (success) {
-          return true;
+        await Helpers.saveString("token", token["access"]);
+        if (token.containsKey("refresh")) {
+          await Helpers.saveString("refresh_token", token["refresh"]);
         }
+        return true;
       }
       return false;
     } catch (error) {
@@ -335,10 +328,33 @@ class AuthenticationRemoteDataSourceImpl
   }
 
   @override
+  Future<String?> refreshToken() async {
+    try {
+      final refreshToken = await Helpers.getString("refresh_token");
+      if (refreshToken.isEmpty) return null;
+
+      final response = await _dio.post(
+        "$baseUrl/accounts/token/refresh/",
+        data: jsonEncode({"refresh": refreshToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final token = response.data["access"];
+        await Helpers.saveString("token", token);
+        return token;
+      }
+      return null;
+    } catch (e) {
+      debugPrint("Refresh Token Error: $e");
+      return null;
+    }
+  }
+
+  @override
   Future<bool> deleteAccount() async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseUrl/accounts/delete-account/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -346,6 +362,7 @@ class AuthenticationRemoteDataSourceImpl
       if (response.statusCode == 200) {
         await Helpers.deletePref("token");
         await Helpers.deletePref("email");
+        await Helpers.deletePref("refresh_token");
         return true;
       }
       return false;
@@ -355,3 +372,5 @@ class AuthenticationRemoteDataSourceImpl
     }
   }
 }
+
+

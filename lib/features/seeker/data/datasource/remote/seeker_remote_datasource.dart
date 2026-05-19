@@ -7,12 +7,12 @@ import 'package:nsapp/core/models/request_acceptance.dart';
 import '../../../../../core/models/request_data.dart';
 
 abstract class SeekerRemoteDatasource {
-  Future<bool> createRequest(Request request);
+  Future<bool> createRequest(Request request, {String? imagePath});
   Future<bool> rate(Rate rate);
-  Future<List<RequestData>?> myRequest();
-  Future<List<Profile>?> getPopularProviders();
-  Future<List<RequestAcceptance>?> getAcceptedUsers({required String request});
-  Future<List<Favorite>?> getMyFavorites();
+  Future<List<RequestData>> myRequest();
+  Future<List<Profile>> getPopularProviders();
+  Future<List<RequestAcceptance>> getAcceptedUsers({required String request});
+  Future<List<Favorite>> getMyFavorites();
   Future<bool> approveRequest({
     required String user,
     required String serviceRequestId,
@@ -20,19 +20,20 @@ abstract class SeekerRemoteDatasource {
   });
   Future<bool> cancelApproveRequest({required String requestId});
   Future<bool> deleteRequest({required String requestId});
-  Future<bool> updateRequest({required Request request});
+  Future<bool> updateRequest({required Request request, String? imagePath});
   Future<bool> markAsDone({required Request request});
   Future<bool> addToFavorite({required String uid});
   Future<bool> removeFromFavorite({required String id});
-  Future<RequestData?> reloadRequest({required String request});
+  Future<RequestData> reloadRequest({required String request});
 
-  Future<List<AppointmentData>?> getAppointment();
-  Future<List<Profile>?> searchProviders({
+  Future<List<AppointmentData>> getAppointment();
+  Future<List<Profile>> searchProviders({
     double? ratingMin,
     double? priceMin,
     double? priceMax,
     String? categoryName,
     String? serviceName,
+    String? serviceId,
     String? city,
   });
   Future<bool> cancelAppointment({required String id});
@@ -41,5 +42,7 @@ abstract class SeekerRemoteDatasource {
     required String id,
     required double amount,
   });
-  Future<List<Profile>?> matchProviders({required String description});
+  Future<List<Profile>> matchProviders({required String description});
 }
+
+

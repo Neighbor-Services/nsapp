@@ -1,17 +1,17 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/appointment.dart';
-import 'package:nsapp/core/services/dialog_utils.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/appointment_detail_bottom_sheet.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -44,7 +44,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
           "MY APPOINTMENTS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -54,7 +54,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
         elevation: 0,
         leading: GestureDetector(
           onTap: () {
-            context.read<SeekerBloc>().add(SeekerBackPressedEvent());
+            context.pop();
           },
           child: Container(
             margin: EdgeInsets.all(10.r),
@@ -67,7 +67,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 16.r,
             ),
@@ -100,13 +100,13 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                 child: SafeArea(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: FutureBuilder<List<AppointmentData>>(
-                      future: SuccessGetAppointmentsState.appointments,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: LoadingWidget());
-                        }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    child: Builder(
+                      builder: (context) {
+                        List<AppointmentData> appointments = (state is SuccessGetAppointmentsState) 
+                            ? state.appointments 
+                            : context.read<SeekerBloc>().appointments;
+
+                        if (appointments.isEmpty && state is! LoadingSeekerState) {
                           return const Center(
                             child: EmptyWidget(
                               message: "No appointments found",
@@ -115,9 +115,15 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                           );
                         }
 
-                        final appointments = snapshot.data!;
-                        return ListView.separated(
-                          physics: const BouncingScrollPhysics(),
+                        return RefreshIndicator(
+                          onRefresh: () async {
+                            context.read<SeekerBloc>().add(GetAppointmentsEvent());
+                            context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                            context.read<ProfileBloc>().add(GetProfileEvent());
+                            await Future.delayed(const Duration(seconds: 1));
+                          },
+                          child: ListView.separated(
+                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                           itemCount: appointments.length,
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: 16),
@@ -126,15 +132,26 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                             final appt = data.appointment;
                             if (appt == null) return const SizedBox.shrink();
 
-                            return Container(
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0.0, end: 1.0),
+                              duration: Duration(milliseconds: 400 + (index * 80)),
+                              curve: Curves.easeOut,
+                              builder: (context, value, child) {
+                                return Transform.translate(
+                                  offset: Offset(0, 20 * (1 - value)),
+                                  child: Opacity(opacity: value, child: child),
+                                );
+                              },
+                              child: Container(
                               margin: EdgeInsets.only(bottom: 0),
                               child: GestureDetector(
                                 behavior: HitTestBehavior.opaque,
                                 onTap: () {
-                                  Get.bottomSheet(
-                                    AppointmentDetailBottomSheet(data: data),
+                                  showModalBottomSheet(
+                                    context: context,
                                     isScrollControlled: true,
                                     backgroundColor: Colors.transparent,
+                                    builder: (context) => AppointmentDetailBottomSheet(data: data),
                                   );
                                 },
                                 child: SolidContainer(
@@ -156,7 +173,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                 CustomTextWidget(
                                                   text: (appt.title ?? "No Title").toUpperCase(),
                                                   fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.w500,
                                                   color: textColor,
                                                   letterSpacing: 0.5,
                                                 ),
@@ -189,7 +206,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                           data.role!.toUpperCase(),
                                                           style: TextStyle(
                                                             fontSize: 8.sp,
-                                                            fontWeight: FontWeight.w900,
+                                                            fontWeight: FontWeight.w500,
                                                             color: context.appColors.secondaryColor,
                                                           ),
                                                         ),
@@ -217,7 +234,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               ),
                                             ),
                                             child: Icon(
-                                              Icons.calendar_today_rounded,
+                                              FontAwesomeIcons.calendar,
                                               size: 16.r,
                                               color: context.appColors.primaryColor,
                                             ),
@@ -232,7 +249,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                 style: TextStyle(
                                                   fontSize: 10.sp,
                                                   color: context.appColors.hintTextColor,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.w500,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
@@ -240,7 +257,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                               CustomTextWidget(
                                                 text: appt.effectiveDate != null
                                                     ? DateFormat(
-                                                        "MMM dd, yyyy • h:mm a",
+                                                        "MMM dd, yyyy | h:mm a",
                                                       ).format(
                                                         appt.effectiveDate!
                                                             .toLocal(),
@@ -257,11 +274,14 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                   ),
                                 ),
                               ),
+                            ),
                             );
                           },
-                        );
+                        ),
+                      );
                       },
                     ),
+
                   ),
                 ),
               ),
@@ -297,9 +317,16 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
         text: text.toUpperCase(),
         color: context.appColors.primaryColor,
         fontSize: 10.sp,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
       ),
     );
   }
 }
+
+
+
+
+
+
+

@@ -1,9 +1,12 @@
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_data.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
@@ -11,7 +14,6 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
 import '../bloc/provider_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -42,22 +44,69 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
       body: BlocConsumer<ProviderBloc, ProviderState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is SuccessSearchRequestState && state.requests.isNotEmpty) {
+            setState(() => requests = state.requests);
+          }
+        },
         builder: (context, state) {
           return GradientBackground(
             child: SafeArea(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.all(20.0.r),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  context.read<ProviderBloc>().add(SearchRequestEvent());
+                  context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                  await Future.delayed(const Duration(seconds: 1));
+                },
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
+                  ),
+                  padding: EdgeInsets.all(20.0.r),
                 child: Column(
                   children: [
+                    // Header with back button
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: Container(
+                            padding: EdgeInsets.all(12.r),
+                            decoration: BoxDecoration(
+                              color: context.appColors.cardBackground,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color: context.appColors.glassBorder,
+                              ),
+                            ),
+                            child: Icon(
+                              FontAwesomeIcons.chevronLeft,
+                              color: context.appColors.primaryTextColor,
+                              size: 18.r,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Text(
+                          "SEARCH REQUESTS",
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                            color: context.appColors.primaryTextColor,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
                     // Glassmorphic Search Bar
                     SolidTextField(
                       controller: searchController,
                       hintText: "SEARCH REQUEST",
                       label: "SEARCH",
                       allCapsLabel: true,
-                      prefixIcon: Icons.search,
+                      prefixIcon: FontAwesomeIcons.magnifyingGlass,
                       onChanged: (value) {
                         setState(() {
                           searchedRequests = [];
@@ -89,100 +138,86 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                     ),
                     SizedBox(height: 20.h),
 
-                    // Request Grid
                     SizedBox(
                       height: size(context).height - 200.h,
-                      child: FutureBuilder<List<RequestData>>(
-                        future: SuccessSearchRequestState.requests,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data!.isNotEmpty) {
-                              if (requests.isEmpty) requests = snapshot.data!;
+                      child: () {
+                        // Read from state directly; fall back to locally cached list
+                        final List<RequestData> stateResults = state is SuccessSearchRequestState
+                            ? state.requests
+                            : requests;
 
-                              final displayList = SearchingState.isSearching
-                                  ? searchedRequests
-                                  : snapshot.data!;
+                        if (state is LoadingProviderState && stateResults.isEmpty) {
+                          return const LoadingWidget();
+                        }
 
-                              if (displayList.isEmpty &&
-                                  SearchingState.isSearching) {
-                                return Center(
-                                  child: SolidContainer(
-                                    padding: EdgeInsets.all(24.r),
-                                    child: EmptyWidget(
-                                      message: "No request matches your search",
-                                      height: 200.h,
-                                    ),
+                        final displayList = searchController.text.isNotEmpty
+                            ? searchedRequests
+                            : stateResults;
+
+                        if (displayList.isEmpty && searchController.text.isNotEmpty) {
+                          return Center(
+                            child: SolidContainer(
+                              padding: EdgeInsets.all(24.r),
+                              child: EmptyWidget(
+                                message: "No request matches your search",
+                                height: 200.h,
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (displayList.isEmpty) {
+                           return Center(
+                            child: SolidContainer(
+                              padding: EdgeInsets.all(20.r),
+                              child: EmptyWidget(
+                                message: "No request available at the moment",
+                                height: 250.h,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return GridView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16.w,
+                            mainAxisSpacing: 16.h,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: displayList.length,
+                          itemBuilder: (context, index) {
+                            RequestData requestD = displayList[index];
+
+                            // Staggered Animation
+                            return TweenAnimationBuilder<double>(
+                              tween: Tween(begin: 0.0, end: 1.0),
+                              duration: Duration(
+                                milliseconds: 400 + (index * 100),
+                              ),
+                              curve: Curves.easeOut,
+                              builder: (context, value, child) {
+                                return Transform.translate(
+                                  offset: Offset(0, 50 * (1 - value)),
+                                  child: Opacity(
+                                    opacity: value,
+                                    child: child,
                                   ),
                                 );
-                              }
-
-                              return GridView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 16.w,
-                                      mainAxisSpacing: 16.h,
-                                      childAspectRatio: 0.75,
-                                    ),
-                                itemCount: displayList.length,
-                                itemBuilder: (context, index) {
-                                  RequestData requestD = displayList[index];
-                                  if (SearchingState.isSearching) {
-                                    search = searchedRequests[index];
-                                  }
-
-                                  // Staggered Animation
-                                  return TweenAnimationBuilder<double>(
-                                    tween: Tween(begin: 0.0, end: 1.0),
-                                    duration: Duration(
-                                      milliseconds: 400 + (index * 100),
-                                    ),
-                                    curve: Curves.easeOut,
-                                    builder: (context, value, child) {
-                                      return Transform.translate(
-                                        offset: Offset(0, 50 * (1 - value)),
-                                        child: Opacity(
-                                          opacity: value,
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                    child: _buildRequestCard(requestD),
-                                  );
-                                },
-                              );
-                            } else {
-                              return Center(
-                                child: SolidContainer(
-                                  padding: EdgeInsets.all(20.r),
-                                  child: EmptyWidget(
-                                    message:
-                                        "No request available at the moment",
-                                    height: 250.h,
-                                  ),
-                                ),
-                              );
-                            }
-                          } else if (snapshot.hasError) {
-                            return const Center(
-                              child: Text(
-                                "Error loading requests",
-                                style: TextStyle(color: Colors.white),
-                              ),
+                              },
+                              child: _buildRequestCard(requestD),
                             );
-                          } else {
-                            return const Center(child: LoadingWidget());
-                          }
-                        },
-                      ),
+                          },
+                        );
+                      }(),
                     ),
                   ],
                 ),
               ),
             ),
-          );
+          ),);
         },
       ),
     );
@@ -205,12 +240,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
             context.read<ProviderBloc>().add(
               ReloadProfileEvent(request: requestData.request!.id!),
             );
-            context.read<ProviderBloc>().add(
-              NavigateProviderEvent(
-                page: 1,
-                widget: const ProviderRequestDetailPage(),
-              ),
-            );
+            context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
           },
           child: SolidContainer(
             padding: EdgeInsets.zero,
@@ -245,7 +275,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               .toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.primaryColor,
                             letterSpacing: 0.5,
                           ),
@@ -262,7 +292,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                             requestData.request?.title ?? "",
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 0.5,
                             ),
@@ -284,7 +314,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                     (profile.profilePictureUrl == null ||
                                         profile.profilePictureUrl!.isEmpty)
                                     ? Icon(
-                                        Icons.person,
+                                        FontAwesomeIcons.user,
                                         size: 14.r,
                                         color: iconColor,
                                       )
@@ -301,7 +331,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                           .toUpperCase(),
                                       style: TextStyle(
                                         fontSize: 12.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w500,
                                         color: textColor,
                                         letterSpacing: 0.5,
                                       ),
@@ -311,7 +341,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                     Row(
                                       children: [
                                         Icon(
-                                          Icons.location_on,
+                                          FontAwesomeIcons.locationDot,
                                           size: 12.r,
                                           color: secondaryTextColor,
                                         ),
@@ -344,7 +374,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                   top: 8.h,
                   right: 8.w,
                   child: PopupMenuButton(
-                    icon: Icon(Icons.more_horiz_rounded, color: context.appColors.primaryTextColor),
+                    icon: FaIcon(FontAwesomeIcons.ellipsis, color: context.appColors.primaryTextColor),
                     color: context.appColors.primaryBackground,
                     surfaceTintColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
@@ -365,23 +395,13 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                               request: requestData.request!.id!,
                             ),
                           );
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 1,
-                              widget: const ProviderRequestDetailPage(),
-                            ),
-                          );
+                          context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
                           break;
                         case 2:
                           context.read<MessageBloc>().add(
                             SetMessageReceiverEvent(profile: profile),
                           );
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 4,
-                              widget: const ChatPage(),
-                            ),
-                          );
+                          context.push('/chat');
                           break;
                       }
                     },
@@ -393,7 +413,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           child: Row(
                             children: [
                               Icon(
-                                Icons.remove_red_eye_rounded,
+                                FontAwesomeIcons.eye,
                                 color: popupTextColor,
                                 size: 20.r,
                               ),
@@ -402,7 +422,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 "DETAILS",
                                 style: TextStyle(
                                   color: popupTextColor,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
@@ -415,7 +435,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           child: Row(
                             children: [
                               Icon(
-                                Icons.chat_bubble_outline_rounded,
+                                FontAwesomeIcons.comment,
                                 color: popupTextColor,
                                 size: 20.r,
                               ),
@@ -424,7 +444,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 "CHAT",
                                 style: TextStyle(
                                   color: popupTextColor,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12.sp,
                                   letterSpacing: 0.5,
                                 ),
@@ -438,8 +458,8 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                 ),
               ],
             ),
-          ),
-        );
+          ),);
+      
       },
     );
   }

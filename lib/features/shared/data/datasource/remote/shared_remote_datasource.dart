@@ -15,7 +15,7 @@ abstract class SharedRemoteDatasource {
   Future<bool> addReport(Report report);
   Future<bool> setSeen(String notificationID);
 
-  Future<List<not.NotificationData>?> getMyNotifications();
+  Future<List<not.NotificationData>?> getMyNotifications({int page = 1});
 
   Future<Place?> searchPlace({required String placeID});
 
@@ -32,3 +32,5 @@ abstract class SharedRemoteDatasource {
   Future<String> getStripeDashboardLink();
   Future<List<LegalDocument>?> getLegalDocument(String docType);
 }
+
+

@@ -1,6 +1,7 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -79,7 +80,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
             );
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                Get.offAndToNamed("/login");
+                context.go("/login");
               }
             });
           }
@@ -100,7 +101,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                       child: Row(
                         children: [
                           IconButton(
-                            onPressed: () => Get.back(),
+                            onPressed: () => context.pop(),
                             icon: Container(
                               padding: EdgeInsets.all(8.r),
                               decoration: BoxDecoration(
@@ -112,7 +113,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                 ),
                               ),
                               child: Icon(
-                                Icons.arrow_back_ios_new_rounded,
+                                FontAwesomeIcons.chevronLeft,
                                 color: isDark ? Colors.white : Colors.black,
                                 size: 18.r,
                               ),
@@ -143,7 +144,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                 ),
                               ),
                               child: Icon(
-                                Icons.key_rounded,
+                                FontAwesomeIcons.key,
                                 size: 50.r,
                                 color: context.appColors.primaryColor,
                               ),
@@ -161,7 +162,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       "CREATE NEW PASSWORD",
                                       style: TextStyle(
                                         fontSize: 22.sp,
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w500,
                                         color: isDark ? Colors.white : Colors.black,
                                         letterSpacing: 1.0,
                                       ),
@@ -183,7 +184,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       label: "Verification Code",
                                       allCapsLabel: true,
                                       hintText: "Enter 4-digit OTP",
-                                      prefixIcon: Icons.pin_rounded,
+                                      prefixIcon: FontAwesomeIcons.thumbtack,
                                       keyboardType: TextInputType.number,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -201,7 +202,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       label: "New Password",
                                       allCapsLabel: true,
                                       hintText: "Enter new password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -219,7 +220,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       label: "Confirm Password",
                                       allCapsLabel: true,
                                       hintText: "Confirm new password",
-                                      prefixIcon: Icons.lock_outline_rounded,
+                                      prefixIcon: FontAwesomeIcons.lock,
                                       obscureText: true,
                                       validator: (val) {
                                         if (val!.isEmpty) {
@@ -270,3 +271,8 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
     );
   }
 }
+
+
+
+
+

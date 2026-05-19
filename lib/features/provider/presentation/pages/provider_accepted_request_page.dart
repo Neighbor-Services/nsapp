@@ -1,17 +1,16 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/request_accept.dart';
 import '../../../../core/models/request_acceptance.dart';
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class ProviderAcceptedRequestPage extends StatefulWidget {
@@ -24,7 +23,7 @@ class ProviderAcceptedRequestPage extends StatefulWidget {
 
 class _ProviderAcceptedRequestPageState
     extends State<ProviderAcceptedRequestPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -51,7 +50,11 @@ class _ProviderAcceptedRequestPageState
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     final textColor = context.appColors.primaryTextColor;
@@ -72,53 +75,93 @@ class _ProviderAcceptedRequestPageState
             customAlert(context, AlertType.error, "Request Cancelled Failed");
           }
         },
-        builder: (context, state) {
-          return GradientBackground(
-            child: SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 800.w),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32.w : 20.w,
-                            vertical: 24.h,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "ACCEPTED REQUESTS",
-                                style: TextStyle(
-                                  fontSize: 22.sp,
-                                  fontWeight: FontWeight.w900,
-                                  color: textColor,
-                                  letterSpacing: 1.2,
-                                ),
+        builder: (context, providerState) {
+          return BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, profileState) {
+              final myId = (profileState is SuccessGetProfileState)
+                  ? profileState.profile.user?.id
+                  : null;
+
+              return GradientBackground(
+                child: SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 800.w),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isLargeScreen ? 32.w : 20.w,
+                                vertical: 24.h,
                               ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                "MANAGE YOUR ACTIVE PROJECTS AND PROGRESS",
-                                style: TextStyle(
-                                  fontSize: 9.sp,
-                                  fontWeight: FontWeight.w900,
-                                  color: secondaryTextColor,
-                                  letterSpacing: 0.8,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                    onTap: () {
+                                      if (Navigator.of(context).canPop()) {
+                                        context.pop();
+                                      } else {
+                                        context.read<ProviderBloc>().add(
+                                            ChangeProviderTabEvent(tabIndex: 1));
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(14.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 16.w),
+                                      Text(
+                                        "ACCEPTED REQUESTS",
+                                        style: TextStyle(
+                                          fontSize: 22.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: textColor,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Text(
+                                    "MANAGE YOUR ACTIVE PROJECTS AND PROGRESS",
+                                    style: TextStyle(
+                                      fontSize: 9.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: secondaryTextColor,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: FutureBuilder<List<RequestAcceptance>>(
-                            future: SuccessGetAcceptRequestState.accepts,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.isEmpty) {
+                            ),
+                            Expanded(
+                              child: () {
+                                final accepts = context.read<ProviderBloc>().myAcceptedRequests;
+
+                                if (providerState is LoadingProviderState && accepts.isEmpty) {
+                                  return const LoadingWidget();
+                                }
+
+                                if (accepts.isEmpty) {
                                   return Center(
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
@@ -146,7 +189,7 @@ class _ProviderAcceptedRequestPageState
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Icon(
-                                                Icons.work_history_rounded,
+                                                FontAwesomeIcons.clockRotateLeft,
                                                 size: 64.r,
                                                 color: context.appColors.glassBorder,
                                               ),
@@ -156,7 +199,7 @@ class _ProviderAcceptedRequestPageState
                                               "No accepted requests",
                                               style: TextStyle(
                                                 fontSize: 22.sp,
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.w500,
                                                 color: textColor,
                                                 letterSpacing: 0.5,
                                               ),
@@ -177,32 +220,41 @@ class _ProviderAcceptedRequestPageState
                                     ),
                                   );
                                 }
-                                return ListView.builder(
-                                  physics: const BouncingScrollPhysics(),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isLargeScreen ? 32.w : 16.w,
-                                    vertical: 8.h,
-                                  ),
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index) {
-                                    return _buildRequestCard(
-                                      context,
-                                      snapshot.data![index],
-                                      index,
-                                    );
+                                return RefreshIndicator(
+                                  onRefresh: () async {
+                                    context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
+                                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                                    context.read<ProfileBloc>().add(GetProfileEvent());
+                                    await Future.delayed(const Duration(seconds: 1));
                                   },
+                                  child: ListView.builder(
+                                    key: const PageStorageKey('provider_accepted_list'),
+                                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isLargeScreen ? 32.w : 16.w,
+                                      vertical: 8.h,
+                                    ),
+                                    itemCount: accepts.length,
+                                    itemBuilder: (context, index) {
+                                      return _buildRequestCard(
+                                        context,
+                                        accepts[index],
+                                        index,
+                                        myId,
+                                      );
+                                    },
+                                  ),
                                 );
-                              }
-                              return const Center(child: LoadingWidget());
-                            },
-                          ),
+                              }(),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
@@ -213,7 +265,7 @@ class _ProviderAcceptedRequestPageState
     BuildContext context,
     RequestAcceptance requestAcceptance,
     int index,
- 
+    String? myId,
   ) {
     final textColor = context.appColors.primaryTextColor;
     final cardColor = context.appColors.cardBackground;
@@ -226,31 +278,38 @@ class _ProviderAcceptedRequestPageState
     if (user == null) return const SizedBox.shrink();
 
     final isApproved = request.approved ?? false;
-    final isAssignedToMe =
-        request.approvedUser == SuccessGetProfileState.profile.user?.id;
+    final isAssignedToMe = request.approvedUser == myId;
     final status = request.status ?? 'OPEN';
 
-    return GestureDetector(
-      onTap: () {
-        context.read<ProviderBloc>().add(
-          RequestDetailEvent(
-            request: RequestData(
-              request: requestAcceptance.acceptance!.request,
-              user: requestAcceptance.user,
-            ),
-          ),
-        );
-        context.read<ProviderBloc>().add(
-          ReloadProfileEvent(request: request.id ?? ""),
-        );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 3,
-            widget: const ProviderRequestDetailPage(),
-          ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 100)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
         );
       },
-      child: Container(
+      child: GestureDetector(
+        onTap: () {
+          context.read<ProviderBloc>().add(
+            RequestDetailEvent(
+              request: RequestData(
+                request: requestAcceptance.acceptance!.request,
+                user: requestAcceptance.user,
+              ),
+            ),
+          );
+          context.read<ProviderBloc>().add(
+            ReloadProfileEvent(request: request.id ?? ""),
+          );
+          context.push('/app/provider/requests/${request.id}', extra: RequestData(
+            request: requestAcceptance.acceptance!.request,
+            user: requestAcceptance.user,
+          ));
+        },
+        child: Container(
         margin: EdgeInsets.only(bottom: 20.h),
         decoration: BoxDecoration(
           color: cardColor,
@@ -280,7 +339,7 @@ class _ProviderAcceptedRequestPageState
                                 height: 140.h,
                                 color: context.appColors.primaryColor.withAlpha(50),
                                 child: Icon(
-                                  Icons.image_not_supported_rounded,
+                                  FontAwesomeIcons.image,
                                   color: context.appColors.primaryColor,
                                 ),
                               ),
@@ -290,7 +349,7 @@ class _ProviderAcceptedRequestPageState
                           height: 140.h,
                           color: context.appColors.primaryColor.withAlpha(50),
                           child: Icon(
-                            Icons.assignment_rounded,
+                            FontAwesomeIcons.fileLines,
                             color: context.appColors.primaryColor,
                             size: 40.r,
                           ),
@@ -321,7 +380,7 @@ class _ProviderAcceptedRequestPageState
                           _getStatusText(isApproved, isAssignedToMe, status).toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.primaryColor,
                             letterSpacing: 0.5,
                           ),
@@ -348,14 +407,14 @@ class _ProviderAcceptedRequestPageState
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                         child: Icon(
-                          Icons.more_horiz_rounded,
+                          FontAwesomeIcons.ellipsis,
                           color: context.appColors.primaryTextColor,
                           size: 20.r,
                         ),
                       ),
                       onSelected: (val) =>
                           _handleMenuAction(context, val, requestAcceptance),
-                      itemBuilder: (context) => _buildMenuItems(),
+                      itemBuilder: (context) => _buildMenuItems(isApproved),
                     ),
                   ),
                 ),
@@ -383,7 +442,7 @@ class _ProviderAcceptedRequestPageState
                           request.title ?? "Project",
                           style: TextStyle(
                             fontSize: 17.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
@@ -402,7 +461,7 @@ class _ProviderAcceptedRequestPageState
                     ),
                   ),
                   Icon(
-                    Icons.chevron_right_rounded,
+                    FontAwesomeIcons.chevronRight,
                     color: context.appColors.secondaryTextColor,
                   ),
                 ],
@@ -411,33 +470,28 @@ class _ProviderAcceptedRequestPageState
           ],
         ),
       ),
+    ),
     );
   }
 
 
   IconData _getStatusIcon(bool isApproved, bool isAssignedToMe, String status) {
-    // If assigned to me and in progress or done
     if (isAssignedToMe && isApproved) {
-      if (status == 'DONE') return Icons.check_circle_rounded;
-      if (status == 'IN_PROGRESS') return Icons.pending_actions_rounded;
-      return Icons.verified_rounded;
+      if (status == 'DONE') return FontAwesomeIcons.circleCheck;
+      if (status == 'IN_PROGRESS') return FontAwesomeIcons.clock;
+      return FontAwesomeIcons.circleCheck;
     }
-    // If approved but not assigned to me
-    if (isApproved) return Icons.pending_rounded;
-    // Waiting for approval
-    return Icons.hourglass_empty_rounded;
+    if (isApproved) return FontAwesomeIcons.ellipsis;
+    return FontAwesomeIcons.hourglass;
   }
 
   String _getStatusText(bool isApproved, bool isAssignedToMe, String status) {
-    // If assigned to me and in progress or done
     if (isAssignedToMe && isApproved) {
       if (status == 'DONE') return "COMPLETED";
       if (status == 'IN_PROGRESS') return "IN PROGRESS";
       return "ACTIVE TASK";
     }
-    // If approved but not assigned to me
     if (isApproved) return "ASSIGNED TO OTHER";
-    // Waiting for approval
     return "WAITING RESPONSE";
   }
 
@@ -459,21 +513,17 @@ class _ProviderAcceptedRequestPageState
         context.read<ProviderBloc>().add(
           ReloadProfileEvent(request: ra.acceptance?.request?.id ?? ""),
         );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 3,
-            widget: const ProviderRequestDetailPage(),
-          ),
-        );
+        context.push('/app/provider/requests/${ra.acceptance!.request!.id}', extra: RequestData(
+          request: ra.acceptance!.request,
+          user: ra.user,
+        ));
         break;
       case 2:
         if (ra.user == null) break;
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 4, widget: const ChatPage()),
-        );
+        context.push('/chat');
         break;
       case 3:
         context.read<MessageBloc>().add(
@@ -483,9 +533,7 @@ class _ProviderAcceptedRequestPageState
         context.read<MessageBloc>().add(
           SetMessageReceiverEvent(profile: ra.user!),
         );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 4, widget: const ChatPage()),
-        );
+        context.push('/chat');
         break;
       case 4:
         if (ra.acceptance?.request?.id == null) break;
@@ -497,7 +545,7 @@ class _ProviderAcceptedRequestPageState
         context.read<ProviderBloc>().add(
           RequestDirectionEvent(request: ra.acceptance!.request!),
         );
-        Get.toNamed("/map-direction");
+        context.push("/map-direction");
         break;
     }
   }
@@ -512,7 +560,7 @@ class _ProviderAcceptedRequestPageState
           "CANCEL INTEREST?",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             letterSpacing: 1.0,
           ),
         ),
@@ -552,7 +600,7 @@ class _ProviderAcceptedRequestPageState
               "WITHDRAW",
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1.0,
               ),
             ),
@@ -562,41 +610,42 @@ class _ProviderAcceptedRequestPageState
     );
   }
 
-  List<PopupMenuEntry<int>> _buildMenuItems() {
-    return [
+  List<PopupMenuEntry<int>> _buildMenuItems(bool isApproved) {
+    List<PopupMenuEntry<int>> items = [
       _buildMenuItem(
         1,
-        Icons.visibility_rounded,
+        FontAwesomeIcons.eye,
         "View Details",
         context.appColors.primaryTextColor
-       
       ),
       _buildMenuItem(
         2,
-        Icons.chat_bubble_rounded,
+        FontAwesomeIcons.comment,
         "Chat",
         context.appColors.primaryTextColor
-       
       ),
       _buildMenuItem(
         3,
-        Icons.calendar_month_rounded,
+        FontAwesomeIcons.calendar,
         "Schedule",
         context.appColors.primaryTextColor
       ),
-      _buildMenuItem(
+    ];
+    if (!isApproved) {
+      items.add(_buildMenuItem(
         4,
-        Icons.cancel_rounded,
+        FontAwesomeIcons.circleXmark,
         "Cancel",
         context.appColors.primaryTextColor
-      ),
-      _buildMenuItem(
+      ));
+    }
+    items.add(_buildMenuItem(
         5,
-        Icons.directions_rounded,
+        FontAwesomeIcons.diamondTurnRight,
         "Directions",
         context.appColors.primaryTextColor
-      ),
-    ];
+      ));
+    return items;
   }
 
   PopupMenuItem<int> _buildMenuItem(
@@ -616,7 +665,7 @@ class _ProviderAcceptedRequestPageState
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontSize: 12.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
             ),
           ),
@@ -625,3 +674,5 @@ class _ProviderAcceptedRequestPageState
     );
   }
 }
+
+

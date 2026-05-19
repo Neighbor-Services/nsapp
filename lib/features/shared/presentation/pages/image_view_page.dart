@@ -1,9 +1,11 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-import 'package:nsapp/core/constants/dimension.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -19,7 +21,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: BlocBuilder<SharedBloc, SharedState>(
+      body: BlocBuilder<CommonBloc, CommonState>(
         builder: (context, state) {
           return Stack(
             children: [
@@ -34,7 +36,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                     minScale: 0.5,
                     maxScale: 5,
                     child: CachedNetworkImage(
-                      imageUrl: ViewImageState.url,
+                      imageUrl: state is ViewImageState ? state.url : "",
                       fit: BoxFit.contain,
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) => Center(
@@ -47,7 +49,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.broken_image,
+                            FontAwesomeIcons.image,
                             size: 100.r,
                             color: Colors.white.withAlpha(100),
                           ),
@@ -70,7 +72,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                 top: 40.h,
                 left: 20.w,
                 child: GestureDetector(
-                  onTap: () => Get.back(),
+                  onTap: () => context.pop(),
                   child: Container(
                     padding: EdgeInsets.all(10.r),
                     decoration: BoxDecoration(
@@ -79,7 +81,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                       border: Border.all(color: Colors.white.withAlpha(30)),
                     ),
                     child: Icon(
-                      Icons.arrow_back,
+                      FontAwesomeIcons.arrowLeft,
                       color: Colors.white,
                       size: 24.r,
                     ),

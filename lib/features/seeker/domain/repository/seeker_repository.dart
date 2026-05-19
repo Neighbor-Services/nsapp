@@ -9,9 +9,9 @@ import 'package:nsapp/core/models/appointment.dart';
 import '../../../../core/models/rate.dart';
 
 abstract class SeekerRepository {
-  Future<Either<Failure, bool>> createRequest(Request request);
+  Future<Either<Failure, bool>> createRequest(Request request, {String? imagePath});
   Future<Either<Failure, bool>> rate(Rate rete);
-  Future<Either<Failure, bool>> updateRequest(Request request);
+  Future<Either<Failure, bool>> updateRequest(Request request, {String? imagePath});
   Future<Either<Failure, bool>> markAsDone(Request request);
   Future<Either<Failure, List<RequestData>>> myRequest();
   Future<Either<Failure, RequestData>> reloadRequest({required String request});
@@ -40,6 +40,7 @@ abstract class SeekerRepository {
     double? priceMax,
     String? categoryName,
     String? serviceName,
+    String? serviceId,
     String? city,
   });
   Future<Either<Failure, bool>> cancelAppointment({required String id});
@@ -54,3 +55,5 @@ abstract class SeekerRepository {
     required String description,
   });
 }
+
+

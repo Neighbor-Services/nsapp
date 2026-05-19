@@ -1,10 +1,13 @@
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -83,13 +86,11 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
               isLoadingMore = false;
             });
             if (state is SuccessGetRequestsState) {
-              SuccessGetRequestsState.requests?.then((value) {
-                if (value.length < (currentPage * 10)) {
-                  setState(() {
-                    hasReachedMax = true;
-                  });
-                }
-              });
+              if (state.requests.length < (currentPage * 10)) {
+                setState(() {
+                  hasReachedMax = true;
+                });
+              }
             }
           }
         },
@@ -103,9 +104,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                     child: Row(
                       children: [
                         GestureDetector(
-                          onTap: () => context.read<ProviderBloc>().add(
-                            ProviderBackPressedEvent(),
-                          ),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(
@@ -117,7 +116,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                               ),
                             ),
                             child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
+                              FontAwesomeIcons.chevronLeft,
                               color: context.appColors.primaryTextColor,
                               size: 18.r,
                             ),
@@ -128,7 +127,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                           "BROWSE REQUESTS",
                           style: TextStyle(
                             color: context.appColors.primaryTextColor,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             fontSize: 20.sp,
                             letterSpacing: 1.2,
                           ),
@@ -149,7 +148,19 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                               children: [
                                 // Requests List
                                 Expanded(
-                                  child: _buildRequestsList(context, isLargeScreen),
+                                  child: RefreshIndicator(
+                                    onRefresh: () async {
+                                      setState(() {
+                                        currentPage = 1;
+                                        hasReachedMax = false;
+                                      });
+                                      context.read<ProviderBloc>().add(GetRequestsEvent(requestData: requestData));
+                                      context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                                      context.read<ProfileBloc>().add(GetProfileEvent());
+                                      await Future.delayed(const Duration(seconds: 1));
+                                    },
+                                    child: _buildRequestsList(context, isLargeScreen, state),
+                                  ),
                                 ),
                               ],
                             ),
@@ -167,70 +178,71 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
     );
   }
 
-  Widget _buildRequestsList(BuildContext context, bool isLargeScreen) {
-    return FutureBuilder<List<RequestData>>(
-      future: SuccessGetRequestsState.requests,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: SolidContainer(
-                padding: EdgeInsets.all(40.r),
-                borderColor: context.appColors.glassBorder,
-                borderWidth: 1.5.r,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.work_off_rounded,
-                      size: 60.r,
-                      color: context.appColors.glassBorder,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      "No requests available",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      "Check back later for new projects",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                  ],
+  Widget _buildRequestsList(BuildContext context, bool isLargeScreen, ProviderState state) {
+    List<RequestData> requests = (state is SuccessGetRequestsState) 
+        ? state.requests 
+        : context.read<ProviderBloc>().allRequests;
+
+    if (state is LoadingProviderState && requests.isEmpty) {
+      return const LoadingWidget();
+    }
+
+    if (requests.isEmpty) {
+      return Center(
+        child: SolidContainer(
+          padding: EdgeInsets.all(40.r),
+          borderColor: context.appColors.glassBorder,
+          borderWidth: 1.5.r,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.briefcase,
+                size: 60.r,
+                color: context.appColors.glassBorder,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "No requests available",
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w400,
+                  color: context.appColors.glassBorder,
                 ),
               ),
-            );
-          }
+              SizedBox(height: 8.h),
+              Text(
+                "Check back later for new projects",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.glassBorder,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-          requestData = snapshot.data!.last;
-          return ListView.builder(
-            controller: scrollController,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(
-              horizontal: isLargeScreen ? 32.w : 16.w,
-              vertical: 16.h,
-            ),
-            itemCount: snapshot.data!.length + (isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index < snapshot.data!.length) {
-                return _buildRequestCard(context, snapshot.data![index], index);
-              } else {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24.h),
-                  child: Center(child: LoadingWidget()),
-                );
-              }
-            },
-          );
+    requestData = requests.last;
+    return ListView.builder(
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: isLargeScreen ? 32.w : 16.w,
+        vertical: 16.h,
+      ),
+      itemCount: requests.length + (isLoadingMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index < requests.length) {
+          return _buildRequestCard(context, requests[index], index);
         } else {
-          return const Center(child: LoadingWidget());
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h),
+            child: const LoadingWidget(),
+          );
         }
       },
     );
@@ -253,12 +265,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: data.request?.id ?? ""),
           );
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderRequestDetailPage(),
-            ),
-          );
+          context.push('/app/provider/requests/${data.request!.id}', extra: data);
         },
         child: Padding(
           padding: EdgeInsets.only(bottom: 16.h),
@@ -286,7 +293,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.white.withAlpha(10),
-                                  child: const Center(child: LoadingWidget()),
+                                  child: const Center(child: LoadingWidget(count: 1)),
                                 ),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(logoAssets, fit: BoxFit.cover),
@@ -324,7 +331,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                                   (data.user?.firstName ?? "User").toUpperCase(),
                                   style: TextStyle(
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                     letterSpacing: 0.5,
                                     color: context.appColors.primaryTextColor,
                                   ),
@@ -353,7 +360,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: context.appColors.primaryColor,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -371,7 +378,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                         Row(
                           children: [
                             Icon(
-                              Icons.calendar_today_rounded,
+                              FontAwesomeIcons.calendar,
                               size: 12.r,
                               color: context.appColors.secondaryTextColor,
                             ),
@@ -402,7 +409,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                       Padding(
                         padding: EdgeInsets.only(right: 16.w),
                         child: Icon(
-                          Icons.chevron_right_rounded,
+                          FontAwesomeIcons.chevronRight,
                           color: context.appColors.secondaryTextColor,
                         ),
                       ),
@@ -444,7 +451,7 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
   //       status.toUpperCase(),
   //       style: TextStyle(
   //         fontSize: 8,
-  //         fontWeight: FontWeight.w900,
+  //         fontWeight: FontWeight.w500,
   //         color: color,
   //         letterSpacing: 0.5,
   //       ),
@@ -452,3 +459,9 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
   //   );
   // }
 }
+
+
+
+
+
+

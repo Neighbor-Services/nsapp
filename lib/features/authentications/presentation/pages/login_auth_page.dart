@@ -1,18 +1,17 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:get/get.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 
 class LoginAuthPage extends StatefulWidget {
@@ -33,7 +32,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
   GlobalKey<FormState> key = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
-  bool _acceptTerms = false;
 
   @override
   void initState() {
@@ -87,20 +85,24 @@ class _LoginAuthPageState extends State<LoginAuthPage>
           BlocListener<ProfileBloc, ProfileState>(
             listener: (context, state) {
               if (state is SuccessGetProfileState) {
-                if (SuccessGetProfileState.profile.phone != null &&
-                    SuccessGetProfileState.profile.phone!.isNotEmpty) {
-                  if (Helpers.isProvider(SuccessGetProfileState.profile.userType)) {
-                    context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: true));
+                final profile = state.profile;
+                if (profile.phone != null &&
+                    profile.phone!.isNotEmpty) {
+                  bool isProvider = Helpers.isProvider(profile.userType);
+                  context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: isProvider));
+                  
+                  if (isProvider && profile.isIdentityVerified != true) {
+                    context.go("/home");
+                    // context.go("/pending-verification");
                   } else {
-                    context.read<SharedBloc>().add(ToggleDashboardEvent(isProvider: false));
+                    context.go("/home");
                   }
-                  Get.offAllNamed("/home");
                 } else {
-                  Get.offAllNamed("/add-profile");
+                  context.go("/add-profile");
                 }
               }
               if (state is FailureGetProfileState) {
-                Get.offAllNamed("/add-profile");
+                context.go("/add-profile");
               }
             },
           ),
@@ -111,23 +113,20 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   _isLoading = true;
                   _errorMessage = null;
                 });
-              } else {
-                setState(() => _isLoading = false);
-              }
-
-              if (state is SuccessLoginAuthenticationState ||
-                  state is SuccessGoogleRegisterAuthenticationState) {
-                // Start foreground WebSocket (works on both Android & iOS)
-                BackgroundNotificationService.connectForeground();
-                // Register device token for native push (iOS)
-                DeviceTokenService.tryRegisterStoredToken();
-                context.read<ProfileBloc>().add(GetProfileEvent());
-              }
-
-              if (state is FailureLoginAuthenticationState) {
+              } else if (state is FailureLoginAuthenticationState) {
                 setState(() {
+                  _isLoading = false;
                   _errorMessage = state.message;
                 });
+              } else if (state is SuccessLoginAuthenticationState ||
+                  state is SuccessGoogleRegisterAuthenticationState) {
+                // Keep _isLoading = true while we fetch the profile
+                // Register device token for native push (iOS)
+                DeviceTokenService.tryRegisterStoredToken();
+                context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                context.read<ProfileBloc>().add(GetProfileEvent());
+              } else {
+                setState(() => _isLoading = false);
               }
             },
           ),
@@ -155,223 +154,202 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               // Logo/Branding
-                              _buildHeader(),
+                              TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeOutCubic,
+                                builder: (context, value, child) {
+                                  return Transform.translate(
+                                    offset: Offset(0, 30 * (1 - value)),
+                                    child: Opacity(opacity: value, child: child),
+                                  );
+                                },
+                                child: _buildHeader(),
+                              ),
                               SizedBox(height: 40.h),
 
                               // Glass Form Container
-                              SolidContainer(
-                                padding: EdgeInsets.all(28.r),
-                                child: Form(
-                                  key: key,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Email Field
-                                      SolidTextField(
-                                        controller: emailTextController,
-                                        label: "EMAIL",
-                                        allCapsLabel: true,
-                                        hintText: "Enter your email",
-                                        prefixIcon: Icons.email_rounded,
-                                        keyboardType: TextInputType.emailAddress,
-                                        validator: (val) {
-                                          if (val!.isEmpty) {
-                                            return "Email is required";
-                                          } else if (!val.isEmail) {
-                                            return "Invalid email format";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                      SizedBox(height: 24.h),
-                                      // Password Field
-                                      SolidTextField(
-                                        controller: passwordTextController,
-                                        label: "PASSWORD",
-                                        allCapsLabel: true,
-                                        hintText: "Enter your password",
-                                        prefixIcon: Icons.lock_rounded,
-                                        obscureText: true,
-                                        validator: (val) {
-                                          if (val!.isEmpty) {
-                                            return "Password is required";
-                                          } else if (val.length < 6) {
-                                            return "Password must be at least 6 characters";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                      // Forgot Password
-                                      SizedBox(height: 12.h),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: GestureDetector(
-                                          onTap: () =>
-                                              Get.toNamed("/reset-password"),
-                                          child: Text(
-                                            "Forgot Password?",
-                                            style: TextStyle(
-                                              color: context.appColors.secondaryTextColor,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w500,
+                              TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutCubic,
+                                builder: (context, value, child) {
+                                  return Transform.translate(
+                                    offset: Offset(0, 50 * (1 - value)),
+                                    child: Opacity(opacity: value, child: child),
+                                  );
+                                },
+                                child: SolidContainer(
+                                  padding: EdgeInsets.all(28.r),
+                                  child: Form(
+                                    key: key,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Email Field
+                                        SolidTextField(
+                                          controller: emailTextController,
+                                          label: "EMAIL",
+                                          allCapsLabel: true,
+                                          hintText: "Enter your email",
+                                          prefixIcon: FontAwesomeIcons.envelope,
+                                          keyboardType: TextInputType.emailAddress,
+                                          validator: ValidationUtil.validateEmail,
+                                        ),
+                                        SizedBox(height: 24.h),
+                                        // Password Field
+                                        SolidTextField(
+                                          controller: passwordTextController,
+                                          label: "PASSWORD",
+                                          allCapsLabel: true,
+                                          hintText: "Enter your password",
+                                          prefixIcon: FontAwesomeIcons.lock,
+                                          obscureText: true,
+                                          validator: ValidationUtil.validatePassword,
+                                        ),
+                                        // Forgot Password
+                                        SizedBox(height: 12.h),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                context.push("/reset-password"),
+                                            child: Text(
+                                              "Forgot Password?",
+                                              style: TextStyle(
+                                                color: context.appColors.secondaryTextColor,
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      // Error Message
-                                      if (_errorMessage != null) ...[
-                                        SizedBox(height: 16.h),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 16.w,
-                                            vertical: 12.h,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: context.appColors.errorColor.withAlpha(25),
-                                            borderRadius: BorderRadius.circular(12.r),
-                                            border: Border.all(
-                                              color: context.appColors.errorColor.withAlpha(60),
+                                        // Error Message
+                                        if (_errorMessage != null) ...[
+                                          SizedBox(height: 16.h),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16.w,
+                                              vertical: 12.h,
                                             ),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.error_outline_rounded,
-                                                color: context.appColors.errorColor,
-                                                size: 20.r,
+                                            decoration: BoxDecoration(
+                                              color: context.appColors.errorColor.withAlpha(25),
+                                              borderRadius: BorderRadius.circular(12.r),
+                                              border: Border.all(
+                                                color: context.appColors.errorColor.withAlpha(60),
                                               ),
-                                              SizedBox(width: 12.w),
-                                              Expanded(
-                                                child: Text(
-                                                  _errorMessage!,
-                                                  style: TextStyle(
-                                                    color: context.appColors.errorColor,
-                                                    fontSize: 13.sp,
-                                                    fontWeight: FontWeight.w500,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  FontAwesomeIcons.circleExclamation,
+                                                  color: context.appColors.errorColor,
+                                                  size: 20.r,
+                                                ),
+                                                SizedBox(width: 12.w),
+                                                Expanded(
+                                                  child: Text(
+                                                    _errorMessage!,
+                                                    style: TextStyle(
+                                                      color: context.appColors.errorColor,
+                                                      fontSize: 13.sp,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                      SizedBox(height: 16.h),
-                                      _buildTermsCheckbox(),
-                                      SizedBox(height: 28.h),
-                                      // Login Button
-                                      SolidButton(
-                                        label: "LOGIN",
-                                        allCaps: true,
-                                        isLoading: _isLoading,
-                                        onPressed: () {
-                                          if (!_acceptTerms) {
-                                            Get.snackbar(
-                                              "Required",
-                                              "Please accept our terms and conditions to proceed",
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              backgroundColor: context.appColors.errorColor.withAlpha(200),
-                                              colorText: Colors.white,
-                                            );
-                                            return;
-                                          }
-                                          if (key.currentState!.validate()) {
-                                            context
-                                                .read<AuthenticationBloc>()
-                                                .add(
-                                                  LoginAuthenticationEvent(
-                                                    email: emailTextController
-                                                        .text
-                                                        .trim(),
-                                                    password:
-                                                        passwordTextController
-                                                            .text
-                                                            .trim(),
-                                                  ),
-                                                );
-                                          }
-                                        },
-                                      ),
-                                      SizedBox(height: 24.h),
-                                      // Divider
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Divider(
-                                              color: context.appColors.glassBorder.withAlpha(80),
-                                              thickness: 1,
-                                            ),
-                                          ),
-                                           Padding(
-                                             padding: EdgeInsets.symmetric(
-                                               horizontal: 16.w,
-                                             ),
-                                             child: Text(
-                                               "or",
-                                               style: TextStyle(
-                                                 color: context.appColors.secondaryTextColor,
-                                                 fontSize: 14.sp,
-                                                 fontWeight: FontWeight.w400,
-                                               ),
-                                             ),
-                                           ),
-                                          Expanded(
-                                            child: Divider(
-                                              color: context.appColors.glassBorder.withAlpha(80),
-                                              thickness: 1,
+                                              ],
                                             ),
                                           ),
                                         ],
-                                      ),
-                                      SizedBox(height: 24.h),
-                                      // Google Sign In
-                                      SolidButton(
-                                        label: "SIGN IN WITH GOOGLE",
-                                        allCaps: true,
-                                        imagePath: googleLogo,
-                                        textColor: Colors.white,
-                                        isPrimary: false,
-                                        onPressed: () {
-                                          if (!_acceptTerms) {
-                                            Get.snackbar(
-                                              "Required",
-                                              "Please accept our terms and conditions to proceed",
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              backgroundColor: context.appColors.errorColor.withAlpha(200),
-                                              colorText: Colors.white,
+                                        SizedBox(height: 28.h),
+                                        // Login Button
+                                        SolidButton(
+                                          label: "LOGIN",
+                                          allCaps: true,
+                                          isLoading: _isLoading,
+                                          onPressed: () {
+                                            
+                                            if (key.currentState!.validate()) {
+                                              context
+                                                  .read<AuthenticationBloc>()
+                                                  .add(
+                                                    LoginAuthenticationEvent(
+                                                      email: emailTextController
+                                                          .text
+                                                          .trim(),
+                                                      password:
+                                                          passwordTextController
+                                                              .text
+                                                              .trim(),
+                                                    ),
+                                                  );
+                                            }
+                                          },
+                                        ),
+                                        SizedBox(height: 24.h),
+                                        // Divider
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Divider(
+                                                color: context.appColors.glassBorder.withAlpha(80),
+                                                thickness: 1,
+                                              ),
+                                            ),
+                                             Padding(
+                                               padding: EdgeInsets.symmetric(
+                                                 horizontal: 16.w,
+                                               ),
+                                               child: Text(
+                                                 "or",
+                                                 style: TextStyle(
+                                                   color: context.appColors.secondaryTextColor,
+                                                   fontSize: 14.sp,
+                                                   fontWeight: FontWeight.w400,
+                                                 ),
+                                               ),
+                                             ),
+                                            Expanded(
+                                              child: Divider(
+                                                color: context.appColors.glassBorder.withAlpha(80),
+                                                thickness: 1,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 24.h),
+                                        // Google Sign In
+                                        SolidButton(
+                                          label: "SIGN IN WITH GOOGLE",
+                                          allCaps: true,
+                                          imagePath: googleLogo,
+                                          textColor: Colors.white,
+                                          isPrimary: false,
+                                          onPressed: () {
+                                            
+                                            context.read<AuthenticationBloc>().add(
+                                              LoginWithGoogleAuthenticationEvent(),
                                             );
-                                            return;
-                                          }
-                                          context.read<AuthenticationBloc>().add(
-                                            LoginWithGoogleAuthenticationEvent(),
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(height: 16.h),
-                                      // Apple Sign In
-                                      SolidButton(
-                                        label: "SIGN IN WITH APPLE",
-                                        allCaps: true,
-                                        icon: Icons.apple,
-                                        textColor: Colors.white,
-                                        isPrimary: false,
-                                        onPressed: () {
-                                          if (!_acceptTerms) {
-                                            Get.snackbar(
-                                              "Required",
-                                              "Please accept our terms and conditions to proceed",
-                                              snackPosition: SnackPosition.BOTTOM,
-                                              backgroundColor: context.appColors.errorColor.withAlpha(200),
-                                              colorText: Colors.white,
+                                          },
+                                        ),
+                                        SizedBox(height: 16.h),
+                                        // Apple Sign In
+                                        SolidButton(
+                                          label: "SIGN IN WITH APPLE",
+                                          allCaps: true,
+                                          icon: FontAwesomeIcons.apple,
+                                          textColor: Colors.white,
+                                          isPrimary: false,
+                                          onPressed: () {
+                                          
+                                            context.read<AuthenticationBloc>().add(
+                                              LoginWithAppleAuthenticationEvent(),
                                             );
-                                            return;
-                                          }
-                                          context.read<AuthenticationBloc>().add(
-                                            LoginWithAppleAuthenticationEvent(),
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(height: 24.h),
-                                    ],
+                                          },
+                                        ),
+                                        SizedBox(height: 24.h),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -390,13 +368,13 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     ),
                                   ),
                                   GestureDetector(
-                                    onTap: () => Get.toNamed("/register"),
+                                    onTap: () => context.push("/register"),
                                     child: Text(
                                       "Sign Up",
                                       style: TextStyle(
                                         color: context.appColors.primaryTextColor,
                                         fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold,
+                                        fontWeight: FontWeight.w500,
                                         letterSpacing: 0.3,
                                       ),
                                     ),
@@ -440,7 +418,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
           "WELCOME BACK",
           style: TextStyle(
             fontSize: 28.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             color: context.appColors.primaryTextColor,
             letterSpacing: 1.5,
           ),
@@ -457,58 +435,10 @@ class _LoginAuthPageState extends State<LoginAuthPage>
       ],
     );
   }
-
-  Widget _buildTermsCheckbox() {
-    return Row(
-      children: [
-        Theme(
-          data: ThemeData(
-            unselectedWidgetColor: context.appColors.secondaryTextColor,
-          ),
-          child: Checkbox(
-            value: _acceptTerms,
-            activeColor: context.appColors.primaryColor,
-            onChanged: (val) {
-              setState(() {
-                _acceptTerms = val ?? false;
-              });
-            },
-          ),
-        ),
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                color: context.appColors.secondaryTextColor,
-                fontSize: 12.sp,
-                height: 1.5,
-              ),
-              children: [
-                const TextSpan(text: "I accept the "),
-                TextSpan(
-                  text: "Terms and Conditions",
-                  style: TextStyle(
-                    color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => Get.toNamed('/legal', arguments: 'TERMS'),
-                ),
-                const TextSpan(text: " and "),
-                TextSpan(
-                  text: "Privacy Policy",
-                  style: TextStyle(
-                    color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => Get.toNamed('/legal', arguments: 'PRIVACY'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
+
+
+
+
+
+

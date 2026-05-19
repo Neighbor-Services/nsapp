@@ -1,67 +1,92 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:nsapp/core/constants/urls.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:flutter/material.dart';
 
 class DeviceTokenService {
-  static const MethodChannel _channel = MethodChannel('com.nsapp/notifications');
-
-  /// Initialize and listen for native token updates (iOS only)
+  /// Initialize and listen for native token updates (iOS APNs & Android FCM)
   static void initialize() {
-    if (Platform.isIOS) {
-       _channel.setMethodCallHandler((call) async {
-        if (call.method == "onTokenReceived") {
-          final String token = call.arguments;
-          debugPrint("DEBUG [Dart]: Received APNs token from iOS: $token");
-          
-          // Save it locally first
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString("apns_token", token);
-          
-          await registerToken(token, 'IOS');
+    // Both iOS and Android can use FirebaseMessaging.instance.getToken()
+    // once APNs is properly configured in the Firebase Console for iOS.
+    Future(() async {
+      try {
+        if (Platform.isIOS) {
+          final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+          if (apnsToken == null) {
+            debugPrint("DEBUG [Dart]: APNS token is null. Skipping FCM token request to prevent exception.");
+            return;
+          }
         }
-      });
-    }
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
+          debugPrint("DEBUG [Dart]: Received FCM token from $platform: $token");
+          await _handleTokenUpdate(token, platform);
+        }
+      } catch (e) {
+        debugPrint("DEBUG [Dart]: Error fetching FCM token: $e");
+      }
+    });
+
+    // Listen for token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
+      final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
+      debugPrint("DEBUG [Dart]: FCM token refreshed: $token");
+      await _handleTokenUpdate(token, platform);
+    }).onError((error) {
+      debugPrint("DEBUG [Dart]: Error on token refresh: $error");
+    });
+  }
+
+  static Future<void> _handleTokenUpdate(String token, String platform) async {
+    // Save it locally first
+    await Helpers.saveString("device_push_token", token);
+    await Helpers.saveString("device_platform", platform);
+    
+    // Attempt registration if user is already logged in
+    await registerToken(token, platform);
   }
 
   /// Attempts to register a previously saved token (called after login)
   static Future<void> tryRegisterStoredToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("apns_token");
-    if (token != null && token.isNotEmpty) {
-      await registerToken(token, 'IOS');
+    final token = await Helpers.getString("device_push_token");
+    final platform = await Helpers.getString("device_platform");
+    final effectivePlatform = platform.isNotEmpty ? platform : (Platform.isIOS ? 'IOS' : 'ANDROID');
+    
+    if (token.isNotEmpty) {
+      await registerToken(token, effectivePlatform);
     }
   }
 
   /// Sends the device token to the Django backend
   static Future<void> registerToken(String token, String platform) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final userToken = prefs.getString("token") ?? "";
+      final userAuthToken = await Helpers.getString("token");
 
-      if (userToken.isEmpty) {
+      if (userAuthToken.isEmpty) {
         debugPrint("DEBUG [DeviceTokenService]: No user auth token yet. Skipping registration.");
         return;
       }
 
       final deviceId = await _getDeviceId();
-      final url = Uri.parse("$baseUrl/api/notifications/tokens/");
+      // Use the centralized notifications endpoint
+      final url = Uri.parse("$baseUrl/notifications/tokens/");
       
       debugPrint("DEBUG [DeviceTokenService]: Registering $platform token on backend...");
       
       final response = await http.post(
         url,
         headers: {
-          "Authorization": "Bearer $userToken",
+          "Authorization": "Bearer $userAuthToken",
           "Content-Type": "application/json",
         },
         body: json.encode({
           "token": token,
-          "platform": platform, // Should match 'IOS' or 'ANDROID' choices in Django
+          "platform": platform, // 'IOS' or 'ANDROID'
           "device_id": deviceId,
         }),
       );
@@ -92,3 +117,5 @@ class DeviceTokenService {
     return null;
   }
 }
+
+

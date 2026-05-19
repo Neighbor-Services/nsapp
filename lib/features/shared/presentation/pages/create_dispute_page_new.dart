@@ -1,6 +1,7 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
 import 'package:nsapp/core/models/dispute.dart';
 import 'package:nsapp/core/models/chat.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
@@ -60,7 +61,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
         description: _descriptionController.text,
       );
 
-      context.read<SharedBloc>().add(CreateDisputeEvent(dispute: dispute));
+      context.read<DisputeBloc>().add(CreateDisputeEvent(dispute: dispute));
     }
   }
 
@@ -73,7 +74,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
       
       body: SafeArea(
         child: GradientBackground(
-          child: BlocConsumer<SharedBloc, SharedState>(
+          child: BlocConsumer<DisputeBloc, DisputeState>(
             listener: (context, state) {
               if (state is SuccessCreateDisputeState) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -82,9 +83,9 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                     backgroundColor: context.appColors.successColor,
                   ),
                 );
-                context.read<SharedBloc>().add(GetMyDisputesEvent());
+                context.read<DisputeBloc>().add(GetMyDisputesEvent());
                 Navigator.pop(context);
-              } else if (state is FailureCreateDisputeState) {
+              } else if (state is DisputeFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
                    SnackBar(
                     content: Text('Failed to raise dispute. Please try again.'),
@@ -111,7 +112,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                             child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
+                              FontAwesomeIcons.chevronLeft,
                               color: textColor,
                               size: 18.r,
                             ),
@@ -122,7 +123,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                           'Raise Dispute'.toUpperCase(),
                           style: TextStyle(
                             color: textColor,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             fontSize: 20.sp,
                           ),
                         ),
@@ -155,7 +156,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.gavel_rounded,
+                                    FontAwesomeIcons.gavel,
                                     color: context.appColors.primaryColor,
                                     size: 28.r,
                                   ),
@@ -170,7 +171,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                         'Raise a Dispute',
                                         style: TextStyle(
                                           fontSize: 20.sp,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w500,
                                           color: textColor,
                                         ),
                                       ),
@@ -200,7 +201,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                   'Who are you disputing against?',
                                   style: TextStyle(
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w400,
                                     color: textColor.withAlpha(200),
                                   ),
                                 ),
@@ -222,7 +223,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                     child: Row(
                                       children: [
                                         Icon(
-                                          Icons.person_outline_rounded,
+                                          FontAwesomeIcons.user,
                                           color: secondaryTextColor,
                                           size: 20.r,
                                         ),
@@ -240,7 +241,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                           ),
                                         ),
                                         Icon(
-                                          Icons.arrow_forward_ios_rounded,
+                                          FontAwesomeIcons.chevronRight,
                                           color: secondaryTextColor,
                                           size: 16.r,
                                         ),
@@ -263,7 +264,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                   'Dispute Details',
                                   style: TextStyle(
                                     fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w400,
                                     color: textColor.withAlpha(200),
                                   ),
                                 ),
@@ -271,7 +272,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                 SolidTextField(
                                   controller: _reasonController,
                                   hintText: 'Reason for dispute',
-                                  prefixIcon: Icons.warning_amber_rounded,
+                                  prefixIcon: FontAwesomeIcons.triangleExclamation,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter a reason';
@@ -283,7 +284,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                                 SolidTextField(
                                   controller: _descriptionController,
                                   hintText: 'Describe the issue in detail',
-                                  // prefixIcon: Icons.description_outlined,
+                                  // prefixIcon: FontAwesomeIcons.fileLines,
                                   isMultiLine: true,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -310,7 +311,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                             child: Row(
                               children: [
                                 Icon(
-                                  Icons.info_outline_rounded,
+                                  FontAwesomeIcons.circleInfo,
                                   color: context.appColors.warningColor.withAlpha(200),
                                   size: 24.r,
                                 ),
@@ -332,7 +333,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                           // Submit Button
                           SolidButton(
                             label: 'Submit Dispute',
-                            isLoading: state is SharedLoadingState,
+                            isLoading: state is DisputeLoading,
                             onPressed: _submitDispute,
                           ),
                         ],
@@ -358,24 +359,24 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
         backgroundColor: context.appColors.cardBackground,
         title: Text(
           'Select User',
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
         ),
         content: SizedBox(
           width: double.maxFinite,
           height: 400.h,
-          child: FutureBuilder<List<Chat>>(
-            future: SuccessGetMyMessagesState.myMessages,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: LoadingWidget());
+          child: BlocBuilder<MessageBloc, MessageState>(
+            builder: (context, state) {
+              List<Chat> conversations = [];
+              if (state is SuccessGetMyMessagesState) {
+                conversations = state.myMessages;
               }
 
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              if (conversations.isEmpty && state is! LoadingMessageState) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.chat_bubble_outline_rounded,
+                      FontAwesomeIcons.comment,
                       size: 48.r,
                       color: secondaryTextColor,
                     ),
@@ -400,7 +401,10 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                 );
               }
 
-              final conversations = snapshot.data!;
+              if (state is LoadingMessageState) {
+                return const LoadingWidget();
+              }
+
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: conversations.length,
@@ -444,14 +448,14 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                             : null,
                         child: (user?.profilePictureUrl == null ||
                                 user!.profilePictureUrl!.isEmpty)
-                            ? Icon(Icons.person, color: secondaryTextColor)
+                            ? FaIcon(FontAwesomeIcons.user, color: secondaryTextColor)
                             : null,
                       ),
                       title: Text(
                         user?.firstName ?? 'Unknown User',
                         style: TextStyle(
                           color: textColor,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w400,
                           fontSize: 14.sp,
                         ),
                       ),
@@ -465,7 +469,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
                             )
                           : null,
                       trailing: Icon(
-                        Icons.arrow_forward_ios_rounded,
+                        FontAwesomeIcons.chevronRight,
                         color: secondaryTextColor,
                         size: 16.r,
                       ),
@@ -486,3 +490,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
     );
   }
 }
+
+
+
+

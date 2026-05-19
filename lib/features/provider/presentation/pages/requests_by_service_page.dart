@@ -1,10 +1,14 @@
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -24,6 +28,7 @@ class RequestsByServicePage extends StatefulWidget {
 
 class _RequestsByServicePageState extends State<RequestsByServicePage> {
   bool _isLoading = true;
+  List<RequestData> _cachedRequests = [];
 
   @override
   void initState() {
@@ -65,9 +70,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<ProviderBloc>().add(
-                          ProviderBackPressedEvent(),
-                        );
+                        context.pop();
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -80,7 +83,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                           ),
                         ),
                         child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          FontAwesomeIcons.chevronLeft,
                           color: backBtnIconColor,
                           size: 20.r,
                         ),
@@ -95,7 +98,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
                               fontSize: 20.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -105,7 +108,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             "AVAILABLE REQUESTS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: secondaryTextColor,
                               letterSpacing: 0.5,
                             ),
@@ -120,77 +123,78 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
               // Requests List
               Expanded(
                 child: BlocBuilder<ProviderBloc, ProviderState>(
+                  buildWhen: (previous, current) =>
+                      current is SuccessSearchRequestState ||
+                      current is LoadingProviderState ||
+                      current is FailureSearchRequestState,
                   builder: (context, state) {
-                    if (state is LoadingProviderState || _isLoading) {
-                      return const Center(child: LoadingWidget());
+                    if (state is SuccessSearchRequestState) {
+                      _cachedRequests = state.requests;
                     }
 
-                    if (state is SuccessSearchRequestState) {
-                      return FutureBuilder<List<RequestData>>(
-                        future: SuccessSearchRequestState.requests,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(child: LoadingWidget());
-                          }
+                    final requestsData = _cachedRequests;
 
-                          final requestsData = snapshot.data ?? [];
-
-                          if (requestsData.isEmpty) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.search_off_rounded,
-                                    size: 80.r,
-                                    color: secondaryTextColor.withAlpha(60),
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  Text(
-                                    "No requests found",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: secondaryTextColor,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    "Try searching for a different service",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: secondaryTextColor.withAlpha(100),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-
-                          return ListView.separated(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 16.h,
+                    if (requestsData.isEmpty) {
+                      if (state is LoadingProviderState || _isLoading) {
+                        return const LoadingWidget();
+                      }
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.magnifyingGlass,
+                              size: 80.r,
+                              color: secondaryTextColor.withAlpha(60),
                             ),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: requestsData.length,
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 16.h),
-                            itemBuilder: (context, index) {
-                              final requestData = requestsData[index];
-                              return _buildRequestCard(context, requestData);
-                            },
-                          );
-                        },
+                            SizedBox(height: 16.h),
+                            Text(
+                              "No requests found",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              "Try searching for a different service",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: secondaryTextColor.withAlpha(100),
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     }
 
-                    return Center(
-                      child: Text(
-                        "Start searching for requests",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: secondaryTextColor,
+                    return LoadingView(
+                      isLoading: state is LoadingProviderState || _isLoading,
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<ProviderBloc>().add(
+                            SearchRequestEvent(
+                              query: widget.serviceName,
+                              catalogServiceId: widget.serviceId,
+                            ),
+                          );
+                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                          await Future.delayed(const Duration(seconds: 1));
+                        },
+                        child: ListView.separated(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 16.h,
+                          ),
+                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                          itemCount: requestsData.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 16.h),
+                          itemBuilder: (context, index) {
+                            final requestData = requestsData[index];
+                            return _buildRequestCard(context, requestData, index);
+                          },
                         ),
                       ),
                     );
@@ -204,7 +208,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     );
   }
 
-  Widget _buildRequestCard(BuildContext context, RequestData requestData) {
+  Widget _buildRequestCard(BuildContext context, RequestData requestData, int index) {
     final request = requestData.request;
     if (request == null) return const SizedBox.shrink();
 
@@ -212,22 +216,27 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     final secondaryTextColor = context.appColors.glassBorder;
     final locationIconColor = context.appColors.glassBorder;
 
-    return GestureDetector(
-      onTap: () {
-        // Set request detail state before navigation
-        context.read<ProviderBloc>().add(
-          RequestDetailEvent(request: requestData),
-        );
-        context.read<ProviderBloc>().add(
-          ReloadProfileEvent(request: request.id!),
-        );
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 1,
-            widget: const ProviderRequestDetailPage(),
-          ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 80)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
         );
       },
+      child: GestureDetector(
+        onTap: () {
+          // Set request detail state before navigation
+          context.read<ProviderBloc>().add(
+            RequestDetailEvent(request: requestData),
+          );
+          context.read<ProviderBloc>().add(
+            ReloadProfileEvent(request: request.id!),
+          );
+          context.push('/app/provider/requests/${request.id}', extra: requestData);
+        },
       child: SolidContainer(
         padding: EdgeInsets.all(16.r),
         borderColor: context.appColors.glassBorder,
@@ -243,7 +252,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                     request.title?.toUpperCase() ?? "UNTITLED REQUEST",
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 0.5,
                     ),
@@ -264,7 +273,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
             SizedBox(height: 12.h),
             Row(
               children: [
-                Icon(Icons.location_on, color: locationIconColor, size: 16.r),
+                FaIcon(FontAwesomeIcons.locationDot, color: locationIconColor, size: 16.r),
                 SizedBox(width: 4.w),
                 Expanded(
                   child: Text(
@@ -276,14 +285,14 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                 ),
                 if (request.distance != null) ...[
                   SizedBox(width: 12.w),
-                  Icon(Icons.near_me, color: context.appColors.secondaryColor, size: 16.r),
+                  FaIcon(FontAwesomeIcons.locationArrow, color: context.appColors.secondaryColor, size: 16.r),
                   SizedBox(width: 4.w),
                   Text(
                     "${request.distance!.toStringAsFixed(1)} km",
                     style: TextStyle(
                       color: context.appColors.secondaryColor,
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -295,7 +304,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
               Row(
                 children: [
                   Icon(
-                    Icons.people_outline,
+                    FontAwesomeIcons.users,
                     color: context.appColors.infoColor.withAlpha(200),
                     size: 16.r,
                   ),
@@ -313,6 +322,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -346,7 +356,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
         status?.toUpperCase() ?? "OPEN",
         style: TextStyle(
           fontSize: 8.sp,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w500,
           color: color,
           letterSpacing: 0.5,
         ),
@@ -354,3 +364,9 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
     );
   }
 }
+
+
+
+
+
+

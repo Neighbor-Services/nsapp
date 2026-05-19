@@ -1,260 +1,98 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Platform;
-import 'dart:ui';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/services/local_notification_service.dart';
-import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/status.dart' as status;
+import 'package:nsapp/core/services/notification_navigator.dart';
+
+/// MUST be a top-level function (NOT a static class method) so Firebase can
+/// invoke it in a separate background isolate when the app is terminated or
+/// in the background. Any static method would be silently ignored.
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Note: Firebase is already initialised by the time this is called, but
+  // FlutterLocalNotificationsPlugin is NOT — calling showNotification here
+  // would require re-initialising it. For now we log and let the system
+  // notification tray handle notification-type messages automatically.
+  // Data-only (silent) messages that arrive in the background must be
+  // processed here if they require local storage updates, etc.
+  debugPrint(
+    "DEBUG [FCM BG]: Background message received — id: ${message.messageId}, "
+    "type: ${message.data['notification_type']}",
+  );
+}
 
 class BackgroundNotificationService {
-  // --- Foreground WebSocket (used on both platforms while app is open) ---
-  static IOWebSocketChannel? _foregroundChannel;
-  static Timer? _foregroundReconnectTimer;
-  static bool _foregroundConnected = false;
 
-  /// Call this after login to connect the foreground WebSocket.
-  /// Works on both Android and iOS.
-  static Future<void> connectForeground() async {
-    _disconnectForeground();
-    _foregroundConnected = true;
-    await _connectForegroundWebSocket();
-  }
-
-  /// Call this on logout to cleanly disconnect.
-  static void disconnectForeground() {
-    _foregroundConnected = false;
-    _disconnectForeground();
-  }
-
-  static void _disconnectForeground() {
-    _foregroundReconnectTimer?.cancel();
-    _foregroundChannel?.sink.close(status.goingAway);
-    _foregroundChannel = null;
-  }
-
-  static Future<void> _connectForegroundWebSocket() async {
-    if (!_foregroundConnected) return;
-
-    try {
-      final token = await Helpers.getString("token");
-      if (token.isEmpty) {
-        debugPrint("DEBUG [Foreground WS]: No token. Retrying in 10s...");
-        _foregroundReconnectTimer = Timer(
-          const Duration(seconds: 10),
-          _connectForegroundWebSocket,
-        );
-        return;
-      }
-
-      final wsUrl = _buildWsUrl(token);
-      if (wsUrl == null) return;
-      debugPrint("DEBUG [Foreground WS]: Connecting to $wsUrl");
-
-      _foregroundChannel = IOWebSocketChannel.connect(
-        Uri.parse(wsUrl),
-        connectTimeout: const Duration(seconds: 10),
-      );
-
-      _foregroundChannel!.stream.listen(
-        (message) {
-          debugPrint("DEBUG [Foreground WS]: Message received: $message");
-          try {
-            final data = json.decode(message) as Map<String, dynamic>;
-            // Show a local notification even while the app is in the foreground
-            LocalNotificationService.showNotification(
-              id: DateTime.now().microsecondsSinceEpoch % 1000000,
-              title: data['title'] as String? ?? "Neighbor Services",
-              body: data['message'] as String? ?? "",
-              payload: message,
-            );
-          } catch (e) {
-            debugPrint("DEBUG [Foreground WS]: Error parsing message: $e");
-          }
-        },
-        onError: (e) {
-          debugPrint("DEBUG [Foreground WS]: Error: $e. Retrying...");
-          _retryForeground();
-        },
-        onDone: () {
-          debugPrint("DEBUG [Foreground WS]: Closed. Retrying...");
-          _retryForeground();
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      debugPrint("DEBUG [Foreground WS]: Critical error: $e");
-      _retryForeground();
-    }
-  }
-
-  static void _retryForeground() {
-    if (!_foregroundConnected) return;
-    _foregroundChannel?.sink.close(status.goingAway);
-    _foregroundChannel = null;
-    _foregroundReconnectTimer?.cancel();
-    _foregroundReconnectTimer = Timer(
-      const Duration(seconds: 15),
-      _connectForegroundWebSocket,
-    );
-  }
-
-  // ----------------------------------------------------------------
-  // --- Background Service (Android only — iOS doesn't support it) ---
-  // ----------------------------------------------------------------
-
+  /// Initialize Firebase Messaging handlers. Call once from main().
   static Future<void> initializeService() async {
-    // flutter_background_service does not run persistently on iOS.
-    // On iOS, we rely solely on the foreground WebSocket + local notifications.
-    if (Platform.isIOS) {
-      debugPrint("DEBUG: Background service skipped on iOS (not supported without APNs).");
-      return;
-    }
+    // 1. Register the top-level background handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    final service = FlutterBackgroundService();
-
-    await service.configure(
-      androidConfiguration: AndroidConfiguration(
-        onStart: onStart,
-        autoStart: true,
-        isForegroundMode: true,
-        notificationChannelId: 'high_importance_channel',
-        initialNotificationTitle: 'Neighbor Services',
-        initialNotificationContent: 'Notification service is running',
-        foregroundServiceNotificationId: 888,
-      ),
-      iosConfiguration: IosConfiguration(
-        autoStart: false, // Disabled on iOS
-        onForeground: onStart,
-        onBackground: onIosBackground,
-      ),
+    // 2. Request notification permission (required on iOS and Android 13+)
+    final settings = await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    
+    // Set foreground notification options for iOS
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
     );
 
-    await service.startService();
-  }
+    debugPrint(
+      "DEBUG [FCM]: Permission status: ${settings.authorizationStatus}",
+    );
 
-  @pragma('vm:entry-point')
-  static Future<bool> onIosBackground(ServiceInstance service) async {
-    WidgetsFlutterBinding.ensureInitialized();
-    DartPluginRegistrant.ensureInitialized();
-    return true;
-  }
-
-  @pragma('vm:entry-point')
-  static void onStart(ServiceInstance service) async {
-    DartPluginRegistrant.ensureInitialized();
-
-    if (service is AndroidServiceInstance) {
-      service.on('setAsForeground').listen((event) {
-        service.setAsForegroundService();
-      });
-
-      service.on('setAsBackground').listen((event) {
-        service.setAsBackgroundService();
-      });
-    }
-
-    service.on('stopService').listen((event) {
-      service.stopSelf();
+    // 3. Handle foreground messages — show a local notification banner
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint("DEBUG [FCM]: Foreground message received: ${message.data}");
+      _showLocalNotification(message);
     });
 
-    service.on('reconnect').listen((event) {
-      _retryAndroidBackground(service);
+    // 4. Handle notification tap when app is in background (not terminated)
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      debugPrint(
+        "DEBUG [FCM]: App opened via notification tap: ${message.data}",
+      );
+      // Navigate to the relevant screen. The app is already running so
+      // NotificationNavigator can route immediately if /home is in the stack,
+      // or stash the data for the home page to consume after mounting.
+      NotificationNavigator.handleTap(message.data);
     });
 
-    // Initialize Local Notifications within the background isolate
-    await LocalNotificationService.initialize();
-
-    _connectAndroidBackgroundWebSocket(service);
-  }
-
-  static IOWebSocketChannel? _channel;
-  static Timer? _reconnectTimer;
-
-  static void _connectAndroidBackgroundWebSocket(ServiceInstance service) async {
-    try {
-      final token = await Helpers.getString("token");
-      if (token.isEmpty) {
-        debugPrint("DEBUG [Android BG WS]: No token found. Retrying in 30s...");
-        _reconnectTimer?.cancel();
-        _reconnectTimer = Timer(
-          const Duration(seconds: 30),
-          () => _connectAndroidBackgroundWebSocket(service),
+    // 5. Handle cold-start (app launched from a terminated state by tapping a notification)
+    FirebaseMessaging.instance.getInitialMessage().then((initialMessage) {
+      if (initialMessage != null) {
+        debugPrint(
+          "DEBUG [FCM]: App launched via notification tap (cold start): "
+          "${initialMessage.data}",
         );
-        return;
+        // Store the data in PendingNotificationStore. The home screen will
+        // consume it in initState once BLoCs are ready and navigate accordingly.
+        NotificationNavigator.handleTap(initialMessage.data, isColdStart: true);
       }
-
-      final wsUrl = _buildWsUrl(token);
-      if (wsUrl == null) return;
-      debugPrint("DEBUG [Android BG WS]: Connecting to $wsUrl");
-
-      _channel = IOWebSocketChannel.connect(
-        Uri.parse(wsUrl),
-        connectTimeout: const Duration(seconds: 10),
-      );
-
-      _channel!.stream.listen(
-        (message) {
-          debugPrint("DEBUG [Android BG WS]: Message received: $message");
-          try {
-            final data = json.decode(message) as Map<String, dynamic>;
-
-            // Broadcast to foreground UI if app is open
-            service.invoke('notification', data);
-
-            // Show system tray notification
-            LocalNotificationService.showNotification(
-              id: DateTime.now().microsecondsSinceEpoch % 1000000,
-              title: data['title'] as String? ?? "Neighbor Services",
-              body: data['message'] as String? ?? "",
-              payload: message,
-            );
-          } catch (e) {
-            debugPrint("DEBUG [Android BG WS]: Error parsing message: $e");
-          }
-        },
-        onError: (e) {
-          debugPrint("DEBUG [Android BG WS]: Error: $e. Retrying...");
-          _retryAndroidBackground(service);
-        },
-        onDone: () {
-          debugPrint("DEBUG [Android BG WS]: Closed. Retrying...");
-          _retryAndroidBackground(service);
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      debugPrint("DEBUG [Android BG WS]: Critical error: $e");
-      _retryAndroidBackground(service);
-    }
+    }).catchError((e) {
+      debugPrint("DEBUG [FCM]: Error getting initial message: $e");
+    });
   }
 
-  static void _retryAndroidBackground(ServiceInstance service) {
-    _channel?.sink.close(status.goingAway);
-    _reconnectTimer?.cancel();
-    _reconnectTimer = Timer(
-      const Duration(seconds: 15),
-      () => _connectAndroidBackgroundWebSocket(service),
+  static void _showLocalNotification(RemoteMessage message) {
+    final notification = message.notification;
+    final data = message.data;
+
+    LocalNotificationService.showNotification(
+      id: DateTime.now().microsecondsSinceEpoch % 1000000,
+      title: notification?.title ?? data['title'] ?? "Neighbor Services",
+      body: notification?.body ?? data['message'] ?? "",
+      payload: json.encode(data),
     );
-  }
-
-  // --- Shared helper ---
-  static String? _buildWsUrl(String token) {
-    try {
-      String cleanBaseUrl = baseUrl;
-      if (cleanBaseUrl.endsWith('/')) {
-        cleanBaseUrl = cleanBaseUrl.substring(0, cleanBaseUrl.length - 1);
-      }
-      final uri = Uri.parse(cleanBaseUrl);
-      final scheme = uri.scheme == 'https' ? 'wss' : 'ws';
-      final portPart = uri.hasPort ? ":${uri.port}" : "";
-      return "$scheme://${uri.host}$portPart/ws/notifications/?token=$token";
-    } catch (e) {
-      debugPrint("DEBUG: Error building WebSocket URL: $e");
-      return null;
-    }
   }
 }

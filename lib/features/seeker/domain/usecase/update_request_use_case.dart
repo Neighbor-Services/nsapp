@@ -11,7 +11,10 @@ class UpdateRequestUseCase extends UseCase{
 
   @override
   Future<Either<Failure, bool>> call(params) async {
-    final results = await repository.updateRequest(params);
-    return results.fold((l) => Left(l), (r) => Right(r));
+    if (params is RequestParams) {
+      return await repository.updateRequest(params.request, imagePath: params.imagePath);
+    }
+    return await repository.updateRequest(params);
   }
 }
+

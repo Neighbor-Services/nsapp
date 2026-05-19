@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/legal_document.dart';
 import 'package:nsapp/core/models/map_places.dart';
 import 'package:nsapp/core/models/place.dart';
@@ -21,11 +20,14 @@ import '../../../../../core/constants/string_constants.dart';
 import '../../../../../core/models/notification.dart' as not;
 
 class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
+  final Dio _dio;
+
+  SharedRemoteDatasourceImpl(this._dio);
   @override
   Future<bool> addNotification(not.Notification notification) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/notifications/",
         data: json.encode(notification.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -40,11 +42,12 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   }
 
   @override
-  Future<List<not.NotificationData>?> getMyNotifications() async {
+  Future<List<not.NotificationData>?> getMyNotifications({int page = 1}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/notifications/",
+        queryParameters: {"page": page},
         options: Options(headers: dioHeaders(token)),
       );
 
@@ -68,7 +71,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<bool> addReport(Report report) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/moderation/reports/",
         data: json.encode(report.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -138,7 +141,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<List<Service>?> getServices() async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/services/catalog-services/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -177,7 +180,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<bool> setSeen(String notificationID) async {
     try {
       final String token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/notifications/$notificationID/mark_as_read/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -191,7 +194,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<String?> addServices(Service model) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/services/catalog-services/",
         data: json.encode(model.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -205,22 +208,41 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
     }
   }
 
+  void _handleDioError(Object e) {
+    if (e is DioException) {
+      if (e.type == DioExceptionType.badResponse) {
+        final response = e.response;
+        if (response != null && response.data != null) {
+          final data = response.data;
+          if (data is Map) {
+            if (data.containsKey('non_field_errors')) {
+              throw data['non_field_errors'][0];
+            } else if (data.containsKey('detail')){
+              throw data['detail'];
+            } else if (data.containsKey('error')){
+              throw data['error'];
+            }
+          } else if (data is List && data.isNotEmpty) {
+            throw data[0].toString();
+          }
+        }
+      }
+    }
+    throw e;
+  }
+
   @override
   Future<bool> updateUserType(String userType, String service) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.patch(
+      final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
         data: json.encode({"user_type": userType, "catalog_service": service}),
         options: Options(headers: dioHeaders(token)),
       );
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return true;
-      }
-      return false;
+      return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (e) {
-      if (e is DioException) {}
-
+      _handleDioError(e);
       return false;
     }
   }
@@ -229,7 +251,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<bool> createDispute(Dispute dispute) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/disputes/",
         data: json.encode(dispute.toJson()),
         options: Options(headers: dioHeaders(token)),
@@ -247,7 +269,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<Wallet> getMyWallet() async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/payments/wallet/my_wallet/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -264,7 +286,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<bool> requestPayout(double amount) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/payments/wallet/request_payout/",
         data: json.encode({"amount": amount}),
         options: Options(headers: dioHeaders(token)),
@@ -281,7 +303,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   @override
   Future<List<SubscriptionPlan>?> getSubscriptionPlans() async {
     try {
-      final response = await dio.get("$baseUrl/payments/subscription-plans/");
+      final response = await _dio.get("$baseUrl/payments/subscription-plans/");
       if (response.statusCode == 200) {
         List<SubscriptionPlan> plans = [];
         var data = (response.data is List)
@@ -313,7 +335,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<List<Dispute>?> getMyDisputes() async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/interactions/disputes/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -343,7 +365,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   Future<String> getStripeDashboardLink() async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/payments/wallet/stripe-dashboard/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -362,7 +384,7 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
   @override
   Future<List<LegalDocument>?> getLegalDocument(String docType) async {
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/legal/",
         queryParameters: {"type": docType},
       );
@@ -393,4 +415,6 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
     }
   }
 }
+
+
 

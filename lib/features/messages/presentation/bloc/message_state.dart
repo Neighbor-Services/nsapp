@@ -3,9 +3,17 @@ part of 'message_bloc.dart';
 sealed class MessageState {}
 
 class ChatStatusState extends MessageState {
-  static bool isTyping = false;
-  static bool isOnline = false;
-  static String? targetUserId;
+  final bool isTyping;
+  final bool isOnline;
+  final String? targetUserId;
+  final bool isConnected;
+
+  ChatStatusState({
+    this.isTyping = false,
+    this.isOnline = false,
+    this.targetUserId,
+    this.isConnected = false,
+  });
 }
 
 final class MessageInitial extends MessageState {}
@@ -15,48 +23,76 @@ final class LoadingMessageState extends MessageState {}
 final class SuccessSendMessageState extends MessageState {}
 
 final class SuccessGetMessageState extends MessageState {
-  static Future<List<ChatMessage>>? messages;
+  final List<ChatMessage> messages;
+  SuccessGetMessageState({required this.messages});
 }
 
 final class MessageReceiverState extends MessageState {
-  static Profile profile = Profile();
+  final Profile profile;
+  MessageReceiverState({required this.profile});
 }
 
-final class FailureSendMessageState extends MessageState {}
+final class FailureSendMessageState extends MessageState {
+  final String message;
+  FailureSendMessageState({required this.message});
+}
 
-final class FailureGetMessageState extends MessageState {}
+final class FailureGetMessageState extends MessageState {
+  final String message;
+  FailureGetMessageState({required this.message});
+}
 
 class MessageImageState extends MessageState {
-  static XFile? image;
+  final XFile? image;
+  MessageImageState({this.image});
 }
 
 class ClearedImageState extends MessageState {}
 
 class SuccessGetMyMessagesState extends MessageState {
-  static Future<List<Chat>>? myMessages;
-  static int unreadMessageCount = 0;
+  final List<Chat> myMessages;
+  final int unreadMessageCount;
+  
+  SuccessGetMyMessagesState({
+    required this.myMessages,
+    required this.unreadMessageCount,
+  });
 }
 
-class FailureGetMyMessagesState extends MessageState {}
+class FailureGetMyMessagesState extends MessageState {
+  final String message;
+  FailureGetMyMessagesState({required this.message});
+}
 
 class SetAppointmentState extends MessageState {
-  static bool setAppointment = false;
+  final bool setAppointment;
+  SetAppointmentState({required this.setAppointment});
 }
 
 class ReloadMessageState extends MessageState {}
 
 class WithImageState extends MessageState {
-  static bool isWithImage = false;
+  final bool isWithImage;
+  WithImageState({required this.isWithImage});
 }
 
 final class SuccessDeleteMessageState extends MessageState {}
 
 final class SuccessUpdateMessageState extends MessageState {}
 
-final class FailureDeleteMessageState extends MessageState {}
+final class FailureDeleteMessageState extends MessageState {
+  final String message;
+  FailureDeleteMessageState({required this.message});
+}
 
-final class FailureUpdateMessageState extends MessageState {}
+final class FailureUpdateMessageState extends MessageState {
+  final String message;
+  FailureUpdateMessageState({required this.message});
+}
 
 final class SuccessSetSeenMessageState extends MessageState {}
 
-final class FailureSetSeenMessageState extends MessageState {}
+final class FailureSetSeenMessageState extends MessageState {
+  final String message;
+  FailureSetSeenMessageState({required this.message});
+}

@@ -1,6 +1,8 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -42,7 +44,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () => context.pop(),
           child: Container(
             margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
@@ -54,7 +56,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,
             ),
@@ -64,7 +66,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
           "IDENTITY VERIFICATION",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
@@ -81,7 +83,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                   "VERIFY YOUR ACCOUNT",
                   style: TextStyle(
                     fontSize: 22.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                     color: context.appColors.primaryTextColor,
                     letterSpacing: 1.0,
                   ),
@@ -91,7 +93,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                   "UPLOAD A GOVERNMENT-ISSUED ID OR BUSINESS LICENSE TO RECEIVE YOUR VERIFICATION BADGE AND BUILD TRUST WITH SEEKERS.",
                   style: TextStyle(
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                     color: context.appColors.secondaryTextColor,
                     height: 1.5,
                     letterSpacing: 0.5,
@@ -120,7 +122,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                             AlertType.success,
                             "Documents submitted for review",
                           );
-                          Get.back();
+                          context.pop();
                         },
                 ),
               ],
@@ -143,7 +145,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
           title.toUpperCase(),
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 14.sp,
             letterSpacing: 0.8,
           ),
@@ -164,7 +166,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.add_a_photo_rounded,
+                        FontAwesomeIcons.camera,
                         color: context.appColors.primaryTextColor,
                         size: 40.r,
                       ),
@@ -184,3 +186,8 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
     );
   }
 }
+
+
+
+
+

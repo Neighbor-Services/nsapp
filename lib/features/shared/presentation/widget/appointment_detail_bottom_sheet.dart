@@ -1,20 +1,19 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AppointmentDetailBottomSheet extends StatefulWidget {
   final AppointmentData data;
@@ -33,6 +32,9 @@ class _AppointmentDetailBottomSheetState
   late TextEditingController _descriptionController;
   late TextEditingController _scheduleController;
   DateTime? _selectedDate;
+  bool _isVerifying = false;
+  late TextEditingController _codeController;
+
 
   @override
   void initState() {
@@ -44,9 +46,10 @@ class _AppointmentDetailBottomSheetState
       text: widget.data.appointment?.description,
     );
     _selectedDate = widget.data.appointment?.effectiveDate;
+    _codeController = TextEditingController();
     _scheduleController = TextEditingController(
       text: _selectedDate != null
-          ? DateFormat("EEEE, MMM dd, yyyy • h:mm a").format(_selectedDate!)
+          ? DateFormat("EEEE, MMM dd, yyyy | h:mm a").format(_selectedDate!)
           : "Date TBD",
     );
   }
@@ -56,6 +59,7 @@ class _AppointmentDetailBottomSheetState
     _titleController.dispose();
     _descriptionController.dispose();
     _scheduleController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 
@@ -75,13 +79,12 @@ class _AppointmentDetailBottomSheetState
       isFunded: appt.isFunded,
     );
 
-    final seekerBloc = context.read<SeekerBloc>();
-    final providerBloc = context.read<ProviderBloc>();
-
     try {
+      final seekerBloc = context.read<SeekerBloc>();
       seekerBloc.add(UpdateSeekerAppointmentEvent(appointment: updatedAppt));
     } catch (_) {
       try {
+        final providerBloc = context.read<ProviderBloc>();
         providerBloc.add(
           UpdateProviderAppointmentEvent(appointment: updatedAppt),
         );
@@ -92,10 +95,19 @@ class _AppointmentDetailBottomSheetState
       _isEditing = false;
     });
 
-    Navigator.pop(context);
+    context.pop();
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text("Updating appointment...")));
+  }
+
+
+  void _verifyCode() {
+    final appt = widget.data.appointment;
+    if (appt == null || _codeController.text.trim().isEmpty) return;
+    context.read<ProviderBloc>().add(
+      VerifyAppointmentCodeEvent(appointmentId: appt.id!, code: _codeController.text.trim()),
+    );
   }
 
   @override
@@ -110,18 +122,37 @@ class _AppointmentDetailBottomSheetState
 
     if (appt == null) return const SizedBox.shrink();
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
-        border: Border.all(color: dividerColor, width: 1.5.r),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    return BlocListener<ProviderBloc, ProviderState>(
+      listener: (context, state) {
+        if (state is VerifyAppointmentCodeLoadingState) {
+          setState(() => _isVerifying = true);
+        } else if (state is SuccessVerifyAppointmentCodeState) {
+          setState(() {
+            _isVerifying = false;
+            widget.data.appointment?.status = 'IN_PROGRESS';
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Code verified successfully!")),
+          );
+        } else if (state is FailureVerifyAppointmentCodeState) {
+          setState(() => _isVerifying = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Failed to verify code. Please try again.")),
+          );
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
+          border: Border.all(color: dividerColor, width: 1.5.r),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
             Center(
               child: Container(
                 width: 40.w,
@@ -142,7 +173,7 @@ class _AppointmentDetailBottomSheetState
                     style: TextStyle(
                       color: contentColor,
                       fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                     decoration: InputDecoration(
                       hintText: "Enter title",
@@ -162,7 +193,7 @@ class _AppointmentDetailBottomSheetState
                         child: CustomTextWidget(
                           text: (appt.title ?? "Appointment Details").toUpperCase(),
                           fontSize: 20.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w500,
                           color: contentColor,
                           letterSpacing: 1.0,
                         ),
@@ -179,7 +210,7 @@ class _AppointmentDetailBottomSheetState
                             widget.data.role!.toUpperCase(),
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: context.appColors.secondaryColor,
                               letterSpacing: 0.5,
                             ),
@@ -195,7 +226,7 @@ class _AppointmentDetailBottomSheetState
             _buildInfoSection(
               context,
 
-              icon: Icons.calendar_today_rounded,
+              icon: FontAwesomeIcons.calendar,
               title: "Schedule",
               subtitle: _isEditing ? null : (_scheduleController.text),
               content: _isEditing
@@ -236,7 +267,7 @@ class _AppointmentDetailBottomSheetState
                                 time.minute,
                               );
                               _scheduleController.text = DateFormat(
-                                "EEEE, MMM dd, yyyy • h:mm a",
+                                "EEEE, MMM dd, yyyy | h:mm a",
                               ).format(_selectedDate!);
                             });
                           }
@@ -248,18 +279,16 @@ class _AppointmentDetailBottomSheetState
             SizedBox(height: 20.h),
             GestureDetector(
               onTap: () {
-                Get.back();
-                context.read<MessageBloc>().add(
-                  SetMessageReceiverEvent(profile: user!),
-                );
-                context.read<ProviderBloc>().add(
-                  NavigateProviderEvent(page: 4, widget: const ChatPage()),
-                );
+                if (user == null) return;
+                final messageBloc = context.read<MessageBloc>();
+                context.pop();
+                messageBloc.add(SetMessageReceiverEvent(profile: user));
+                context.push("/chat");
               },
               child: _buildInfoSection(
                 context,
 
-                icon: Icons.person_outline_rounded,
+                icon: FontAwesomeIcons.user,
                 title: "Participant",
                 subtitle: user != null
                     ? (user.firstName ?? '').trim()
@@ -268,13 +297,182 @@ class _AppointmentDetailBottomSheetState
               ),
             ),
             SizedBox(height: 32.h),
+                        if (!_isEditing && widget.data.role == 'seeker' && appt.secretCode != null) ...[
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: context.appColors.primaryColor.withAlpha(20),
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: context.appColors.primaryColor.withAlpha(50), width: 1.5.r),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      "VERIFICATION CODE",
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                        color: context.appColors.primaryColor,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      appt.secretCode!,
+                      style: TextStyle(
+                        fontSize: 32.sp,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 8.0,
+                        color: contentColor,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      "Show this code to the provider in person",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: secondaryTextColor,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16.h),
+              if (appt.status == 'SCHEDULED' || appt.status == 'IN_PROGRESS') ...[
+                SolidButton(
+                  onPressed: () {
+                    context.pop();
+                    context.push('/live-tracking', extra: {
+                      'appointmentId': appt.id ?? '',
+                      'jobLocation': LatLng(
+                        double.tryParse(widget.data.user?.latitude ?? '0.0') ?? 0.0,
+                        double.tryParse(widget.data.user?.longitude ?? '0.0') ?? 0.0,
+                      )
+                    });
+                  },
+                  label: 'LIVE TRACKING',
+                  icon: FontAwesomeIcons.locationDot,
+                  color: context.appColors.primaryColor.withAlpha(40),
+                  textColor: Colors.white,
+                  isPrimary: false,
+                ),
+                SizedBox(height: 32.h),
+              ],
+            ],
+
+            if (!_isEditing && widget.data.role == 'provider' && appt.status == 'SCHEDULED') ...[
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: context.appColors.secondaryColor.withAlpha(20),
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: context.appColors.secondaryColor.withAlpha(50), width: 1.5.r),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      "VERIFY START",
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                        color: context.appColors.secondaryColor,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    TextField(
+                      controller: _codeController,
+                      textAlign: TextAlign.center,
+                      maxLength: 6,
+                      textCapitalization: TextCapitalization.characters,
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 6.0,
+                        color: contentColor,
+                      ),
+                      decoration: InputDecoration(
+                        counterText: "",
+                        hintText: "ENTER CODE",
+                        hintStyle: TextStyle(
+                           fontSize: 16.sp,
+                           letterSpacing: 1.0,
+                           color: secondaryTextColor,
+                        ),
+                        filled: true,
+                        fillColor: context.appColors.cardBackground,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    _isVerifying 
+                      ? const CircularProgressIndicator() 
+                      : SizedBox(
+                          width: double.infinity,
+                          child: SolidButton(
+                            label: "VERIFY ARRIVAL",
+                            onPressed: _verifyCode,
+                            color: context.appColors.secondaryColor,
+                            height: 48.h,
+                            textColor: Colors.white,
+                          ),
+                        ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 32.h),
+            ],
+
+            if (!_isEditing && widget.data.role == 'provider' && appt.status == 'IN_PROGRESS') ...[
+               Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(20),
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: Colors.green.withAlpha(50), width: 1.5.r),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(FontAwesomeIcons.circleCheck, color: Colors.green, size: 20.r),
+                    SizedBox(width: 8.w),
+                    Text(
+                      "SERVICE VERIFIED",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.green,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 32.h),
+            ],
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomTextWidget(
                   text: "DESCRIPTION",
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w500,
                   color: contentColor,
                   letterSpacing: 0.5,
                 ),
@@ -282,7 +480,7 @@ class _AppointmentDetailBottomSheetState
                   IconButton(
                     onPressed: () => setState(() => _isEditing = true),
                     icon: Icon(
-                      Icons.edit_note_rounded,
+                      FontAwesomeIcons.penToSquare,
                       color: context.appColors.hintTextColor,
                     ),
                   ),
@@ -318,7 +516,7 @@ class _AppointmentDetailBottomSheetState
               Divider(height: 48.h),
               CustomTextWidget(
                 text: "LINKED REQUEST",
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 fontSize: 14.sp,
                 color: context.appColors.secondaryTextColor,
                 letterSpacing: 1.0,
@@ -326,7 +524,7 @@ class _AppointmentDetailBottomSheetState
               SizedBox(height: 16.h),
               _buildInfoSection(
                 context,
-                icon: Icons.assignment_rounded,
+                icon: FontAwesomeIcons.fileLines,
                 title: "Original Title",
                 subtitle: appt.serviceRequest?.title ?? "N/A",
               ),
@@ -336,43 +534,43 @@ class _AppointmentDetailBottomSheetState
                 child: TextButton.icon(
                   onPressed: () {
                     final req = appt.serviceRequest;
-                    Get.back();
                     if (req == null) return;
-                    if (req.userId == SuccessGetProfileState.profile.user?.id && !DashboardState.isProvider) {
+                    // Capture all BLoC state BEFORE context.pop() dismisses this sheet
+                    // and unmounts its context.
+                    final settingsState = context.read<SettingsBloc>().state;
+                    final profileState = context.read<ProfileBloc>().state;
+                    final seekerBloc = context.read<SeekerBloc>();
+                    final providerBloc = context.read<ProviderBloc>();
+                    final isProvider = settingsState.isProvider;
+                    final profile = profileState is SuccessGetProfileState ? profileState.profile : null;
+
+                    context.pop();
+
+                    if (req.userId == profile?.user?.id && !isProvider) {
                       final requestData = RequestData(
                         request: req,
                         user: widget.data.user,
                       );
-                      context.read<SeekerBloc>().add(
+                      seekerBloc.add(
                         SeekerRequestDetailEvent(request: requestData),
                       );
-                      context.read<SeekerBloc>().add(
-                        NavigateSeekerEvent(
-                          page: 1,
-                          widget: const SeekerRequestDetailsPage(),
-                        ),
-                      );  
-                    } else if (DashboardState.isProvider) {
+                      context.push('/app/requests/${req.id}', extra: requestData);  
+                    } else if (isProvider) {
                       final requestData = RequestData(
                         request: req,
                         user: widget.data.user,
                       );
-                      context.read<ProviderBloc>().add(
+                      providerBloc.add(
                         RequestDetailEvent(request: requestData),
                       );
-                      context.read<ProviderBloc>().add(
+                      providerBloc.add(
                         ReloadProfileEvent(request: requestData.request!.id!),
                       );
-                      context.read<ProviderBloc>().add(
-                        NavigateProviderEvent(
-                          page: 1,
-                          widget: const ProviderRequestDetailPage(),
-                        ),
-                      );
+                      context.push('/app/provider/requests/${req.id}', extra: requestData);
                     }
                   },
                   icon: Icon(
-                    Icons.open_in_new_rounded,
+                    FontAwesomeIcons.arrowUpRightFromSquare,
                     size: 18.r,
                     color: context.appColors.primaryColor,
                   ),
@@ -380,7 +578,7 @@ class _AppointmentDetailBottomSheetState
                     "VIEW FULL DETAILS",
                     style: TextStyle(
                       fontSize: 12.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       color: context.appColors.primaryColor,
                       letterSpacing: 0.5,
                     ),
@@ -417,7 +615,7 @@ class _AppointmentDetailBottomSheetState
             else
               SolidButton(
                 label: "CLOSE",
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => context.pop(),
                 isPrimary: false,
                 color: context.appColors.hintTextColor,
                 textColor: Colors.white,
@@ -425,8 +623,27 @@ class _AppointmentDetailBottomSheetState
                 height: 50.h,
               ),
             SizedBox(height: 12.h),
+            if (appt.status != 'CANCELLED' && appt.status != 'RESOLVED') ...[
+               SolidButton(
+                  onPressed: () {
+                    context.pop(); // close bottom sheet
+                    context.push("/dispute-center", extra: {
+                      'appointment': appt,
+                      'currentUser': widget.data.user!,
+                      'otherUser': user!,
+                    });
+                  },
+                  label: 'RAISE DISPUTE',
+                  icon: FontAwesomeIcons.circleExclamation,
+                  color: context.appColors.errorColor.withAlpha(20),
+                  textColor: context.appColors.errorColor,
+                  isPrimary: false,
+                ),
+            ],
+            SizedBox(height: 32.h),
           ],
         ),
+      ),
       ),
     );
   }
@@ -469,7 +686,7 @@ class _AppointmentDetailBottomSheetState
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -480,7 +697,7 @@ class _AppointmentDetailBottomSheetState
                   CustomTextWidget(
                     text: subtitle ?? "",
                     fontSize: 15.sp,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w400,
                     color: contentColor,
                   ),
               ],
@@ -496,7 +713,7 @@ class _AppointmentDetailBottomSheetState
               child: CustomTextWidget(
                 text: trailing,
                 fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: contentColor,
               ),
             ),
@@ -505,3 +722,9 @@ class _AppointmentDetailBottomSheetState
     );
   }
 }
+
+
+
+
+
+

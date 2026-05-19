@@ -21,3 +21,5 @@ class GetRequestsUseCase
     return results.fold((l) => Left(l), (r) => Right(r));
   }
 }
+
+

@@ -19,6 +19,9 @@ class Notification {
   bool? isRead;
   @HiveField(6)
   DateTime? createdAt;
+  
+  // Non-persisted field for creation
+  String? targetUserId;
 
   Notification({
     this.id,
@@ -28,6 +31,7 @@ class Notification {
     this.data,
     this.isRead,
     this.createdAt,
+    this.targetUserId,
   });
 
   Notification.fromJson(Map<String, dynamic> json) {
@@ -50,6 +54,10 @@ class Notification {
     data['message'] = message;
     data['data'] = this.data;
     data['is_read'] = isRead;
+    // Map recipient for backend creation
+    if (id == null && targetUserId != null) {
+      data['user'] = targetUserId;
+    }
     return data;
   }
 }
@@ -91,3 +99,5 @@ class NotificationData {
     return data;
   }
 }
+
+

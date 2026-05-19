@@ -1,9 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
 import 'package:intl/intl.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -12,7 +16,8 @@ import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/core.dart';
 
 class ReviewsWidget extends StatefulWidget {
-  const ReviewsWidget({super.key});
+  final String? userId;
+  const ReviewsWidget({super.key, this.userId});
 
   @override
   State<ReviewsWidget> createState() => _ReviewsWidgetState();
@@ -21,10 +26,30 @@ class ReviewsWidget extends StatefulWidget {
 class _ReviewsWidgetState extends State<ReviewsWidget> {
   @override
   void initState() {
-    context.read<ProfileBloc>().add(
-      GetReviewsEvent(user: PortfolioUserState.userId),
-    );
     super.initState();
+    String userId = widget.userId ?? '';
+    
+    if (userId.isEmpty) {
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is PortfolioUserState) {
+        userId = profileState.userId;
+      }
+    }
+
+    if (userId.isEmpty) {
+      final seekerState = context.read<SeekerBloc>().state;
+      if (seekerState is ProviderToReviewState) {
+        userId = seekerState.providerUserId ?? '';
+      }
+    }
+
+    if (userId.isNotEmpty) {
+      context.read<ProfileBloc>().add(
+        GetReviewsEvent(user: userId),
+      );
+    } else {
+      debugPrint("ReviewsWidget: No userId found, skipping GetReviewsEvent");
+    }
   }
 
   @override
@@ -32,28 +57,30 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is SuccessAddReviewState) {
-          context.read<ProfileBloc>().add(
-            GetReviewsEvent(user: PortfolioUserState.userId),
-          );
-          Get.snackbar(
-            "Success",
-            "Review sent",
-            colorText: Colors.white,
-            backgroundColor: context.appColors.successColor.withAlpha(150),
-          );
+          String userId = widget.userId ?? '';
+          if (userId.isEmpty) {
+            final seekerState = context.read<SeekerBloc>().state;
+            userId = seekerState is ProviderToReviewState
+                ? (seekerState.providerUserId ?? '')
+                : '';
+          }
+          if (userId.isNotEmpty) {
+            context.read<ProfileBloc>().add(
+              GetReviewsEvent(user: userId),
+            );
+          }
+          customAlert(context, AlertType.success, "Review sent");
         }
         if (state is FailureAddReviewState) {
-          Get.snackbar(
-            "Error",
-            "An error occurred",
-            colorText: Colors.white,
-            backgroundColor: context.appColors.errorColor.withAlpha(150),
-          );
+          customAlert(context, AlertType.error, "An error occurred");
         }
         if (state is PortfolioUserState) {
-          context.read<ProfileBloc>().add(
-            GetReviewsEvent(user: PortfolioUserState.userId),
-          );
+          String userId = state.userId;
+          if (userId.isNotEmpty) {
+            context.read<ProfileBloc>().add(
+              GetReviewsEvent(user: userId),
+            );
+          }
           setState(() {});
         }
       },
@@ -63,7 +90,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
           child: Stack(
             children: [
               FutureBuilder<List<ReviewData>>(
-                future: SuccessGetReviewStreamState.reviews,
+                future: state is SuccessGetReviewStreamState ? Future.value(state.reviews) : null,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const LoadingWidget();
@@ -115,7 +142,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                   ?.profilePictureUrl
                                                   ?.isNotEmpty ??
                                               false)
-                                          ? NetworkImage(
+                                          ? CachedNetworkImageProvider(
                                               review.from!.profilePictureUrl!,
                                             )
                                           : const AssetImage(logoAssets)
@@ -132,7 +159,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                           text:
                                               (review.from?.firstName ??
                                               "Anonymous").toUpperCase(),
-                                          fontWeight: FontWeight.w900,
+                                          fontWeight: FontWeight.w500,
                                           fontSize: 14.sp,
                                           color: context.appColors.primaryTextColor,
                                           letterSpacing: 0.5,
@@ -163,7 +190,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                       child: Row(
                                         children: [
                                            Icon(
-                                            Icons.star_rounded,
+                                            FontAwesomeIcons.star,
                                             color: context.appColors.secondaryColor,
                                             size: 16.r,
                                           ),
@@ -173,7 +200,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                                 .toStringAsFixed(1),
                                             style: TextStyle(
                                               color: context.appColors.secondaryColor,
-                                              fontWeight: FontWeight.w900,
+                                              fontWeight: FontWeight.w500,
                                               fontSize: 12.sp,
                                               letterSpacing: 0.5,
                                             ),
@@ -216,3 +243,5 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
     );
   }
 }
+
+

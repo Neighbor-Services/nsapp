@@ -1,73 +1,55 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-
 import 'package:dio/dio.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
-
+import 'package:nsapp/core/models/audit_log.dart';
 import 'profile_remote_datasource.dart';
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
+  final Dio _dio;
+
+  ProfileRemoteDataSourceImpl(this._dio);
   @override
-  Future<bool> addProfile(Profile profile) async {
+  Future<List<AuditLog>> getAuditLogs() async {
+    final token = await Helpers.getString("token");
     try {
-      final token = await Helpers.getString("token");
-      final response = await dio.post(
-        "$baseUrl/accounts/profile/",
-        data: json.encode(profile.toJson()),
+      final response = await _dio.get(
+        "$baseUrl/audit/", // Endpoint from backend viewset
         options: Options(headers: dioHeaders(token)),
       );
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        if (image != null) {
-          final res = await dio.patch(
-            "$baseUrl/accounts/profile/picture/",
-            data: FormData.fromMap({
-              "image": await MultipartFile.fromFile(image!.path),
-            }),
-            options: Options(headers: dioMultiPartHeaders(token)),
-          );
 
-          if (res.statusCode == 200) {
-            return true;
-          }
-        }
-        return true;
+      if (response.statusCode == 200) {
+        final List results = response.data is List 
+            ? response.data 
+            : (response.data['results'] ?? []);
+        return results.map((e) => AuditLog.fromJson(e)).toList();
       }
-      return false;
+      return [];
     } catch (e) {
-      if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {
-          debugPrint("ADD PROFILE ERROR RESPONSE: ${e.response?.data}");
-          debugPrint("ADD PROFILE ERROR STATUS: ${e.response?.statusCode}");
-        } else {
-          debugPrint("ADD PROFILE ERROR: ${e.message}");
-        }
-      } else {
-        debugPrint("ADD PROFILE UNKNOWN ERROR: $e");
-      }
-      return false;
+      debugPrint("GET AUDIT LOGS ERROR: $e");
+      rethrow;
     }
   }
 
   @override
-  Future<bool> updateProfile(Profile profile) async {
+  Future<bool> addProfile(Profile profile, {String? profilePicturePath}) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.patch(
-        "$baseUrl/accounts/profile/update_me/",
+      final response = await _dio.post(
+        "$baseUrl/accounts/profile/",
+        data: profile.toJson(),
         options: Options(headers: dioHeaders(token)),
-        data: json.encode(profile.toJson()),
       );
-      if (response.statusCode == 200) {
-        if (image != null) {
-          final res = await dio.patch(
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        if (profilePicturePath != null) {
+          final res = await _dio.patch(
             "$baseUrl/accounts/profile/picture/",
             data: FormData.fromMap({
-              "image": await MultipartFile.fromFile(image!.path),
+              "image": await MultipartFile.fromFile(profilePicturePath),
             }),
             options: Options(headers: dioMultiPartHeaders(token)),
           );
@@ -81,17 +63,53 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return false;
     } catch (e) {
       if (e is DioException) {
-        if (e.type == DioExceptionType.badResponse) {
-          debugPrint("UPDATE PROFILE ERROR RESPONSE: ${e.response?.data}");
-          debugPrint("UPDATE PROFILE ERROR STATUS: ${e.response?.statusCode}");
-        } else {
-          debugPrint("UPDATE PROFILE ERROR: ${e.message}");
+        final errorData = e.response?.data;
+        debugPrint("ADD PROFILE ERROR: ${e.response?.statusCode} - $errorData");
+        throw Exception(errorData.toString());
+      } else {
+        debugPrint("ADD PROFILE UNKNOWN ERROR: $e");
+        throw Exception(e.toString());
+      }
+    }
+
+  }
+
+  @override
+  Future<bool> updateProfile(Profile profile, {String? profilePicturePath}) async {
+    try {
+      final token = await Helpers.getString("token");
+      final response = await _dio.patch(
+        "$baseUrl/accounts/profile/update_me/",
+        options: Options(headers: dioHeaders(token)),
+        data: profile.toJson(),
+      );
+      if (response.statusCode == 200) {
+        if (profilePicturePath != null) {
+          final res = await _dio.patch(
+            "$baseUrl/accounts/profile/picture/",
+            data: FormData.fromMap({
+              "image": await MultipartFile.fromFile(profilePicturePath),
+            }),
+            options: Options(headers: dioMultiPartHeaders(token)),
+          );
+
+          if (res.statusCode == 200) {
+            return true;
+          }
         }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      if (e is DioException) {
+        final errorData = e.response?.data;
+        debugPrint("UPDATE PROFILE ERROR: ${e.response?.statusCode} - $errorData");
       } else {
         debugPrint("UPDATE PROFILE UNKNOWN ERROR: $e");
       }
       return false;
     }
+
   }
 
   @override
@@ -120,7 +138,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/profile/?user=$id",
         options: Options(headers: dioHeaders(token)),
       );
@@ -141,7 +159,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<Profile?> getProfileStream() async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/profile/me/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -163,9 +181,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> addAbout(About about) async {
     try {
       final token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/accounts/about/",
-        data: json.encode(about.toJson()),
+        data: about.toJson(),
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201) {
@@ -179,9 +197,13 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<AboutData?> getAboutStream(String userId) async {
+    if (userId.isEmpty) {
+      debugPrint("getAboutStream: userId is empty, skipping request.");
+      return null;
+    }
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/accounts/about/user/?user_id=$userId",
         options: Options(headers: dioHeaders(token)),
       );
@@ -201,9 +223,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> addReview(Review review) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.post(
+      final response = await _dio.post(
         "$baseUrl/interactions/reviews/",
-        data: json.encode(review.toJson()),
+        data: review.toJson(),
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 201) {
@@ -217,9 +239,13 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<List<ReviewData>?> getReviews(String user) async {
+    if (user.isEmpty) {
+      debugPrint("getReviews: user ID is empty, skipping request.");
+      return [];
+    }
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "$baseUrl/interactions/reviews/?provider=$user",
         options: Options(headers: dioHeaders(token)),
       );
@@ -268,13 +294,13 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     try {
       final String deviceToken = await Helpers.getToken();
       final token = await Helpers.getString("token");
-      Map<String, dynamic> data = {"token": deviceToken};
-      final response = await dio.patch(
+      Map<String, dynamic> data = {"device_token": deviceToken};
+      final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
         options: Options(headers: dioHeaders(token)),
-        data: json.encode(data),
+        data: data,
       );
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         return true;
       }
       return false;
@@ -287,7 +313,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<bool> deleteAboutStream(String id) async {
     final token = await Helpers.getString("token");
     try {
-      final response = await dio.delete(
+      final response = await _dio.delete(
         "$baseUrl/accounts/about/$id/",
         options: Options(headers: dioHeaders(token)),
       );
@@ -302,4 +328,27 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return false;
     }
   }
+
+  @override
+  Future<String?> initiateBackgroundCheck(String paymentIntentId) async {
+    final token = await Helpers.getString("token");
+    try {
+      final response = await _dio.post(
+        "$baseUrl/moderation/background-checks/initiate/",
+        data: json.encode({"payment_intent_id": paymentIntentId}),
+        options: Options(headers: dioHeaders(token)),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data['invitation_url'];
+      }
+      return null;
+    } catch (e) {
+      if (e is DioException) {
+        debugPrint("BG CHECK INIT ERROR: ${e.response?.data}");
+      }
+      return null;
+    }
+  }
 }
+
+

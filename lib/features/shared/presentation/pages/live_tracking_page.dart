@@ -1,9 +1,11 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/services/tracking_service.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 
 class LiveTrackingPage extends StatefulWidget {
@@ -24,6 +26,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   final TrackingService _trackingService = TrackingService();
+  StreamSubscription<Map<String, dynamic>>? _locationSubscription;
   LatLng? _providerLocation;
   double _heading = 0.0;
 
@@ -31,7 +34,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
   void initState() {
     super.initState();
     _trackingService.startTracking(widget.appointmentId, false);
-    _trackingService.locationStream.listen((data) {
+    _locationSubscription = _trackingService.locationStream.listen((data) {
       if (mounted) {
         setState(() {
           _providerLocation = LatLng(data['latitude'], data['longitude']);
@@ -53,6 +56,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
 
   @override
   void dispose() {
+    _locationSubscription?.cancel();
     _trackingService.dispose();
     super.dispose();
   }
@@ -65,7 +69,10 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: LatLng(locationData.latitude, locationData.longitude),
+              target: LatLng(
+                context.read<LocationBloc>().state.location.position.latitude,
+                context.read<LocationBloc>().state.location.position.longitude,
+              ),
               zoom: 15,
             ),
             style: mapStyle,
@@ -101,7 +108,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                   ),
                 ),
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
                 ),
@@ -126,7 +133,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.delivery_dining_rounded,
+                          FontAwesomeIcons.motorcycle,
                           color: context.appColors.infoColor,
                           size: 24.r,
                         ),
@@ -141,7 +148,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                                   .toUpperCase(),
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -151,7 +158,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor,
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -169,3 +176,8 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
     );
   }
 }
+
+
+
+
+

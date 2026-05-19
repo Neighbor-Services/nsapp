@@ -1,10 +1,13 @@
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -72,16 +75,13 @@ class _ProviderTargetedRequestsPageState
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isLargeScreen = MediaQuery.of(context).size.width > 600;
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => context.read<ProviderBloc>().add(ProviderBackPressedEvent()),
+          onTap: () => context.pop(),
           child: Container(
             margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
@@ -93,7 +93,7 @@ class _ProviderTargetedRequestsPageState
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,
             ),
@@ -103,7 +103,7 @@ class _ProviderTargetedRequestsPageState
           "DIRECT REQUESTS",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 16.sp,
             letterSpacing: 1.2,
           ),
@@ -118,13 +118,11 @@ class _ProviderTargetedRequestsPageState
               isLoadingMore = false;
             });
             if (state is SuccessGetTargetedRequestsState) {
-              SuccessGetTargetedRequestsState.requests?.then((value) {
-                if (value.length < (currentPage * 10)) {
-                  setState(() {
-                    hasReachedMax = true;
-                  });
-                }
-              });
+              if (state.requests.length < (currentPage * 10)) {
+                setState(() {
+                  hasReachedMax = true;
+                });
+              }
             }
           }
         },
@@ -141,10 +139,15 @@ class _ProviderTargetedRequestsPageState
                       children: [
                         // Requests List
                         Expanded(
-                          child: _buildRequestsList(
-                            context,
-                            isLargeScreen,
-                            isDark,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              setState(() { currentPage = 1; hasReachedMax = false; });
+                              context.read<ProviderBloc>().add(GetTargetedRequestsEvent());
+                              context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                              context.read<ProfileBloc>().add(GetProfileEvent());
+                              await Future.delayed(const Duration(seconds: 1));
+                            },
+                            child: _buildRequestsList(context, state),
                           ),
                         ),
                       ],
@@ -161,78 +164,81 @@ class _ProviderTargetedRequestsPageState
 
   Widget _buildRequestsList(
     BuildContext context,
-    bool isLargeScreen,
-    bool isDark,
+    ProviderState state,
   ) {
-    return FutureBuilder<List<RequestData>>(
-      future: SuccessGetTargetedRequestsState.requests,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: SolidContainer(
-                padding: EdgeInsets.all(40.r),
-                borderColor: context.appColors.glassBorder,
-                borderWidth: 1.5.r,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.handshake_rounded,
-                      size: 60.r,
-                      color: context.appColors.glassBorder,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      "No direct requests",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w600,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      "Requests sent specifically to you will appear here",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                  ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
+
+    List<RequestData> requests = context.read<ProviderBloc>().targetedRequests;
+    if (state is SuccessGetTargetedRequestsState) {
+      requests = state.requests;
+    }
+
+    if (state is LoadingProviderState && requests.isEmpty) {
+      return const LoadingWidget();
+    }
+
+    if (requests.isEmpty && state is! LoadingProviderState) {
+      return Center(
+        child: SolidContainer(
+          padding: EdgeInsets.all(40.r),
+          borderColor: context.appColors.glassBorder,
+          borderWidth: 1.5.r,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.handshake,
+                size: 60.r,
+                color: context.appColors.glassBorder,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "No direct requests",
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w400,
+                  color: context.appColors.glassBorder,
                 ),
               ),
-            );
-          }
+              SizedBox(height: 8.h),
+              Text(
+                "Requests sent specifically to you will appear here",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.glassBorder,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-          requestData = snapshot.data!.last;
-          return ListView.builder(
-            controller: scrollController,
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(
-              horizontal: isLargeScreen ? 32.w : 16.w,
-              vertical: 16.h,
-            ),
-            itemCount: snapshot.data!.length + (isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index < snapshot.data!.length) {
-                return _buildRequestCard(
-                  context,
-                  snapshot.data![index],
-                  index,
-                  isDark,
-                );
-              } else {
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24.h),
-                  child: Center(child: LoadingWidget()),
-                );
-              }
-            },
+    return ListView.builder(
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: isLargeScreen ? 32.w : 16.w,
+        vertical: 16.h,
+      ),
+      itemCount: requests.length + (isLoadingMore ? 1 : 0),
+      itemBuilder: (context, index) {
+        if (index < requests.length) {
+          return _buildRequestCard(
+            context,
+            requests[index],
+            index,
+            isDark,
           );
         } else {
-          return const Center(child: LoadingWidget());
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.h),
+            child: const LoadingWidget(),
+          );
         }
       },
     );
@@ -260,12 +266,7 @@ class _ProviderTargetedRequestsPageState
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: data.request?.id ?? ""),
           );
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderRequestDetailPage(),
-            ),
-          );
+          context.push('/app/provider/requests/${data.request!.id}', extra: data);
         },
         child: Padding(
           padding: EdgeInsets.only(bottom: 16.h),
@@ -296,7 +297,7 @@ class _ProviderTargetedRequestsPageState
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.white.withAlpha(10),
-                                  child: const Center(child: LoadingWidget()),
+                                  child: const Center(child: LoadingWidget(count: 1)),
                                 ),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(logoAssets, fit: BoxFit.cover),
@@ -326,7 +327,7 @@ class _ProviderTargetedRequestsPageState
                             "DIRECT",
                             style: TextStyle(
                               fontSize: 8.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: Colors.white,
                               letterSpacing: 0.5,
                             ),
@@ -352,7 +353,7 @@ class _ProviderTargetedRequestsPageState
                                 (data.user?.firstName ?? "User").toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 16.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 0.5,
                                   color: context.appColors.primaryTextColor,
                                 ),
@@ -381,7 +382,7 @@ class _ProviderTargetedRequestsPageState
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: context.appColors.primaryColor,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -399,7 +400,7 @@ class _ProviderTargetedRequestsPageState
                         Row(
                           children: [
                             Icon(
-                              Icons.calendar_today_rounded,
+                              FontAwesomeIcons.calendar,
                               size: 12.r,
                               color: context.appColors.secondaryTextColor,
                             ),
@@ -424,7 +425,7 @@ class _ProviderTargetedRequestsPageState
                 Padding(
                   padding: EdgeInsets.only(right: 16.w),
                   child: Icon(
-                    Icons.chevron_right_rounded,
+                    FontAwesomeIcons.chevronRight,
                     color: context.appColors.secondaryTextColor,
                   ),
                 ),
@@ -436,3 +437,10 @@ class _ProviderTargetedRequestsPageState
     );
   }
 }
+
+
+
+
+
+
+

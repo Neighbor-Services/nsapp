@@ -33,13 +33,14 @@ class MessageAdapter extends TypeAdapter<Message> {
       version: fields[13] as int?,
       image: fields[14] as String?,
       fileName: fields[15] as String?,
+      isDelivered: fields[16] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Message obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -71,7 +72,9 @@ class MessageAdapter extends TypeAdapter<Message> {
       ..writeByte(14)
       ..write(obj.image)
       ..writeByte(15)
-      ..write(obj.fileName);
+      ..write(obj.fileName)
+      ..writeByte(16)
+      ..write(obj.isDelivered);
   }
 
   @override

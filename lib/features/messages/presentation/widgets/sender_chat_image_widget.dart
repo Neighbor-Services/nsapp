@@ -1,9 +1,11 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -12,6 +14,8 @@ class SenderChatImageWidget extends StatelessWidget {
   final DateTime dateTime;
   final bool withText;
   final String imageUrl;
+  final bool isDelivered;
+  final bool isSeen;
   final VoidCallback onLongPressed;
 
   const SenderChatImageWidget({
@@ -20,6 +24,8 @@ class SenderChatImageWidget extends StatelessWidget {
     required this.dateTime,
     required this.withText,
     required this.imageUrl,
+    this.isDelivered = false,
+    this.isSeen = false,
     required this.onLongPressed,
   });
 
@@ -72,10 +78,10 @@ class SenderChatImageWidget extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<SharedBloc>().add(
+                        context.read<CommonBloc>().add(
                           SetViewImageEvent(url: finalUrl),
                         );
-                        Get.toNamed("/image");
+                        context.push("/image");
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(18),
@@ -107,7 +113,7 @@ class SenderChatImageWidget extends StatelessWidget {
                             width: double.infinity,
                             color: context.appColors.cardBackground,
                             child: Icon(
-                              Icons.broken_image_outlined,
+                              FontAwesomeIcons.image,
                               size: 40.r,
                               color: context.appColors.primaryTextColor,
                             ),
@@ -132,13 +138,24 @@ class SenderChatImageWidget extends StatelessWidget {
               ),
               Padding(
                 padding: EdgeInsets.only(top: 4.h, right: 4.w),
-                child: Text(
-                  DateFormat("HH:mm").format(dateTime.toLocal()),
-                  style: TextStyle(
-                    color: timestampColor,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      DateFormat("HH:mm").format(dateTime.toLocal()),
+                      style: TextStyle(
+                        color: timestampColor,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      isSeen ? Icons.done_all : (isDelivered ? Icons.done_all : Icons.check),
+                      size: 14.sp,
+                      color: isSeen ? Colors.blue : timestampColor,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -148,3 +165,7 @@ class SenderChatImageWidget extends StatelessWidget {
     );
   }
 }
+
+
+
+

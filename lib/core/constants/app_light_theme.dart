@@ -6,6 +6,7 @@ ThemeData providerLightTheme = ThemeData(
   secondaryHeaderColor: appDeepBlueColor1,
   primaryColorLight: appDeepBlueColor1,
   brightness: Brightness.light,
+  fontFamily: 'FuturaPT',
   textTheme: lightTextTheme,
   scaffoldBackgroundColor: appBackgroundColor,
   extensions: [
@@ -43,3 +44,5 @@ ThemeData seekerLightTheme = providerLightTheme.copyWith(
   secondaryHeaderColor: appOrangeColor2,
   primaryColorLight: appLightBlueCard,
 );
+
+

@@ -14,3 +14,5 @@ class GetRequestDetailUseCase extends UseCase<RequestData, String> {
     return repository.getRequestById(id: params);
   }
 }
+
+

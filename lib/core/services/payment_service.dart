@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:nsapp/core/constants/urls.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -9,7 +10,7 @@ import 'package:nsapp/core/models/account_link.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/core/models/subscription.dart';
 import 'package:nsapp/core/initialize/init.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 
 class PaymentService {
   static Future<String> _getToken() async {
@@ -17,10 +18,10 @@ class PaymentService {
     return token;
   }
 
-  static Future<void> createStripeCustomer() async {
+  static Future<void> createStripeCustomer({required String userId}) async {
     try {
       CustomerData customerModel = await getCustomer(
-        uid: SuccessGetProfileState.profile.user!.id,
+        uid: userId,
       );
       if (customerModel.customer == null) {
         await createCustomer();
@@ -116,9 +117,13 @@ class PaymentService {
 
   static Future<bool> initStripeCustomer(BuildContext context) async {
     try {
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is! SuccessGetProfileState) return false;
+      final userId = profileState.profile.user!.id!;
+
       await createCustomerEphemeral();
       CustomerData customerModel = await getCustomer(
-        uid: SuccessGetProfileState.profile.user!.id,
+        uid: userId,
       );
 
       await Stripe.instance.initCustomerSheet(
@@ -158,6 +163,9 @@ class PaymentService {
       final String token = await _getToken();
       if (token.isEmpty) return false;
 
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
+
       // 1. Call Backend to get PaymentSheet parameters
       // Backend: CustomerViewSet.payment_sheet
       final response = await dio.post(
@@ -180,7 +188,7 @@ class PaymentService {
           paymentIntentClientSecret: data['paymentIntent'],
           customerEphemeralKeySecret: data['ephemeralKey'],
           merchantDisplayName: "Neighbor Services",
-          style: ThemeModeState.themeMode,
+          style: themeMode,
           applePay: const PaymentSheetApplePay(merchantCountryCode: 'US'),
           googlePay: const PaymentSheetGooglePay(
             merchantCountryCode: "US",
@@ -209,6 +217,106 @@ class PaymentService {
     }
   }
 
+  static Future<String> getBackgroundCheckConfig() async {
+    try {
+      final String token = await _getToken();
+      final response = await dio.get(
+        "$baseUrl/moderation/background-checks/config/",
+        options: Options(headers: dioHeaders(token)),
+      );
+      if (response.statusCode == 200) {
+        return response.data['payment_mode'] ?? 'IN_APP_STRIPE';
+      }
+    } catch (e) {
+      debugPrint("Get BG Config Exception: $e");
+    }
+    return 'IN_APP_STRIPE';
+  }
+
+  static Future<String?> fundBackgroundCheck({
+    required BuildContext context,
+  }) async {
+    try {
+      final String token = await _getToken();
+      if (token.isEmpty) {
+        DialogUtils.showCustomAlert(
+          context,
+          AlertType.error,
+          "Session expired. Please login again.",
+        );
+        return null;
+      }
+
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
+
+      final response = await dio.post(
+        "$basePaymentUrl/customer/fund-background-check/",
+        options: Options(headers: dioHeaders(token)),
+      );
+
+      if (response.statusCode != 200) {
+        DialogUtils.showCustomAlert(
+          context,
+          AlertType.error,
+          "Failed to initialize payment.",
+        );
+        return null;
+      }
+
+      final data = response.data;
+
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          customerId: data['customer'],
+          paymentIntentClientSecret: data['paymentIntent'],
+          customerEphemeralKeySecret: data['ephemeralKey'],
+          merchantDisplayName: "Neighbor Services",
+          style: themeMode,
+          applePay: const PaymentSheetApplePay(merchantCountryCode: 'US'),
+          googlePay: const PaymentSheetGooglePay(
+            merchantCountryCode: "US",
+            currencyCode: "USD",
+            testEnv: true,
+          ),
+          appearance: PaymentSheetAppearance(
+            colors: PaymentSheetAppearanceColors(
+              background: Theme.of(context).scaffoldBackgroundColor,
+              primaryText: Theme.of(context).iconTheme.color,
+              secondaryText: Theme.of(context).iconTheme.color,
+              componentText: Theme.of(context).iconTheme.color,
+              placeholderText: Theme.of(context).iconTheme.color,
+              componentBorder: Theme.of(context).iconTheme.color,
+              componentBackground: Theme.of(context).scaffoldBackgroundColor,
+              componentDivider: Theme.of(context).iconTheme.color,
+            ),
+          ),
+        ),
+      );
+
+      await Stripe.instance.presentPaymentSheet();
+      
+      // Extract paymentIntentId from clientSecret (format: pi_123_secret_456)
+      String clientSecret = data['paymentIntent'];
+      String paymentIntentId = clientSecret.split('_secret_').first;
+      return paymentIntentId;
+    } catch (e) {
+      debugPrint("Fund Background Check Exception: $e");
+      String errorMessage = "An error occurred during payment initialization.";
+
+      if (e is StripeException) {
+        errorMessage = "Payment cancelled or failed: ${e.error.localizedMessage}";
+      } else if (e is DioException) {
+        errorMessage = "Server error: ${e.response?.data?['error'] ?? e.message}";
+      }
+
+      if (context.mounted) {
+        DialogUtils.showCustomAlert(context, AlertType.error, errorMessage);
+      }
+      return null;
+    }
+  }
+
   static Future<bool> fundAppointment({
     required String appointmentId,
     required String amount,
@@ -224,6 +332,9 @@ class PaymentService {
         );
         return false;
       }
+
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
 
       debugPrint(
         "DEBUG: Funding Appointment $appointmentId with amount $amount",
@@ -263,7 +374,7 @@ class PaymentService {
           paymentIntentClientSecret: data['paymentIntent'],
           customerEphemeralKeySecret: data['ephemeralKey'],
           merchantDisplayName: "Neighbor Services",
-          style: ThemeModeState.themeMode,
+          style: themeMode,
           applePay: const PaymentSheetApplePay(merchantCountryCode: 'US'),
           googlePay: const PaymentSheetGooglePay(
             merchantCountryCode: "US",
@@ -339,14 +450,8 @@ class PaymentService {
   ) async {
     try {
       final String token = await _getToken();
-      // Customer fetch removed as it is unused.
-      /* 
-      // Default payment method check might be too strict if we allow new card in payment sheet?
-      if (customer.customer?.paymentMethod == null ||
-          customer.customer?.paymentMethod == "") {
-         // ...
-      }
-      */
+      final settingsState = context.read<SettingsBloc>().state;
+      final themeMode = settingsState.themeMode;
 
       final response = await dio.post(
         "$basePaymentUrl/subscription/create/",
@@ -373,7 +478,7 @@ class PaymentService {
                 paymentIntentClientSecret: data['client_secret'],
                 customerEphemeralKeySecret: data['ephemeralKey'],
                 merchantDisplayName: "Neighbor Services",
-                style: ThemeModeState.themeMode,
+                style: themeMode,
                 applePay: const PaymentSheetApplePay(merchantCountryCode: 'US'),
                 googlePay: const PaymentSheetGooglePay(
                   merchantCountryCode: "US",
@@ -449,9 +554,13 @@ class PaymentService {
   static Future<void> createMonthlySubscription(BuildContext context) async {
     try {
       final String token = await _getToken();
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is! SuccessGetProfileState) return;
+      final userId = profileState.profile.user!.id!;
+
       await getCustomerFromStripe();
       CustomerData customer = await getCustomer(
-        uid: SuccessGetProfileState.profile.user!.id,
+        uid: userId,
       );
       if (customer.customer!.paymentMethod == "") {
         DialogUtils.showCustomAlert(
@@ -488,9 +597,13 @@ class PaymentService {
   static Future<void> createYearlySubscription(BuildContext context) async {
     try {
       final String token = await _getToken();
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is! SuccessGetProfileState) return;
+      final userId = profileState.profile.user!.id!;
+
       await getCustomerFromStripe();
       CustomerData customer = await getCustomer(
-        uid: SuccessGetProfileState.profile.user!.id,
+        uid: userId,
       );
       if (customer.customer!.paymentMethod == "") {
         DialogUtils.showCustomAlert(
@@ -524,10 +637,14 @@ class PaymentService {
     }
   }
 
-  static Future<void> setUpStripeConnectAccount() async {
+  static Future<void> setUpStripeConnectAccount(BuildContext context) async {
     try {
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is! SuccessGetProfileState) return;
+      final userId = profileState.profile.user!.id!;
+
       CustomerData customerModel = await getCustomer(
-        uid: SuccessGetProfileState.profile.user!.id,
+        uid: userId,
       );
       if (customerModel.customer!.accountId != null ||
           customerModel.customer!.accountId.toString() != "") {
@@ -704,8 +821,10 @@ class PaymentService {
       }
       return false;
     } catch (e) {
-      debugPrint("Error checking subscription validity: $e");
+      debugPrint(e.toString());
       return false;
     }
   }
 }
+
+

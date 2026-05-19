@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -9,10 +10,12 @@ import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/profile/presentation/widgets/portfolio_gallery.dart';
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class PortfolioWidget extends StatefulWidget {
-  const PortfolioWidget({super.key});
+  final String? userId;
+  const PortfolioWidget({super.key, this.userId});
 
   @override
   State<PortfolioWidget> createState() => _PortfolioWidgetState();
@@ -21,10 +24,30 @@ class PortfolioWidget extends StatefulWidget {
 class _PortfolioWidgetState extends State<PortfolioWidget> {
   @override
   void initState() {
-    context.read<ProfileBloc>().add(
-      GetAboutEvent(user: PortfolioUserState.userId),
-    );
     super.initState();
+    String userId = widget.userId ?? '';
+
+    if (userId.isEmpty) {
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState is PortfolioUserState) {
+        userId = profileState.userId;
+      }
+    }
+
+    if (userId.isEmpty) {
+      final seekerState = context.read<SeekerBloc>().state;
+      if (seekerState is ProviderToReviewState) {
+        userId = seekerState.providerUserId ?? '';
+      }
+    }
+
+    if (userId.isNotEmpty) {
+      context.read<ProfileBloc>().add(
+        GetAboutEvent(user: userId),
+      );
+    } else {
+      debugPrint("PortfolioWidget: No userId found, skipping GetAboutEvent");
+    }
   }
 
   @override
@@ -32,9 +55,12 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is PortfolioUserState) {
-          context.read<ProfileBloc>().add(
-            GetAboutEvent(user: PortfolioUserState.userId),
-          );
+          String userId = state.userId;
+          if (userId.isNotEmpty) {
+            context.read<ProfileBloc>().add(
+              GetAboutEvent(user: userId),
+            );
+          }
           setState(() {});
         }
       },
@@ -42,9 +68,16 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
+            String userId = widget.userId ?? '';
+            if (userId.isEmpty) {
+              final seekerState = context.read<SeekerBloc>().state;
+              userId = seekerState is ProviderToReviewState
+                  ? (seekerState.providerUserId ?? '')
+                  : '';
+            }
             return FutureBuilder<Profile?>(
-              future: (PortfolioUserState.userId.isNotEmpty)
-                  ? Helpers.getSeekerProfile(PortfolioUserState.userId)
+              future: userId.isNotEmpty
+                  ? Helpers.getSeekerProfile(userId)
                   : Future.value(null),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -54,7 +87,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                 final profile = snapshot.data;
 
                 return FutureBuilder<AboutData>(
-                  future: SuccessGetAboutStreamState.about,
+                  future: state is SuccessGetAboutStreamState ? Future.value(state.about) : null,
                   builder: (context, aboutSnapshot) {
                     if (!aboutSnapshot.hasData && profile == null) {
                       return const LoadingWidget();
@@ -68,20 +101,20 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                       children: [
                         if (aboutData.about != null) ...[
                           _buildInfoSection(
-                            icon: Icons.location_on_rounded,
+                            icon: FontAwesomeIcons.locationDot,
                             title: "COMPANY ADDRESS",
                             content: aboutData.about?.address ?? "Not Set",
                           ),
                           SizedBox(height: 16.h),
                           _buildInfoSection(
-                            icon: Icons.business_center_rounded,
+                            icon: FontAwesomeIcons.briefcase,
                             title: "COMPANY SPECIFICATION",
                             content:
                                 aboutData.about?.specification ?? "Not Set",
                           ),
                           SizedBox(height: 16.h),
                           _buildInfoSection(
-                            icon: Icons.description_rounded,
+                            icon: FontAwesomeIcons.fileLines,
                             title: "COMPANY DESCRIPTION",
                             content: aboutData.about?.description ?? "Not Set",
                           ),
@@ -89,7 +122,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.experienceYears != null &&
                               (aboutData.about?.experienceYears ?? 0) > 0) ...[
                             _buildInfoSection(
-                              icon: Icons.timeline_rounded,
+                              icon: FontAwesomeIcons.timeline,
                               title: "EXPERIENCE",
                               content:
                                   "${aboutData.about!.experienceYears} Years",
@@ -99,7 +132,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.education != null &&
                               aboutData.about!.education!.isNotEmpty) ...[
                             _buildInfoSection(
-                              icon: Icons.school_rounded,
+                              icon: FontAwesomeIcons.graduationCap,
                               title: "EDUCATION",
                               content: aboutData.about?.education ?? "",
                             ),
@@ -108,10 +141,10 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.skills != null &&
                               aboutData.about!.skills!.isNotEmpty) ...[
                             _buildInfoSection(
-                              icon: Icons.handyman_rounded,
+                              icon: FontAwesomeIcons.hammer,
                               title: "SKILLS",
                               content: (aboutData.about!.skills as List).join(
-                                " • ",
+                                " | ",
                               ),
                             ),
                             SizedBox(height: 16.h),
@@ -119,10 +152,10 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                           if (aboutData.about?.languages != null &&
                               aboutData.about!.languages!.isNotEmpty) ...[
                             _buildInfoSection(
-                              icon: Icons.translate_rounded,
+                              icon: FontAwesomeIcons.language,
                               title: "LANGUAGES",
                               content: (aboutData.about!.languages as List)
-                                  .join(" • "),
+                                  .join(" | "),
                             ),
                             SizedBox(height: 32.h),
                           ],
@@ -139,7 +172,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                               Row(
                                 children: [
                                   Icon(
-                                    Icons.photo_library_rounded,
+                                    FontAwesomeIcons.images,
                                     color:
                                         context.appColors.primaryBackground,
                                     size: 20.r,
@@ -147,7 +180,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                                   SizedBox(width: 12.w),
                                   CustomTextWidget(
                                     text: "PORTFOLIO",
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: 18.sp,
                                     color:
                                         context.appColors.primaryBackground,
@@ -243,7 +276,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                   title,
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                     fontSize: 14.sp,
                     letterSpacing: 0.5,
                   ),
@@ -263,7 +296,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               height: 1.5,
             ),
           ),
@@ -272,3 +305,5 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
     );
   }
 }
+
+

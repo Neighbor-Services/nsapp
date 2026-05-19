@@ -34,6 +34,7 @@ abstract class ProviderRepository {
     RequestSearchParams? params,
   });
   Future<Either<Failure, List<AppointmentData>>> getAppointments();
+  Future<Either<Failure, bool>> verifyAppointmentCode(String appointmentId, String code);
 
   Future<Either<Failure, bool>> cancelAppointment({required String id});
   Future<Either<Failure, bool>> updateAppointment({
@@ -43,7 +44,7 @@ abstract class ProviderRepository {
     required String id,
     required double amount,
   });
-  Future<Either<Failure, bool>> isRequestAccepted({required String id});
+  Future<Either<Failure, bool>> isRequestAccepted({required String id, String? uid});
   Future<Either<Failure, bool>> addPortfolioItem({
     required File image,
     String description,
@@ -52,3 +53,5 @@ abstract class ProviderRepository {
     ServicePackage package,
   );
 }
+
+

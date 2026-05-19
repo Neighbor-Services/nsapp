@@ -8,7 +8,7 @@ class LocalNotificationService {
   static Future<void> initialize() async {
     try {
       const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('logo2'); // Fallback to 'ic_launcher' if this fails
+          AndroidInitializationSettings('logo'); // Fallback to 'ic_launcher' if this fails
 
       const DarwinInitializationSettings initializationSettingsIOS =
           DarwinInitializationSettings(
@@ -98,3 +98,5 @@ class LocalNotificationService {
     );
   }
 }
+
+

@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
@@ -47,12 +49,13 @@ class ProviderListItem extends StatelessWidget {
                   (profile.profilePictureUrl != null &&
                       profile.profilePictureUrl != "" &&
                       profile.profilePictureUrl != "picture")
-                  ? Image.network(
-                      profile.profilePictureUrl!,
+                  ? CachedNetworkImage(
+                      imageUrl: profile.profilePictureUrl!,
                       width: 80.w,
                       height: 80.h,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, _, _) => Image.asset(
+                      placeholder: (context, url) => Container(width: 80.w, height: 80.h, color: Colors.grey[200]),
+                      errorWidget: (context, url, error) => Image.asset(
                         logo2Assets,
                         width: 80.w,
                         height: 80.h,
@@ -74,7 +77,7 @@ class ProviderListItem extends StatelessWidget {
                   CustomTextWidget(
                     text: profile.firstName ?? "Unknown",
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: appBlackColor,
                   ),
                   SizedBox(height: 4.h),
@@ -86,14 +89,14 @@ class ProviderListItem extends StatelessWidget {
                   SizedBox(height: 8.h),
                   Row(
                     children: [
-                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16.r),
+                      FaIcon(FontAwesomeIcons.star, color: context.appColors.secondaryColor, size: 16.r),
                       SizedBox(width: 4.w),
                       CustomTextWidget(
                         text: (double.tryParse(profile.rating ?? "0") ?? 0.0)
                             .toStringAsFixed(1),
                         color: appBlackColor,
                         fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       ),
                       const Spacer(),
                       if (profile.address != null)
@@ -102,7 +105,7 @@ class ProviderListItem extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Icon(
-                                Icons.location_on,
+                                FontAwesomeIcons.locationDot,
                                 size: 14.r,
                                 color: appGreyColor,
                               ),
@@ -131,3 +134,6 @@ class ProviderListItem extends StatelessWidget {
     );
   }
 }
+
+
+

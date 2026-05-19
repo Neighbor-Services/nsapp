@@ -1,10 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:nsapp/core/models/request_data.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 
 import '../../../shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/core/core.dart';
@@ -39,29 +43,37 @@ class _ProviderRecentRequestWidgetState
   }
 
   @override
-    Widget build(BuildContext context) {
-    final textColor = context.appColors.primaryTextColor;
-    final secondaryTextColor = context.appColors.glassBorder;
-    final cardColor = context.appColors.cardBackground;
-    final borderColor = context.appColors.glassBorder;
-    final tagBgColor = context.appColors.glassBorder;
-
+  Widget build(BuildContext context) {
     return BlocBuilder<ProviderBloc, ProviderState>(
       builder: (context, state) {
-        return FutureBuilder<List<RequestData>>(
-          future: SuccessGetRecentRequestState.myRequests,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!.isNotEmpty) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    var recent = snapshot.data![index];
-                    RequestData requestData = recent;
-                    return GestureDetector(
+        List<RequestData> requests = (state is SuccessGetRecentRequestState) 
+            ? state.myRequests 
+            : context.read<ProviderBloc>().recentRequests;
+
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          child: () {
+            if (requests.isNotEmpty) {
+              return ListView.builder(
+                key: const ValueKey('requests_list'),
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                itemCount: requests.length,
+                itemBuilder: (context, index) {
+                  var recent = requests[index];
+                  RequestData requestData = recent;
+                  return TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: Duration(milliseconds: 600 + (index * 150)),
+                    curve: Curves.easeOut,
+                    builder: (context, value, child) {
+                      return Transform.translate(
+                        offset: Offset(30 * (1 - value), 0),
+                        child: Opacity(opacity: value, child: child),
+                      );
+                    },
+                    child: GestureDetector(
                       onTap: () {
                         context.read<ProviderBloc>().add(
                           RequestDetailEvent(request: requestData),
@@ -69,110 +81,118 @@ class _ProviderRecentRequestWidgetState
                         context.read<ProviderBloc>().add(
                           ReloadProfileEvent(request: requestData.request!.id!),
                         );
-                        context.read<ProviderBloc>().add(
-                          NavigateProviderEvent(
-                            page: 1,
-                            widget: ProviderRequestDetailPage(),
-                          ),
-                        );
+                        context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
                       },
                       child: Container(
-                        width: 260,
+                        width: 300.w,
                         margin: EdgeInsets.only(
-                          right: 20,
-                          bottom: 10,
-                          top: 4,
+                          right: 20.w,
+                          bottom: 12.h,
+                          top: 8.h,
                         ),
-                        decoration: BoxDecoration(
-                          color: cardColor,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: borderColor,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
+                        child: SolidContainer(
+                          padding: EdgeInsets.zero,
+                          borderRadius: BorderRadius.circular(28.r),
                           child: Stack(
-                            fit: StackFit.expand,
                             children: [
-                              Container(color: cardColor),
-                              // Removed decorative circle for solid aesthetic
-                              const SizedBox.shrink(),
-                              Padding(
-                                padding: EdgeInsets.all(20),
+                              // Background Image or Gradient
+                              if (requestData.request?.imageUrl != null)
+                                Positioned.fill(
+                                  child: Opacity(
+                                    opacity: 0.7,
+                                    child: CachedNetworkImage(
+                                      imageUrl: requestData.request!.imageUrl!,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Container(color: Colors.black12),
+                                      errorWidget: (context, url, error) => 
+                                          const SizedBox.shrink(),
+                                    ),
+                                  ),
+                                ),
+                              
+                              // Main Content Overlay
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.black.withAlpha(200),
+                                    ],
+                                  ),
+                                ),
+                                padding: EdgeInsets.all(20.r),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         _buildTag(
-                                          requestData.request?.service?.name ??
-                                              "Service",
-                                          tagBgColor,
-                                          textColor,
+                                          requestData.request?.service?.name ?? "SERVICE",
                                         ),
-                                        _buildStatusBadge(
-                                          requestData.request?.status ?? "OPEN",
-                                        ),
+                                        if (requestData.request?.price != null)
+                                          _buildPriceBadge(requestData.request!.price!),
                                       ],
                                     ),
                                     const Spacer(),
+                                    Text(
+                                      (requestData.request?.title ?? "Untitled Job").toUpperCase(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.5,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 12.h),
                                     Row(
                                       children: [
-                                        CircleAvatar(
-                                          radius: 20,
-                                          backgroundColor: context.appColors.glassBorder,
-                                          child: Icon(
-                                            Icons.person,
-                                            color: context.appColors.primaryTextColor,
-                                            size: 20,
+                                        Container(
+                                          padding: EdgeInsets.all(2.r),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(color: Colors.white.withAlpha(100), width: 1.5.r),
+                                          ),
+                                          child: CircleAvatar(
+                                            radius: 14.r,
+                                            backgroundColor: Colors.white.withAlpha(40),
+                                            backgroundImage: requestData.user?.profilePictureUrl != null 
+                                                ? CachedNetworkImageProvider(requestData.user!.profilePictureUrl!) 
+                                                : null,
+                                            child: requestData.user?.profilePictureUrl == null 
+                                                ? FaIcon(FontAwesomeIcons.user, size: 12.r, color: Colors.white)
+                                                : null,
                                           ),
                                         ),
-                                        const SizedBox(width: 12),
+                                        SizedBox(width: 10.w),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                requestData.user?.firstName ??
-                                                    "User",
+                                                requestData.user?.firstName ?? "Neighbor",
                                                 style: TextStyle(
-                                                  color: textColor,
-                                                  fontWeight: FontWeight.w900,
-                                                  fontSize: 16,
-                                                  letterSpacing: 0.5,
+                                                  color: Colors.white,
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
-                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              const SizedBox(height: 2),
                                               Row(
                                                 children: [
-                                                  Icon(
-                                                    Icons.location_on_rounded,
-                                                    size: 12,
-                                                    color: secondaryTextColor,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Expanded(
-                                                    child: Text(
-                                                      requestData
-                                                                  .request
-                                                                  ?.distance !=
-                                                              null
-                                                          ? "${requestData.request!.distance!.toStringAsFixed(1)}km away"
-                                                          : "Distance N/A",
-                                                      style: TextStyle(
-                                                        color:
-                                                            context.appColors.hintTextColor,
-                                                        fontSize: 12,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                  FaIcon(FontAwesomeIcons.locationDot, size: 10.r, color: Colors.white.withAlpha(180)),
+                                                  SizedBox(width: 4.w),
+                                                  Text(
+                                                    requestData.request?.distance != null
+                                                        ? "${requestData.request!.distance!.toStringAsFixed(1)}km away"
+                                                        : "Nearby",
+                                                    style: TextStyle(
+                                                      color: Colors.white.withAlpha(180),
+                                                      fontSize: 10.sp,
                                                     ),
                                                   ),
                                                 ],
@@ -180,6 +200,7 @@ class _ProviderRecentRequestWidgetState
                                             ],
                                           ),
                                         ),
+                                        _buildStatusBadge(requestData.request?.status ?? "OPEN"),
                                       ],
                                     ),
                                   ],
@@ -189,40 +210,62 @@ class _ProviderRecentRequestWidgetState
                           ),
                         ),
                       ),
-                    );
-                  },
-                );
-              } else {
-                return const EmptyWidget(
-                  message: "No recent request at the moment",
-                  height: 250,
-                );
-              }
-            } else if (snapshot.hasError) {
-              return const SizedBox();
+                    ),
+                  );
+                },
+              );
+            } else if (state is LoadingProviderState) {
+              return HorizontalSkeletonLoader(
+                key: const ValueKey('loading'),
+                height: 250.h, 
+                itemWidth: 300.w,
+              );
             } else {
-              return const LoadingWidget();
+              return EmptyWidget(
+                key: const ValueKey('empty'),
+                message: "No recent request at the moment",
+                height: 250.h,
+              );
             }
-          },
+          }(),
         );
       },
     );
   }
 
-  Widget _buildTag(String label, Color bgColor, Color textColor) {
+  Widget _buildTag(String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: context.appColors.glassBorder,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white.withAlpha(40),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: Colors.white.withAlpha(60)),
       ),
       child: Text(
         label.toUpperCase(),
         style: TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.w900,
-          color: context.appColors.primaryTextColor,
-          letterSpacing: 0.5,
+          fontSize: 9.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          letterSpacing: 1.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPriceBadge(double price) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: context.appColors.primaryColor,
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: Text(
+        "\$${price.toStringAsFixed(0)}",
+        style: TextStyle(
+          fontSize: 12.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
         ),
       ),
     );
@@ -232,29 +275,29 @@ class _ProviderRecentRequestWidgetState
     Color color;
     switch (status.toUpperCase()) {
       case 'DONE':
-        color = Color.fromARGB(255, 20, 117, 72);
+        color = appSuccessColor;
         break;
       case 'IN_PROGRESS':
-        color = Color.fromARGB(255, 10, 83, 143);
+        color = appInfoColor;
         break;
       case 'CANCELLED':
-        color = context.appColors.errorColor;
+        color = appErrorColor;
         break;
       default:
-        color = Color.fromARGB(255, 129, 81, 4);
+        color = appWarningColor;
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(6),
+        color: color.withAlpha(200),
+        borderRadius: BorderRadius.circular(8.r),
       ),
       child: Text(
         status.toUpperCase(),
         style: TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.w900,
+          fontSize: 9.sp,
+          fontWeight: FontWeight.bold,
           color: Colors.white,
           letterSpacing: 0.5,
         ),

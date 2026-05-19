@@ -1,17 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_verification_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/add_service_package_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/performance_badge_widget.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -28,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   void initState() {
     super.initState();
-    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+    _fetchProfile();
 
     _fadeController = AnimationController(
       vsync: this,
@@ -39,6 +40,10 @@ class _ProfilePageState extends State<ProfilePage>
       end: 1,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOut));
     _fadeController.forward();
+  }
+
+  void _fetchProfile() {
+    context.read<ProfileBloc>().add(GetProfileStreamEvent());
   }
 
   @override
@@ -54,134 +59,198 @@ class _ProfilePageState extends State<ProfilePage>
     return Scaffold(
       body: MultiBlocListener(
         listeners: [
-          BlocListener<ProfileBloc, ProfileState>(
-            listener: (context, state) {},
-          ),
           BlocListener<ProviderBloc, ProviderState>(
             listener: (context, state) {
               if (state is SuccessAddPortfolioItemState) {
-                Get.back(); // Close loading dialog if any
-                context.read<ProfileBloc>().add(GetProfileStreamEvent());
-                Get.snackbar(
-                  "Success",
-                  "Portfolio item added! AI analysis started.",
-                  backgroundColor: context.appColors.successColor.withAlpha(100),
-                  colorText: Colors.white,
+                context.pop(); // Close loading dialog
+                _fetchProfile();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text("Portfolio item added! AI analysis started."),
+                    backgroundColor: context.appColors.successColor.withAlpha(100),
+                  ),
                 );
               } else if (state is FailureAddPortfolioItemState) {
-                Get.back();
-                Get.snackbar(
-                  "Error",
-                  "Failed to upload image. Please try again.",
-                  backgroundColor: context.appColors.errorColor.withAlpha(100),
-                  colorText: Colors.white,
+                context.pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message ?? "Failed to upload image. Please try again."),
+                    backgroundColor: context.appColors.errorColor.withAlpha(100),
+                  ),
                 );
               } else if (state is LoadingProviderState) {
-                Get.dialog(
-                  const Center(child: LoadingWidget()),
+                showDialog(
+                  context: context,
                   barrierDismissible: false,
+                  builder: (context) => Center(
+                    child: Container(
+                      padding: EdgeInsets.all(20.r),
+                      decoration: BoxDecoration(
+                        color: context.appColors.cardBackground,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: const CircularProgressIndicator(),
+                    ),
+                  ),
                 );
               }
             },
           ),
         ],
         child: BlocBuilder<ProfileBloc, ProfileState>(
+          buildWhen: (previous, current) =>
+              current is SuccessGetProfileStreamState ||
+              current is FailureGetProfileStreamState ||
+              current is LoadingProfileState ||
+              current is InitialProfileState,
           builder: (context, state) {
-            if (state is! SuccessGetProfileStreamState &&
-                SuccessGetProfileState.profile.id == null) {
-              return const Center(child: LoadingWidget());
+            if (state is LoadingProfileState) {
+              return const ProfileSkeletonLoader();
             }
 
-            return FutureBuilder<Profile>(
-              future: SuccessGetProfileStreamState.profile,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  Profile profile = snapshot.data!;
-                  final isProvider = Helpers.isProvider(profile.userType);
+            if (state is FailureGetProfileStreamState) {
+              return _buildErrorUI(state.message);
+            }
 
-                  return GradientBackground(
-                    child: SafeArea(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 600.w),
-                          child: FadeTransition(
-                            opacity: _fadeAnimation,
-                            child: ListView(
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: isLargeScreen ? 32.w : 20.w,
-                                vertical: 24.h,
-                              ),
-                              children: [
-                                // Back & Edit Buttons
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () => Navigator.pop(context),
-                                      child: Container(
-                                        padding: EdgeInsets.all(12.r),
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.circular(12.r),
-                                          border: Border.all(
-                                            color: context.appColors.glassBorder,
-                                            width: 1.5.r,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.arrow_back_ios_new_rounded,
-                                          color: context.appColors.primaryTextColor,
-                                          size: 20.r,
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => Get.toNamed("/edit-profile"),
-                                      child: Container(
-                                        padding: EdgeInsets.all(12.r),
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.circular(12.r),
-                                          border: Border.all(
-                                            color: context.appColors.glassBorder,
-                                            width: 1.5.r,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.edit_rounded,
-                                          color: context.appColors.primaryTextColor,
-                                          size: 20.r,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 32.h),
+            if (state is SuccessGetProfileStreamState) {
+              Profile profile = state.profile;
+              final isProvider = Helpers.isProvider(profile.userType);
 
-                                // Profile Header
-                                _buildProfileHeader(profile, isProvider),
-                                SizedBox(height: 32.h),
-
-                                // Info Section
-                                _buildInfoSection(profile),
-                                SizedBox(height: 24.h),
-
-                              
-                              ],
+              return GradientBackground(
+                child: SafeArea(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 600.w),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                            context.read<ProfileBloc>().add(GetProfileEvent());
+                          },
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isLargeScreen ? 32.w : 20.w,
+                              vertical: 24.h,
                             ),
+                            children: [
+                              // Back & Edit Buttons
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => context.pop(),
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => context.push("/edit-profile"),
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                          width: 1.5.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.penToSquare,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 32.h),
+    
+                              // Profile Header
+                              _buildProfileHeader(profile, isProvider),
+                              SizedBox(height: 32.h),
+    
+                              // Info Section
+                              _buildInfoSection(profile),
+                              SizedBox(height: 24.h),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  );
-                } else {
-                  return const Center(child: LoadingWidget());
-                }
-              },
-            );
+                  ),
+                ),
+              );
+            }
+
+            return const ProfileSkeletonLoader();
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorUI(String message) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(32.r),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                FontAwesomeIcons.circleExclamation,
+                size: 60.r,
+                color: context.appColors.errorColor,
+              ),
+              SizedBox(height: 24.h),
+              CustomTextWidget(
+                text: "OPS! SOMETHING WENT WRONG",
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w500,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: context.appColors.secondaryTextColor,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 32.h),
+              ElevatedButton(
+                onPressed: () {
+                  _fetchProfile();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.appColors.primaryColor,
+                  padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 15.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
+                child: const Text("RETRY"),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -227,7 +296,7 @@ class _ProfilePageState extends State<ProfilePage>
                   (profile.profilePictureUrl != null &&
                       profile.profilePictureUrl!.isNotEmpty &&
                       !profile.profilePictureUrl!.startsWith("file:///"))
-                  ? NetworkImage(profile.profilePictureUrl!)
+                  ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                   : const AssetImage(logoAssets) as ImageProvider,
             ),
           ),
@@ -240,7 +309,7 @@ class _ProfilePageState extends State<ProfilePage>
               profile.firstName ?? "USER",
               style: TextStyle(
                 fontSize: 28.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 color: textColor,
                 letterSpacing: -0.5,
               ),
@@ -248,7 +317,7 @@ class _ProfilePageState extends State<ProfilePage>
             if (profile.isIdentityVerified == true) ...[
               SizedBox(width: 8.w),
                Icon(
-                Icons.verified_rounded,
+                FontAwesomeIcons.circleCheck,
                 color: context.appColors.infoColor,
                 size: 26.r,
               ),
@@ -260,7 +329,7 @@ class _ProfilePageState extends State<ProfilePage>
           profile.user?.email ?? "No email provided",
           style: TextStyle(
             fontSize: 15.sp,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
             color: subTextColor,
           ),
         ),
@@ -282,8 +351,8 @@ class _ProfilePageState extends State<ProfilePage>
             children: [
               Icon(
                 isProvider
-                    ? Icons.business_center_rounded
-                    : Icons.person_rounded,
+                    ? FontAwesomeIcons.briefcase
+                    : FontAwesomeIcons.user,
                 size: 14.r,
                 color: isProvider
                     ? context.appColors.primaryColor
@@ -294,7 +363,7 @@ class _ProfilePageState extends State<ProfilePage>
                 profile.userType?.toUpperCase() ?? "USER",
                 style: TextStyle(
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 1.2,
                   color: isProvider
                       ? context.appColors.primaryColor
@@ -342,73 +411,82 @@ class _ProfilePageState extends State<ProfilePage>
           _buildInfoRow(
             "Email",
             profile.user?.email ?? "Not set",
-            Icons.email_rounded,
+            FontAwesomeIcons.envelope,
           ),
           _buildInfoRow(
             "Country",
             profile.country ?? "Not set",
-            Icons.public_rounded,
+            FontAwesomeIcons.globe,
           ),
           _buildInfoRow(
             "Phone",
-            "(${profile.countryCode ?? ""}) ${profile.phone ?? ""}",
-            Icons.phone_rounded,
+            profile.phone ?? "Not set",
+            FontAwesomeIcons.phone,
           ),
           
           _buildInfoRow(
             "Address",
             profile.address ?? "Not set",
-            Icons.location_on_rounded,
+            FontAwesomeIcons.locationDot,
           ),
           _buildInfoRow(
             "Gender",
             profile.gender ?? "Not set",
-            Icons.person_rounded,
+            FontAwesomeIcons.user,
           ),
-          _buildInfoRow("State", profile.state ?? "Not set", Icons.map_rounded),
+          _buildInfoRow("State", profile.state ?? "Not set", FontAwesomeIcons.map),
           _buildInfoRow(
             "Service",
             getServiceName(profile.service ?? ""),
-            Icons.work_rounded,
+            FontAwesomeIcons.briefcase,
           ),
           _buildInfoRow(
             "Date of Birth",
             profile.dateOfBirth != null
                 ? DateFormat("dd/MM/yyyy").format(profile.dateOfBirth!)
                 : "Not set",
-            Icons.cake_rounded,
+            FontAwesomeIcons.cakeCandles,
           ),
           _buildInfoRow(
             "Zipcode",
             profile.zipCode ?? "Not set",
-            Icons.pin_drop_rounded,
+            FontAwesomeIcons.mapPin,
           ),
+          
+          // Audit Logs Link
+          InkWell(
+            onTap: () => context.push("/audit-logs"),
+            child: _buildInfoRow(
+              "Activity History",
+              "View your recent logs",
+              FontAwesomeIcons.clockRotateLeft,
+            ),
+          ),
+
           if (Helpers.isProvider(profile.userType)) ...[
+            _buildGlassDivider(),
             _buildInfoRow(
               "Payment Preference",
               profile.preferredPaymentMode ?? "BOTH",
-              Icons.payments_rounded,
+              FontAwesomeIcons.creditCard,
             ),
             InkWell(
-              onTap: () {
-                // Navigate to Add Service Package Page
-                Get.to(() => const AddServicePackagePage());
-              },
+              onTap: () => context.push("/add-service-package"),
               child: _buildInfoRow(
                 "Service Packages",
                 "Add New Package",
-                Icons.inventory_2_rounded,
+                FontAwesomeIcons.boxOpen,
               ),
             ),
             if (Helpers.isProvider(profile.userType) &&
                 profile.isIdentityVerified == false) ...[
               _buildGlassDivider(),
               InkWell(
-                onTap: () => Get.to(() => const ProviderVerificationPage()),
+                onTap: () => context.push("/provider-verification"),
                 child: _buildInfoRow(
                   "Verification",
                   "Verify Identity",
-                  Icons.verified_user_rounded,
+                  FontAwesomeIcons.userShield,
                 ),
               ),
             ],
@@ -453,7 +531,7 @@ class _ProfilePageState extends State<ProfilePage>
                     label.toUpperCase(),
                     style: TextStyle(
                       fontSize: 15.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       color: labelColor,
                       letterSpacing: 0.8,
                     ),
@@ -463,7 +541,7 @@ class _ProfilePageState extends State<ProfilePage>
                     value.isNotEmpty ? value : "Not set",
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                       color: valueColor,
                     ),
                   ),
@@ -482,5 +560,7 @@ class _ProfilePageState extends State<ProfilePage>
       color: context.appColors.glassBorder,
     );
   }
-
 }
+
+
+

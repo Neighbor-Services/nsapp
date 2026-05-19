@@ -138,7 +138,7 @@ class _SolidButtonState extends State<SolidButton>
                         style: TextStyle(
                           color: textColor,
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 1.1,
                         ),
                       ),
@@ -150,3 +150,7 @@ class _SolidButtonState extends State<SolidButton>
     );
   }
 }
+
+
+
+

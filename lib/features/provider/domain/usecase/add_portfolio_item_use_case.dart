@@ -12,7 +12,7 @@ class AddPortfolioItemUseCase extends UseCase {
   @override
   Future<Either<Failure, bool>> call(params) async {
     if (params is! AddPortfolioItemParams) {
-      return Left(Failure(massege: "Invalid parameters"));
+      return Left(Failure(message: "Invalid parameters"));
     }
     final results = await repository.addPortfolioItem(
       image: params.image,
@@ -28,3 +28,6 @@ class AddPortfolioItemParams {
 
   AddPortfolioItemParams({required this.image, this.description});
 }
+
+
+

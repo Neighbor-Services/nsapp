@@ -1,13 +1,17 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:nsapp/core/models/legal_document.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/legal/legal_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/core/core.dart';
 
 class LegalDocumentPage extends StatefulWidget {
-  const LegalDocumentPage({super.key});
+  final String? docType;
+  const LegalDocumentPage({super.key, this.docType});
 
   @override
   State<LegalDocumentPage> createState() => _LegalDocumentPageState();
@@ -22,7 +26,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
   @override
   void initState() {
     super.initState();
-    _docType = (Get.arguments as String?) ?? 'TERMS';
+    _docType = widget.docType ?? 'TERMS';
 
     _fadeController = AnimationController(
       vsync: this,
@@ -34,7 +38,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SharedBloc>().add(
+      context.read<LegalBloc>().add(
         GetLegalDocumentEvent(docType: _docType),
       );
     });
@@ -53,7 +57,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     final subtitleColor = textColor.withAlpha(150);
 
     return Scaffold(
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<LegalBloc, LegalState>(
         listener: (context, state) {
           if (state is SuccessGetLegalDocumentState) {
             _fadeController.forward();
@@ -73,7 +77,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                     child: Row(
                       children: [
                         GestureDetector(
-                          onTap: () => Get.back(),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(12.r),
                             decoration: BoxDecoration(
@@ -86,7 +90,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                               ),
                             ),
                             child: Icon(
-                              Icons.arrow_back_ios_new_rounded,
+                              FontAwesomeIcons.chevronLeft,
                               color: textColor,
                               size: 20.r,
                             ),
@@ -100,7 +104,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                                 : 'PRIVACY POLICY',
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -131,24 +135,24 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
 
   Widget _buildBody(
     BuildContext context,
-    SharedState state,
+    LegalState state,
     Color textColor,
     Color subtitleColor,
     Color secondaryColor,
   ) {
-    if (state is SharedLoadingState || state is SharedInitialState) {
-      return Center(
-        child: CircularProgressIndicator(color: secondaryColor),
+    if (state is LegalLoading) {
+      return const Center(
+        child: LoadingWidget(),
       );
     }
 
-    if (state is FailureGetLegalDocumentState) {
+    if (state is LegalFailure) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.error_outline_rounded,
+              FontAwesomeIcons.circleExclamation,
               size: 56.r,
               color: subtitleColor,
             ),
@@ -157,7 +161,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
               'Documents not available',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
                 color: textColor,
               ),
             ),
@@ -169,11 +173,11 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
             SizedBox(height: 24.h),
             TextButton.icon(
               onPressed: () {
-                context.read<SharedBloc>().add(
+                context.read<LegalBloc>().add(
                   GetLegalDocumentEvent(docType: _docType),
                 );
               },
-              icon: Icon(Icons.refresh_rounded, color: secondaryColor),
+              icon: FaIcon(FontAwesomeIcons.rotateRight, color: secondaryColor),
               label: Text(
                 'Retry',
                 style: TextStyle(color: secondaryColor),
@@ -184,14 +188,18 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
       );
     }
 
-    final List<LegalDocument> docs = SuccessGetLegalDocumentState.documents;
-    if (docs.isEmpty) {
+    List<LegalDocument> docs = [];
+    if (state is SuccessGetLegalDocumentState) {
+      docs = state.documents;
+    }
+
+    if (docs.isEmpty && state is! LegalLoading) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.info_outline_rounded,
+              FontAwesomeIcons.circleInfo,
               size: 56.r,
               color: subtitleColor,
             ),
@@ -200,7 +208,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
               'No documents found',
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
                 color: textColor,
               ),
             ),
@@ -236,8 +244,8 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                   children: [
                     Icon(
                       _docType == 'TERMS'
-                          ? Icons.gavel_rounded
-                          : Icons.privacy_tip_rounded,
+                          ? FontAwesomeIcons.gavel
+                          : FontAwesomeIcons.shieldHalved,
                       color: secondaryColor,
                       size: 22.r,
                     ),
@@ -249,14 +257,14 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                           Text(
                             doc.title,
                             style: TextStyle(
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w500,
                               fontSize: 14.sp,
                               color: textColor,
                             ),
                           ),
                           SizedBox(height: 2.h),
                           Text(
-                            'Version ${doc.version}  •  Last updated ${_formatDate(doc.updatedAt)}',
+                            'Version ${doc.version}  |  Last updated ${_formatDate(doc.updatedAt)}',
                             style: TextStyle(
                               fontSize: 11.sp,
                               color: subtitleColor,

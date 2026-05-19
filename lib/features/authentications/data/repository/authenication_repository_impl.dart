@@ -15,9 +15,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (isSuccess) {
         return Right(isSuccess);
       }
-      return Left(Failure(massege: "e.message"));
+      return Left(Failure(message: "e.message"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -28,9 +28,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (user != null) {
         return Right(user);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -40,7 +40,7 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       await dataSource.logout();
       return right(true);
     } catch (e) {
-      return left(Failure(massege: e.toString()));
+      return left(Failure(message: e.toString()));
     }
   }
 
@@ -54,9 +54,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return left(Failure(massege: e.toString()));
+      return left(Failure(message: e.toString()));
     }
   }
 
@@ -67,9 +67,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -80,9 +80,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -93,9 +93,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -109,9 +109,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -122,9 +122,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -135,9 +135,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -148,9 +148,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -161,9 +161,9 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 
@@ -174,9 +174,12 @@ class AuthenicationRepositoryImpl extends AuthenticationRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: e.toString()));
+      return Left(Failure(message: e.toString()));
     }
   }
 }
+
+
+

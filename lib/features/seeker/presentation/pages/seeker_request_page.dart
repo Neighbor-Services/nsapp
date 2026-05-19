@@ -1,17 +1,16 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/request_data.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/core.dart';
 import '../../../../core/helpers/helpers.dart';
@@ -30,6 +29,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
   late Animation<double> _fadeAnimation;
   late TextEditingController amountController;
   late GlobalKey<FormState> formKey;
+  bool _isFunding = false;
 
   @override
   void initState() {
@@ -94,27 +94,66 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "MY REQUESTS",
-                              style: TextStyle(
-                                fontSize: 24.sp,
-                                fontWeight: FontWeight.w900,
-                                color: context.appColors.primaryTextColor,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              "MANAGE YOUR SERVICE REQUESTS",
-                              style: TextStyle(
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w900,
-                                color: context.appColors.secondaryTextColor,
-                                letterSpacing: 1.0,
-                              ),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (Navigator.of(context).canPop()) {
+                                      context.pop();
+                                    } else {
+                                      
+                                        context.read<SeekerBloc>().add(
+                                            ChangeSeekerTabEvent(
+                                                tabIndex: 0));
+                                      
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(12.r),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
+                                        width: 1.5.r,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      FontAwesomeIcons.chevronLeft,
+                                      color: context.appColors.primaryTextColor,
+                                      size: 16.r,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "MY REQUESTS",
+                                      style: TextStyle(
+                                        fontSize: 24.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: context.appColors.primaryTextColor,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    Text(
+                                      "MANAGE YOUR SERVICE REQUESTS",
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: context.appColors.secondaryTextColor,
+                                        letterSpacing: 1.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             SizedBox(height: 24.h),
-                            Expanded(child: _buildRequestList(context)),
+                            Expanded(child: _buildRequestList(context, state)),
                           ],
                         ),
                       ),
@@ -129,62 +168,64 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 
-  Widget _buildRequestList(BuildContext context) {
-    return FutureBuilder<List<RequestData>>(
-      future: SuccessGetMyRequestState.myRequests,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: SolidContainer(
-                padding: EdgeInsets.all(40.r),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.assignment_outlined,
-                      size: 60.r,
-                      color: context.appColors.glassBorder,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      "NO REQUESTS FOUND",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w900,
-                        color: context.appColors.glassBorder,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      "Create a new request to get started",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: context.appColors.glassBorder,
-                      ),
-                    ),
-                  ],
+  Widget _buildRequestList(BuildContext context, SeekerState state) {
+    List<RequestData> requests = (state is SuccessGetMyRequestState) 
+        ? state.myRequests 
+        : context.read<SeekerBloc>().myRequests;
+
+    if (requests.isEmpty && state is! LoadingSeekerState) {
+      return Center(
+        child: SolidContainer(
+          padding: EdgeInsets.all(40.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.fileLines,
+                size: 60.r,
+                color: context.appColors.glassBorder,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "NO REQUESTS FOUND",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: context.appColors.glassBorder,
+                  letterSpacing: 1.0,
                 ),
               ),
-            );
-          }
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return _buildRequestCard(
-                context,
-                snapshot.data![index],
-                index
-               
-              );
-            },
-          );
-        } else {
-          return const Center(child: LoadingWidget());
-        }
+              SizedBox(height: 8.h),
+              Text(
+                "Create a new request to get started",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.glassBorder,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<SeekerBloc>().add(GetMyRequestEvent());
+        context.read<ProfileBloc>().add(GetProfileStreamEvent());
+        context.read<ProfileBloc>().add(GetProfileEvent());
+        await Future.delayed(const Duration(seconds: 1));
       },
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: requests.length,
+        itemBuilder: (context, index) {
+          return _buildRequestCard(
+            context,
+            requests[index],
+            index
+          );
+        },
+      ),
     );
   }
 
@@ -200,12 +241,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
           SeekerRequestDetailEvent(request: requestData),
         );
 
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(
-            page: 1,
-            widget: const SeekerRequestDetailsPage(),
-          ),
-        );
+        context.push('/app/requests/${requestData.request?.id}', extra: requestData);
       },
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
@@ -245,7 +281,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               errorBuilder: (context, error, stackTrace) =>
                                   const Center(
                                     child: Icon(
-                                      Icons.broken_image,
+                                      FontAwesomeIcons.image,
                                       color: Colors.white54,
                                     ),
                                   ),
@@ -291,7 +327,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                 : "OPEN")),
                         style: TextStyle(
                           color: context.appColors.primaryTextColor, // Keep white on orange badge
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w500,
                           fontSize: 12.sp,
                         ),
                       ),
@@ -318,7 +354,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               width: 1.5.r,
                             ),
                           ),
-                          child: Icon(Icons.more_horiz, color: context.appColors.primaryTextColor)),
+                          child: FaIcon(FontAwesomeIcons.ellipsis, color: context.appColors.primaryTextColor)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.r),
                           side: BorderSide(
@@ -331,22 +367,12 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),
                             );
-                            context.read<SeekerBloc>().add(
-                              NavigateSeekerEvent(
-                                page: 1,
-                                widget: const SeekerRequestDetailsPage(),
-                              ),
-                            );
+                            context.push('/app/requests/${requestData.request?.id}', extra: requestData);
                           } else if (val == 'edit') {
                             context.read<SeekerBloc>().add(
                               SeekerRequestDetailEvent(request: requestData),
                             );
-                            context.read<SeekerBloc>().add(
-                              NavigateSeekerEvent(
-                                page: 1,
-                                widget: const SeekerUpdateRequestPage(),
-                              ),
-                            );
+                            context.push('/update-request');
                           } else if (val == 'delete') {
                             context.read<SeekerBloc>().add(
                               DeleteRequestEvent(
@@ -436,7 +462,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                 CustomTextWidget(
                                                   text: "FUND PROJECT",
                                                   fontSize: 18.sp,
-                                                  fontWeight: FontWeight.w900,
+                                                  fontWeight: FontWeight.w500,
                                                   letterSpacing: 1.2,
                                                 ),
                                                 SizedBox(height: 12.h),
@@ -456,7 +482,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                     if (val!.isEmpty) {
                                                       return "Required";
                                                     }
-                                                    if (!val.isNum) {
+                                                    if (double.tryParse(val) == null) {
                                                       return "Invalid";
                                                     }
                                                     return null;
@@ -478,26 +504,39 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                               SizedBox(width: 16.w),
                                               Expanded(
                                                 child: ElevatedButton(
-                                                  onPressed: () async {
-                                                    if (formKey.currentState!
-                                                        .validate()) {
-                                                      Navigator.pop(context);
-                                                      await PaymentService.fundAppointment(
-                                                        appointmentId:
-                                                            requestData
-                                                                .request!
-                                                                .appointmentId!,
-                                                        amount: amountController
-                                                            .text,
-                                                        context: context,
-                                                      );
-                                                      context
-                                                          .read<SeekerBloc>()
-                                                          .add(
-                                                            GetMyRequestEvent(),
-                                                          );
-                                                    }
-                                                  },
+                                                  onPressed: _isFunding
+                                                      ? null
+                                                      : () async {
+                                                          if (formKey.currentState!
+                                                              .validate()) {
+                                                            setState(() {
+                                                              _isFunding = true;
+                                                            });
+                                                            final success = await PaymentService.fundAppointment(
+                                                              appointmentId:
+                                                                  requestData
+                                                                      .request!
+                                                                      .appointmentId!,
+                                                              amount: amountController
+                                                                  .text,
+                                                              context: context,
+                                                            );
+                                                            
+                                                            if (mounted) {
+                                                              setState(() {
+                                                                _isFunding = false;
+                                                              });
+                                                              if (success) {
+                                                                Navigator.pop(context);
+                                                                context
+                                                                    .read<SeekerBloc>()
+                                                                    .add(
+                                                                      GetMyRequestEvent(),
+                                                                    );
+                                                              }
+                                                            }
+                                                          }
+                                                        },
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
                                                         context.appColors.secondaryColor,
@@ -508,7 +547,16 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                                           ),
                                                     ),
                                                   ),
-                                                  child: const Text("Fund Now"),
+                                                  child: _isFunding
+                                                      ? SizedBox(
+                                                          height: 20.h,
+                                                          width: 20.h,
+                                                          child: CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            color: context.appColors.cardBackground,
+                                                          ),
+                                                        )
+                                                      : const Text("Fund Now", style: TextStyle(color: Colors.white)),
                                                 ),
                                               ),
                                             ],
@@ -526,31 +574,32 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                           _buildPopupMenuItem(
                             'view',
                             'VIEW DETAILS',
-                            Icons.visibility
+                            FontAwesomeIcons.eye
                             
                           ),
                           _buildPopupMenuItem(
                             'edit',
                             'EDIT',
-                            Icons.edit
+                            FontAwesomeIcons.penToSquare
                            
                           ),
                           _buildPopupMenuItem(
                             'delete',
                             'DELETE',
-                            Icons.delete
+                            FontAwesomeIcons.trashCan
                             
                           ),
                           _buildPopupMenuItem(
                             'done',
                             'MARK AS DONE',
-                            Icons.check_circle
+                            FontAwesomeIcons.circleCheck
                             
                           ),
+                          if (requestData.request?.paymentMode != 'ON_SITE')
                           _buildPopupMenuItem(
                             'pay',
                             'PAY PROVIDER',
-                            Icons.payment_outlined
+                            FontAwesomeIcons.creditCard
                            
                           ),
                         ],
@@ -573,7 +622,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               "",
                           style: TextStyle(
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.primaryTextColor, // Keep white on image overlay
                           ),
                         ),
@@ -586,7 +635,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                           ).toUpperCase(),
                           style: TextStyle(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.hintTextColor,
                             letterSpacing: 0.5,
                           ),
@@ -599,14 +648,14 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                       style: TextStyle(
                         fontSize: 15.sp,
                         color: context.appColors.primaryTextColor,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
                         _buildInfoChip(
-                          Icons.people_outline_rounded,
+                          FontAwesomeIcons.users,
                           "${requestData.request?.proposalsCount ?? 0} Proposals",
                          
                         ),
@@ -638,7 +687,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
             text.toUpperCase(),
             style: TextStyle(
               color: context.appColors.primaryTextColor,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               fontSize: 12.sp,
               letterSpacing: 0.5,
             ),
@@ -668,7 +717,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
             label.toUpperCase(),
             style: TextStyle(
               fontSize: 10.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w500,
               color: context.appColors.primaryColor,
               letterSpacing: 0.5,
             ),
@@ -678,3 +727,10 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 }
+
+
+
+
+
+
+

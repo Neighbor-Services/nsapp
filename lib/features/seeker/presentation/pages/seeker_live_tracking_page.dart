@@ -1,4 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+<<<<<<< HEAD
+=======
+import 'package:go_router/go_router.dart';
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -120,7 +124,11 @@ class _SeekerLiveTrackingPageState extends State<SeekerLiveTrackingPage> {
             top: 60.h,
             left: 20.w,
             child: InkWell(
+<<<<<<< HEAD
               onTap: () => Navigator.pop(context),
+=======
+              onTap: () => context.pop(),
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
               child: SolidContainer(
                 padding: EdgeInsets.all(12.r),
                 borderRadius: BorderRadius.circular(12.r),

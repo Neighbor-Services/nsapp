@@ -2,11 +2,10 @@ part of 'seeker_bloc.dart';
 
 abstract class SeekerEvent {}
 
-class NavigateSeekerEvent extends SeekerEvent {
-  final Widget widget;
-  final int page;
+class ChangeSeekerTabEvent extends SeekerEvent {
+  final int tabIndex;
 
-  NavigateSeekerEvent({required this.page, required this.widget});
+  ChangeSeekerTabEvent({required this.tabIndex});
 }
 
 class RequestPriceEvent extends SeekerEvent {
@@ -93,8 +92,7 @@ class RemoveFromFavoriteEvent extends SeekerEvent {
   RemoveFromFavoriteEvent({required this.userId});
 }
 
-class SeekerBackPressedEvent extends SeekerEvent {}
-
+// Removed SeekerBackPressedEvent as native back-button will now be handled by Flutter's standard navigator.
 class SeekerReloadEvent extends SeekerEvent {}
 
 class GetAppointmentsEvent extends SeekerEvent {}
@@ -105,14 +103,16 @@ class SearchProviderEvent extends SeekerEvent {
   final double? priceMax;
   final String? categoryName;
   final String? serviceName;
+  final String? serviceId;
   final String? city;
-
+  
   SearchProviderEvent({
     this.ratingMin,
     this.priceMin,
     this.priceMax,
     this.categoryName,
     this.serviceName,
+    this.serviceId,
     this.city,
   });
 }
@@ -186,3 +186,5 @@ class UpdateSeekerAppointmentEvent extends SeekerEvent {
 
   UpdateSeekerAppointmentEvent({required this.appointment});
 }
+
+

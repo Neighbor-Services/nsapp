@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -77,7 +78,7 @@ class _SolidTextFieldState extends State<SolidTextField>
     final borderColor = context.appColors.glassBorder;
     final textColor = context.appColors.primaryTextColor;
     final hintColor = context.appColors.hintTextColor;
-    final iconColor = context.appColors.hintTextColor;
+    final iconColor = context.appColors.primaryColor;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +89,7 @@ class _SolidTextFieldState extends State<SolidTextField>
             style: TextStyle(
               color: labelColor,
               fontSize: 13.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.2,
             ),
           ),
@@ -130,7 +131,7 @@ class _SolidTextFieldState extends State<SolidTextField>
               prefixIcon: widget.prefixIcon != null
                   ? Icon(
                       widget.prefixIcon,
-                      color: _isFocused ? context.appColors.secondaryColor : iconColor,
+                      color: iconColor,
                       size: 20.r,
                     )
                   : null,
@@ -138,8 +139,8 @@ class _SolidTextFieldState extends State<SolidTextField>
                   ? IconButton(
                       icon: Icon(
                         _obscureText
-                            ? Icons.visibility_off_rounded
-                            : Icons.visibility_rounded,
+                            ? FontAwesomeIcons.eyeSlash
+                            : FontAwesomeIcons.eye,
                         color: iconColor,
                         size: 20.r,
                       ),
@@ -166,3 +167,9 @@ class _SolidTextFieldState extends State<SolidTextField>
     );
   }
 }
+
+
+
+
+
+

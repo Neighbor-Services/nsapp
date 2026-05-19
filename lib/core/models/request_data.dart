@@ -16,7 +16,11 @@ class RequestData {
   RequestData({this.request, this.user, this.approvedUser});
 
   RequestData.fromJson(Map<String, dynamic> json) {
-    request = Request.fromJson(json);
+    if (json.containsKey('request') && json['request'] is Map<String, dynamic>) {
+      request = Request.fromJson(json['request']);
+    } else {
+      request = Request.fromJson(json);
+    }
 
     // Check for user_profile first (new structure)
     if (json['user_profile'] != null) {
@@ -46,3 +50,5 @@ class RequestData {
     return data;
   }
 }
+
+

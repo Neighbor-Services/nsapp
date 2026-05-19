@@ -7,9 +7,11 @@ import '../../../../core/models/profile.dart';
 
 abstract class MessagesRepository {
   Future<Either<Failure, Profile>> reloadMessageReceiver(String user);
-  Future<Either<Failure, List<ChatMessage>>> getMessages(String receiver);
+  Future<Either<Failure, List<ChatMessage>>> getMessages(String receiver, {String? before});
   Future<Either<Failure, List<Chat>?>> getMyMessages();
   Future<Either<Failure, bool>> deleteMessage(Message message);
   Future<Either<Failure, bool>> updateMessage(Message message);
   Future<Either<Failure, bool>> setSeen(String messageID);
 }
+
+

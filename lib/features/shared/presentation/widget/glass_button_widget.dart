@@ -155,7 +155,7 @@ class _GlassButtonState extends State<GlassButton>
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w400,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -308,7 +308,7 @@ class _GlassSocialButtonState extends State<GlassSocialButton>
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15.sp,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
@@ -318,3 +318,5 @@ class _GlassSocialButtonState extends State<GlassSocialButton>
     );
   }
 }
+
+

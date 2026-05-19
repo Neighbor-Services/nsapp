@@ -1,16 +1,18 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:local_auth/local_auth.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/services/background_notification_service.dart';
 import 'package:nsapp/core/services/device_token_service.dart';
 
 class BiometricPage extends StatefulWidget {
@@ -36,18 +38,20 @@ class _BiometricPageState extends State<BiometricPage> {
 
       if (isAuthenticated) {
         if (await Helpers.isAuthenticated()) {
-          Get.offAllNamed("/home");
+          context.go("/home");
         } else {
           const secureStorage = FlutterSecureStorage();
           final email = await secureStorage.read(key: "email");
           final password = await secureStorage.read(key: "password");
 
           if (email != null && password != null) {
-            context.read<AuthenticationBloc>().add(
-                  LoginAuthenticationEvent(email: email, password: password),
-                );
+            if (mounted) {
+              context.read<AuthenticationBloc>().add(
+                LoginAuthenticationEvent(email: email, password: password),
+              );
+            }
           } else {
-            Get.offAllNamed("/login");
+            context.go("/login");
           }
         }
       }
@@ -66,45 +70,45 @@ class _BiometricPageState extends State<BiometricPage> {
   @override
   Widget build(BuildContext context) {
     final contentColor = context.appColors.primaryTextColor;
-    final secondaryColor =
-        context.appColors.secondaryTextColor;
+    final secondaryColor = context.appColors.secondaryTextColor;
     final glassColor = context.appColors.glassBorder;
-    final glassBorderColor =
-        context.appColors.glassBorder;
+    final glassBorderColor = context.appColors.glassBorder;
 
     return Scaffold(
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is SuccessLoginAuthenticationState) {
-            BackgroundNotificationService.connectForeground();
             DeviceTokenService.tryRegisterStoredToken();
             context.read<ProfileBloc>().add(GetProfileEvent());
             Future.delayed(const Duration(seconds: 2), () {
               if (!mounted) return;
-              if (SuccessGetProfileState.profile.firstName != null) {
-                if (Helpers.isProvider(
-                  SuccessGetProfileState.profile.userType,
-                )) {
-                  context.read<SharedBloc>().add(
-                        ToggleDashboardEvent(isProvider: true),
-                      );
+              // Read profile reactively from ProfileBloc state
+              final profileState = context.read<ProfileBloc>().state;
+              final profile = profileState is SuccessGetProfileState
+                  ? profileState.profile
+                  : null;
+              if (profile?.firstName != null) {
+                if (Helpers.isProvider(profile!.userType)) {
+                  context.read<SettingsBloc>().add(
+                    ToggleDashboardEvent(isProvider: true),
+                  );
                 } else {
-                  context.read<SharedBloc>().add(
-                        ToggleDashboardEvent(isProvider: false),
-                      );
+                  context.read<SettingsBloc>().add(
+                    ToggleDashboardEvent(isProvider: false),
+                  );
                 }
-                Get.offAllNamed("/home");
+                context.go("/home");
               } else {
-                Get.offAllNamed("/add-profile");
+                context.go("/add-profile");
               }
             });
           } else if (state is FailureLoginAuthenticationState) {
-            Get.snackbar(
-              "Login Failed",
+            customAlert(
+              context,
+              AlertType.error,
               "Biometric login failed. Please sign in with your password.",
-              snackPosition: SnackPosition.BOTTOM,
             );
-            Get.offAllNamed("/login");
+            context.go("/login");
           }
         },
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -125,7 +129,7 @@ class _BiometricPageState extends State<BiometricPage> {
                             shape: BoxShape.circle,
                             border: Border.all(color: glassBorderColor),
                           ),
-                          child: Icon(Icons.fingerprint,
+                          child: FaIcon(FontAwesomeIcons.fingerprint,
                               color: contentColor, size: 80.r),
                         ),
                         SizedBox(height: 30.h),
@@ -134,7 +138,7 @@ class _BiometricPageState extends State<BiometricPage> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 18.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: contentColor,
                             letterSpacing: 1.0,
                           ),
@@ -148,13 +152,13 @@ class _BiometricPageState extends State<BiometricPage> {
                         if (!_isAuthenticating)
                           TextButton.icon(
                             onPressed: auth,
-                            icon: Icon(Icons.lock_open, color: contentColor),
+                            icon: FaIcon(FontAwesomeIcons.lockOpen, color: contentColor),
                             label: Text(
                               "UNLOCK",
                               style: TextStyle(
-                                color: contentColor, 
+                                color: contentColor,
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -182,3 +186,5 @@ class _BiometricPageState extends State<BiometricPage> {
     );
   }
 }
+
+

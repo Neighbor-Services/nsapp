@@ -1,5 +1,8 @@
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/report.dart';
@@ -9,10 +12,8 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 
 import '../../../provider/presentation/bloc/provider_bloc.dart';
-import '../../../provider/presentation/pages/provider_home_page.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart';
-import '../../../seeker/presentation/pages/seeker_home_page.dart';
-import '../bloc/shared_bloc.dart';
+import '../bloc/settings/settings_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class ReportPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _ReportPageState extends State<ReportPage> {
   TextEditingController descriptionController = TextEditingController();
   String title = "Fraud Issue"; // Default value
   GlobalKey<FormState> key = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   final List<String> reportIssues = [
     "Fraud Issue",
@@ -42,31 +44,27 @@ class _ReportPageState extends State<ReportPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       extendBody: true,
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<SettingsBloc, SettingsState>(
         listener: (context, state) {
           if (state is SuccessAddReportState) {
+            setState(() => _isLoading = false);
             customAlert(context, AlertType.success, "Report Sent Successfully");
             Future.delayed(const Duration(seconds: 3), () {
-              if (DashboardState.isProvider) {
-                context.read<ProviderBloc>().add(
-                  NavigateProviderEvent(
-                    page: 1,
-                    widget: const ProviderHomePage(),
-                  ),
-                );
+              final settingsState = context.read<SettingsBloc>().state;
+              if (settingsState.isProvider) {
+                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
               } else {
-                context.read<SeekerBloc>().add(
-                  NavigateSeekerEvent(page: 1, widget: const SeekerHomePage()),
-                );
+                context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 1));
               }
             });
           } else if (state is FailureAddReportState) {
+            setState(() => _isLoading = false);
             customAlert(context, AlertType.error, "Failed To Send Report");
           }
         },
         builder: (context, state) {
           return LoadingView(
-            isLoading: (state is SharedLoadingState),
+            isLoading: _isLoading,
             child: SizedBox.expand(
               child: GradientBackground(
                 child: SafeArea(
@@ -85,17 +83,7 @@ class _ReportPageState extends State<ReportPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               GestureDetector(
-                                onTap: () {
-                                  if (DashboardState.isProvider) {
-                                    context.read<ProviderBloc>().add(
-                                      ProviderBackPressedEvent(),
-                                    );
-                                  } else {
-                                    context.read<SeekerBloc>().add(
-                                      SeekerBackPressedEvent(),
-                                    );
-                                  }
-                                },
+                                onTap: () => context.pop(),
                                 child: Container(
                                   padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
@@ -115,7 +103,7 @@ class _ReportPageState extends State<ReportPage> {
                                           ],
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 20.r,
                                   ),
@@ -128,7 +116,7 @@ class _ReportPageState extends State<ReportPage> {
                                   "REPORT AN ISSUE",
                                   style: TextStyle(
                                     fontSize: 18.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                     color: context.appColors.primaryTextColor,
                                     letterSpacing: 1.2,
                                   ),
@@ -142,7 +130,7 @@ class _ReportPageState extends State<ReportPage> {
                                   "HELP US IMPROVE BY REPORTING ANY ISSUES",
                                   style: TextStyle(
                                     fontSize: 10.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                     color: context.appColors.secondaryTextColor,
                                     letterSpacing: 1.0,
                                   ),
@@ -169,7 +157,7 @@ class _ReportPageState extends State<ReportPage> {
                                             dropdownColor:
                                                 context.appColors.cardBackground,
                                             icon: Icon(
-                                              Icons.keyboard_arrow_down,
+                                              FontAwesomeIcons.chevronDown,
                                               color: context
                                                   .appColors.primaryTextColor,
                                             ),
@@ -234,7 +222,8 @@ class _ReportPageState extends State<ReportPage> {
                                             return;
                                           }
                                           if (key.currentState!.validate()) {
-                                            context.read<SharedBloc>().add(
+                                            setState(() => _isLoading = true);
+                                            context.read<SettingsBloc>().add(
                                                   AddReportEvent(
                                                     report: Report(
                                                       reason:
@@ -259,7 +248,7 @@ class _ReportPageState extends State<ReportPage> {
                                           "SUBMIT REPORT",
                                           style: TextStyle(
                                             fontSize: 16.sp,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w500,
                                             color: Colors.white,
                                             letterSpacing: 1.1,
                                           ),
@@ -290,10 +279,12 @@ class _ReportPageState extends State<ReportPage> {
       text.toUpperCase(),
       style: TextStyle(
         fontSize: 10.sp,
-        fontWeight: FontWeight.w900,
+        fontWeight: FontWeight.w500,
         color: context.appColors.primaryTextColor,
         letterSpacing: 1.2,
       ),
     );
   }
 }
+
+

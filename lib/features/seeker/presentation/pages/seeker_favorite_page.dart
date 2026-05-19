@@ -1,16 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/favorite.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 
 import '../../../messages/presentation/bloc/message_bloc.dart';
-import '../../../messages/presentation/pages/chat_page.dart';
-import '../../../profile/presentation/bloc/profile_bloc.dart';
-import '../../../profile/presentation/pages/about_page.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerFavoritePage extends StatefulWidget {
@@ -21,7 +23,7 @@ class SeekerFavoritePage extends StatefulWidget {
 }
 
 class _SeekerFavoritePageState extends State<SeekerFavoritePage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -48,12 +50,15 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.secondaryTextColor;
-    final iconColor = context.appColors.primaryTextColor;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -70,8 +75,15 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
             );
           }
         },
+        buildWhen: (previous, current) =>
+          current is SuccessGetMyFavoritesState ||
+          current is FailureGetMyFavoritesState ||
+          current is LoadingSeekerState ||
+          current is InitialSeekerState,
         builder: (context, state) {
-          return GradientBackground(
+          return LoadingView(
+            isLoading: state is LoadingSeekerState,
+            child: GradientBackground(
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
@@ -92,33 +104,13 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                             children: [
                               Row(
                                 children: [
-                                  GestureDetector(
-                                    onTap: () => context.read<SeekerBloc>().add(
-                                      SeekerBackPressedEvent(),
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.all(12.r),
-                                      decoration: BoxDecoration(
-                                        color: context.appColors.cardBackground,
-                                        borderRadius: BorderRadius.circular(14.r),
-                                        border: Border.all(
-                                          color: context.appColors.glassBorder,
-                                          width: 1.5.r,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.arrow_back_ios_new_rounded,
-                                        color: iconColor,
-                                        size: 20.r,
-                                      ),
-                                    ),
-                                  ),
+                                 
                                   SizedBox(width: 16.w),
                                   Text(
                                     "FAVORITES",
                                     style: TextStyle(
                                       fontSize: 24.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w500,
                                       color: textColor,
                                       letterSpacing: 1.2,
                                     ),
@@ -132,7 +124,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                   "YOUR SAVED PROFESSIONALS",
                                   style: TextStyle(
                                     fontSize: 12.sp,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                     color: textColor.withAlpha(150),
                                     letterSpacing: 1.0,
                                   ),
@@ -144,79 +136,14 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
 
                         // Favorites List
                         Expanded(
-                          child: FutureBuilder<List<Favorite>>(
-                            future: SuccessGetMyFavoritesState.profiles,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.isNotEmpty) {
-                                  return ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    padding: EdgeInsets.only(
-                                      left: isLargeScreen ? 32.w : 16.w,
-                                      right: isLargeScreen ? 32.w : 16.w,
-                                      bottom: 32.h,
-                                    ),
-                                    itemCount: snapshot.data!.length,
-                                    itemBuilder: (context, index) {
-                                      return _buildFavoriteCard(
-                                        context,
-                                        snapshot.data![index],
-                                        index,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return Center(
-                                    child: SolidContainer(
-                                      // Use SolidContainer for consistency
-                                      margin: EdgeInsets.all(24.r),
-                                      padding: EdgeInsets.all(20.r),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(20.r),
-                                            decoration: BoxDecoration(
-                                              color: context.appColors.errorColor.withAlpha(
-                                                30,
-                                              ),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              Icons.favorite_rounded,
-                                              size: 60.r,
-                                              color: context.appColors.errorColor,
-                                            ),
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          Text(
-                                            "No favorites yet",
-                                            style: TextStyle(
-                                              fontSize: 20.sp,
-                                              fontWeight: FontWeight.w900,
-                                              color: textColor,
-                                              letterSpacing: 0.5,
-                                            ),
-                                          ),
-                                          SizedBox(height: 12.h),
-                                          Text(
-                                            "Save providers you like for quick access and priority booking.",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: secondaryTextColor,
-                                              height: 1.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                return const Center(child: LoadingWidget());
-                              }
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              context.read<SeekerBloc>().add(GetMyFavoritesEvent());
+                              context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                              context.read<ProfileBloc>().add(GetProfileEvent());
+                              await Future.delayed(const Duration(seconds: 1));
                             },
+                            child: _buildContent(context, state, isLargeScreen, textColor, secondaryTextColor),
                           ),
                         ),
                       ],
@@ -225,9 +152,120 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                 ),
               ),
             ),
+          )
           );
         },
       ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    SeekerState state,
+    bool isLargeScreen,
+    Color textColor,
+    Color secondaryTextColor,
+  ) {
+    final favorites = context.read<SeekerBloc>().myFavorites;
+    
+    if (state is SuccessGetMyFavoritesState) {
+      if (state.profiles.isNotEmpty) {
+        return _buildFavoriteList(context, state.profiles, isLargeScreen);
+      } else {
+        return _buildEmptyState(context, textColor, secondaryTextColor);
+      }
+    }
+
+    if (state is FailureGetMyFavoritesState) {
+      return Center(
+        child: Text(
+          state.message ?? "Failed to load favorites",
+          style: TextStyle(color: context.appColors.errorColor),
+        ),
+      );
+    }
+
+    // Fallback to cached data if available
+    if (favorites.isNotEmpty) {
+      return _buildFavoriteList(context, favorites, isLargeScreen);
+    }
+
+    return const LoadingWidget();
+  }
+
+  Widget _buildFavoriteList(BuildContext context, List<Favorite> profiles, bool isLargeScreen) {
+    return ListView.builder(
+      key: const PageStorageKey('seeker_favorites_list'),
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
+      padding: EdgeInsets.only(
+        left: isLargeScreen ? 32.w : 16.w,
+        right: isLargeScreen ? 32.w : 16.w,
+        bottom: 32.h,
+      ),
+      itemCount: profiles.length,
+      itemBuilder: (context, index) {
+        return _buildFavoriteCard(
+          context,
+          profiles[index],
+          index,
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, Color textColor, Color secondaryTextColor) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+        Center(
+          child: SolidContainer(
+            margin: EdgeInsets.all(24.r),
+            padding: EdgeInsets.all(20.r),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(20.r),
+                  decoration: BoxDecoration(
+                    color: context.appColors.errorColor.withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    FontAwesomeIcons.heart,
+                    size: 60.r,
+                    color: context.appColors.errorColor,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                Text(
+                  "No favorites yet",
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  "Save providers you like for quick access and priority booking.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: secondaryTextColor,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -255,17 +293,10 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
       },
       child: GestureDetector(
         onTap: (){
-          context.read<ProfileBloc>().add(
-            AboutUserEvent(
-              userID: favorite.favoriteUser!.user!.id!,
-            ),
-          );
-          context.read<SeekerBloc>().add(
-            NavigateSeekerEvent(
-              page: 1,
-              widget: const AboutPage(),
-            ),
-          );
+          final String? providerId = favorite.favoriteUser?.user?.id;
+          if (providerId != null) {
+            context.push('/portfolio-view', extra: favorite.favoriteUser);
+          }
         },
         child: Container(
           margin: EdgeInsets.only(bottom: 16.h),
@@ -282,21 +313,18 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                     border: Border.all(color: borderColor, width: 2.5.r),
                    
                   ),
-                  child: CircleAvatar(
-                    radius: 36.r,
-                    backgroundColor: Colors.white12,
-                    backgroundImage:
-                        (favorite.favoriteUser!.profilePictureUrl != null &&
-                            favorite
-                                .favoriteUser!
-                                .profilePictureUrl!
-                                .isNotEmpty &&
-                            favorite.favoriteUser!.profilePictureUrl!.startsWith(
-                              "http",
-                            ))
-                        ? NetworkImage(favorite.favoriteUser!.profilePictureUrl!)
-                        : const AssetImage(logoAssets) as ImageProvider,
-                  ),
+                    child: CircleAvatar(
+                      radius: 36.r,
+                      backgroundColor: Colors.white12,
+                      backgroundImage:
+                          (favorite.favoriteUser?.profilePictureUrl != null &&
+                              favorite.favoriteUser!.profilePictureUrl!.isNotEmpty &&
+                              favorite.favoriteUser!.profilePictureUrl!.startsWith(
+                                "http",
+                              ))
+                          ? CachedNetworkImageProvider(favorite.favoriteUser!.profilePictureUrl!)
+                          : const AssetImage(logoAssets) as ImageProvider,
+                    ),
                 ),
                 SizedBox(width: 18.w),
         
@@ -306,10 +334,10 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (favorite.favoriteUser!.firstName ?? "Provider").toUpperCase(),
+                        (favorite.favoriteUser?.firstName ?? "Provider").toUpperCase(),
                         style: TextStyle(
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w500,
                           color: textColor,
                           letterSpacing: 1.2,
                         ),
@@ -325,10 +353,10 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                         child: Text(
-                          getServiceName(favorite.favoriteUser!.service ?? favorite.favoriteUser!.catalogServiceName ?? "").toUpperCase(),
+                          getServiceName(favorite.favoriteUser?.service ?? favorite.favoriteUser?.catalogServiceName ?? "").toUpperCase(),
                           style: TextStyle(
                             fontSize: 10.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.hintTextColor,
                             letterSpacing: 1.0,
                           ),
@@ -342,8 +370,9 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (favorite.favoriteUser != null)
                      _buildActionButton(
-                  icon: Icons.chat_bubble_rounded,
+                  icon: FontAwesomeIcons.comment,
                   color: context.appColors.primaryColor,
                   onTap: () {
                     context.read<MessageBloc>().add(
@@ -351,20 +380,20 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                         profile: favorite.favoriteUser!,
                       ),
                     );
-                    context.read<SeekerBloc>().add(
-                      NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-                    );
+                    context.push('/chat');
                   },
                 ),
                  SizedBox(width: 8.w),
                    
                     _buildActionButton(
-                      icon: Icons.favorite_rounded,
+                      icon: FontAwesomeIcons.heart,
                       color: context.appColors.errorColor,
                       onTap: () {
-                        context.read<SeekerBloc>().add(
-                          RemoveFromFavoriteEvent(userId: favorite.id!),
-                        );
+                        if (favorite.id != null) {
+                          context.read<SeekerBloc>().add(
+                            RemoveFromFavoriteEvent(userId: favorite.id!),
+                          );
+                        }
                       },
                     ),
                   ],
@@ -376,6 +405,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
       ),
     );
   }
+
 
   Widget _buildActionButton({
     required IconData icon,

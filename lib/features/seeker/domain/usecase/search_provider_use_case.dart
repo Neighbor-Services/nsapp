@@ -12,7 +12,7 @@ class SearchProviderUseCase extends UseCase {
   @override
   Future<Either<Failure, List<Profile>>> call(dynamic params) async {
     if (params is! SearchProviderParams) {
-      return Left(Failure(massege: "Invalid properties"));
+      return Left(Failure(message: "Invalid properties"));
     }
     final results = await repository.searchProviders(
       ratingMin: params.ratingMin,
@@ -20,6 +20,7 @@ class SearchProviderUseCase extends UseCase {
       priceMax: params.priceMax,
       categoryName: params.categoryName,
       serviceName: params.serviceName,
+      serviceId: params.serviceId,
       city: params.city,
     );
     return results.fold((l) => Left(l), (r) => Right(r));
@@ -32,6 +33,7 @@ class SearchProviderParams {
   final double? priceMax;
   final String? categoryName;
   final String? serviceName;
+  final String? serviceId;
   final String? city;
 
   SearchProviderParams({
@@ -40,6 +42,10 @@ class SearchProviderParams {
     this.priceMax,
     this.categoryName,
     this.serviceName,
+    this.serviceId,
     this.city,
   });
 }
+
+
+

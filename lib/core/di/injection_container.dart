@@ -1,7 +1,11 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:get_it/get_it.dart';
+import 'package:nsapp/core/config/app_config.dart';
+import 'package:nsapp/core/utils/dio_interceptor.dart';
 import 'package:nsapp/core/services/hive_service.dart';
-import 'package:nsapp/core/services/notification_socket_service.dart';
 import 'package:nsapp/features/authentications/data/datasource/remote/authentication_remote_data_source.dart';
 import 'package:nsapp/features/authentications/data/datasource/remote/authentication_remote_data_source_impl.dart';
 import 'package:nsapp/features/authentications/data/repository/authenication_repository_impl.dart';
@@ -45,6 +49,8 @@ import 'package:nsapp/features/profile/domain/usecase/get_profile_use_case.dart'
 import 'package:nsapp/features/profile/domain/usecase/get_reviews_use_case.dart';
 import 'package:nsapp/features/profile/domain/usecase/update_device_token_use_case.dart';
 import 'package:nsapp/features/profile/domain/usecase/update_profile_use_case.dart';
+import 'package:nsapp/features/profile/domain/usecase/initiate_background_check_use_case.dart';
+import 'package:nsapp/features/profile/domain/usecase/get_audit_logs_use_case.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/data/datasource/remote/provider_remote_datasource.dart';
 import 'package:nsapp/features/provider/data/datasource/remote/provider_remote_datasource_impl.dart';
@@ -69,6 +75,7 @@ import 'package:nsapp/features/provider/domain/usecase/update_appointment_use_ca
     as provider_update_appt;
 import 'package:nsapp/features/provider/domain/usecase/get_request_detail_use_case.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/features/provider/domain/usecase/verify_appointment_code_use_case.dart';
 import 'package:nsapp/features/seeker/data/datasource/remote/seeker_remote_datasource.dart';
 import 'package:nsapp/features/seeker/data/datasource/remote/seeker_remote_datasource_impl.dart';
 import 'package:nsapp/features/seeker/data/repository/seeker_repository_impl.dart';
@@ -113,48 +120,85 @@ import 'package:nsapp/features/shared/domain/usecase/get_subscription_plans_use_
 import 'package:nsapp/features/shared/domain/usecase/search_place_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/search_places_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/set_seen_notification_use_case.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nsapp/features/shared/domain/usecase/get_token_usecase.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_disputes_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_legal_document_use_case.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/legal/legal_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // ! External
-  final prefs = await SharedPreferencesWithCache.create(
-    cacheOptions: const SharedPreferencesWithCacheOptions(),
-  );
-  sl.registerLazySingleton<SharedPreferencesWithCache>(() => prefs);
-  sl.registerLazySingleton(() => const FlutterSecureStorage());
-  sl.registerLazySingleton(() => Dio());
-  // sl.registerLazySingleton(() => InternetConnectionCheckerPlus());
-  sl.registerLazySingleton(() => NotificationSocketService());
+  List<int>? rootCaBytes;
+  if (AppConfig.instance.isProd) {
+    try {
+      final ByteData data = await rootBundle.load('assets/certs/cloudflare_roots.pem');
+      rootCaBytes = data.buffer.asUint8List();
+    } catch (e) {
+      print("Warning: Could not load cloudflare_roots.pem: $e");
+    }
+  }
 
+  // ! External
+  sl.registerLazySingleton(() => const FlutterSecureStorage());
+  sl.registerLazySingleton(() {
+    final dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+      ),
+    );
+    
+    // dio.httpClientAdapter = IOHttpClientAdapter(
+    //   createHttpClient: () {
+    //     SecurityContext? context;
+    //     if (AppConfig.instance.isProd && rootCaBytes != null) {
+    //       context = SecurityContext(withTrustedRoots: false);
+    //       context.setTrustedCertificatesBytes(rootCaBytes);
+    //     }
+    //     final client = HttpClient(context: context);
+        
+    //     return client;
+    //   },
+    //   // Removed validateCertificate leaf fingerprint logic since we are now natively 
+    //   // restricting the trusted root CAs via the SecurityContext above.
+    // );
+
+    dio.interceptors.add(GlobalDioInterceptor());
+    return dio;
+  });
+  // sl.registerLazySingleton(() => InternetConnectionCheckerPlus());
+  // Legacy services removed
   final hiveService = HiveService();
   await hiveService.init();
   sl.registerLazySingleton(() => hiveService);
 
   // ! Data Source
   sl.registerLazySingleton<AuthenticationRemoteDataSource>(
-    () => AuthenticationRemoteDataSourceImpl(),
+    () => AuthenticationRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(),
+    () => ProfileRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<ProviderRemoteDatasource>(
-    () => ProviderRemoteDatasourceImpl(),
+    () => ProviderRemoteDatasourceImpl(sl()),
   );
   sl.registerLazySingleton<SeekerRemoteDatasource>(
-    () => SeekerRemoteDatasourceImpl(),
+    () => SeekerRemoteDatasourceImpl(sl()),
   );
   sl.registerLazySingleton<SharedRemoteDatasource>(
-    () => SharedRemoteDatasourceImpl(),
+    () => SharedRemoteDatasourceImpl(sl()),
   );
   sl.registerLazySingleton<MessageRemoteDatasource>(
-    () => MessageRemoteDatasourceImpl(),
+    () => MessageRemoteDatasourceImpl(sl()),
   );
 
   // ! Repository
@@ -212,6 +256,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => AddAboutUseCase(sl()));
   sl.registerLazySingleton(() => GetAboutUseCase(sl()));
   sl.registerLazySingleton(() => DeleteAboutUseCase(sl()));
+  sl.registerLazySingleton(() => InitiateBackgroundCheckUseCase(sl()));
+  sl.registerLazySingleton(() => GetAuditLogsUseCase(sl()));
 
   // Provider
   sl.registerLazySingleton(() => GetRequestsUseCase(sl()));
@@ -238,6 +284,7 @@ Future<void> init() async {
     () => provider_complete.CompleteAppointmentUseCase(sl()),
   );
   sl.registerLazySingleton(() => GetRequestDetailUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyAppointmentCodeUseCase(sl()));
 
   // Seeker
   sl.registerLazySingleton(() => CreateRequestUseCase(sl()));
@@ -288,6 +335,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetMyDisputesUseCase(sl()));
   sl.registerLazySingleton(() => GetStripeDashboardLinkUseCase(sl()));
   sl.registerLazySingleton(() => GetLegalDocumentUseCase(sl()));
+  sl.registerLazySingleton(() => GetTokenUsecase());
 
   // ! Blocs
   sl.registerFactory(
@@ -311,7 +359,7 @@ Future<void> init() async {
 
   sl.registerFactory(
     () =>
-        ProfileBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+        ProfileBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory(
@@ -331,7 +379,8 @@ Future<void> init() async {
       sl(),
       sl(),
       sl(),
-      sl(), // GetRequestDetailUseCase
+      sl(),
+      sl(),
     ),
   );
 
@@ -360,27 +409,62 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(() => MessageBloc(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => MessageBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+
 
   sl.registerFactory(
-    () => SharedBloc(
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(),
-      sl(), // GetLegalDocumentUseCase
+    () => WalletBloc(
+      getMyWalletUseCase: sl(),
+      requestPayoutUseCase: sl(),
+      getStripeDashboardLinkUseCase: sl(),
     ),
   );
+
+  sl.registerFactory(
+    () => DisputeBloc(
+      createDisputeUseCase: sl(),
+      getMyDisputesUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => NotificationBloc(
+      addNotificationUseCase: sl(),
+      getMyNotificationsUseCase: sl(),
+      seenNotificationUseCase: sl(),
+      getTokenUsecase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => SettingsBloc(
+      changeUserTypeUseCase: sl(),
+      addReportUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => LegalBloc(
+      getLegalDocumentUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => SubscriptionBloc(
+      getSubscriptionPlansUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => CommonBloc(
+      getServicesUsecase: sl(),
+      addServiceUseCase: sl(),
+      searchPlacesUseCase: sl(),
+      searchPlaceUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(() => LocationBloc());
 }
+
+

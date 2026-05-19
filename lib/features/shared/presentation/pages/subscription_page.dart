@@ -1,10 +1,12 @@
 // ignore_for_file: unused_local_variable
 
+import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
@@ -22,14 +24,15 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-  bool isLoading = false;
+  bool _isValid = false;
+  List<SubscriptionPlan> _allPlans = [];
   String selectedInterval = 'month'; // 'month' or 'year'
 
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
-    context.read<SharedBloc>().add(GetSubscriptionPlansEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+    context.read<SubscriptionBloc>().add(GetSubscriptionPlansEvent());
 
     _fadeController = AnimationController(
       vsync: this,
@@ -53,37 +56,36 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<SubscriptionBloc, SubscriptionState>(
         listener: (context, state) {
           if (state is SuccessDeleteUserSubscriptionState) {
-            context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
+            context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
             customAlert(context, AlertType.success, "Subscription Canceled");
           }
-          if (state is FailureDeleteUserSubscriptionState) {
-            customAlert(
-              context,
-              AlertType.error,
-              "Unable to cancel subscription",
-            );
+          if (state is SubscriptionFailure) {
+            customAlert(context, AlertType.error, state.message ?? "Error");
           }
           if (state is ValidUserSubscriptionState) {
             setState(() {
-              isLoading = false;
+              _isValid = state.isValid;
             });
-            if (!ValidUserSubscriptionState.isValid) {
-              context.read<SharedBloc>().add(GetSubscriptionPlansEvent());
+            if (!state.isValid) {
+              context.read<SubscriptionBloc>().add(GetSubscriptionPlansEvent());
             }
           }
-          if (state is SuccessMakeSubscriptionState) {
-            context.read<SharedBloc>().add(CheckUserSubscriptionEvent());
-            customAlert(context, AlertType.success, "Subscription Made");
+          if (state is SuccessGetSubscriptionPlansState) {
+            setState(() {
+              _allPlans = state.plans;
+            });
           }
-          if (state is FailureMakeSubscriptionState) {
-            customAlert(
-              context,
-              AlertType.error,
-              "Unable to make subscription",
-            );
+          if (state is SubscriptionFailure) {
+            setState(() {
+              _allPlans = [];
+            });
+          }
+          if (state is SuccessMakeSubscriptionState) {
+            context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+            customAlert(context, AlertType.success, "Subscription Made");
           }
         },
         builder: (context, state) {
@@ -94,69 +96,80 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           final borderColor = context.appColors.glassBorder;
 
           return LoadingView(
-            isLoading: (state is SharedLoadingState),
+            isLoading: (state is SubscriptionLoading),
             child: GradientBackground(
               child: SafeArea(
                 child: Center(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: 800.w),
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isLargeScreen ? 32.w : 20.w,
-                        vertical: 24.h,
-                      ),
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: Column(
-                          children: [
-                            // Back Button
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (Navigator.canPop(context)) {
-                                    Navigator.pop(context);
-                                  } else {
-                                    context.read<ProviderBloc>().add(
-                                      ProviderBackPressedEvent(),
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(12.r),
-                                  decoration: BoxDecoration(
-                                    color: context.appColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(14.r),
-                                    border: Border.all(color: borderColor),
-                                  ),
-                                  child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
-                                    color: textColor,
-                                    size: 20.r,
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        context.read<ProfileBloc>().add(
+                          GetProfileStreamEvent(),
+                        );
+                        context.read<ProfileBloc>().add(GetProfileEvent());
+                        context.read<SubscriptionBloc>().add(
+                          GetSubscriptionPlansEvent(),
+                        );
+                        context.read<SubscriptionBloc>().add(
+                          CheckUserSubscriptionEvent(),
+                        );
+                        await Future.delayed(const Duration(seconds: 1));
+                      },
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isLargeScreen ? 32.w : 20.w,
+                          vertical: 24.h,
+                        ),
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Column(
+                            children: [
+                              // Back Button
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: GestureDetector(
+                                  onTap: () => context.pop(),
+                                  child: Container(
+                                    padding: EdgeInsets.all(12.r),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      border: Border.all(color: borderColor),
+                                    ),
+                                    child: Icon(
+                                      FontAwesomeIcons.chevronLeft,
+                                      color: textColor,
+                                      size: 20.r,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 24.h),
 
-                            ValidUserSubscriptionState.isValid
-                                ? _buildActiveSubscription(
-                                    context,
-                                    isDark,
-                                    textColor,
-                                    secondaryTextColor,
-                                  )
-                                : _buildSubscriptionPlans(
-                                    context,
-                                    isLargeScreen,
-                                    isDark,
-                                    textColor,
-                                    secondaryTextColor,
-                                    buttonColor,
-                                    borderColor,
-                                  ),
-                          ],
+                              SizedBox(height: 24.h),
+
+                              _isValid
+                                  ? _buildActiveSubscription(
+                                      context,
+                                      isDark,
+                                      textColor,
+                                      secondaryTextColor,
+                                    )
+                                  : _buildSubscriptionPlans(
+                                      context,
+                                      isLargeScreen,
+                                      isDark,
+                                      textColor,
+                                      secondaryTextColor,
+                                      buttonColor,
+                                      borderColor,
+                                      state,
+                                    ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -185,16 +198,21 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           decoration: BoxDecoration(
             color: context.appColors.primaryColor,
             shape: BoxShape.circle,
-           
           ),
-          child: Icon(Icons.check_rounded, color: Colors.white, size: 60.r),
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.check,
+              color: Colors.white,
+              size: 60.r,
+            ),
+          ),
         ),
         SizedBox(height: 40.h),
         Text(
           "YOU'RE SUBSCRIBED!",
           style: TextStyle(
             fontSize: 24.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             color: textColor,
             letterSpacing: 1.2,
           ),
@@ -203,7 +221,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
         Text(
           "Enjoy unlimited access to your premium benefits",
           style: TextStyle(
-            fontSize: 14.sp, 
+            fontSize: 14.sp,
             color: context.appColors.secondaryTextColor,
             letterSpacing: 0.3,
           ),
@@ -216,8 +234,8 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           child: Column(
             children: [
               Icon(
-                Icons.settings_suggest_rounded, 
-                size: 40.r, 
+                FontAwesomeIcons.sliders,
+                size: 40.r,
                 color: context.appColors.primaryColor,
               ),
               SizedBox(height: 20.h),
@@ -225,7 +243,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 "MANAGE SUBSCRIPTION",
                 style: TextStyle(
                   fontSize: 18.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w500,
                   color: textColor,
                   letterSpacing: 0.5,
                 ),
@@ -234,7 +252,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               Text(
                 "Cancel anytime with no hidden fees",
                 style: TextStyle(
-                  fontSize: 13.sp, 
+                  fontSize: 13.sp,
                   color: context.appColors.secondaryTextColor,
                   letterSpacing: 0.2,
                 ),
@@ -245,7 +263,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 height: 54.h,
                 child: OutlinedButton(
                   onPressed: () {
-                    context.read<SharedBloc>().add(
+                    context.read<SubscriptionBloc>().add(
                       DeleteUserSubscriptionEvent(),
                     );
                   },
@@ -259,7 +277,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                   child: const Text(
                     "CANCEL SUBSCRIPTION",
                     style: TextStyle(
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 1.0,
                     ),
                   ),
@@ -280,118 +298,105 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     Color secondaryTextColor,
     Color buttonColor,
     Color borderColor,
+    SubscriptionState state,
   ) {
-    return BlocBuilder<SharedBloc, SharedState>(
-      builder: (context, state) {
-        if (state is SuccessGetSubscriptionPlansState ||
-            SuccessGetSubscriptionPlansState.plans.isNotEmpty) {
-          final allPlans = List<SubscriptionPlan>.from(
-            SuccessGetSubscriptionPlansState.plans,
-          );
+    if (_allPlans.isNotEmpty) {
+      final plans =
+          _allPlans.where((plan) => plan.interval == selectedInterval).toList()
+            ..sort(
+              (a, b) => (a.displayOrder ?? 0).compareTo(b.displayOrder ?? 0),
+            );
 
-          final plans =
-              allPlans
-                  .where((plan) => plan.interval == selectedInterval)
-                  .toList()
-                ..sort(
-                  (a, b) =>
-                      (a.displayOrder ?? 0).compareTo(b.displayOrder ?? 0),
-                );
+      return Column(
+        children: [
+          Icon(
+            FontAwesomeIcons.crown,
+            size: 60.r,
+            color: secondaryTextColor.withAlpha(220),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            "CHOOSE YOUR PLAN",
+            style: TextStyle(
+              fontSize: 24.sp,
+              fontWeight: FontWeight.w500,
+              color: textColor,
+              letterSpacing: 1.2,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            "Unlock premium features and grow your business",
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: secondaryTextColor,
+              letterSpacing: 0.3,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 40.h),
 
-          return Column(
-            children: [
-              Icon(
-                Icons.workspace_premium_rounded,
-                size: 60.r,
-                color: secondaryTextColor.withAlpha(220),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                "CHOOSE YOUR PLAN",
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w900,
-                  color: textColor,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                "Unlock premium features and grow your business",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: secondaryTextColor,
-                  letterSpacing: 0.3,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 40.h),
+          _buildIntervalToggle(
+            isDark,
+            textColor,
+            secondaryTextColor,
+            buttonColor,
+            borderColor,
+          ),
 
-              _buildIntervalToggle(
-                isDark,
-                textColor,
-                secondaryTextColor,
-                buttonColor,
-                borderColor,
-              ),
+          SizedBox(height: 40.h),
 
-              SizedBox(height: 40.h),
-
-              if (plans.isEmpty)
-                _buildEmptyPlans(textColor, secondaryTextColor)
-              else
-                isLargeScreen
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: plans
-                            .map(
-                              (plan) => Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 10.w,
-                                  ),
-                                  child: _buildPlanCard(
-                                    plan,
-                                    context,
-                                    plan.tier == 'GOLD',
-                                    isDark,
-                                    textColor,
-                                    secondaryTextColor,
-                                  ),
-                                ),
+          if (plans.isEmpty)
+            _buildEmptyPlans(textColor, secondaryTextColor)
+          else
+            isLargeScreen
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: plans
+                        .map(
+                          (plan) => Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              child: _buildPlanCard(
+                                plan,
+                                context,
+                                plan.tier == 'GOLD',
+                                isDark,
+                                textColor,
+                                secondaryTextColor,
                               ),
-                            )
-                            .toList(),
-                      )
-                    : Column(
-                        children: plans
-                            .map(
-                              (plan) => Padding(
-                                padding: EdgeInsets.only(bottom: 20.h),
-                                child: _buildPlanCard(
-                                  plan,
-                                  context,
-                                  plan.tier == 'GOLD',
-                                  isDark,
-                                  textColor,
-                                  secondaryTextColor,
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-              SizedBox(height: 40.h),
-            ],
-          );
-        }
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  )
+                : Column(
+                    children: plans
+                        .map(
+                          (plan) => Padding(
+                            padding: EdgeInsets.only(bottom: 20.h),
+                            child: _buildPlanCard(
+                              plan,
+                              context,
+                              plan.tier == 'GOLD',
+                              isDark,
+                              textColor,
+                              secondaryTextColor,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+          SizedBox(height: 40.h),
+        ],
+      );
+    }
 
-        if (state is FailureGetSubscriptionPlansState) {
-          return _buildFailureView(textColor, secondaryTextColor);
-        }
+    if (state is SubscriptionFailure) {
+      return _buildFailureView(textColor, secondaryTextColor);
+    }
 
-        return _buildLoadingView(textColor);
-      },
-    );
+    return _buildLoadingView(textColor);
   }
 
   Widget _buildIntervalToggle(
@@ -453,7 +458,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           label.toUpperCase(),
           style: TextStyle(
             color: isSelected ? Colors.white : secondaryTextColor,
-            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
             letterSpacing: 0.8,
           ),
         ),
@@ -464,11 +469,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   Widget _buildEmptyPlans(Color textColor, Color secondaryTextColor) {
     return Column(
       children: [
-        Icon(
-          Icons.sentiment_dissatisfied_rounded,
-          size: 48.r,
-          color: secondaryTextColor,
-        ),
+        Icon(FontAwesomeIcons.faceFrown, size: 48.r, color: secondaryTextColor),
         SizedBox(height: 16.h),
         Text(
           "No plans found for this interval",
@@ -496,22 +497,22 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       case 'PLATINUM':
         primaryColor = Color(0xFF673AB7);
         gradientColors = [Color(0xFF673AB7), Color(0xFF9575CD)];
-        tierIcon = Icons.auto_awesome_rounded;
+        tierIcon = FontAwesomeIcons.wandMagicSparkles;
         break;
       case 'GOLD':
         primaryColor = Color(0xFFFFB300);
         gradientColors = [Color(0xFFFFB300), Color(0xFFFFD54F)];
-        tierIcon = Icons.workspace_premium_rounded;
+        tierIcon = FontAwesomeIcons.crown;
         break;
       case 'SILVER':
         primaryColor = Color(0xFF78909C);
         gradientColors = [Color(0xFF78909C), Color(0xFFB0BEC5)];
-        tierIcon = Icons.shield_rounded;
+        tierIcon = FontAwesomeIcons.shield;
         break;
       default:
         primaryColor = Color(0xFFFF6B35);
         gradientColors = [Color(0xFFFF6B35), Color(0xFFFF8E53)];
-        tierIcon = Icons.star_rounded;
+        tierIcon = FontAwesomeIcons.star;
     }
 
     String commissionText = "20% platform fee";
@@ -531,9 +532,9 @@ class _SubscriptionPageState extends State<SubscriptionPage>
     return GestureDetector(
       onTap: () async {
         if (plan.id != null) {
-          context.read<SharedBloc>().add(
-            MakeSubscriptionEvent(planId: plan.id!, context: context),
-          );
+          // context.read<SubscriptionBloc>().add(
+          //   MakeSubscriptionEvent(planId: plan.id!, context: context),
+          // );
         }
       },
       child: Container(
@@ -541,10 +542,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(
-            color: context.appColors.glassBorder,
-          ),
-          
+          border: Border.all(color: context.appColors.glassBorder),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -566,7 +564,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               (plan.name ?? "Plan").toUpperCase(),
               style: TextStyle(
                 fontSize: 20.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 color: textColor,
                 letterSpacing: 1.1,
               ),
@@ -580,7 +578,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                   "\$${plan.price?.toInt() ?? 0}",
                   style: TextStyle(
                     fontSize: 32.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                     color: textColor,
                   ),
                 ),
@@ -588,7 +586,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                   "/${plan.interval == 'year' ? 'YR' : 'MO'}",
                   style: TextStyle(
                     fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: secondaryTextColor,
                   ),
                 ),
@@ -598,51 +596,50 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
             _buildBenefitItem(
               commissionText,
-              Icons.account_balance_wallet_rounded,
+              FontAwesomeIcons.wallet,
               false,
               textColor,
               secondaryTextColor,
             ),
             _buildBenefitItem(
               priorityText,
-              Icons.trending_up_rounded,
+              FontAwesomeIcons.arrowTrendUp,
               false,
               textColor,
               secondaryTextColor,
             ),
 
-            Divider(
-              color: context.appColors.glassBorder,
-              height: 32.h,
-            ),
+            Divider(color: context.appColors.glassBorder, height: 32.h),
 
             ...features.map(
-              (feature) => _buildFeatureItem(
-                feature,
-                false,
-                secondaryTextColor,
-              ),
+              (feature) =>
+                  _buildFeatureItem(feature, false, secondaryTextColor),
             ),
 
             SizedBox(height: 24.h),
-            Container(
-              width: double.infinity,
-              height: 54.h,
-              decoration: BoxDecoration(
-                color: context.appColors.primaryColor.withAlpha(30),
-                borderRadius: BorderRadius.circular(16.r),
-                border: Border.all(
-                  color: context.appColors.glassBorder,
+            GestureDetector(
+              onTap: () {
+                context.read<SubscriptionBloc>().add(
+                  MakeSubscriptionEvent(planId: plan.id!, context: context),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                height: 54.h,
+                decoration: BoxDecoration(
+                  color: context.appColors.primaryColor.withAlpha(30),
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: context.appColors.glassBorder),
                 ),
-              ),
-              child: Center(
-                child: Text(
-                  "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w900,
-                    color: context.appColors.primaryColor,
-                    letterSpacing: 1.0,
+                child: Center(
+                  child: Text(
+                    "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: context.appColors.primaryColor,
+                      letterSpacing: 1.0,
+                    ),
                   ),
                 ),
               ),
@@ -664,17 +661,13 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       padding: EdgeInsets.only(bottom: 10.h),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 16.r,
-            color: secondaryTextColor,
-          ),
+          Icon(icon, size: 16.r, color: secondaryTextColor),
           SizedBox(width: 8.w),
           Text(
             text.toUpperCase(),
             style: TextStyle(
               fontSize: 12.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w500,
               color: textColor,
               letterSpacing: 0.5,
             ),
@@ -694,20 +687,18 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       child: Row(
         children: [
           Icon(
-            Icons.check_circle_outline_rounded,
+            FontAwesomeIcons.circleCheck,
             size: 16.r,
-            color: isHighlighted
-                ? Colors.white70
-                : secondaryTextColor,
+            color: isHighlighted ? Colors.white70 : secondaryTextColor,
           ),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
               text.toUpperCase(),
               style: TextStyle(
-                fontSize: 11.sp, 
+                fontSize: 11.sp,
                 color: secondaryTextColor,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 0.3,
               ),
             ),
@@ -720,13 +711,17 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   Widget _buildFailureView(Color textColor, Color secondaryTextColor) {
     return Column(
       children: [
-        Icon(Icons.error_outline_rounded, size: 60.r, color: secondaryTextColor),
+        FaIcon(
+          FontAwesomeIcons.circleExclamation,
+          size: 60.r,
+          color: secondaryTextColor,
+        ),
         SizedBox(height: 16.h),
         Text(
           "Failed to Load Plans",
           style: TextStyle(
             fontSize: 24.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: textColor,
           ),
         ),
@@ -739,7 +734,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
         SizedBox(height: 24.h),
         ElevatedButton(
           onPressed: () {
-            context.read<SharedBloc>().add(GetSubscriptionPlansEvent());
+            context.read<SubscriptionBloc>().add(GetSubscriptionPlansEvent());
           },
           child: const Text("Retry"),
         ),

@@ -1,8 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -15,16 +19,10 @@ import 'package:nsapp/features/messages/presentation/widgets/sender_appointment_
 import 'package:nsapp/features/messages/presentation/widgets/sender_chat_image_widget.dart';
 import 'package:nsapp/features/messages/presentation/widgets/sender_chat_text_widget.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/core/constants/urls.dart';
-
-import 'package:nsapp/features/shared/presentation/pages/call_page.dart';
-import 'package:nsapp/core/services/consultation_service.dart';
 import 'package:nsapp/core/models/chat.dart';
+import 'package:nsapp/core/models/profile.dart';
 import '../widgets/chat_input_field.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -40,18 +38,38 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   late AnimationController _headerController;
   late Animation<double> _headerAnimation;
+  String? receiverId;
+  
+  Profile _receiver = Profile();
+  List<ChatMessage> _messages = [];
+  bool _isTyping = false;
+  bool _isOnline = false;
+  bool _isLoadingOlder = false;
+  String? _currentSenderId;
 
   @override
   void initState() {
     super.initState();
-    final receiverId = MessageReceiverState.profile.user?.id;
-    final senderId = SuccessGetProfileState.profile.user?.id;
+    
+    _scrollController.addListener(_onScroll);
+
+    // Get initial receiver from Bloc state
+    final messageState = context.read<MessageBloc>().state;
+    if (messageState is MessageReceiverState) {
+      _receiver = messageState.profile;
+    }
+
+    receiverId = _receiver.user?.id;
+    final profileState = context.read<ProfileBloc>().state;
+    if (profileState is SuccessGetProfileState) {
+      _currentSenderId = profileState.profile.user?.id;
+    }
 
     if (receiverId != null) {
-      context.read<MessageBloc>().add(GetMessagesEvent(receiver: receiverId));
-      if (senderId != null) {
+      context.read<MessageBloc>().add(GetMessagesEvent(receiver: receiverId!));
+      if (_currentSenderId != null) {
         context.read<MessageBloc>().add(
-          ConnectWebSocketEvent(sender: senderId, receiver: receiverId),
+          ConnectWebSocketEvent(sender: _currentSenderId!, receiver: receiverId!),
         );
       }
     }
@@ -67,6 +85,21 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _headerController.forward();
   }
 
+  void _onScroll() {
+    if (_scrollController.position.pixels <= _scrollController.position.minScrollExtent + 100 &&
+        !_isLoadingOlder &&
+        _messages.isNotEmpty) {
+      final firstMsg = _messages.first.message;
+      if (firstMsg != null && firstMsg.createdAt != null) {
+        setState(() => _isLoadingOlder = true);
+        context.read<MessageBloc>().add(GetMessagesEvent(
+              receiver: _receiver.user?.id ?? "",
+              before: firstMsg.createdAt!.toUtc().toIso8601String(),
+            ));
+      }
+    }
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -77,35 +110,67 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final receiver = MessageReceiverState.profile;
-
-    return BlocConsumer<MessageBloc, MessageState>(
-      listener: (context, state) {
-        if (state is SuccessGetMessageState ||
-            state is SuccessSendMessageState) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_scrollController.hasClients) {
-              _scrollController.animateTo(
-                _scrollController.position.maxScrollExtent,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-              );
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if (state is SuccessGetProfileState) {
+              final newSenderId = state.profile.user?.id;
+              if (_currentSenderId == null && newSenderId != null) {
+                setState(() => _currentSenderId = newSenderId);
+                final receiverId = _receiver.user?.id;
+                if (receiverId != null) {
+                  context.read<MessageBloc>().add(
+                    ConnectWebSocketEvent(sender: newSenderId, receiver: receiverId),
+                  );
+                }
+              }
             }
-          });
-        } else if (state is MessageImageState) {
-          if (MessageImageState.image != null) {
-            _handleSendImage(MessageImageState.image!);
-          }
-        }
-      },
-      builder: (context, state) {
+          },
+        ),
+        BlocListener<MessageBloc, MessageState>(
+          listener: (context, state) {
+            if (state is SuccessGetMessageState) {
+              final wasLoadingOlder = _isLoadingOlder;
+              setState(() {
+                _messages = state.messages;
+                _isLoadingOlder = false;
+              });
+              if (!wasLoadingOlder) {
+                _scrollToBottom();
+              }
+            } else if (state is SuccessSendMessageState) {
+              _scrollToBottom();
+            } else if (state is FailureGetMessageState) {
+              setState(() => _isLoadingOlder = false);
+            } else if (state is MessageImageState) {
+              if (state.image != null) {
+                _handleSendImage(state.image!);
+              }
+            } else if (state is MessageReceiverState) {
+              setState(() => _receiver = state.profile);
+            } else if (state is ChatStatusState) {
+              setState(() {
+                _isTyping = state.isTyping;
+                _isOnline = state.isOnline;
+              });
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<MessageBloc, MessageState>(
+        buildWhen: (previous, current) =>
+            current is SuccessGetMessageState ||
+            current is LoadingMessageState ||
+            current is FailureGetMessageState,
+        builder: (context, state) {
         return GradientBackground(
           child: Scaffold(
             backgroundColor: Colors.transparent,
             body: SafeArea(
               child: Column(
                 children: [
-                  _buildHeader(context, receiver),
+                  _buildHeader(context),
                   Expanded(child: _buildChatArea(context, state)),
                   _buildInputArea(context),
                 ],
@@ -114,10 +179,23 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           ),
         );
       },
-    );
+    ),
+  );
+}
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
-  Widget _buildHeader(BuildContext context, dynamic receiver) {
+  Widget _buildHeader(BuildContext context) {
     final bgColor = context.appColors.cardBackground;
     final textColor = context.appColors.primaryTextColor;
     final subtitleColor = context.appColors.secondaryTextColor;
@@ -138,17 +216,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           children: [
             IconButton(
               onPressed: () {
-                if (DashboardState.isProvider) {
-                  context.read<ProviderBloc>().add(ProviderBackPressedEvent());
-                } else {
-                  context.read<SeekerBloc>().add(SeekerBackPressedEvent());
-                }
+                context.pop();
               },
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              icon: const FaIcon(FontAwesomeIcons.chevronLeft),
               color: iconColor,
               iconSize: 20.r,
             ),
-            _buildAvatar(receiver),
+            _buildAvatar(_receiver),
             SizedBox(width: 12.w),
             Expanded(
               child: Column(
@@ -156,11 +230,11 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "${receiver.firstName}",
+                    _receiver.firstName ?? 'User',
                     style: TextStyle(
                       color: textColor,
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -170,7 +244,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                         width: 8.r,
                         height: 8.r,
                         decoration: BoxDecoration(
-                          color: ChatStatusState.isOnline
+                          color: _isOnline
                               ? context.appColors.successColor
                               : Colors.grey,
                           shape: BoxShape.circle,
@@ -178,9 +252,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                       ),
                       SizedBox(width: 6.w),
                       Text(
-                        ChatStatusState.isTyping
+                        _isTyping
                             ? "Typing..."
-                            : (ChatStatusState.isOnline ? "Online" : "Offline"),
+                            : (_isOnline ? "Online" : "Offline"),
                         style: TextStyle(color: subtitleColor, fontSize: 12.sp),
                       ),
                     ],
@@ -188,14 +262,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 ],
               ),
             ),
-           
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAvatar(dynamic receiver) {
+  Widget _buildAvatar(Profile receiver) {
     return Container(
       padding: EdgeInsets.all(2.r),
       decoration: BoxDecoration(
@@ -209,38 +282,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             (receiver.profilePictureUrl != null &&
                 receiver.profilePictureUrl != "" &&
                 receiver.profilePictureUrl != "picture")
-            ? NetworkImage(receiver.profilePictureUrl)
+            ? CachedNetworkImageProvider(receiver.profilePictureUrl!)
             : const AssetImage(logo2Assets) as ImageProvider,
       ),
-    );
-  }
-
-  Widget _buildHeaderActions(BuildContext context) {
-    final iconColor = context.appColors.secondaryTextColor;
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildIconButton(
-          Icons.videocam_rounded,
-          () => _handleCall(isVideo: true),
-          iconColor,
-        ),
-        SizedBox(width: 8.w),
-        _buildIconButton(
-          Icons.call_rounded,
-          () => _handleCall(isVideo: false),
-          iconColor,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildIconButton(IconData icon, VoidCallback onTap, Color color) {
-    return IconButton(
-      onPressed: onTap,
-      icon: Icon(icon, color: context.appColors.primaryColor),
-      iconSize: 22.r,
     );
   }
 
@@ -248,57 +292,64 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final emptyTextColor = context.appColors.glassBorder;
     final iconColor = context.appColors.glassBorder;
 
-    if (state is LoadingMessageState) {
+    if (state is LoadingMessageState && _messages.isEmpty) {
       return const LoadingWidget();
     }
-    if (state is FailureGetMessageState) {
+    
+    if (state is FailureGetMessageState && _messages.isEmpty) {
       return Center(
         child: Text(
-          "Failed to load messages",
+          state.message,
           style: TextStyle(color: emptyTextColor),
         ),
       );
     }
 
-    return FutureBuilder<List<ChatMessage>>(
-      future: SuccessGetMessageState.messages,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const LoadingWidget();
-        final messages = snapshot.data!;
-
-        if (messages.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.chat_bubble_outline_rounded,
-                  size: 64.r,
-                  color: iconColor,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  "Start a conversation",
-                  style: TextStyle(color: emptyTextColor, fontSize: 16.sp),
-                ),
-              ],
+    if (_messages.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              FontAwesomeIcons.comment,
+              size: 64.r,
+              color: iconColor,
             ),
-          );
-        }
+            SizedBox(height: 16.h),
+            Text(
+              "Start a conversation",
+              style: TextStyle(color: emptyTextColor, fontSize: 16.sp),
+            ),
+          ],
+        ),
+      );
+    }
 
-        return ListView.builder(
-          controller: _scrollController,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            final chatMessage = messages[index];
-            final isMe =
-                chatMessage.message?.sender ==
-                SuccessGetProfileState.profile.user?.id;
-            return _buildMessageItem(chatMessage, isMe);
-          },
-        );
+    final profileState = context.read<ProfileBloc>().state;
+    String? myId;
+    if (profileState is SuccessGetProfileState) {
+      myId = profileState.profile.user?.id;
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<MessageBloc>().add(GetMessagesEvent(receiver: receiverId!));
+        context.read<ProfileBloc>().add(GetProfileStreamEvent());
+        context.read<ProfileBloc>().add(GetProfileEvent());
+        await Future.delayed(const Duration(seconds: 1));
       },
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        controller: _scrollController,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        itemCount: _messages.length,
+        itemBuilder: (context, index) {
+          final chatMessage = _messages[index];
+          final isMe = chatMessage.message?.sender == myId;
+          return _buildMessageItem(chatMessage, isMe);
+        },
+      ),
+
     );
   }
 
@@ -340,114 +391,234 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     final bool withImage = message.withImage ?? false;
     final bool withImageAndText = message.withImageAndText ?? false;
-    final bool isCalender = message.isCalender ?? false;
     final String contentTxt = message.message ?? "";
     final String mediaUrl = message.mediaUrl ?? "";
     final DateTime createdAt = message.createdAt ?? DateTime.now();
     final String msgId = message.id ?? "";
 
     if (isMe) {
-      if (withImage) {
-        return SenderChatImageWidget(
-          withText: withImageAndText,
-          message: contentTxt,
-          imageUrl: mediaUrl,
-          dateTime: createdAt,
-          onLongPressed: () {},
-        );
-      } else if (isCalender) {
-        return SenderAppointmentChatWidget(
-          chatID: msgId,
-          startTime: message.calenderDate ?? DateTime.now(),
-          appointmentDate: message.calenderDate ?? DateTime.now(),
-          message: contentTxt,
-          from: chatMessage.sender?.user?.id ?? message.sender ?? "",
-          onLongPressed: () {},
-          seekerId: MessageReceiverState.profile.user?.id ?? "",
-        );
-      } else {
-        return SenderChatTextWidget(
-          message: contentTxt,
-          dateTime: createdAt,
-          onLongPressed: () {},
-        );
-      }
+      return FadeInRight(
+        duration: const Duration(milliseconds: 400),
+        child: _buildSenderMessage(withImage, withImageAndText, contentTxt, mediaUrl, createdAt, msgId, message, chatMessage),
+      );
     } else {
-      if (withImage) {
-        return ReceiverChatImageWidget(
-          withText: withImageAndText,
-          message: contentTxt,
-          imageUrl: mediaUrl,
-          dateTime: createdAt,
-        );
-      } else if (isCalender) {
-        return ReceiverAppointmentChatWidget(
-          chatID: msgId,
-          startTime: message.calenderDate ?? DateTime.now(),
-          appointmentDate: message.calenderDate ?? DateTime.now(),
-          message: contentTxt,
-          from: chatMessage.receiver?.user?.id ?? message.sender ?? "",
-        );
-      } else {
-        return ReceiverChatTextWidget(message: contentTxt, dateTime: createdAt);
-      }
+      return FadeInLeft(
+        duration: const Duration(milliseconds: 400),
+        child: _buildReceiverMessage(withImage, withImageAndText, contentTxt, mediaUrl, createdAt, msgId, chatMessage, message),
+      );
     }
   }
 
-  Future<void> _handleCall({required bool isVideo}) async {
-    final senderId = SuccessGetProfileState.profile.user?.id;
-    final receiverId = MessageReceiverState.profile.user?.id;
-    final snackBarBg = context.appColors.cardBackground;
-    final snackBarText = context.appColors.primaryTextColor;
+  void _showMessageOptions(Message message) {
+    final sheetColor = context.appColors.cardBackground;
+    final textColor = context.appColors.primaryTextColor;
 
-    if (senderId == null || receiverId == null) {
-      customAlert(context, AlertType.error, "User information missing");
-      return;
-    }
-
-    final channelName = Helpers.createChatRoom(
-      sender: senderId,
-      receiver: receiverId,
-    );
-
-    Get.snackbar(
-      "Call Initiation",
-      "Joining ${isVideo ? 'Video' : 'Audio'} Call...",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: snackBarBg,
-      colorText: snackBarText,
-      duration: const Duration(seconds: 4),
-      margin: EdgeInsets.all(16.r),
-      borderRadius: 16.r,
-      mainButton: TextButton(
-        onPressed: () => Get.back(),
-        child: Text("Dismiss", style: TextStyle(color: snackBarText)),
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: EdgeInsets.all(24.r),
+        decoration: BoxDecoration(
+          color: sheetColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: context.appColors.glassBorder,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            _buildListTile(
+              icon: FontAwesomeIcons.copy,
+              title: "Copy Text",
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: message.message ?? ""));
+                context.pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Message copied to clipboard")),
+                );
+              },
+              color: textColor,
+            ),
+            if (message.sender == _currentSenderId) ...[
+              _buildListTile(
+                icon: FontAwesomeIcons.penToSquare,
+                title: "Edit Message",
+                onTap: () {
+                  context.pop();
+                  _showEditDialog(message);
+                },
+                color: textColor,
+              ),
+              _buildListTile(
+                icon: FontAwesomeIcons.trash,
+                title: "Delete Message",
+                onTap: () {
+                  context.pop();
+                  _showDeleteConfirmation(message);
+                },
+                color: Colors.redAccent,
+              ),
+            ],
+            SizedBox(height: 16.h),
+          ],
+        ),
       ),
     );
+  }
 
-    final tokenData = await ConsultationService.getRTCToken(
-      channelName: channelName,
+  void _showDeleteConfirmation(Message message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: context.appColors.cardBackground,
+        title: Text("Delete Message", style: TextStyle(color: context.appColors.primaryTextColor)),
+        content: Text("Are you sure you want to delete this message? This action cannot be undone.", 
+          style: TextStyle(color: context.appColors.secondaryTextColor)),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: Text("Cancel", style: TextStyle(color: context.appColors.hintTextColor)),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<MessageBloc>().add(DeleteMessageEvent(message: message));
+              context.pop();
+            },
+            child: const Text("Delete", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
     );
+  }
 
-    if (tokenData != null && tokenData['token'] != null) {
-      Get.to(
-        () => CallPage(
-          appId: tokenData['app_id'] ?? agoraAppId,
-          token: tokenData['token'],
-          channelName: channelName,
-          uid: DashboardState.isProvider ? 1 : 0,
+  void _showEditDialog(Message message) {
+    final controller = TextEditingController(text: message.message);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: context.appColors.cardBackground,
+        title: Text("Edit Message", style: TextStyle(color: context.appColors.primaryTextColor)),
+        content: TextField(
+          controller: controller,
+          maxLines: null,
+          style: TextStyle(color: context.appColors.primaryTextColor),
+          decoration: InputDecoration(
+            hintText: "Enter new message...",
+            hintStyle: TextStyle(color: context.appColors.hintTextColor),
+            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: context.appColors.glassBorder)),
+            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: context.appColors.primaryColor)),
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: Text("Cancel", style: TextStyle(color: context.appColors.hintTextColor)),
+          ),
+          TextButton(
+            onPressed: () {
+              final newText = controller.text.trim();
+              if (newText.isNotEmpty && newText != message.message) {
+                final updatedMessage = message.copyWith(message: newText);
+                context.read<MessageBloc>().add(UpdateMessageEvent(message: updatedMessage));
+              }
+              context.pop();
+            },
+            child: Text("Update", style: TextStyle(color: context.appColors.primaryColor)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListTile({required IconData icon, required String title, required VoidCallback onTap, required Color color}) {
+    return ListTile(
+      leading: Icon(icon, color: color, size: 20.r),
+      title: Text(title, style: TextStyle(color: color, fontSize: 16.sp, fontWeight: FontWeight.w400)),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+    );
+  }
+
+  Widget _buildSenderMessage(bool withImage, bool withImageAndText, String contentTxt, String mediaUrl, DateTime createdAt, String msgId, Message message, ChatMessage chatMessage) {
+    if (withImage) {
+      return SenderChatImageWidget(
+        withText: withImageAndText,
+        message: contentTxt,
+        imageUrl: mediaUrl,
+        dateTime: createdAt,
+        isDelivered: message.isDelivered ?? false,
+        isSeen: message.read ?? false,
+        onLongPressed: () => _showMessageOptions(message),
+      );
+    } else if (message.isCalender ?? false) {
+      return SenderAppointmentChatWidget(
+        chatID: msgId,
+        startTime: message.calenderDate ?? DateTime.now(),
+        appointmentDate: message.calenderDate ?? DateTime.now(),
+        message: contentTxt,
+        from: chatMessage.sender?.user?.id ?? message.sender ?? "",
+        isDelivered: message.isDelivered ?? false,
+        isSeen: message.read ?? false,
+        onLongPressed: () => _showMessageOptions(message),
+        seekerId: _receiver.user?.id ?? "",
       );
     } else {
-      customAlert(context, AlertType.error, "Could not initiate call");
+      return SenderChatTextWidget(
+        message: contentTxt,
+        dateTime: createdAt,
+        isDelivered: message.isDelivered ?? false,
+        isSeen: message.read ?? false,
+        onLongPressed: () => _showMessageOptions(message),
+      );
+    }
+  }
+
+  Widget _buildReceiverMessage(bool withImage, bool withImageAndText, String contentTxt, String mediaUrl, DateTime createdAt, String msgId, ChatMessage chatMessage, Message message) {
+    if (withImage) {
+      return ReceiverChatImageWidget(
+        withText: withImageAndText,
+        message: contentTxt,
+        imageUrl: mediaUrl,
+        dateTime: createdAt,
+      );
+    } else if (message.isCalender ?? false) {
+      return ReceiverAppointmentChatWidget(
+        chatID: msgId,
+        startTime: message.calenderDate ?? DateTime.now(),
+        appointmentDate: message.calenderDate ?? DateTime.now(),
+        message: contentTxt,
+        from: chatMessage.receiver?.user?.id ?? message.sender ?? "",
+      );
+    } else {
+      return ReceiverChatTextWidget(
+        message: contentTxt, 
+        dateTime: createdAt,
+        onLongPressed: () {
+          Clipboard.setData(ClipboardData(text: contentTxt));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Message copied to clipboard")),
+          );
+        },
+      );
     }
   }
 
   void _handleSendMessage() {
     final text = _messageController.text.trim();
     if (text.isNotEmpty) {
-      final receiverId = MessageReceiverState.profile.user?.id;
-      final senderId = SuccessGetProfileState.profile.user?.id;
+      final receiverId = _receiver.user?.id;
+      final profileState = context.read<ProfileBloc>().state;
+      String? senderId;
+      if (profileState is SuccessGetProfileState) {
+        senderId = profileState.profile.user?.id;
+      }
 
       if (receiverId != null && senderId != null) {
         context.read<MessageBloc>().add(
@@ -467,6 +638,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           ),
         );
         _messageController.clear();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Unable to send message: Profile or receiver not found. Please wait a moment.")),
+        );
+        // Attempt to re-fetch profile or re-connect if possible
+        context.read<ProfileBloc>().add(GetProfileEvent());
       }
     }
   }
@@ -476,8 +653,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final sheetColor = context.appColors.cardBackground;
     final textColor = context.appColors.primaryTextColor;
 
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
           color: sheetColor,
@@ -490,7 +669,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               "Send Image",
               style: TextStyle(
                 fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: textColor,
               ),
             ),
@@ -498,14 +677,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildOptionButton(Icons.camera_alt_rounded, "Camera", () {
-                  Get.back();
+                _buildOptionButton(FontAwesomeIcons.camera, "Camera", () {
+                  context.pop();
                   context.read<MessageBloc>().add(
                     ChooseMessageImageFromCameraEvent(),
                   );
                 }, isDark),
-                _buildOptionButton(Icons.photo_library_rounded, "Gallery", () {
-                  Get.back();
+                _buildOptionButton(FontAwesomeIcons.images, "Gallery", () {
+                  context.pop();
                   context.read<MessageBloc>().add(
                     ChooseMessageImageFromGalleyEvent(),
                   );
@@ -520,13 +699,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   void _handleSendImage(XFile imageFile) async {
-    final receiverId = MessageReceiverState.profile.user?.id;
-    final senderId = SuccessGetProfileState.profile.user?.id;
+    final receiverId = _receiver.user?.id;
+    final profileState = context.read<ProfileBloc>().state;
+    String? senderId;
+    if (profileState is SuccessGetProfileState) {
+      senderId = profileState.profile.user?.id;
+    }
 
     if (receiverId != null && senderId != null) {
-      // Clear the static image state after getting it
-      MessageImageState.image = null;
-
       try {
         final bytes = await imageFile.readAsBytes();
         final base64Image = base64Encode(bytes);
@@ -576,7 +756,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           SizedBox(height: 8.h),
           Text(
             label,
-            style: TextStyle(color: iconColor, fontWeight: FontWeight.w500, fontSize: 13.sp),
+            style: TextStyle(color: iconColor, fontWeight: FontWeight.w400, fontSize: 13.sp),
           ),
         ],
       ),
@@ -584,15 +764,17 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   void _handleScheduleAppointment() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final sheetColor = context.appColors.cardBackground;
     final textColor = context.appColors.primaryTextColor;
 
     DateTime selectedDate = DateTime.now();
     TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
 
-    Get.bottomSheet(
-      StatefulBuilder(
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
         builder: (context, setSheetState) {
           return Container(
             padding: EdgeInsets.all(24.r),
@@ -610,13 +792,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   "Schedule Appointment",
                   style: TextStyle(
                     fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: textColor,
                   ),
                 ),
                 SizedBox(height: 24.h),
                 _buildPickerRow(
-                  Icons.calendar_month_rounded,
+                  FontAwesomeIcons.calendar,
                   "Date",
                   DateFormat("EEEE, MMM dd").format(selectedDate),
                   () async {
@@ -630,11 +812,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                       setSheetState(() => selectedDate = picked);
                     }
                   },
-                  isDark,
                 ),
                 SizedBox(height: 16.h),
                 _buildPickerRow(
-                  Icons.access_time_rounded,
+                  FontAwesomeIcons.clock,
                   "Start Time",
                   startTime.format(context),
                   () async {
@@ -646,7 +827,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                       setSheetState(() => startTime = picked);
                     }
                   },
-                  isDark,
                 ),
                 SizedBox(height: 32.h),
                 SizedBox(
@@ -654,7 +834,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   child: ElevatedButton(
                     onPressed: () {
                       _submitAppointment(selectedDate, startTime);
-                      Get.back();
+                      context.pop();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.appColors.secondaryColor,
@@ -668,7 +848,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -679,7 +859,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           );
         },
       ),
-      isScrollControlled: true,
     );
   }
 
@@ -688,7 +867,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     String label,
     String value,
     VoidCallback onTap,
-    bool isDark,
   ) {
     final bgColor = context.appColors.glassBorder;
     final textColor = context.appColors.primaryTextColor;
@@ -720,13 +898,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   style: TextStyle(
                     color: textColor,
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
             const Spacer(),
-            Icon(Icons.chevron_right_rounded, color: textColor.withAlpha(100)),
+            FaIcon(FontAwesomeIcons.chevronRight, color: textColor.withAlpha(100)),
           ],
         ),
       ),
@@ -737,8 +915,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     DateTime date,
     TimeOfDay startTime,
   ) {
-    final receiverId = MessageReceiverState.profile.user?.id;
-    final senderId = SuccessGetProfileState.profile.user?.id;
+    final receiverId = _receiver.user?.id;
+    final profileState = context.read<ProfileBloc>().state;
+    String? senderId;
+    if (profileState is SuccessGetProfileState) {
+      senderId = profileState.profile.user?.id;
+    }
 
     if (receiverId != null && senderId != null) {
       final start = DateTime(
@@ -769,3 +951,5 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     }
   }
 }
+
+

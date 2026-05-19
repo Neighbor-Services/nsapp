@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -86,7 +87,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              Icons.calendar_today_rounded,
+                              FontAwesomeIcons.calendar,
                               color: iconColor,
                               size: 18.r,
                             ),
@@ -96,7 +97,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                             "Appointment",
                             style: TextStyle(
                               color: textColor,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               fontSize: 16.sp,
                               letterSpacing: -0.2,
                             ),
@@ -104,7 +105,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                         ],
                       ),
                       PopupMenuButton(
-                        icon: Icon(Icons.more_horiz_rounded, color: iconColor),
+                        icon: FaIcon(FontAwesomeIcons.ellipsis, color: iconColor),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.r),
                         ),
@@ -122,6 +123,10 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                               );
                               return;
                             }
+                            
+                            final state = context.read<ProfileBloc>().state;
+                            final seekerId = state is SuccessGetProfileState ? state.profile.user?.id : null;
+                            
                             context.read<ProviderBloc>().add(
                               AddAppointmentEvent(
                                 appointment: Appointment(
@@ -131,10 +136,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                                   appointmentDate: appointmentDate,
                                   fromUser: from,
                                   fromChat: true,
-                                  seekerId: SuccessGetProfileState
-                                      .profile
-                                      .user
-                                      ?.id, // seeker
+                                  seekerId: seekerId,
                                   providerId: from,
                                   status: "SCHEDULED",
                                   isConsultation: false,
@@ -151,7 +153,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                             child: Row(
                               children: [
                                 Icon(
-                                  Icons.add_to_drive_rounded,
+                                  FontAwesomeIcons.hardDrive,
                                   size: 18.r,
                                   color: secondaryTextColor,
                                 ),
@@ -172,7 +174,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                     child: Divider(color: dividerColor, height: 1.h),
                   ),
                   _buildInfoRow(
-                    Icons.event_available_rounded,
+                    FontAwesomeIcons.calendarCheck,
                     DateFormat("EEEE, MMM dd, yyyy").format(appointmentDate),
                     textColor,
                     secondaryTextColor,
@@ -181,7 +183,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 10.h),
                   _buildInfoRow(
-                    Icons.access_time_rounded,
+                    FontAwesomeIcons.clock,
                     DateFormat.jm().format(startTime),
                     textColor,
                     secondaryTextColor,
@@ -206,13 +208,13 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 4.h, left: 4.w),
+               padding: EdgeInsets.only(top: 4.h, left: 4.w),
               child: Text(
                 DateFormat("HH:mm").format(appointmentDate.toLocal()),
                 style: TextStyle(
                   color: timestampColor,
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -247,7 +249,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
             style: TextStyle(
               color: textColor,
               fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -255,3 +257,5 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
     );
   }
 }
+
+

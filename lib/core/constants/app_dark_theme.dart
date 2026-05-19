@@ -6,6 +6,7 @@ ThemeData providerDarkTheme = ThemeData(
   secondaryHeaderColor: appShadowColor,
   primaryColorLight: appDeepBlueColor1,
   brightness: Brightness.dark,
+  fontFamily: 'FuturaPT',
   textTheme: darkTextTheme,
   scaffoldBackgroundColor: const Color(0xFF13141A),
   extensions: [
@@ -43,3 +44,5 @@ ThemeData seekerDarkTheme = providerDarkTheme.copyWith(
   secondaryHeaderColor: appOrangeColor2,
   primaryColorLight: appLightBlueCard,
 );
+
+

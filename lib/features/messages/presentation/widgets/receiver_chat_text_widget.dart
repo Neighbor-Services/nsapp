@@ -6,10 +6,12 @@ class ReceiverChatTextWidget extends StatelessWidget {
   final String message;
   final DateTime dateTime;
 
+  final VoidCallback? onLongPressed;
   const ReceiverChatTextWidget({
     super.key,
     required this.message,
     required this.dateTime,
+    this.onLongPressed,
   });
 
   @override
@@ -29,7 +31,9 @@ class ReceiverChatTextWidget extends StatelessWidget {
       ),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Column(
+        child: GestureDetector(
+          onLongPress: onLongPressed,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -74,7 +78,7 @@ class ReceiverChatTextWidget extends StatelessWidget {
                 style: TextStyle(
                   color: timestampColor,
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -82,6 +86,8 @@ class ReceiverChatTextWidget extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),);
   }
 }
+
+

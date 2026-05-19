@@ -1,19 +1,22 @@
+import 'package:flutter/services.dart';
+
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/core.dart';
-// import 'package:nsapp/features/provider/presentation/pages/requests_by_service_page.dart';
-// import 'package:nsapp/features/provider/presentation/pages/provider_all_services_page.dart';
+import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_acceptance.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_more_requests_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_search_request_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_targeted_requests_page.dart';
 import 'package:nsapp/features/provider/presentation/widgets/provider_recent_request_widget.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/subscribe_dialog_widget.dart';
-import 'package:nsapp/features/wallet/presentation/pages/wallet_page.dart';
 
 import '../bloc/provider_bloc.dart';
 
@@ -25,17 +28,19 @@ class ProviderHomePage extends StatefulWidget {
 }
 
 class _ProviderHomePageState extends State<ProviderHomePage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  bool _isSubscriptionValid = false;
 
   @override
   void initState() {
     super.initState();
     context.read<ProviderBloc>().add(SearchRequestEvent());
     context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
-    context.read<SharedBloc>().add(GetServicesEvent());
-    context.read<SharedBloc>().add(GetMyWalletEvent());
+    context.read<CommonBloc>().add(GetServicesEvent());
+    context.read<WalletBloc>().add(GetMyWalletEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
 
     _fadeController = AnimationController(
       vsync: this,
@@ -55,218 +60,506 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  Widget _buildAnimatedSection(int index, Widget child) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 400 + (index * 150)),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 50 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      body: BlocConsumer<ProviderBloc, ProviderState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          return GradientBackground(
-            child: SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 800.w),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isLargeScreen ? 32.w : 20.w,
-                        vertical: 20.h,
-                      ),
-                      children: [
-                        SizedBox(height: 24.h),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<SubscriptionBloc, SubscriptionState>(
+            listener: (context, state) {
+              if (state is ValidUserSubscriptionState) {
+                setState(() => _isSubscriptionValid = state.isValid);
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          buildWhen: (previous, current) =>
+              current is SuccessGetProfileState ||
+              current is SuccessGetProfileStreamState ||
+              current is LoadingProfileState ||
+              current is InitialProfileState,
+          builder: (context, profileState) {
+            final profile = profileState.profile;
 
-                        // Performance Dashboard (Replaced Search Hero)
-                        _buildDashboard(context, isLargeScreen),
-                        SizedBox(height: 32.h),
+            return GradientBackground(
+              child: SafeArea(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 800.w),
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<ProviderBloc>().add(SearchRequestEvent());
+                          context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
+                          context.read<CommonBloc>().add(GetServicesEvent());
+                          context.read<WalletBloc>().add(GetMyWalletEvent());
+                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(GetProfileEvent());
+                          context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+                          await Future.delayed(const Duration(seconds: 1));
+                        },
+                        child: ListView(
+                          key: const PageStorageKey('provider_home_list'),
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isLargeScreen ? 32.w : 20.w,
+                            vertical: 20.h,
+                          ),
+                        children: [
+                          _buildAnimatedSection(0, _buildHeader(context)),
+                          SizedBox(height: 16.h),
+                          // _buildAnimatedSection(1, _buildGamificationBar(context, profile)),
+                          // SizedBox(height: 24.h),
 
-                        // Search Bar (Minimalist)
-                        _buildSearchBar(context),
-                        SizedBox(height: 32.h),
-
-                        // Recent Requests Section
-                        _buildSectionHeader(context, "Recent Requests"),
-                        SizedBox(height: 16.h),
-                        SizedBox(
-                          height: 250.h,
-                          child: const ProviderRecentRequestWidget(),
-                        ),
-                        SizedBox(height: 32.h),
-
-                        // // Service Categories Section
-                        // _buildSectionHeader(
-                        //   context,
-                        //   "Your Services",
-                        //   onViewAll: () {
-                        //     context.read<ProviderBloc>().add(
-                        //       NavigateProviderEvent(
-                        //         page: 1,
-                        //         widget: const ProviderAllServicesPage(),
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
-                        // const SizedBox(height: 16),
-                        // _buildServicesGrid(context),
-                        // const SizedBox(height: 32),
-                        _buildSectionHeader(context, "Explore More"),
-                        SizedBox(height: 16.h),
-                        _buildDirectRequestsCard(context),
-                        SizedBox(height: 16.h),
-                        _buildExploreCard(context),
-                        SizedBox(height: 16.h),
-                        if (SuccessGetProfileState
-                                .profile
-                                .preferredPaymentMode !=
-                            'ON_SITE') ...[
-                          _buildWalletCard(context),
+                          // Performance Dashboard
+                          _buildAnimatedSection(2, _buildDashboard(context, isLargeScreen)),
                           SizedBox(height: 32.h),
-                        ],
 
-                        SizedBox(height: 40.h),
-                      ],
+                          // Search Bar
+                          _buildAnimatedSection(1, _buildSearchBar(context)),
+                          SizedBox(height: 32.h),
+
+                          // Recent Requests Section
+                          _buildAnimatedSection(2, Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionHeader(context, "Recent Requests"),
+                              SizedBox(height: 16.h),
+                              SizedBox(
+                                height: 250.h,
+                                child: const ProviderRecentRequestWidget(),
+                              ),
+                            ],
+                          )),
+                          SizedBox(height: 32.h),
+
+                          _buildAnimatedSection(3, Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildSectionHeader(context, "Explore More"),
+                              SizedBox(height: 16.h),
+                              _buildDirectRequestsCard(context),
+                            ],
+                          )),
+                          SizedBox(height: 16.h),
+                          _buildAnimatedSection(4, _buildExploreCard(context)),
+                          SizedBox(height: 16.h),
+                          if (profile?.preferredPaymentMode != 'ON_SITE') ...[
+                            _buildAnimatedSection(5, _buildWalletCard(context)),
+                            SizedBox(height: 32.h),
+                          ],
+
+                          SizedBox(height: 40.h),
+                        ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 
   Widget _buildDashboard(BuildContext context, bool isLargeScreen) {
-    return BlocBuilder<SharedBloc, SharedState>(
-      builder: (context, sharedState) {
+    return BlocBuilder<WalletBloc, WalletState>(
+      builder: (context, walletState) {
         return BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, profileState) {
             return BlocBuilder<ProviderBloc, ProviderState>(
               builder: (context, providerState) {
-                final wallet = SuccessGetMyWalletState.wallet;
-                final profile = SuccessGetProfileState.profile;
+                final wallet = (walletState is SuccessGetMyWalletState)
+                    ? walletState.wallet
+                    : null;
+                
+                Profile? profile = profileState.profile;
 
-                return FutureBuilder<List<RequestAcceptance>>(
-                  future: SuccessGetAcceptRequestState.accepts,
-                  builder: (context, snapshot) {
-                    final bidsCount = snapshot.hasData
-                        ? snapshot.data!.length
-                        : 0;
+                if (profile == null) return const SizedBox.shrink();
 
-                    return SolidContainer(
-                      padding: EdgeInsets.all(24.r),
-                      backgroundColor: context.appColors.primaryColor,
-                      borderRadius: BorderRadius.circular(28.r),
-                      gradient: context.appColors.primaryGradient,
-                      child: Column(
-                        children: [
-                          if (profile.preferredPaymentMode != 'ON_SITE') ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                List<RequestAcceptance> accepts = [];
+                if (providerState is SuccessGetAcceptRequestState) {
+                  accepts = providerState.accepts;
+                }
+                final bidsCount = accepts.length;
+
+                return SolidContainer(
+                  padding: EdgeInsets.all(24.r),
+                  backgroundColor: context.appColors.primaryColor,
+                  borderRadius: BorderRadius.circular(28.r),
+                  gradient: context.appColors.primaryGradient,
+                  child: Column(
+                    children: [
+                      if (profile.preferredPaymentMode != 'ON_SITE') ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "TOTAL BALANCE",
-                                      style: TextStyle(
-                                        color:
-                                            context.appColors.primaryTextColor,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 1.2,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.h),
-                                    Text(
-                                      "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
-                                      style: TextStyle(
-                                        color:
-                                            context.appColors.primaryTextColor,
-                                        fontSize: 32.sp,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  "TOTAL BALANCE",
+                                  style: TextStyle(
+                                    color: context.appColors.primaryTextColor,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.2,
+                                  ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    context.read<ProviderBloc>().add(
-                                      NavigateProviderEvent(
-                                        page: 1,
-                                        widget: const WalletPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 10.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
-                                        width: 1.5.r,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          "WALLET",
-                                          style: TextStyle(
-                                            color:
-                                                context.appColors.primaryColor,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 12.sp,
-                                            letterSpacing: 1.0,
-                                          ),
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        Icon(
-                                          Icons.arrow_forward_ios_rounded,
-                                          size: 10.r,
-                                          color: context.appColors.primaryColor,
-                                        ),
-                                      ],
-                                    ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  "${wallet?.currency ?? 'USD'} ${wallet?.balance?.toStringAsFixed(2) ?? '0.00'}",
+                                  style: TextStyle(
+                                    color: context.appColors.primaryTextColor,
+                                    fontSize: 32.sp,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 24.h),
+                            GestureDetector(
+                              onTap: () {
+                                  context.push("/wallet");
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 10.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: context.appColors.cardBackground,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(
+                                    color: context.appColors.glassBorder,
+                                    width: 1.5.r,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "WALLET",
+                                      style: TextStyle(
+                                        color: context.appColors.primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12.sp,
+                                        letterSpacing: 1.0,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Icon(
+                                      FontAwesomeIcons.chevronRight,
+                                      size: 10.r,
+                                      color: context.appColors.primaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
-                          Row(
-                            children: [
-                              _buildDashboardStat(
-                                "Active Bids",
-                                bidsCount.toString(),
-                                Icons.gavel_rounded,
-                                context.appColors.warningColor,
-                              ),
-                              SizedBox(width: 16.w),
-                              _buildDashboardStat(
-                                "Avg Rating",
-                                profile.averageRating?.toStringAsFixed(1) ??
-                                    "0.0",
-                                Icons.star_rounded,
-                                Colors.yellow,
-                              ),
-                            ],
+                        ),
+                        SizedBox(height: 24.h),
+                      ],
+                      // Removed duplicate _buildGamificationBar
+                      Row(
+                        children: [
+                          _buildDashboardStat(
+                            "Active Bids",
+                            bidsCount.toString(),
+                            FontAwesomeIcons.gavel,
+                            context.appColors.warningColor,
+                          ),
+                          SizedBox(width: 16.w),
+                          _buildDashboardStat(
+                            "Avg Rating",
+                            profile.averageRating?.toStringAsFixed(1) ?? "0.0",
+                            FontAwesomeIcons.star,
+                            Colors.yellow,
                           ),
                         ],
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 );
               },
             );
           },
         );
       },
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    String greeting = "Good Day";
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      greeting = "Good Morning";
+    } else if (hour < 17) {
+      greeting = "Good Afternoon";
+    } else {
+      greeting = "Good Evening";
+    }
+
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => 
+        current is SuccessGetProfileState || 
+        current is SuccessGetProfileStreamState,
+      builder: (context, state) {
+        final profile = state.profile;
+        String name = profile?.firstName ?? "Neighbor";
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "$greeting, $name! 👋",
+                    style: TextStyle(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.bold,
+                      color: context.appColors.primaryTextColor,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  _buildLocationHeader(context),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.mediumImpact();
+                context.push("/notifications");
+              },
+              child: Container(
+                padding: EdgeInsets.all(12.r),
+                decoration: BoxDecoration(
+                  color: context.appColors.cardBackground,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: context.appColors.glassBorder),
+                ),
+                child: Stack(
+                  children: [
+                    FaIcon(FontAwesomeIcons.bell, size: 20.r, color: context.appColors.primaryTextColor),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 8.r,
+                        height: 8.r,
+                        decoration: const BoxDecoration(
+                          color: Colors.redAccent,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLocationHeader(BuildContext context) {
+    return BlocBuilder<LocationBloc, LocationState>(
+      builder: (context, state) {
+        final address = (state.location.city.isNotEmpty)
+            ? "${state.location.city}, ${state.location.state}"
+            : "Locating...";
+        
+        return GestureDetector(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            context.push("/map-location");
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.locationDot,
+                color: context.appColors.primaryColor,
+                size: 12.r,
+              ),
+              SizedBox(width: 6.w),
+              Text(
+                address.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: context.appColors.secondaryTextColor,
+                  letterSpacing: 0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(width: 4.w),
+              Icon(
+                FontAwesomeIcons.chevronDown,
+                size: 10.r,
+                color: context.appColors.secondaryTextColor,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGamificationBar(BuildContext context, Profile? profile) {
+    final streak = profile?.streakCount ?? 0;
+    final score = profile?.neighborScore ?? 500;
+    final level = profile?.level ?? 1;
+
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(16.r),
+          decoration: BoxDecoration(
+            color: context.appColors.cardBackground,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(color: context.appColors.glassBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(20),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildGamificationItem(
+                icon: FontAwesomeIcons.fire,
+                iconColor: Colors.orangeAccent,
+                label: "$streak DAY STREAK",
+                value: "STREAK",
+              ),
+              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+              _buildGamificationItem(
+                icon: FontAwesomeIcons.shieldHeart,
+                iconColor: Colors.blueAccent,
+                label: "NEIGHBOR SCORE",
+                value: "$score",
+              ),
+              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+              _buildGamificationItem(
+                icon: FontAwesomeIcons.bolt,
+                iconColor: Colors.yellowAccent,
+                label: "LVL $level",
+                value: "PROVIDER",
+              ),
+            ],
+          ),
+        ),
+        if (profile != null) ...[
+          SizedBox(height: 12.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "PROGRESS TO NEXT LEVEL",
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.bold,
+                        color: context.appColors.primaryTextColor.withAlpha(180),
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                    Text(
+                      "${(profile.xp ?? 0) % 1000} / 1000 XP",
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.bold,
+                        color: context.appColors.primaryTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6.h),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: LinearProgressIndicator(
+                    value: ((profile.xp ?? 0) % 1000) / 1000,
+                    backgroundColor: Colors.white.withAlpha(40),
+                    valueColor: AlwaysStoppedAnimation<Color>(context.appColors.primaryTextColor),
+                    minHeight: 4.h,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildGamificationItem({
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      children: [
+        FaIcon(icon, color: iconColor, size: 20.r),
+        SizedBox(height: 6.h),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+            color: context.appColors.primaryTextColor,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 8.sp,
+            fontWeight: FontWeight.w600,
+            color: context.appColors.primaryTextColor.withAlpha(150),
+            letterSpacing: 0.5,
+          ),
+        ),
+      ],
     );
   }
 
@@ -307,7 +600,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   style: TextStyle(
                     color: context.appColors.primaryTextColor,
                     fontSize: 15.sp,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
@@ -315,7 +608,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   style: TextStyle(
                     color: context.appColors.hintTextColor,
                     fontSize: 9.sp,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 0.8,
                   ),
                 ),
@@ -335,13 +628,8 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        if (ValidUserSubscriptionState.isValid) {
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderSearchRequestPage(),
-            ),
-          );
+        if (_isSubscriptionValid) {
+          context.push("/provider-search-request");
         } else {
           showDialog(
             context: context,
@@ -359,14 +647,14 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         ),
         child: Row(
           children: [
-            Icon(Icons.search_rounded, color: iconColor),
+            FaIcon(FontAwesomeIcons.magnifyingGlass, color: iconColor),
             SizedBox(width: 16.w),
             Text(
               "FIND YOUR NEXT PROJECT...",
               style: TextStyle(
                 color: hintColor,
                 fontSize: 14.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1.1,
               ),
             ),
@@ -378,7 +666,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.arrow_forward_rounded,
+                FontAwesomeIcons.arrowRight,
                 color: context.appColors.secondaryColor,
                 size: 20.r,
               ),
@@ -403,7 +691,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
           title.toUpperCase(),
           style: TextStyle(
             fontSize: 18.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             color: textColor,
             letterSpacing: 1.2,
           ),
@@ -415,7 +703,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
               "VIEW ALL",
               style: TextStyle(
                 color: textColor.withAlpha(180),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -432,12 +720,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(
-            page: 1,
-            widget: const ProviderTargetedRequestsPage(),
-          ),
-        );
+        context.push("/provider-targeted-requests");
       },
       child: Container(
         padding: EdgeInsets.all(12.r),
@@ -456,7 +739,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
-                Icons.handshake_rounded,
+                FontAwesomeIcons.handshake,
                 color: context.appColors.primaryColor,
                 size: 26.r,
               ),
@@ -470,7 +753,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "DIRECT REQUESTS",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -499,13 +782,8 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        if (ValidUserSubscriptionState.isValid) {
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(
-              page: 1,
-              widget: const ProviderMoreRequestsPage(),
-            ),
-          );
+        if (_isSubscriptionValid) {
+          context.push("/provider-more-requests");
         } else {
           showDialog(
             context: context,
@@ -530,7 +808,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
-                Icons.location_searching_rounded,
+                FontAwesomeIcons.locationCrosshairs,
                 color: context.appColors.primaryColor,
                 size: 26.r,
               ),
@@ -544,7 +822,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "NEARBY OPPORTUNITIES",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -573,9 +851,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
 
     return GestureDetector(
       onTap: () {
-        context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 1, widget: const WalletPage()),
-        );
+        context.push("/wallet");
       },
       child: Container(
         padding: EdgeInsets.all(12.r),
@@ -594,7 +870,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(
-                Icons.account_balance_wallet_rounded,
+                FontAwesomeIcons.wallet,
                 color: context.appColors.primaryColor,
                 size: 26.r,
               ),
@@ -608,7 +884,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                     "FINANCIAL WALLET",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       color: textColor,
                       letterSpacing: 1.0,
                     ),
@@ -630,3 +906,5 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     );
   }
 }
+
+

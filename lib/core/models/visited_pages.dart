@@ -6,3 +6,5 @@ class VisitedPages {
 
   VisitedPages({required this.widget, required this.page});
 }
+
+

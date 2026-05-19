@@ -32,8 +32,9 @@ class GetReviewsEvent extends ProfileEvent {
 
 class AddProfileEvent extends ProfileEvent {
   final Profile profile;
+  final String? profilePicturePath;
 
-  AddProfileEvent({required this.profile});
+  AddProfileEvent({required this.profile, this.profilePicturePath});
 }
 
 class GetProfileEvent extends ProfileEvent {}
@@ -42,9 +43,14 @@ class GetProfileStreamEvent extends ProfileEvent {}
 
 class UpdateProfileEvent extends ProfileEvent {
   final Profile profile;
+  final String? profilePicturePath;
 
-  UpdateProfileEvent({required this.profile});
+  UpdateProfileEvent({required this.profile, this.profilePicturePath});
 }
+
+class GetAuditLogsEvent extends ProfileEvent {}
+
+class LogoutProfileEvent extends ProfileEvent {}
 
 class AddAboutEvent extends ProfileEvent {
   final About about;
@@ -75,3 +81,16 @@ class DeleteAboutUserEvent extends ProfileEvent {
 
   DeleteAboutUserEvent({required this.id});
 }
+
+class InitiateBackgroundCheckEvent extends ProfileEvent {
+  final String paymentIntentId;
+  InitiateBackgroundCheckEvent({required this.paymentIntentId});
+}
+
+class CreateStripeCustomerEvent extends ProfileEvent {
+  final String userId;
+  CreateStripeCustomerEvent({required this.userId});
+}
+
+
+

@@ -18,7 +18,7 @@ abstract class SharedRepository {
 
   Future<Either<Failure, bool>> setSeen(String notificationID);
 
-  Future<Either<Failure, List<NotificationData>>> getMyNotifications();
+  Future<Either<Failure, List<NotificationData>>> getMyNotifications({int page = 1});
 
   Future<Either<Failure, Place>> searchPlace({required String placeID});
 
@@ -36,3 +36,5 @@ abstract class SharedRepository {
   Future<Either<Failure, String>> getStripeDashboardLink();
   Future<Either<Failure, List<LegalDocument>>> getLegalDocument(String docType);
 }
+
+

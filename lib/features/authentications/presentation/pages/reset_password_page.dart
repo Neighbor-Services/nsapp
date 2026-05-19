@@ -1,6 +1,8 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -65,7 +67,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
             );
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                Get.toNamed("/forgot-password");
+                context.push("/forgot-password");
               }
             });
           }
@@ -98,7 +100,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                           child: Row(
                             children: [
                               GestureDetector(
-                                onTap: () => Get.back(),
+                                onTap: () => context.pop(),
                                 child: Container(
                                   padding: EdgeInsets.all(12.r),
                                   decoration: BoxDecoration(
@@ -109,7 +111,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                     ),
                                   ),
                                   child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
+                                    FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 18.r,
                                   ),
@@ -138,7 +140,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                           "RESET PASSWORD",
                                           style: TextStyle(
                                             fontSize: 28.sp,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w500,
                                             color: context.appColors.primaryTextColor,
                                             letterSpacing: 1.2,
                                           ),
@@ -161,17 +163,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                           label: "EMAIL",
                                           allCapsLabel: true,
                                           hintText: "Enter your email",
-                                          prefixIcon: Icons.email_rounded,
+                                          prefixIcon: FontAwesomeIcons.envelope,
                                           keyboardType:
                                               TextInputType.emailAddress,
-                                          validator: (val) {
-                                            if (val!.isEmpty) {
-                                              return "Email is required";
-                                            } else if (!val.isEmail) {
-                                              return "Invalid email format";
-                                            }
-                                            return null;
-                                          },
+                                          validator: (val) => ValidationUtil.validateEmail(val),
                                         ),
                                         SizedBox(height: 32.h),
 
@@ -202,13 +197,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
 
                                 // Back to login
                                 GestureDetector(
-                                  onTap: () => Get.toNamed("/login"),
+                                  onTap: () => context.push("/login"),
                                   child: Text(
                                     "Back to Login",
                                     style: TextStyle(
                                       color: context.appColors.secondaryTextColor,
                                       fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w400,
                                       letterSpacing: 0.5,
                                     ),
                                   ),
@@ -230,3 +225,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
     );
   }
 }
+
+
+
+
+
+

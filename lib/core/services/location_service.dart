@@ -7,32 +7,37 @@ import 'package:nsapp/core/constants/string_constants.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_distance.dart';
+import 'package:nsapp/core/models/user_location.dart';
 
 class LocationService {
   static Future<gmd.DistanceValue> getDistance({
-    required double lat,
-    required double lng,
+    required double sourceLat,
+    required double sourceLng,
+    required double destLat,
+    required double destLng,
   }) async {
     var directions = await gmd.distance(
-      locationData.latitude,
-      locationData.longitude,
-      lat,
-      lng,
+      sourceLat,
+      sourceLng,
+      destLat,
+      destLng,
       googleAPIKey: mapAPIKey,
     );
     return directions;
   }
 
   static Future<Map<String, dynamic>> getFullDirections({
-    required double lat,
-    required double lng,
+    required double sourceLat,
+    required double sourceLng,
+    required double destLat,
+    required double destLng,
   }) async {
     try {
       final results = await gmd.distance(
-        locationData.latitude,
-        locationData.longitude,
-        lat,
-        lng,
+        sourceLat,
+        sourceLng,
+        destLat,
+        destLng,
         googleAPIKey: mapAPIKey,
       );
       
@@ -108,7 +113,7 @@ class LocationService {
     return points;
   }
 
-  static Future<bool> getLocation() async {
+  static Future<UserLocation?> getLocation() async {
     try {
       bool serviceEnabled;
       LocationPermission permission;
@@ -116,7 +121,7 @@ class LocationService {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         debugPrint('Location services are disabled.');
-        return false;
+        return null;
       }
 
       permission = await Geolocator.checkPermission();
@@ -124,7 +129,7 @@ class LocationService {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           debugPrint('Location permissions are denied');
-          return false;
+          return null;
         }
       }
 
@@ -132,25 +137,62 @@ class LocationService {
         debugPrint(
           'Location permissions are permanently denied, we cannot request permissions.',
         );
-        return false;
+        return null;
       }
 
-      locationData = await Geolocator.getCurrentPosition();
+      Position position = await Geolocator.getCurrentPosition();
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
-        locationData.latitude,
-        locationData.longitude,
+        position.latitude,
+        position.longitude,
       );
-      city = placemarks.first.locality.toString();
-      countryState = placemarks.first.administrativeArea.toString();
-      zipCode = placemarks.first.postalCode.toString();
-      country = placemarks.first.country.toString();
-
-      myAddress = '${placemarks.first.locality} ${placemarks.first.country}';
-      return true;
+      
+      final placemark = placemarks.first;
+      
+      return UserLocation(
+        position: position,
+        address: '${placemark.locality} ${placemark.country}',
+        city: placemark.locality.toString(),
+        state: placemark.administrativeArea.toString(),
+        zipCode: placemark.postalCode.toString(),
+        country: placemark.country.toString(),
+      );
     } catch (e) {
       debugPrint(e.toString());
-      return false;
+      return null;
+    }
+  }
+
+  static Future<UserLocation?> getUserLocationFromLatLng(LatLng loc) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        loc.latitude,
+        loc.longitude,
+      );
+      
+      final placemark = placemarks.first;
+      
+      return UserLocation(
+        position: Position(
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          timestamp: DateTime.now(),
+          accuracy: 0,
+          altitude: 0,
+          heading: 0,
+          speed: 0,
+          speedAccuracy: 0,
+          altitudeAccuracy: 0,
+          headingAccuracy: 0,
+        ),
+        address: '${placemark.locality} ${placemark.country}',
+        city: placemark.locality.toString(),
+        state: placemark.administrativeArea.toString(),
+        zipCode: placemark.postalCode.toString(),
+        country: placemark.country.toString(),
+      );
+    } catch (e) {
+      return null;
     }
   }
 
@@ -160,12 +202,8 @@ class LocationService {
         loc.latitude,
         loc.longitude,
       );
-      city = placemarks.first.locality.toString();
-      countryState = placemarks.first.administrativeArea.toString();
-      zipCode = placemarks.first.postalCode.toString();
-      country = placemarks.first.country.toString();
-      myAddress = '${placemarks.first.locality} ${placemarks.first.country}';
-      return myAddress;
+      final placemark = placemarks.first;
+      return '${placemark.locality} ${placemark.country}';
     } catch (e) {
       return "";
     }
@@ -173,12 +211,18 @@ class LocationService {
 
   static Future<RequestDistance> getProfileDistance(
     String uid, {
+    required double sourceLat,
+    required double sourceLng,
     required double lat,
     required double lng,
   }) async {
     try {
-      final distance = await getDistance(lat: lat, lng: lng);
-      // final user = await store.collection("profiles").doc(uid).get();
+      final distance = await getDistance(
+        sourceLat: sourceLat,
+        sourceLng: sourceLng,
+        destLat: lat,
+        destLng: lng,
+      );
 
       return RequestDistance(
         distance: distance.text,
@@ -190,3 +234,5 @@ class LocationService {
     }
   }
 }
+
+

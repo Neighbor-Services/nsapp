@@ -1,4 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/helpers/use_case.dart';
@@ -15,14 +15,14 @@ import 'package:nsapp/features/authentications/domain/usecase/verify_email_use_c
 import 'package:nsapp/features/authentications/domain/usecase/send_email_verification_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/login_with_apple_use_case.dart';
 import 'package:nsapp/features/authentications/domain/usecase/delete_account_use_case.dart';
-import 'package:nsapp/core/services/background_notification_service.dart';
+import 'package:nsapp/core/services/device_token_service.dart';
 
 part 'authentication_event.dart';
 
 part 'authentication_state.dart';
 
 class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+    extends HydratedBloc<AuthenticationEvent, AuthenticationState> {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
   final LogoutUseCase logoutUseCase;
@@ -66,7 +66,7 @@ class AuthenticationBloc
       results.fold(
         (l) {
           isSuccess = false;
-          message = l.massege ?? "Email or password is incorrect";
+          message = l.message ?? "Email or password is incorrect";
         },
         (r) {
           isSuccess = true;
@@ -79,6 +79,9 @@ class AuthenticationBloc
           await secureStorage.write(key: "email", value: event.email);
           await secureStorage.write(key: "password", value: event.password);
         }
+        // Register device token after login
+                DeviceTokenService.tryRegisterStoredToken();
+
         emit(SuccessLoginAuthenticationState());
       } else {
         emit(FailureLoginAuthenticationState(message: message!));
@@ -96,7 +99,6 @@ class AuthenticationBloc
     });
     on<LogoutAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
-      BackgroundNotificationService.disconnectForeground();
       final results = await logoutUseCase.call(event);
       results.fold(
         (l) => emit(FailureLoginAuthenticationState()),
@@ -124,10 +126,18 @@ class AuthenticationBloc
     on<LoginWithGoogleAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
       final results = await loginWithGoogleUseCase.call(event);
+      
+      bool isSuccess = false;
       results.fold(
-        (l) => emit(FailureLoginAuthenticationState()),
-        (r) => emit(SuccessLoginAuthenticationState()),
+        (l) => emit(FailureLoginAuthenticationState(message: "Google login failed.")),
+        (r) => isSuccess = true,
       );
+
+      if (isSuccess) {
+        // Register device token in background
+        DeviceTokenService.tryRegisterStoredToken();
+        emit(SuccessLoginAuthenticationState());
+      }
     });
     on<VerifyEmailOtpEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
@@ -172,10 +182,17 @@ class AuthenticationBloc
     on<LoginWithAppleAuthenticationEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
       final results = await loginWithAppleUseCase.call();
+      
+      bool isSuccess = false;
       results.fold(
-        (l) => emit(FailureLoginAuthenticationState()),
-        (r) => emit(SuccessLoginAuthenticationState()),
+        (l) => emit(FailureLoginAuthenticationState(message: "Apple login failed.")),
+        (r) => isSuccess = true,
       );
+
+      if (isSuccess) {
+        DeviceTokenService.tryRegisterStoredToken();
+        emit(SuccessLoginAuthenticationState());
+      }
     });
     on<DeleteAccountEvent>((event, emit) async {
       emit(LoadingAuthenticationState());
@@ -186,4 +203,47 @@ class AuthenticationBloc
       );
     });
   }
+
+  @override
+  AuthenticationState? fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as String?;
+    switch (type) {
+      case 'SuccessLoginAuthenticationState':
+        return SuccessLoginAuthenticationState();
+      case 'SuccessGoogleRegisterAuthenticationState':
+        return SuccessGoogleRegisterAuthenticationState();
+      case 'SuccessSendEmailVerificationState':
+        return SuccessSendEmailVerificationState();
+      case 'SuccessRegisterAuthenticationState':
+        return SuccessRegisterAuthenticationState();
+      case 'FailureLoginAuthenticationState':
+        return FailureLoginAuthenticationState(message: json['message'] ?? "");
+      default:
+        return InitialAuthenticationState();
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(AuthenticationState state) {
+    if (state is SuccessLoginAuthenticationState) {
+      return {'type': 'SuccessLoginAuthenticationState'};
+    }
+    if (state is SuccessGoogleRegisterAuthenticationState) {
+      return {'type': 'SuccessGoogleRegisterAuthenticationState'};
+    }
+    if (state is SuccessSendEmailVerificationState) {
+      return {'type': 'SuccessSendEmailVerificationState'};
+    }
+    if (state is SuccessRegisterAuthenticationState) {
+      return {'type': 'SuccessRegisterAuthenticationState'};
+    }
+    if (state is FailureLoginAuthenticationState) {
+      return {'type': 'FailureLoginAuthenticationState', 'message': state.message};
+    }
+    return {'type': 'InitialAuthenticationState'};
+  }
 }
+
+
+
+

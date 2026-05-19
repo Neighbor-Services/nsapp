@@ -1,5 +1,7 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/dispute.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -7,11 +9,11 @@ import 'package:nsapp/features/shared/presentation/widget/gradient_background_wi
 import 'package:nsapp/core/core.dart';
 
 class DisputeDetailsPage extends StatelessWidget {
-  const DisputeDetailsPage({super.key});
+  final Dispute dispute;
+  const DisputeDetailsPage({super.key, required this.dispute});
 
   @override
   Widget build(BuildContext context) {
-    final Dispute dispute = Get.arguments as Dispute;
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.hintTextColor;
 
@@ -22,7 +24,7 @@ class DisputeDetailsPage extends StatelessWidget {
           'DISPUTE DETAILS',
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -31,7 +33,7 @@ class DisputeDetailsPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => Get.back(),
+          onTap: () => context.pop(),
           child: Container(
             margin: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
@@ -40,7 +42,7 @@ class DisputeDetailsPage extends StatelessWidget {
               border: Border.all(color: context.appColors.glassBorder),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 18.r,
             ),
@@ -81,7 +83,7 @@ class DisputeDetailsPage extends StatelessWidget {
                               ),
                             ),
                             child: Icon(
-                              Icons.gavel_rounded,
+                              FontAwesomeIcons.gavel,
                               color: _getStatusColor(context, dispute.status),
                               size: 32.r,
                             ),
@@ -109,7 +111,7 @@ class DisputeDetailsPage extends StatelessWidget {
                               style: TextStyle(
                                 color: _getStatusColor(context, dispute.status),
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -123,7 +125,7 @@ class DisputeDetailsPage extends StatelessWidget {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 20.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -142,7 +144,7 @@ class DisputeDetailsPage extends StatelessWidget {
                     children: [
                       _buildInfoRow(
                         context,
-                        Icons.calendar_today_rounded,
+                        FontAwesomeIcons.calendar,
                         'Date Raised',
                         dispute.createdAt != null
                             ? DateFormat.yMMMMd().add_jm().format(
@@ -156,7 +158,7 @@ class DisputeDetailsPage extends StatelessWidget {
                       Divider(color: context.appColors.glassBorder, height: 24),
                       _buildInfoRow(
                         context,
-                        Icons.assignment_rounded,
+                        FontAwesomeIcons.fileLines,
                         'Appointment ID',
                         dispute.appointment ?? 'Global / General',
                         
@@ -227,7 +229,7 @@ class DisputeDetailsPage extends StatelessWidget {
             style: TextStyle(
               color: color ?? secondaryTextColor,
               fontSize: 11.sp,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w500,
               letterSpacing: 1.2,
             ),
           ),
@@ -270,7 +272,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 style: TextStyle(
                   color: secondaryTextColor,
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -279,7 +281,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 style: TextStyle(
                   color: textColor,
                   fontSize: 14.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w500,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -296,3 +298,9 @@ class DisputeDetailsPage extends StatelessWidget {
     
   }
 }
+
+
+
+
+
+

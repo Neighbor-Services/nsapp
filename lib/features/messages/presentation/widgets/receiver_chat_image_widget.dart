@@ -1,10 +1,12 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/core/constants/urls.dart';
 
 class ReceiverChatImageWidget extends StatelessWidget {
@@ -13,12 +15,14 @@ class ReceiverChatImageWidget extends StatelessWidget {
   final bool withText;
   final String imageUrl;
 
+  final VoidCallback? onLongPressed;
   const ReceiverChatImageWidget({
     super.key,
     required this.message,
     required this.dateTime,
     required this.withText,
     required this.imageUrl,
+    this.onLongPressed,
   });
 
   @override
@@ -49,7 +53,9 @@ class ReceiverChatImageWidget extends StatelessWidget {
       ),
       child: Align(
         alignment: Alignment.centerLeft,
-        child: Column(
+        child: GestureDetector(
+          onLongPress: onLongPressed,
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
@@ -73,10 +79,10 @@ class ReceiverChatImageWidget extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      context.read<SharedBloc>().add(
+                      context.read<CommonBloc>().add(
                         SetViewImageEvent(url: finalUrl),
                       );
-                      Get.toNamed("/image");
+                      context.push("/image");
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(18.r),
@@ -108,7 +114,7 @@ class ReceiverChatImageWidget extends StatelessWidget {
                           width: double.infinity,
                           color: errorWidgetColor,
                           child: Icon(
-                            Icons.broken_image_outlined,
+                            FontAwesomeIcons.image,
                             size: 40.r,
                             color: iconColor,
                           ),
@@ -138,13 +144,17 @@ class ReceiverChatImageWidget extends StatelessWidget {
                 style: TextStyle(
                   color: timestampColor,
                   fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
           ],
         ),
       ),
-    );
+    ),);
   }
 }
+
+
+
+

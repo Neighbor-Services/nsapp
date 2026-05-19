@@ -20,3 +20,4 @@ class GetProfileStreamUseCase extends UseCase{
     );
   }
 }
+

@@ -11,3 +11,5 @@ class RequestPayoutUseCase {
     return await repository.requestPayout(amount);
   }
 }
+
+

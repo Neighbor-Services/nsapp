@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/message.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/messages/data/datasource/remote/message_remote_datasource.dart';
@@ -8,13 +7,23 @@ import 'package:nsapp/core/constants/urls.dart';
 import '../../../../../core/models/chat.dart';
 
 class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
+  final Dio _dio;
+
+  MessageRemoteDatasourceImpl(this._dio);
   @override
-  Future<List<ChatMessage>?> getMessages({required String receiver}) async {
+  Future<List<ChatMessage>> getMessages({required String receiver, String? after, String? before}) async {
     try {
       List<ChatMessage> chats = [];
       final String token = await Helpers.getString("token");
-      final response = await dio.get(
-        '$baseMessagesUrl/chat/messages/?conversation=$receiver',
+      String url = '$baseMessagesUrl/chat/messages/?conversation=$receiver';
+      if (after != null) {
+        url += '&after=$after';
+      }
+      if (before != null) {
+        url += '&before=$before';
+      }
+      final response = await _dio.get(
+        url,
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 200) {
@@ -28,18 +37,16 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
         }
         return chats;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<List<Chat>?> getMyMessages() async {
+  Future<List<Chat>> getMyMessages() async {
     try {
       List<Chat> chats = [];
       final String token = await Helpers.getString("token");
-      final response = await dio.get(
+      final response = await _dio.get(
         '$baseMessagesUrl/chat/conversations/',
         options: Options(headers: dioHeaders(token)),
       );
@@ -54,52 +61,54 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
         }
         return chats;
       }
-      return null;
-    } catch (e) {
-      return null;
-    }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
-  Future<Profile?> reloadMessageReceiver(String user) async {
+  Future<Profile> reloadMessageReceiver(String user) async {
     try {
-      final results = <String, dynamic>{};
-      return Profile.fromJson(results);
-    } catch (e) {
-      return null;
-    }
+      final token = await Helpers.getString("token");
+      final response = await _dio.get(
+        "$baseUrl/accounts/profile/?user=$user",
+        options: Options(headers: dioHeaders(token)),
+      );
+      if (response.statusCode == 200) {
+        if (response.data["providers"] is List &&
+            (response.data["providers"] as List).isNotEmpty) {
+          return Profile.fromJson(response.data["providers"][0]);
+        }
+      }
+      throw Exception('Failed');
+    } catch (e) { rethrow; }
   }
 
   @override
   Future<bool> deleteMessage(Message message) async {
     try {
       return true;
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { rethrow; }
   }
 
   @override
   Future<bool> updateMessage(Message message) async {
     try {
       return true;
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { rethrow; }
   }
 
   @override
   Future<bool> setSeen({required String messageID}) async {
     try {
       final String token = await Helpers.getString("token");
-      final response = await dio.post(
+      final response = await _dio.post(
         '$baseMessagesUrl/chat/conversations/set_seen/',
         data: {"receiver_id": messageID},
         options: Options(headers: dioHeaders(token)),
       );
       return response.statusCode == 200;
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { rethrow; }
   }
 }
+
+

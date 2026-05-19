@@ -1,14 +1,12 @@
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_favorite_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_new_request_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+// Removed UI imports since BLoC no longer stores Widgets
 
 class SeekerBottomNavigationBarWidget extends StatelessWidget {
   const SeekerBottomNavigationBarWidget({super.key});
@@ -21,87 +19,99 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
 
     return BlocBuilder<MessageBloc, MessageState>(
       builder: (context, messageState) {
-        return BlocBuilder<SharedBloc, SharedState>(
-          builder: (context, sharedState) {
+        return BlocBuilder<NotificationBloc, NotificationState>(
+          builder: (context, notificationState) {
             return BlocConsumer<SeekerBloc, SeekerState>(
               listener: (context, state) {},
               builder: (context, snapshot) {
-                return Container(
-                  height: 70.h,
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    border: Border.all(color: borderColor, width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: shadowColor,
-                        blurRadius: 15.r,
-                        offset: Offset(0, 8.h),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                return SizedBox(
+                  height: 95.h,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    clipBehavior: Clip.none,
                     children: [
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.home_rounded,
-                        isActive: NavigatorSeekerState.page == 1,
-                        label: "Home",
-                        onTap: () {
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 1,
-                              widget: const SeekerHomePage(),
+                      Container(
+                        height: 70.h,
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        decoration: BoxDecoration(
+                          color: backgroundColor,
+                          border: Border(top: BorderSide(color: borderColor, width: 1)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: shadowColor,
+                              blurRadius: 15.r,
+                              offset: Offset(0, -4.h), // Top shadow
                             ),
-                          );
-                        },
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.house,
+                                isActive: context.read<SeekerBloc>().currentTab == 1,
+                                label: "Home",
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  context.read<SeekerBloc>().add(
+                                    ChangeSeekerTabEvent(tabIndex: 1),
+                                  );
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.bell,
+                                isActive: context.read<SeekerBloc>().currentTab == 2,
+                                badgeCount: (notificationState is SuccessGetMyNotificationsState) ? notificationState.unreadCount : 0,
+                                label: "Notifications",
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  context.read<SeekerBloc>().add(
+                                    ChangeSeekerTabEvent(tabIndex: 2),
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 70.w), // Space for center FAB
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.comment,
+                                isActive: context.read<SeekerBloc>().currentTab == 4,
+                                label: "Chat",
+                                badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  context.read<SeekerBloc>().add(
+                                    ChangeSeekerTabEvent(tabIndex: 4),
+                                  );
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.heart,
+                                label: "Favorites",
+                                isActive: context.read<SeekerBloc>().currentTab == 5,
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  context.read<SeekerBloc>().add(
+                                    ChangeSeekerTabEvent(tabIndex: 5),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.notifications_rounded,
-                        isActive: NavigatorSeekerState.page == 2,
-                        badgeCount: SuccessGetMyNotificationsState.unreadCount,
-                        label: "Notifications",
-                        onTap: () {
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 2,
-                              widget: const NotificationsPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildCenterButton(context),
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.chat_bubble_rounded,
-                        isActive: NavigatorSeekerState.page == 4,
-                        label: "Chat",
-                        badgeCount:
-                            SuccessGetMyMessagesState.unreadMessageCount,
-                        onTap: () {
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 4,
-                              widget: const MyMessagesPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.favorite_rounded,
-                        label: "Favorites",
-                        isActive: NavigatorSeekerState.page == 5,
-                        onTap: () {
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 5,
-                              widget: const SeekerFavoritePage(),
-                            ),
-                          );
-                        },
+                      Positioned(
+                        top: 0,
+                        child: _buildCenterButton(context),
                       ),
                     ],
                   ),
@@ -133,7 +143,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w500),
           ),
           backgroundColor: context.appColors.errorColor,
           child: Column(
@@ -144,10 +154,16 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
                 size: 26.r,
                 color: isActive ? context.appColors.primaryColor : inactiveColor,
               ),
-              
-                SizedBox(height: 4.h),
-                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9.sp)),
-              
+              SizedBox(height: 4.h),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? context.appColors.primaryTextColor : inactiveColor,
+                  fontSize: 9.sp,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
@@ -156,32 +172,43 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
   }
 
   Widget _buildCenterButton(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = context.appColors.primaryColor;
+
     return GestureDetector(
       onTap: () {
+        HapticFeedback.mediumImpact();
         context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(page: 3, widget: const SeekerNewRequestPage()),
+          ChangeSeekerTabEvent(tabIndex: 3),
         );
       },
       child: Container(
-        width: 50.r,
-        height: 50.r,
+        width: 68.r,
+        height: 68.r,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [context.appColors.primaryColor, context.appColors.primaryColor],
-          ),
+          color: isDark ? primary : context.appColors.primaryBackground,
+          border: !isDark
+              ? Border.all(color: primary.withAlpha(100), width: 1.5.r)
+              : null,
           boxShadow: [
             BoxShadow(
-              color: context.appColors.primaryColor.withAlpha(100),
-              blurRadius: 12.r,
+              color: primary.withAlpha(isDark ? 80 : 30),
+              blurRadius: 15.r,
               offset: Offset(0, 4.h),
             ),
           ],
         ),
-        child: Icon(Icons.add_rounded, size: 28.r, color: Colors.white),
+        child: Center(
+          child: Icon(
+            Icons.add_rounded,
+            size: 38.r,
+            color: isDark ? Colors.white : primary,
+          ),
+        ),
       ),
     );
   }
 }
+
+

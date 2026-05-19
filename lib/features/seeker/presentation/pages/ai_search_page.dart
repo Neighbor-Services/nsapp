@@ -1,8 +1,9 @@
+import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/di/injection_container.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/widgets/provider_list_item.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
@@ -44,7 +45,7 @@ class _AISearchPageState extends State<AISearchPage> {
           "AI MAGIC MATCH",
           style: TextStyle(
             color: Colors.white,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 22.sp,
             letterSpacing: 1.0,
           ),
@@ -53,7 +54,7 @@ class _AISearchPageState extends State<AISearchPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: GestureDetector(
-          onTap: () => context.read<SeekerBloc>().add(SeekerBackPressedEvent()),
+          onTap: () => context.pop(),
           child: Container(
             margin: EdgeInsets.all(10.r),
             decoration: BoxDecoration(
@@ -65,7 +66,7 @@ class _AISearchPageState extends State<AISearchPage> {
               ),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 16.r,
             ),
@@ -90,7 +91,7 @@ class _AISearchPageState extends State<AISearchPage> {
                       Row(
                         children: [
                            Icon(
-                            Icons.auto_awesome,
+                            FontAwesomeIcons.wandMagicSparkles,
                             color: context.appColors.secondaryColor,
                             size: 24.r,
                           ),
@@ -99,7 +100,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             "AI ASSISTANT",
                             style: TextStyle(
                               fontSize: 16.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: Colors.white,
                               letterSpacing: 1.5,
                             ),
@@ -113,7 +114,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             "DESCRIBE WHAT YOU NEED...",
                         label: "REQUIREMENTS",
                         allCapsLabel: true,
-                        prefixIcon: Icons.chat_bubble_outline_rounded,
+                        prefixIcon: FontAwesomeIcons.comment,
                         isMultiLine: true,
                       ),
                       SizedBox(height: 20.h),
@@ -136,61 +137,49 @@ class _AISearchPageState extends State<AISearchPage> {
                           ),
                         );
                       } else if (state is SuccessMatchProvidersState) {
-                        return FutureBuilder<List<Profile>>(
-                          future: state.providers,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return  Center(
-                                child: CircularProgressIndicator(
-                                  color: context.appColors.secondaryColor,
+                        final providers = state.providers;
+                        if (providers.isEmpty) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.magnifyingGlass,
+                                  size: 64.r,
+                                  color: Colors.white.withAlpha(60),
                                 ),
-                              );
-                            }
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.search_off_rounded,
-                                      size: 64.r,
-                                      color: Colors.white.withAlpha(60),
-                                    ),
-                                    SizedBox(height: 16.h),
-                                    Text(
-                                      "NO MATCHING PROVIDERS FOUND",
-                                      style: TextStyle(
-                                        color: Colors.white.withAlpha(150),
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 1.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-
-                            return ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.only(
-                                top: 0,
-                                bottom: 40.h,
-                              ),
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (context, index) {
-                                final provider = snapshot.data![index];
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 12.h),
-                                  child: ProviderListItem(
-                                    profile: provider,
-                                    onTap: () {
-                                      // Navigation logic if needed
-                                    },
+                                SizedBox(height: 16.h),
+                                Text(
+                                  "NO MATCHING PROVIDERS FOUND",
+                                  style: TextStyle(
+                                    color: Colors.white.withAlpha(150),
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.0,
                                   ),
-                                );
-                              },
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.only(
+                            top: 0,
+                            bottom: 40.h,
+                          ),
+                          itemCount: providers.length,
+                          itemBuilder: (context, index) {
+                            final provider = providers[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: ProviderListItem(
+                                profile: provider,
+                                onTap: () {
+                                  // Navigation logic if needed
+                                },
+                              ),
                             );
                           },
                         );
@@ -200,7 +189,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.error_outline_rounded,
+                                FontAwesomeIcons.circleExclamation,
                                 color: context.appColors.errorColor,
                                 size: 48.r,
                               ),
@@ -226,7 +215,7 @@ class _AISearchPageState extends State<AISearchPage> {
                                 return Transform.scale(
                                   scale: value,
                                   child: Icon(
-                                    Icons.auto_awesome,
+                                    FontAwesomeIcons.wandMagicSparkles,
                                     size: 80.r,
                                     color: context.appColors.secondaryColor.withAlpha(100),
                                   ),
@@ -240,7 +229,7 @@ class _AISearchPageState extends State<AISearchPage> {
                               style: TextStyle(
                                 color: Colors.white.withAlpha(150),
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.2,
                                 height: 1.5,
                               ),
@@ -259,3 +248,9 @@ class _AISearchPageState extends State<AISearchPage> {
     );
   }
 }
+
+
+
+
+
+

@@ -1,7 +1,11 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 
@@ -22,15 +26,27 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
   late TextEditingController serviceTextController;
   late GlobalKey<FormState> formKey;
   String? serviceType;
+  bool isOthersSelected = false;
+  String selectedServiceName = "";
 
   @override
   void initState() {
-    context.read<SharedBloc>().add(GetServicesEvent());
-    serviceTextController = TextEditingController();
-    serviceType = SuccessGetProfileState.profile.service;
-    userType = SuccessGetProfileState.profile.userType ?? "seeker";
-    formKey = GlobalKey<FormState>();
     super.initState();
+    context.read<CommonBloc>().add(GetServicesEvent());
+    serviceTextController = TextEditingController();
+    formKey = GlobalKey<FormState>();
+
+    final profileState = context.read<ProfileBloc>().state;
+    if (profileState is SuccessGetProfileState) {
+      serviceType = profileState.profile.service;
+      userType = profileState.profile.userType ?? "seeker";
+    }
+  }
+
+  @override
+  void dispose() {
+    serviceTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,20 +56,36 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
     final unselectedBorderColor = context.appColors.glassBorder;
 
     return BlocConsumer<ProfileBloc, ProfileState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        return BlocListener<SharedBloc, SharedState>(
-          listener: (context, sharedState) {
-            if (sharedState is SuccessAddServicesState) {
+      listener: (context, state) {
+        if (state is UserTypeProfileState) {
+          setState(() {
+            userType = state.userType;
+          });
+        }
+        if (state is OtherServiceSelectState) {
+          setState(() {
+            isOthersSelected = state.others;
+          });
+        }
+      },
+      builder: (context, profileState) {
+        return BlocListener<SettingsBloc, SettingsState>(
+          listener: (context, settingsState) {
+            if (settingsState is SuccessChangeUserTypeState) {
               Navigator.pop(context);
-              context.read<SharedBloc>().add(
-                ChangeUserTypeEvent({
-                  "type": userType,
-                  "service": SuccessAddServicesState.id as String,
-                }),
-              );
             }
           },
+          child: BlocListener<CommonBloc, CommonState>(
+            listener: (context, commonState) {
+              if (commonState is SuccessAddServicesState) {
+                context.read<SettingsBloc>().add(
+                  ChangeUserTypeEvent({
+                    "type": userType,
+                    "service": commonState.id ?? "",
+                  }),
+                );
+              }
+            },
           child: TweenAnimationBuilder<double>(
             duration: const Duration(milliseconds: 400),
             tween: Tween(begin: 0.0, end: 1.0),
@@ -90,8 +122,8 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                           color: context.appColors.secondaryColor.withAlpha(30),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child:  Icon(
-                          Icons.swap_horiz_rounded,
+                        child: Icon(
+                          FontAwesomeIcons.rightLeft,
                           color: context.appColors.secondaryColor,
                           size: 24.r,
                         ),
@@ -105,17 +137,17 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                               "Change User Type",
                               style: TextStyle(
                                 fontSize: 22.sp,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 color: textColor,
                                 letterSpacing: -0.5,
                               ),
                             ),
                             Text(
-                              "Switching from ${SuccessGetProfileState.profile.userType?.toUpperCase()}",
+                              "Switching from ${((profileState is SuccessGetProfileState) ? profileState.profile.userType : userType)?.toUpperCase() ?? ""}",
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 color: subtitleColor,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ],
@@ -131,19 +163,15 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                         ? "PROVIDER"
                         : "SEEKER",
                     onValueChanged: (val) {
-                      setState(() {
-                        if (val == "PROVIDER") {
-                          userType = userTypeProvider;
-                          context.read<ProfileBloc>().add(
-                                SetUserTypeEvent(userType: 'provider'),
-                              );
-                        } else {
-                          userType = "seeker";
-                          context.read<ProfileBloc>().add(
-                                SetUserTypeEvent(userType: 'seeker'),
-                              );
-                        }
-                      });
+                      if (val == "PROVIDER") {
+                        context.read<ProfileBloc>().add(
+                              SetUserTypeEvent(userType: 'provider'),
+                            );
+                      } else {
+                        context.read<ProfileBloc>().add(
+                              SetUserTypeEvent(userType: 'seeker'),
+                            );
+                      }
                     },
                     height: 50,
                     radius: 14,
@@ -154,83 +182,91 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     curve: Curves.easeInOut,
                     child: Column(
                       children: [
-                        if (Helpers.isProvider(UserTypeProfileState.userType)) ...[
+                        if (Helpers.isProvider(userType)) ...[
                           SizedBox(height: 32.h),
                           _buildSectionLabel("Specialization", subtitleColor),
                           SizedBox(height: 12.h),
-                          GestureDetector(
-                            onTap: () {
-                              showServiceSelector(
-                                context: context,
-                                services: SuccessGetServicesState.services,
-                                selectedServiceId: serviceType,
-                                onServiceSelected: (serviceId, serviceName) {
-                                  setState(() {
-                                    serviceType = serviceId;
-                                  });
-                                  context.read<ProfileBloc>().add(
-                                    ChooseOtherServiceEvent(others: false),
+                          BlocBuilder<CommonBloc, CommonState>(
+                            builder: (context, commonState) {
+                              final services = (commonState is SuccessGetServicesState) 
+                                  ? commonState.services 
+                                  : <Service>[];
+                              return GestureDetector(
+                                onTap: () {
+                                  showServiceSelector(
+                                    context: context,
+                                    services: services,
+                                    selectedServiceId: serviceType,
+                                    onServiceSelected: (serviceId, serviceName) {
+                                      setState(() {
+                                        serviceType = serviceId;
+                                        selectedServiceName = serviceName;
+                                      });
+                                      context.read<ProfileBloc>().add(
+                                        ChooseOtherServiceEvent(others: false),
+                                      );
+                                    },
+                                    onOthersSelected: () {
+                                      context.read<ProfileBloc>().add(
+                                        ChooseOtherServiceEvent(others: true),
+                                      );
+                                    },
                                   );
                                 },
-                                onOthersSelected: () {
-                                  context.read<ProfileBloc>().add(
-                                    ChooseOtherServiceEvent(others: true),
-                                  );
-                                },
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 18.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: context.appColors.glassBorder,
-                                borderRadius: BorderRadius.circular(16.r),
-                                border: Border.all(
-                                  color: serviceType != null && serviceType != ""
-                                      ? context.appColors.secondaryColor.withAlpha(100)
-                                      : unselectedBorderColor,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.work_rounded,
-                                    color: serviceType != null &&
-                                            serviceType != ""
-                                        ? context.appColors.secondaryColor
-                                        : subtitleColor,
-                                    size: 20.r,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 18.h,
                                   ),
-                                  SizedBox(width: 14.w),
-                                  Expanded(
-                                    child: Text(
-                                      (serviceType == null || serviceType == "")
-                                          ? "Select Service Category"
-                                          : getServiceName(serviceType!),
-                                      style: TextStyle(
-                                        color: serviceType != null &&
-                                                serviceType != ""
-                                            ? textColor
-                                            : subtitleColor,
-                                        fontSize: 16.sp,
-                                        fontWeight: serviceType != null &&
-                                                serviceType != ""
-                                            ? FontWeight.w600
-                                            : FontWeight.normal,
-                                      ),
+                                  decoration: BoxDecoration(
+                                    color: context.appColors.glassBorder,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    border: Border.all(
+                                      color: serviceType != null && serviceType != ""
+                                          ? context.appColors.secondaryColor.withAlpha(100)
+                                          : unselectedBorderColor,
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down_rounded,
-                                    color: subtitleColor,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        FontAwesomeIcons.briefcase,
+                                        color: serviceType != null &&
+                                                serviceType != ""
+                                            ? context.appColors.secondaryColor
+                                            : subtitleColor,
+                                        size: 20.r,
+                                      ),
+                                      SizedBox(width: 14.w),
+                                      Expanded(
+                                        child: Text(
+                                          (serviceType == null || serviceType == "")
+                                              ? "Select Service Category"
+                                              : selectedServiceName,
+                                          style: TextStyle(
+                                            color: serviceType != null &&
+                                                    serviceType != ""
+                                                ? textColor
+                                                : subtitleColor,
+                                            fontSize: 16.sp,
+                                            fontWeight: serviceType != null &&
+                                                    serviceType != ""
+                                                ? FontWeight.w400
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        FontAwesomeIcons.chevronDown,
+                                        color: subtitleColor,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                              );
+                            },
                           ),
-                          if (OtherServiceSelectState.others) ...[
+                          if (isOthersSelected) ...[
                             SizedBox(height: 20.h),
                             Form(
                               key: formKey,
@@ -238,7 +274,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                 controller: serviceTextController,
                                 hintText: "e.g. Home Cleaning, Tutor",
                                 label: "Detail Your Service",
-                                prefixIcon: Icons.edit_note_rounded,
+                                prefixIcon: FontAwesomeIcons.penToSquare,
                                 validator: (val) {
                                   if (val!.isEmpty) {
                                     return "Service name is required";
@@ -255,54 +291,59 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     ),
                   ),
                   SizedBox(height: 40.h),
-                  SolidButton(
-                    label: "Apply Changes",
-                    isPrimary: true,
-                    onPressed: () {
-                      if (userType != "") {
-                        if (OtherServiceSelectState.others) {
-                          if (formKey.currentState!.validate()) {
-                            context.read<SharedBloc>().add(
-                              AddServiceEvent(
-                                model: Service(
-                                  description:
-                                      "Custom user service via Change User Type",
-                                  name: serviceTextController.text.trim(),
-                                ),
-                              ),
-                            );
-                          }
-                        } else {
-                          if (userType == "provider" &&
-                              (serviceType == null || serviceType == "")) {
+                  BlocBuilder<SettingsBloc, SettingsState>(
+                    builder: (context, settingsState) {
+                      return SolidButton(
+                        label: "Apply Changes",
+                        isPrimary: true,
+                        isLoading: settingsState is LoadingSettingsState,
+                        onPressed: () {
+                          if (userType != "") {
+                            if (isOthersSelected) {
+                              if (formKey.currentState!.validate()) {
+                                context.read<CommonBloc>().add(
+                                  AddServiceEvent(
+                                    model: Service(
+                                      description:
+                                          "Custom user service via Change User Type",
+                                      name: serviceTextController.text.trim(),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              if (userType == "provider" &&
+                                  (serviceType == null || serviceType == "")) {
+                                customAlert(
+                                  context,
+                                  AlertType.warning,
+                                  "Please select a service",
+                                );
+                                return;
+                              }
+                              context.read<SettingsBloc>().add(
+                                ChangeUserTypeEvent({
+                                  "type": userType,
+                                  "service": serviceType ?? "",
+                                }),
+                              );
+                            }
+                          } else {
                             customAlert(
                               context,
                               AlertType.warning,
-                              "Please select a service",
+                              "No changes detected",
                             );
-                            return;
                           }
-                          Navigator.pop(context);
-                          context.read<SharedBloc>().add(
-                            ChangeUserTypeEvent({
-                              "type": userType,
-                              "service": serviceType ?? "",
-                            }),
-                          );
-                        }
-                      } else {
-                        customAlert(
-                          context,
-                          AlertType.warning,
-                          "No changes detected",
-                        );
-                      }
+                        },
+                      );
                     },
                   ),
                 ],
               ),
             ),
           ),
+        )
         );
       },
     );
@@ -315,7 +356,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
         label.toUpperCase(),
         style: TextStyle(
           fontSize: 12.sp,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: color.withAlpha(180),
           letterSpacing: 1.2,
         ),
@@ -323,3 +364,5 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
     );
   }
 }
+
+

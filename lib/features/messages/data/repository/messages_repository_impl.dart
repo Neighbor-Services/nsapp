@@ -6,8 +6,8 @@ import 'package:nsapp/features/messages/data/datasource/remote/message_remote_da
 import 'package:nsapp/features/messages/domain/repository/messages_repository.dart';
 
 import '../../../../core/models/chat.dart';
-
 import '../../../../core/services/hive_service.dart';
+import 'package:nsapp/core/helpers/error_handler.dart';
 
 class MessagesRepositoryImpl extends MessagesRepository {
   final MessageRemoteDatasource messageRemoteDatasource;
@@ -17,42 +17,61 @@ class MessagesRepositoryImpl extends MessagesRepository {
 
   @override
   Future<Either<Failure, List<ChatMessage>>> getMessages(
-    String receiver,
-  ) async {
+    String receiver, {
+    String? before,
+  }) async {
     try {
-      // 1. Fetch from remote
+      final cacheBox = hiveService.getBox(HiveService.messageBox);
+      final cacheKey = 'messages_$receiver';
+      final cached = cacheBox.get(cacheKey);
+      
+      List<ChatMessage> cachedMessages = [];
+      if (cached != null) {
+        cachedMessages = List<ChatMessage>.from(cached);
+      }
+
+      String? afterDate;
+      // If we are NOT fetching older messages, fetch only messages AFTER our latest one
+      if (before == null && cachedMessages.isNotEmpty) {
+        final lastMsg = cachedMessages.last.message;
+        if (lastMsg != null && lastMsg.createdAt != null) {
+          afterDate = lastMsg.createdAt!.toUtc().toIso8601String();
+        }
+      }
+
       final results = await messageRemoteDatasource.getMessages(
         receiver: receiver,
+        after: afterDate,
+        before: before,
       );
 
-      if (results != null) {
-        // 2. Update Cache
-        await hiveService
-            .getBox(HiveService.messageBox)
-            .put('messages_$receiver', results);
-        return Right(results);
+      if (results.isNotEmpty) {
+        if (before != null) {
+          // Fetching older messages: prepend them
+          cachedMessages.insertAll(0, results);
+        } else {
+          // Fetching newer messages: append them
+          cachedMessages.addAll(results);
+        }
+        // Deduplicate just in case (based on message ID)
+        final seenIds = <String>{};
+        cachedMessages = cachedMessages.where((m) {
+          final id = m.message?.id;
+          if (id == null) return true;
+          return seenIds.add(id);
+        }).toList();
+        
+        await cacheBox.put(cacheKey, cachedMessages);
       }
-
-      // 3. Fallback to Cache
-      final cached = hiveService
-          .getBox(HiveService.messageBox)
-          .get('messages_$receiver');
-      if (cached != null) {
-        return Right(List<ChatMessage>.from(cached));
-      }
-
-      return Left(
-        Failure(massege: "An error occurred and no cached data found"),
-      );
+      return Right(cachedMessages);
     } catch (e) {
-      // 4. Fallback to Cache on error
       final cached = hiveService
           .getBox(HiveService.messageBox)
           .get('messages_$receiver');
       if (cached != null) {
         return Right(List<ChatMessage>.from(cached));
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -62,30 +81,18 @@ class MessagesRepositoryImpl extends MessagesRepository {
       // 1. Fetch from remote
       final results = await messageRemoteDatasource.getMyMessages();
 
-      if (results != null) {
-        // 2. Update Cache
-        await hiveService
-            .getBox(HiveService.messageBox)
-            .put('my_chats', results);
-        return Right(results);
-      }
-
-      // 3. Fallback to Cache
-      final cached = hiveService.getBox(HiveService.messageBox).get('my_chats');
-      if (cached != null) {
-        return Right(List<Chat>.from(cached));
-      }
-
-      return Left(
-        Failure(massege: "An error occurred and no cached data found"),
-      );
+      // 2. Update Cache
+      await hiveService
+          .getBox(HiveService.messageBox)
+          .put('my_chats', results);
+      return Right(results);
     } catch (e) {
-      // 4. Fallback to Cache on error
+      // 3. Fallback to Cache on error
       final cached = hiveService.getBox(HiveService.messageBox).get('my_chats');
       if (cached != null) {
         return Right(List<Chat>.from(cached));
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -93,12 +100,9 @@ class MessagesRepositoryImpl extends MessagesRepository {
   Future<Either<Failure, Profile>> reloadMessageReceiver(String user) async {
     try {
       final results = await messageRemoteDatasource.reloadMessageReceiver(user);
-      if (results != null) {
-        return Right(results);
-      }
-      return Left(Failure(massege: "An error occurred"));
+      return Right(results);
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -109,9 +113,9 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -122,9 +126,9 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 
@@ -137,9 +141,12 @@ class MessagesRepositoryImpl extends MessagesRepository {
       if (results) {
         return Right(results);
       }
-      return Left(Failure(massege: "An error occurred"));
+      return Left(Failure(message: "An error occurred"));
     } catch (e) {
-      return Left(Failure(massege: "An error occurred"));
+      return Left(ErrorHandler.handle(e));
     }
   }
 }
+
+
+

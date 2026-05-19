@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_directions/google_maps_directions.dart' as gmd;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/constants/urls.dart';
+import 'package:nsapp/core/di/injection_container.dart';
 import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/models/account_link.dart';
 import 'package:nsapp/core/models/customer.dart';
@@ -9,81 +10,38 @@ import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/request_distance.dart';
 import 'package:nsapp/core/models/services_model.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/core/models/user_location.dart';
+import 'package:nsapp/core/services/hive_service.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:dio/dio.dart';
 import '../models/subscription.dart';
 import 'package:nsapp/features/shared/presentation/widget/searchable_service_selector.dart';
-import 'package:get/get.dart';
+
 import 'package:nsapp/core/services/payment_service.dart';
 import 'package:nsapp/core/services/dialog_utils.dart';
 import 'package:nsapp/core/services/location_service.dart';
 import 'package:nsapp/core/utils/media_utils.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nsapp/core/utils/date_utils_helper.dart';
 import 'package:nsapp/core/core.dart';
+
+import 'package:nsapp/core/utils/validation_util.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 export 'package:nsapp/core/services/payment_service.dart';
 export 'package:nsapp/core/services/dialog_utils.dart';
 export 'package:nsapp/core/services/location_service.dart';
 export 'package:nsapp/core/utils/media_utils.dart';
 export 'package:nsapp/core/utils/date_utils_helper.dart';
-
-List<String> specialCharacters = [
-  "\"",
-  "'",
-  "`",
-  "@",
-  "#",
-  "\$",
-  "&",
-  "|",
-  "^",
-  "~",
-  "!",
-  "?",
-  ":",
-  ";",
-  ",",
-  ".",
-  "=",
-  "+",
-  "-",
-  "*",
-  "/",
-  "%",
-  ">",
-  "<",
-  ">=",
-  "<=",
-  "==",
-  "!=",
-  "&&",
-  "||",
-  "++",
-  "--",
-  "<<",
-  ">>",
-  "??",
-  "??=",
-  "[",
-  "]",
-  "{",
-  "}",
-  "(",
-  ")",
-];
+export 'package:nsapp/core/utils/validation_util.dart';
 
 bool containSpecial(String name) {
-  for (int i = 0; i < name.length; i++) {
-    if (specialCharacters.contains(name[i])) return true;
-  }
-  return false;
+  return ValidationUtil.validateName(name) != null;
 }
 
-String getServiceName(String id) {
+String getServiceName(String id, [List<Service> services = const []]) {
   if (id.isEmpty) return id;
-  for (var service in SuccessGetServicesState.services) {
+  for (var service in services) {
     if (service.id == id) return service.name ?? id;
   }
   return id;
@@ -126,15 +84,17 @@ Future<void> showServiceSelector({
     }
   }
   final List<Category> categories = categoriesMap.values.toList();
-  await Get.bottomSheet(
-    SearchableServiceSelector(
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => SearchableServiceSelector(
       services: services,
       categories: categories,
       selectedServiceId: selectedServiceId,
       onServiceSelected: onServiceSelected,
       onOthersSelected: onOthersSelected,
     ),
-    isScrollControlled: true,
   );
 }
 
@@ -197,22 +157,31 @@ allServicesWidget(List<Service> services, BuildContext context) {
       child: CustomTextWidget(
         text: service.name ?? "",
         color: context.appColors.primaryTextColor,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w400,
       ),
     );
   }).toList();
 }
 
 class Helpers {
+  static const _secureStorage = FlutterSecureStorage();
+
   static Future<gmd.DistanceValue> dis({
+    required double sourceLat,
+    required double sourceLng,
     required double lat,
     required double lng,
   }) async {
-    return LocationService.getDistance(lat: lat, lng: lng);
+    return LocationService.getDistance(
+      sourceLat: sourceLat,
+      sourceLng: sourceLng,
+      destLat: lat,
+      destLng: lng,
+    );
   }
 
-  static bool isMyFavorite(String userID) {
-    for (Favorite user in SuccessGetMyFavoritesNoFutureState.profiles) {
+  static bool isMyFavorite(String userID, [List<Favorite> favorites = const []]) {
+    for (Favorite user in favorites) {
       if (user.favoriteUser!.user!.id == userID) return true;
     }
     return false;
@@ -222,24 +191,20 @@ class Helpers {
     return DateUtilsHelper.selectBirthDate(context);
   }
 
-  static Future<void> selectImageFromGallery() async {
+  static Future<XFile?> selectImageFromGallery() async {
     return MediaUtils.selectImageFromGallery();
   }
 
-  static Future<void> selectImagesFromGallery() async {
+  static Future<List<XFile>?> selectImagesFromGallery() async {
     return MediaUtils.selectImagesFromGallery();
   }
 
-  static Future<void> selectImageFromCamera() async {
+  static Future<XFile?> selectImageFromCamera() async {
     return MediaUtils.selectImageFromCamera();
   }
 
-  static Future<bool> getLocation() async {
-    final success = await LocationService.getLocation();
-    if (success) {
-      locController.text = myAddress;
-    }
-    return success;
+  static Future<UserLocation?> getLocation() async {
+    return LocationService.getLocation();
   }
 
   static Future<String> getAddressFromMap(LatLng loc) async {
@@ -260,9 +225,14 @@ class Helpers {
         options: Options(headers: dioHeaders(token)),
       );
       if (response.statusCode == 200) {
-        if (response.data["providers"] is List &&
-            (response.data["providers"] as List).isNotEmpty) {
-          return Profile.fromJson(response.data["providers"][0]);
+        var data = (response.data is List)
+            ? response.data
+            : (response.data is Map 
+                ? (response.data["results"] ?? response.data["providers"]) 
+                : null);
+
+        if (data is List && data.isNotEmpty) {
+          return Profile.fromJson(data[0]);
         }
       }
       return null;
@@ -296,10 +266,18 @@ class Helpers {
 
   static Future<RequestDistance> getProfile(
     String uid, {
+    required double sourceLat,
+    required double sourceLng,
     required double lat,
     required double lng,
   }) async {
-    return LocationService.getProfileDistance(uid, lat: lat, lng: lng);
+    return LocationService.getProfileDistance(
+      uid,
+      sourceLat: sourceLat,
+      sourceLng: sourceLng,
+      lat: lat,
+      lng: lng,
+    );
   }
 
   static Future<String> getToken() async => getString("token");
@@ -318,20 +296,24 @@ class Helpers {
     }
   }
 
-  static Future<void> createStripeCustomer() =>
-      PaymentService.createStripeCustomer();
+  static Future<void> createStripeCustomer({required String userId}) =>
+      PaymentService.createStripeCustomer(userId: userId);
   static Future<CustomerData> getCustomer({String? uid}) =>
       PaymentService.getCustomer(uid: uid);
   static Future<void> createCustomer() => PaymentService.createCustomer();
   static Future<void> updateCustomerEphemeral({
     required String ephKey,
     required String ephKeySecret,
-  }) async {}
+  }) async {
+    // This is typically handled by PaymentService.createCustomerEphemeral()
+    // but can be used for explicit updates if backend requires it.
+    await PaymentService.createCustomerEphemeral();
+  }
 
   static Future<bool> saveBool(String key, bool value) async {
     try {
-      sharedPreferences = await prefs;
-      await sharedPreferences!.setBool(key, value);
+      final box = sl<HiveService>().getBox(HiveService.settingsBox);
+      await box.put(key, value);
       return true;
     } catch (e) {
       return false;
@@ -340,8 +322,7 @@ class Helpers {
 
   static Future<bool> saveString(String key, String value) async {
     try {
-      sharedPreferences = await prefs;
-      await sharedPreferences!.setString(key, value);
+      await _secureStorage.write(key: key, value: value);
       return true;
     } catch (e) {
       return false;
@@ -350,8 +331,11 @@ class Helpers {
 
   static Future<bool> deletePref(String key) async {
     try {
-      sharedPreferences = await prefs;
-      await sharedPreferences!.remove(key);
+      // Clear from Hive if it exists
+      final box = sl<HiveService>().getBox(HiveService.settingsBox);
+      await box.delete(key);
+      // Clear from SecureStorage
+      await _secureStorage.delete(key: key);
       return true;
     } catch (e) {
       return false;
@@ -360,8 +344,8 @@ class Helpers {
 
   static Future<bool> getBool(String key) async {
     try {
-      sharedPreferences = await prefs;
-      return sharedPreferences!.getBool(key) ?? false;
+      final box = sl<HiveService>().getBox(HiveService.settingsBox);
+      return box.get(key) ?? false;
     } catch (e) {
       return false;
     }
@@ -369,8 +353,11 @@ class Helpers {
 
   static Future<String> getString(String key) async {
     try {
-      sharedPreferences = await prefs;
-      return sharedPreferences!.getString(key) ?? "";
+      final secureValue = await _secureStorage.read(key: key);
+      if (secureValue != null && secureValue.isNotEmpty) {
+        return secureValue;
+      }
+      return "";
     } catch (e) {
       return "";
     }
@@ -379,17 +366,58 @@ class Helpers {
   static Future<bool> isAuthenticated() async {
     final token = await getString("token");
     if (token == "") return false;
+
     try {
-      final dio = Dio();
       final response = await dio.get(
         "$baseUrl/accounts/profile/me/",
-        options: Options(headers: dioHeaders(token)),
+        options: Options(
+          headers: dioHeaders(token),
+          sendTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (e is DioException && e.response?.statusCode == 401) {
-        await deletePref("token");
+      if (e is DioException) {
+        if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+          // Access token explicitly invalid — attempt a silent refresh
+          final refreshed = await _tryRefreshToken(dio);
+          if (refreshed) return true;
+          
+          // Refresh also failed: clear both tokens and force login
+          await deletePref("token");
+          await deletePref("refresh_token");
+          return false;
+        }
+        // For other network errors (timeout, no internet), assume authenticated 
+        // if we have a token, and let the BLoC handle the offline state.
+        return true;
       }
+      return false;
+    }
+  }
+
+  /// Attempts to refresh the access token using the stored refresh token.
+  /// Returns true and saves the new access token on success, false otherwise.
+  static Future<bool> _tryRefreshToken(Dio dio) async {
+    try {
+      final refreshToken = await getString("refresh_token");
+      if (refreshToken.isEmpty) return false;
+
+      final response = await dio.post(
+        "$baseUrl/accounts/token/refresh/",
+        data: {"refresh": refreshToken},
+      );
+
+      if (response.statusCode == 200) {
+        final newToken = response.data["access"] as String?;
+        if (newToken != null && newToken.isNotEmpty) {
+          await saveString("token", newToken);
+          return true;
+        }
+      }
+      return false;
+    } catch (_) {
       return false;
     }
   }
@@ -451,9 +479,13 @@ class Payment {
       PaymentService.createMonthlySubscription(context);
   static Future<void> createYealySubscription(BuildContext context) async =>
       PaymentService.createYearlySubscription(context);
-  static Future<void> confirmPayment(BuildContext context) async {}
-  static Future<void> setUpStripeConnectAccount() async =>
-      PaymentService.setUpStripeConnectAccount();
+  static Future<void> confirmPayment(BuildContext context) async {
+    // Confirmation is now typically handled by the Stripe PaymentSheet.
+    // If we need manual confirmation, it would be a call to Stripe.instance.confirmPayment
+    debugPrint("DEBUG: confirmPayment called, assuming PaymentSheet flow.");
+  }
+  static Future<void> setUpStripeConnectAccount(BuildContext context) async =>
+      PaymentService.setUpStripeConnectAccount(context);
   static Future<AccountLink?> createAccountLink() async =>
       PaymentService.createAccountLink();
   static Future<void> payoutUser({
@@ -463,3 +495,5 @@ class Payment {
   }) async =>
       PaymentService.payoutUser(context: context, uid: uid, amount: amount);
 }
+
+

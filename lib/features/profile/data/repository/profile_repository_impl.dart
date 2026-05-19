@@ -5,8 +5,8 @@ import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/core/models/review.dart';
 import 'package:nsapp/features/profile/data/datasource/remote/profile_remote_datasource.dart';
 import 'package:nsapp/features/profile/domain/repository/profile_repository.dart';
-
-import '../../../../core/services/hive_service.dart';
+import 'package:nsapp/core/services/hive_service.dart';
+import 'package:nsapp/core/models/audit_log.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource remoteDataSource;
@@ -15,28 +15,38 @@ class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(this.remoteDataSource, this.hiveService);
 
   @override
-  Future<Either<Failure, bool>> createProfile(Profile profile) async {
+  Future<Either<Failure, List<AuditLog>>> getAuditLogs() async {
     try {
-      final isSuccess = await remoteDataSource.addProfile(profile);
-      if (isSuccess) {
-        return right(true);
-      }
-      return left(Failure(massege: 'Failed to create profile'));
-    } on Exception {
-      return left(Failure(massege: 'Failed to create profile'));
+      final logs = await remoteDataSource.getAuditLogs();
+      return right(logs);
+    } catch (e) {
+      return left(Failure(message: 'Failed to fetch activity history: $e'));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> updateProfile(Profile profile) async {
+  Future<Either<Failure, bool>> createProfile(Profile profile, {String? profilePicturePath}) async {
     try {
-      final isSuccess = await remoteDataSource.updateProfile(profile);
+      final isSuccess = await remoteDataSource.addProfile(profile, profilePicturePath: profilePicturePath);
       if (isSuccess) {
         return right(true);
       }
-      return left(Failure(massege: 'Failed to update profile'));
+      return left(Failure(message: 'Failed to create profile'));
+    } catch (e) {
+      return left(Failure(message: e.toString().replaceAll("Exception: ", "")));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> updateProfile(Profile profile, {String? profilePicturePath}) async {
+    try {
+      final isSuccess = await remoteDataSource.updateProfile(profile, profilePicturePath: profilePicturePath);
+      if (isSuccess) {
+        return right(true);
+      }
+      return left(Failure(message: 'Failed to update profile'));
     } on Exception {
-      return left(Failure(massege: 'Failed to update profile'));
+      return left(Failure(message: 'Failed to update profile'));
     }
   }
 
@@ -62,7 +72,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         return right(List<Profile>.from(cached));
       }
 
-      return left(Failure(massege: 'Profiles not found'));
+      return left(Failure(message: 'Profiles not found'));
     } on Exception {
       // 4. Fallback to Cache on error
       final cached = hiveService
@@ -71,7 +81,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (cached != null) {
         return right(List<Profile>.from(cached));
       }
-      return left(Failure(massege: 'Failed to get profiles'));
+      return left(Failure(message: 'Failed to get profiles'));
     }
   }
 
@@ -97,7 +107,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         return right(cached as Profile);
       }
 
-      return left(Failure(massege: 'Profile not found'));
+      return left(Failure(message: 'Profile not found'));
     } on Exception {
       // 4. Fallback to Cache on error
       final cached = hiveService
@@ -106,7 +116,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (cached != null) {
         return right(cached as Profile);
       }
-      return left(Failure(massege: 'Failed to get profile'));
+      return left(Failure(message: 'Failed to get profile'));
     }
   }
 
@@ -117,9 +127,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (isSuccess) {
         return right(true);
       }
-      return left(Failure(massege: 'Failed to delete profile'));
+      return left(Failure(message: 'Failed to delete profile'));
     } on Exception {
-      return left(Failure(massege: 'Failed to delete profile'));
+      return left(Failure(message: 'Failed to delete profile'));
     }
   }
 
@@ -145,7 +155,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         return Right(cached as Profile);
       }
 
-      return Left(Failure(massege: 'Profile not found'));
+      return Left(Failure(message: 'Profile not found'));
     } on Exception {
       // 4. Fallback to Cache on error
       final cached = hiveService
@@ -154,7 +164,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (cached != null) {
         return Right(cached as Profile);
       }
-      return Left(Failure(massege: 'Failed to get profile'));
+      return Left(Failure(message: 'Failed to get profile'));
     }
   }
 
@@ -165,9 +175,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (isSuccess) {
         return Right(isSuccess);
       }
-      return Left(Failure(massege: 'Failed to delete profile'));
+      return Left(Failure(message: 'Failed to delete profile'));
     } on Exception {
-      return Left(Failure(massege: 'Failed to delete profile'));
+      return Left(Failure(message: 'Failed to delete profile'));
     }
   }
 
@@ -178,9 +188,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (profile != null) {
         return Right(profile);
       }
-      return Left(Failure(massege: 'Profile not found'));
+      return Left(Failure(message: 'Profile not found'));
     } on Exception {
-      return Left(Failure(massege: 'Failed to get profile'));
+      return Left(Failure(message: 'Failed to get profile'));
     }
   }
 
@@ -191,9 +201,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (isSuccess) {
         return Right(isSuccess);
       }
-      return Left(Failure(massege: 'Failed to delete profile'));
+      return Left(Failure(message: 'Failed to delete profile'));
     } on Exception {
-      return Left(Failure(massege: 'Failed to delete profile'));
+      return Left(Failure(message: 'Failed to delete profile'));
     }
   }
 
@@ -206,9 +216,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (results != null) {
         return Right(results);
       }
-      return Left(Failure(massege: 'Profile not found'));
+      return Left(Failure(message: 'Profile not found'));
     } on Exception {
-      return Left(Failure(massege: 'Failed to get profile'));
+      return Left(Failure(message: 'Failed to get profile'));
     }
   }
 
@@ -219,9 +229,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (isSuccess) {
         return right(true);
       }
-      return left(Failure(massege: 'Failed to create profile'));
+      return left(Failure(message: 'Failed to create profile'));
     } on Exception {
-      return left(Failure(massege: 'Failed to create profile'));
+      return left(Failure(message: 'Failed to create profile'));
     }
   }
 
@@ -232,9 +242,25 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (isSuccess) {
         return right(true);
       }
-      return left(Failure(massege: 'Failed to create profile'));
+      return left(Failure(message: 'Failed to create profile'));
     } on Exception {
-      return left(Failure(massege: 'Failed to create profile'));
+      return left(Failure(message: 'Failed to create profile'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String?>> initiateBackgroundCheck(String paymentIntentId) async {
+    try {
+      final url = await remoteDataSource.initiateBackgroundCheck(paymentIntentId);
+      if (url != null) {
+        return Right(url);
+      }
+      return Left(Failure(message: 'Failed to initiate background check'));
+    } on Exception {
+      return Left(Failure(message: 'Failed to initiate background check'));
     }
   }
 }
+
+
+

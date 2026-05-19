@@ -1,20 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/authentications/presentation/bloc/authentication_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_list_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_appointment_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_home_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:nsapp/features/shared/presentation/pages/report_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/settings_page.dart';
-import 'package:nsapp/features/shared/presentation/pages/disputes_list_page.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -29,161 +22,145 @@ class SeekerDrawerWidget extends StatelessWidget {
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.secondaryTextColor;
 
-    return Drawer(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      width: 280.w,
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          border: Border(right: BorderSide(color: borderColor, width: 0.5)),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context, isDark, textColor, secondaryTextColor),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  children: [
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.home_rounded,
-                      title: "Home",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: 1,
-                            widget: SeekerHomePage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isSelected: NavigatorSeekerState.page == 1,
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.description_rounded,
-                      title: "My Requests",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: SeekerRequestPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.calendar_month_rounded,
-                      title: "Calendar",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: SeekerAppointmentPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.view_list_rounded,
-                      title: "Appointments",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: const SeekerAppointmentListPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.gavel_rounded,
-                      title: "Disputes",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: 1,
-                            widget: const DisputesListPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0.h),
-                      child: Divider(
-                        color: context.appColors.glassBorder,
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => 
+        current is SuccessGetProfileState || 
+        current is SuccessGetProfileStreamState,
+      builder: (context, profileState) {
+        final profile = (profileState is SuccessGetProfileState)
+            ? profileState.profile
+            : Profile();
+
+        return BlocBuilder<SeekerBloc, SeekerState>(
+          builder: (context, seekerState) {
+            final currentPage = (seekerState is SeekerTabChangedState)
+                ? seekerState.tabIndex
+                : 1;
+
+            return Drawer(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              width: 280.w,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  border: Border(right: BorderSide(color: borderColor, width: 0.5.w)),
+                ),
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      _buildHeader(context, profile, isDark, textColor, secondaryTextColor),
+                      SizedBox(height: 20.h),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          children: [
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.house,
+                              title: "Home",
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 1));
+                              },
+                              isSelected: currentPage == 1,
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.fileLines,
+                              title: "My Requests",
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.push('/seeker-requests');
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.calendar,
+                              title: "Calendar",
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.push('/seeker-appointments');
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.listUl,
+                              title: "Appointments",
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.push('/seeker-appointment-list');
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.gavel,
+                              title: "Disputes",
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.push('/dispute');
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.h),
+                              child: Divider(
+                                color: context.appColors.glassBorder,
+                              ),
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.gear,
+                              title: "Settings",
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.push('/settings');
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                            _buildDrawerItem(
+                              context,
+                              icon: FontAwesomeIcons.triangleExclamation,
+                              title: "Report Issue",
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.push('/report');
+                              },
+                              isDark: isDark,
+                              textColor: textColor,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.settings_rounded,
-                      title: "Settings",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: SettingsPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                    _buildDrawerItem(
-                      context,
-                      icon: Icons.report_problem_rounded,
-                      title: "Report Issue",
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          NavigateSeekerEvent(
-                            page: NavigatorSeekerState.page,
-                            widget: ReportPage(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      isDark: isDark,
-                      textColor: textColor,
-                    ),
-                  ],
+                      _buildFooter(context, isDark, textColor),
+                    ],
+                  ),
                 ),
               ),
-              _buildFooter(context, isDark, textColor),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _buildHeader(
     BuildContext context,
+    Profile profile,
     bool isDark,
     Color textColor,
     Color secondaryTextColor,
   ) {
-    final profile = SuccessGetProfileState.profile;
     return Container(
       padding: EdgeInsets.all(24.r),
       child: Column(
@@ -213,14 +190,14 @@ class SeekerDrawerWidget extends StatelessWidget {
                       (profile.profilePictureUrl != null &&
                           profile.profilePictureUrl!.isNotEmpty &&
                           !profile.profilePictureUrl!.startsWith("file:///"))
-                      ? NetworkImage(profile.profilePictureUrl!)
+                      ? CachedNetworkImageProvider(profile.profilePictureUrl!)
                       : const AssetImage(logo2Assets) as ImageProvider,
                 ),
               ),
               const Spacer(),
-              _buildIconButton(context, Icons.edit_note_rounded, () {
+              _buildIconButton(context, FontAwesomeIcons.penToSquare, () {
                 Navigator.pop(context);
-                Get.toNamed("/edit-profile");
+                context.push("/edit-profile");
               }, isDark),
             ],
           ),
@@ -230,7 +207,7 @@ class SeekerDrawerWidget extends StatelessWidget {
             style: TextStyle(
               color: textColor,
               fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               letterSpacing: -0.5,
             ),
           ),
@@ -251,7 +228,7 @@ class SeekerDrawerWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.verified_user_rounded,
+                  FontAwesomeIcons.userShield,
                   size: 12.r,
                   color: context.appColors.secondaryColor,
                 ),
@@ -261,7 +238,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                   style: TextStyle(
                     color: context.appColors.secondaryColor,
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     letterSpacing: 1,
                   ),
                 ),
@@ -283,7 +260,7 @@ class SeekerDrawerWidget extends StatelessWidget {
     required Color textColor,
   }) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8.0.h),
+      padding: EdgeInsets.only(bottom: 8.h),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -319,7 +296,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                         ? context.appColors.primaryColor
                         : context.appColors.primaryTextColor,
                     fontSize: 15.sp,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                   ),
                 ),
               ],
@@ -354,7 +331,6 @@ class SeekerDrawerWidget extends StatelessWidget {
   Widget _buildFooter(BuildContext context, bool isDark, Color textColor) {
     final subTextColor = context.appColors.secondaryTextColor;
     final borderColor = context.appColors.glassBorder;
-    final shadowColor = context.appColors.glassBorder;
 
     final dialogBg = context.appColors.primaryBackground;
     return GestureDetector(
@@ -367,19 +343,12 @@ class SeekerDrawerWidget extends StatelessWidget {
               child: Center(
                 child: Container(
                   padding: EdgeInsets.all(24.r),
-                  width: size(context).width * 0.85,
+                  width: MediaQuery.of(context).size.width * 0.85,
                   constraints: BoxConstraints(maxWidth: 400.w),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
                     color: dialogBg,
                     border: Border.all(color: borderColor),
-                    boxShadow: [
-                      BoxShadow(
-                        color: shadowColor,
-                        blurRadius: 20,
-                        offset: Offset(0, 10),
-                      ),
-                    ],
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -391,7 +360,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child:  Icon(
-                          Icons.logout_rounded,
+                          FontAwesomeIcons.rightFromBracket,
                           size: 32.r,
                           color: context.appColors.errorColor,
                         ),
@@ -401,7 +370,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                         "Logout",
                         style: TextStyle(
                           fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: textColor,
                         ),
                       ),
@@ -416,7 +385,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: TextButton(
-                              onPressed: () => Get.back(),
+                              onPressed: () => context.pop(),
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
                                   vertical: 12.h,
@@ -431,7 +400,7 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: subTextColor,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),
@@ -440,20 +409,14 @@ class SeekerDrawerWidget extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () {
-                                context.read<SharedBloc>().add(
+                                context.read<NotificationBloc>().add(
                                   DisconnectNotificationSocketEvent(),
                                 );
                                 context.read<AuthenticationBloc>().add(
                                   LogoutAuthenticationEvent(),
                                 );
-                                SuccessGetProfileState.profile = Profile();
-                                NavigatorSeekerState.widget =
-                                    const SeekerHomePage();
-                                NavigatorSeekerState.page = 1;
-                                NavigatorProviderState.widget =
-                                    const ProviderHomePage();
-                                NavigatorProviderState.page = 1;
-                                Get.offAllNamed("/login");
+                                Navigator.pop(context);
+                                context.go("/login");
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.appColors.errorColor,
@@ -469,8 +432,8 @@ class SeekerDrawerWidget extends StatelessWidget {
                                 "Logout",
                                 style: TextStyle(
                                   fontSize: 16.sp,
-                                  color: context.appColors.errorColor,
-                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ),
@@ -496,14 +459,14 @@ class SeekerDrawerWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.logout_rounded, color: context.appColors.errorColor, size: 20.r),
+            FaIcon(FontAwesomeIcons.rightFromBracket, color: context.appColors.errorColor, size: 20.r),
             SizedBox(width: 12.w),
             Text(
               "Logout",
               style: TextStyle(
                 color: context.appColors.primaryTextColor,
                 fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

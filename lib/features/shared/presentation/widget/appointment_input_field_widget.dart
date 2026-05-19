@@ -44,7 +44,7 @@ class AppointmentInputFieldWidget extends StatelessWidget {
           labelStyle: TextStyle(
             color: labelColor,
             fontSize: 12.sp,
-            fontWeight: allCapsLabel ? FontWeight.w900 : FontWeight.normal,
+            fontWeight: allCapsLabel ? FontWeight.w500 : FontWeight.normal,
             letterSpacing: allCapsLabel ? 0.5 : null,
           ),
           border: InputBorder.none,
@@ -58,3 +58,7 @@ class AppointmentInputFieldWidget extends StatelessWidget {
     );
   }
 }
+
+
+
+

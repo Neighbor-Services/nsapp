@@ -1,12 +1,13 @@
+import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/profile.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
-import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/profile/presentation/pages/about_page.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -26,6 +27,7 @@ class ProvidersByServicePage extends StatefulWidget {
 
 class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
   bool _isLoading = true;
+  List<Profile> _providers = [];
 
   @override
   void initState() {
@@ -38,7 +40,10 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
 
     // Use the existing search logic with category name filter
     context.read<SeekerBloc>().add(
-      SearchProviderEvent(serviceName: widget.serviceName),
+      SearchProviderEvent(
+        serviceName: widget.serviceName,
+        serviceId: widget.serviceId,
+      ),
     );
 
     // Listen for state changes
@@ -62,11 +67,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        context.read<SeekerBloc>().add(
-                          SeekerBackPressedEvent(),
-                        );
-                      },
+                      onTap: () => context.pop(),
                       child: Container(
                         padding: EdgeInsets.all(12.r),
                         decoration: BoxDecoration(
@@ -78,7 +79,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           ),
                         ),
                         child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          FontAwesomeIcons.chevronLeft,
                           color: textColor,
                           size: 20.r,
                         ),
@@ -93,7 +94,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             widget.serviceName.toUpperCase(),
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -103,7 +104,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             "AVAILABLE PROFESSIONALS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
                             ),
@@ -117,68 +118,74 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
 
               // Providers List
               Expanded(
-                child: BlocBuilder<SeekerBloc, SeekerState>(
-                  builder: (context, state) {
-                    if (state is LoadingSeekerState || _isLoading) {
-                      return const Center(child: LoadingWidget());
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<SeekerBloc>().add(
+                          SearchProviderEvent(
+                            serviceName: widget.serviceName,
+                            serviceId: widget.serviceId,
+                          ),
+                        );
+                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                    context.read<ProfileBloc>().add(GetProfileEvent());
+                    await Future.delayed(const Duration(seconds: 1));
+                  },
+                  child: BlocBuilder<SeekerBloc, SeekerState>(
+                    builder: (context, state) {
+                    if (state is SuccessSearchProviderState) {
+                      _providers = state.providers;
                     }
 
-                    if (state is SuccessSearchProviderState) {
-                      return FutureBuilder<List<Profile>>(
-                        future: SuccessSearchProviderState.providers,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(child: LoadingWidget());
-                          }
+                    if ((state is LoadingSeekerState || _isLoading) && _providers.isEmpty) {
+                      return const LoadingWidget();
+                    }
 
-                          final providers = snapshot.data ?? [];
+                    final providers = _providers;
 
-                          if (providers.isEmpty) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.search_off_rounded,
-                                    size: 80.r,
-                                    color: secondaryTextColor.withAlpha(60),
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  Text(
-                                    "No providers found",
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: secondaryTextColor,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    "Try searching for a different service",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: secondaryTextColor.withAlpha(100),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-
-                          return ListView.separated(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 16.h,
+                    if (providers.isEmpty && !(state is LoadingSeekerState || _isLoading)) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.magnifyingGlass,
+                              size: 80.r,
+                              color: secondaryTextColor.withAlpha(60),
                             ),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: providers.length,
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 16.h),
-                            itemBuilder: (context, index) {
-                              final profile = providers[index];
-                              return _buildProviderCard(context, profile);
-                            },
-                          );
+                            SizedBox(height: 16.h),
+                            Text(
+                              "No providers found",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              "Try searching for a different service",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: secondaryTextColor.withAlpha(100),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (providers.isNotEmpty) {
+                      return ListView.separated(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 16.h,
+                        ),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: providers.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 16.h),
+                        itemBuilder: (context, index) {
+                          final profile = providers[index];
+                          return _buildProviderCard(context, profile, index);
                         },
                       );
                     }
@@ -191,36 +198,43 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           color: secondaryTextColor,
                         ),
                       ),
+                    
                     );
                   },
                 ),
               ),
-            ],
+          )],
+          
           ),
         ),
       ),
     );
   }
 
-  Widget _buildProviderCard(BuildContext context, Profile profile) {
+  Widget _buildProviderCard(BuildContext context, Profile profile, int index) {
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.secondaryTextColor;
 
-    return GestureDetector(
-      onTap: () {
-        context.read<SeekerBloc>().add(
-          SetProviderToReviewEvent(
-            provider: profile,
-            providerUserId: profile.user!.id!,
-          ),
-        );
-        context.read<ProfileBloc>().add(
-          AboutUserEvent(userID: profile.user!.id!),
-        );
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(page: 1, widget: AboutPage()),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 100)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
         );
       },
+      child: GestureDetector(
+        onTap: () {
+          context.read<SeekerBloc>().add(
+            SetProviderToReviewEvent(
+              provider: profile,
+              providerUserId: profile.user!.id!,
+            ),
+          );
+          context.push('/portfolio-view', extra: profile);
+        },
       child: SolidContainer(
         padding: EdgeInsets.all(16.r),
         borderWidth: 1.5.r,
@@ -266,7 +280,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                           (profile.firstName ?? "Provider").toUpperCase(),
                           style: TextStyle(
                             fontSize: 15.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: textColor,
                             letterSpacing: 0.5,
                           ),
@@ -276,7 +290,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                       if (profile.isIdentityVerified == true) ...[
                         SizedBox(width: 4.w),
                         Icon(
-                          Icons.verified_rounded,
+                          FontAwesomeIcons.circleCheck,
                           color: context.appColors.infoColor,
                           size: 16.r,
                         ),
@@ -289,14 +303,14 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                     style: TextStyle(
                       color: secondaryTextColor,
                       fontSize: 10.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 0.5,
                     ),
                   ),
                   SizedBox(height: 8.h),
                   Row(
                     children: [
-                      Icon(Icons.star, color: context.appColors.secondaryColor, size: 16.r),
+                      FaIcon(FontAwesomeIcons.star, color: context.appColors.secondaryColor, size: 16.r),
                       SizedBox(width: 4.w),
                       Text(
                         double.parse(
@@ -305,12 +319,12 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         style: TextStyle(
                           color: textColor,
                           fontSize: 12.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       SizedBox(width: 12.w),
                       Icon(
-                        Icons.location_on,
+                        FontAwesomeIcons.locationDot,
                         color: secondaryTextColor,
                         size: 16.r,
                       ),
@@ -333,13 +347,21 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
             ),
             // Arrow Icon
             Icon(
-              Icons.arrow_forward_ios_rounded,
+              FontAwesomeIcons.chevronRight,
               color: context.appColors.glassBorder,
               size: 18.r,
             ),
           ],
         ),
       ),
+    ),
     );
   }
 }
+
+
+
+
+
+
+

@@ -9,8 +9,11 @@ class GetMyNotificationsUseCase extends UseCase {
 
   GetMyNotificationsUseCase(this.repository);
   @override
-  Future<Either<Failure, List<NotificationData>>> call(params) async {
-    final results = await repository.getMyNotifications();
+  Future<Either<Failure, List<NotificationData>>> call(dynamic params) async {
+    final int page = (params is int) ? params : 1;
+    final results = await repository.getMyNotifications(page: page);
     return results.fold((l) => Left(l), (r) => Right(r));
   }
 }
+
+

@@ -1,11 +1,13 @@
+import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/models/about.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -27,11 +29,9 @@ class _AddAboutPageState extends State<AddAboutPage> {
   TextEditingController specificationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController experienceController = TextEditingController();
-  TextEditingController skillsController =
-      TextEditingController(); // Comma separated
+  TextEditingController skillsController = TextEditingController();
   TextEditingController educationController = TextEditingController();
-  TextEditingController languagesController =
-      TextEditingController(); // Comma separated
+  TextEditingController languagesController = TextEditingController();
   GlobalKey<FormState> key = GlobalKey<FormState>();
   String countryCode = "";
   bool isSet = false;
@@ -39,14 +39,16 @@ class _AddAboutPageState extends State<AddAboutPage> {
 
   @override
   void initState() {
-    final userId = SuccessGetProfileState.profile.user?.id;
+    super.initState();
+    // Read profile reactively from ProfileBloc state
+    final profileState = context.read<ProfileBloc>().state;
+    final userId = profileState is SuccessGetProfileState
+        ? profileState.profile.user?.id
+        : null;
     if (userId != null) {
       context.read<ProfileBloc>().add(GetAboutEvent(user: userId));
     }
-    context.read<SharedBloc>().add(GetServicesEvent());
-    // Clear images from previous session
-    ImagesProfileState.images = null;
-    super.initState();
+    context.read<CommonBloc>().add(GetServicesEvent());
   }
 
   @override
@@ -58,7 +60,11 @@ class _AddAboutPageState extends State<AddAboutPage> {
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is SuccessAddAboutState) {
-            final userId = SuccessGetProfileState.profile.user?.id;
+            // Read profile reactively from ProfileBloc state
+            final profileState = context.read<ProfileBloc>().state;
+            final userId = profileState is SuccessGetProfileState
+                ? profileState.profile.user?.id
+                : null;
             if (userId != null) {
               context.read<ProfileBloc>().add(GetAboutEvent(user: userId));
             }
@@ -69,33 +75,30 @@ class _AddAboutPageState extends State<AddAboutPage> {
             );
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                context.read<ProviderBloc>().add(
-                  NavigateProviderEvent(page: 1, widget: ProviderHomePage()),
-                );
+                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
               }
             });
           } else if (state is FailureAddAboutState) {
             customAlert(context, AlertType.error, "Failed To Create Portfolio");
           } else if (state is SuccessGetAboutStreamState) {
-            SuccessGetAboutStreamState.about?.then((aboutData) {
-              if (aboutData.user != null) {
-                isSet = true;
-                aboutID = aboutData.about?.id ?? "";
-              }
-              companyNameController.text = aboutData.about?.name ?? "";
-              addressController.text = aboutData.about?.address ?? "";
-              specificationController.text =
-                  aboutData.about?.specification ?? "";
-              descriptionController.text = aboutData.about?.description ?? "";
-              experienceController.text =
-                  (aboutData.about?.experienceYears ?? 0).toString();
-              skillsController.text = (aboutData.about?.skills ?? []).join(
-                ", ",
-              );
-              educationController.text = aboutData.about?.education ?? "";
-              languagesController.text = (aboutData.about?.languages ?? [])
-                  .join(", ");
-            });
+            final aboutData = state.about;
+            if (aboutData.user != null) {
+              isSet = true;
+              aboutID = aboutData.about?.id ?? "";
+            }
+            companyNameController.text = aboutData.about?.name ?? "";
+            addressController.text = aboutData.about?.address ?? "";
+            specificationController.text =
+                aboutData.about?.specification ?? "";
+            descriptionController.text = aboutData.about?.description ?? "";
+            experienceController.text =
+                (aboutData.about?.experienceYears ?? 0).toString();
+            skillsController.text = (aboutData.about?.skills ?? []).join(
+              ", ",
+            );
+            educationController.text = aboutData.about?.education ?? "";
+            languagesController.text = (aboutData.about?.languages ?? [])
+                .join(", ");
           }
         },
         builder: (context, state) {
@@ -110,44 +113,53 @@ class _AddAboutPageState extends State<AddAboutPage> {
             child: SizedBox.expand(
               child: GradientBackground(
                 child: SafeArea(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                      vertical: 10.h,
-                    ),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 600.w),
-                        child: Form(
-                          key: key,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildHeader(
-                                context,
-                                textColor,
-                                secondaryTextColor,
-                                buttonColor,
-                                borderColor,
-                              ),
-                              SizedBox(height: 32.h),
-                              _buildFormSection(),
-                              SizedBox(height: 24.h),
-                              _buildPortfolioImagesSection(
-                                context,
-                                isDark,
-                                textColor,
-                              ),
-                              SizedBox(height: 48.h),
-                              _buildSaveButton(context),
-                              SizedBox(height: 100.h),
-                            ],
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                      context.read<ProfileBloc>().add(GetProfileEvent());
+                      await Future.delayed(const Duration(seconds: 1));
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24.w,
+                        vertical: 10.h,
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 600.w),
+                          child: Form(
+                            key: key,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildHeader(
+                                  context,
+                                  textColor,
+                                  secondaryTextColor,
+                                  buttonColor,
+                                  borderColor,
+                                ),
+                                SizedBox(height: 32.h),
+                                _buildFormSection(),
+                                SizedBox(height: 24.h),
+                                _buildPortfolioImagesSection(
+                                  context,
+                                  isDark,
+                                  textColor,
+                                  state,
+                                ),
+                                SizedBox(height: 48.h),
+                                _buildSaveButton(context),
+                                SizedBox(height: 100.h),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -168,8 +180,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () =>
-              context.read<ProviderBloc>().add(ProviderBackPressedEvent()),
+          onTap: () => context.pop(),
           child: Container(
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
@@ -178,7 +189,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
               border: Border.all(color: borderColor),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 20.r,
             ),
@@ -187,7 +198,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
         SizedBox(height: 32.h),
         CustomTextWidget(
           text: "PROFESSIONAL PORTFOLIO",
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w500,
           fontSize: 22.sp,
           color: textColor,
           letterSpacing: 1.5,
@@ -197,7 +208,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           text:
               "TELL THE WORLD ABOUT YOUR BUSINESS AND SHOWCASE YOUR BEST WORK.",
           fontSize: 10.sp,
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w500,
           color: secondaryTextColor,
           letterSpacing: 1.0,
         ),
@@ -214,7 +225,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
            CustomTextWidget(
             text: "BUSINESS DETAILS",
             fontSize: 12.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             color: context.appColors.secondaryColor,
             letterSpacing: 1.5,
           ),
@@ -223,7 +234,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: companyNameController,
             hintText: "What's your business or company name?",
             label: "Company / Business Name",
-            prefixIcon: Icons.business_rounded,
+            prefixIcon: FontAwesomeIcons.building,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Company name is required" : null,
           ),
@@ -232,7 +243,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: addressController,
             hintText: "Where is your business located?",
             label: "Company Address",
-            prefixIcon: Icons.location_on_rounded,
+            prefixIcon: FontAwesomeIcons.locationDot,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Address is required" : null,
           ),
@@ -241,7 +252,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: specificationController,
             hintText: "e.g. House Cleaning, Web Development",
             label: "Specialization",
-            prefixIcon: Icons.stars_rounded,
+            prefixIcon: FontAwesomeIcons.star,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Specialization is required" : null,
           ),
@@ -250,7 +261,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: experienceController,
             hintText: "Years of Experience (e.g. 5)",
             label: "Experience (Years)",
-            prefixIcon: Icons.timeline_rounded,
+            prefixIcon: FontAwesomeIcons.timeline,
             keyboardType: TextInputType.number,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Experience is required" : null,
@@ -260,28 +271,28 @@ class _AddAboutPageState extends State<AddAboutPage> {
             controller: skillsController,
             hintText: "e.g. Cleaning, Repair, Cooking (comma separated)",
             label: "Skills",
-            prefixIcon: Icons.handyman_rounded,
+            prefixIcon: FontAwesomeIcons.hammer,
           ),
           SizedBox(height: 20.h),
           SolidTextField(
             controller: languagesController,
             hintText: "e.g. English, Spanish, French (comma separated)",
             label: "Languages",
-            prefixIcon: Icons.translate_rounded,
+            prefixIcon: FontAwesomeIcons.language,
           ),
           SizedBox(height: 20.h),
           SolidTextField(
             controller: educationController,
             hintText: "e.g. BSc in Computer Science, Certified Plumber",
             label: "Education / Certification",
-            prefixIcon: Icons.school_rounded,
+            prefixIcon: FontAwesomeIcons.graduationCap,
           ),
           SizedBox(height: 20.h),
           SolidTextField(
             controller: descriptionController,
             hintText: "Describe your experience and what you offer...",
             label: "Detailed Description",
-            prefixIcon: Icons.notes_rounded,
+            prefixIcon: FontAwesomeIcons.noteSticky,
             isMultiLine: true,
             validator: (val) =>
                 (val?.isEmpty ?? true) ? "Description is required" : null,
@@ -295,6 +306,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
     BuildContext context,
     bool isDark,
     Color textColor,
+    ProfileState state,
   ) {
     return SolidContainer(
       padding: EdgeInsets.all(24.r),
@@ -307,7 +319,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                CustomTextWidget(
                 text: "SHOWCASE IMAGES",
                 fontSize: 12.sp,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 color: context.appColors.secondaryColor,
                 letterSpacing: 1.5,
               ),
@@ -317,15 +329,16 @@ class _AddAboutPageState extends State<AddAboutPage> {
                     SelectImagesFromGalleryEvent(),
                   );
                 },
-                icon: Icon(Icons.add_photo_alternate_rounded, color: textColor),
+                icon: FaIcon(FontAwesomeIcons.image, color: textColor),
                 tooltip: "Add Images",
               ),
             ],
           ),
           SizedBox(height: 16.h),
-          BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, state) {
-              final selectedImages = ImagesProfileState.images;
+          Builder(
+            builder: (context) {
+              // Use reactive state to get images
+              final selectedImages = state is ImagesProfileState ? state.images : null;
               if (selectedImages == null || selectedImages.isEmpty) {
                 return GestureDetector(
                   onTap: () {
@@ -348,7 +361,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.cloud_upload_outlined,
+                          FontAwesomeIcons.cloudArrowUp,
                           color: context.appColors.secondaryTextColor,
                           size: 32.r,
                         ),
@@ -401,7 +414,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.close,
+                                FontAwesomeIcons.xmark,
                                 color: Colors.white,
                                 size: 14.r,
                               ),
@@ -478,7 +491,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
           "PUBLISH PORTFOLIO",
           style: TextStyle(
             fontSize: 16.sp,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             letterSpacing: 1.1,
           ),
         ),
@@ -486,3 +499,5 @@ class _AddAboutPageState extends State<AddAboutPage> {
     );
   }
 }
+
+

@@ -7,3 +7,5 @@ class RequestDistance {
 
   RequestDistance({this.distance, this.profile, this.dis});
 }
+
+

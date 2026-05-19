@@ -1,6 +1,8 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/dispute/dispute_bloc.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/dispute.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -45,7 +47,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
         description: _descriptionController.text,
       );
 
-      context.read<SharedBloc>().add(CreateDisputeEvent(dispute: dispute));
+      context.read<DisputeBloc>().add(CreateDisputeEvent(dispute: dispute));
     }
   }
 
@@ -61,7 +63,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
           'RAISE DISPUTE',
           style: TextStyle(
             color: textColor, 
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 18,
             letterSpacing: 1.2,
           ),
@@ -79,7 +81,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
               border: Border.all(color: context.appColors.glassBorder),
             ),
             child: Icon(
-              Icons.arrow_back_ios_new_rounded,
+              FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 18,
             ),
@@ -87,7 +89,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
         ),
       ),
       body: GradientBackground(
-        child: BlocConsumer<SharedBloc, SharedState>(
+        child: BlocConsumer<DisputeBloc, DisputeState>(
           listener: (context, state) {
             if (state is SuccessCreateDisputeState) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -97,13 +99,8 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                 ),
               );
               Navigator.pop(context);
-            } else if (state is FailureCreateDisputeState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
-                  content: Text('Failed to raise dispute.'),
-                  backgroundColor: context.appColors.errorColor,
-                ),
-              );
+            } else if (state is DisputeFailure) {
+              customAlert(context, AlertType.error, state.message ?? "Error");
             }
           },
           builder: (context, state) {
@@ -130,7 +127,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                               ),
                             ),
                             child:  Icon(
-                              Icons.gavel_rounded,
+                              FontAwesomeIcons.gavel,
                               color: context.appColors.warningColor,
                               size: 28,
                             ),
@@ -144,7 +141,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                                   'RAISE A DISPUTE',
                                   style: TextStyle(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.w900,
+                                    fontWeight: FontWeight.w500,
                                     color: textColor,
                                     letterSpacing: 0.5,
                                   ),
@@ -177,7 +174,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                             'DISPUTE DETAILS',
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.0,
                             ),
@@ -188,7 +185,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                             label: 'REASON FOR DISPUTE',
                             hintText: 'Enter reason',
                             allCapsLabel: true,
-                            prefixIcon: Icons.warning_amber_rounded,
+                            prefixIcon: FontAwesomeIcons.triangleExclamation,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a reason';
@@ -202,7 +199,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                             label: 'DESCRIPTION',
                             hintText: 'Describe the issue in detail',
                             allCapsLabel: true,
-                            prefixIcon: Icons.description_outlined,
+                            prefixIcon: FontAwesomeIcons.fileLines,
                             isMultiLine: true,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -222,7 +219,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                       child: Row(
                         children: [
                           Icon(
-                            Icons.info_outline_rounded,
+                            FontAwesomeIcons.circleInfo,
                             color: context.appColors.infoColor.withAlpha(200),
                             size: 24,
                           ),
@@ -261,3 +258,9 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
     );
   }
 }
+
+
+
+
+
+

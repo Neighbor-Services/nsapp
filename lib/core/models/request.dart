@@ -57,6 +57,9 @@ class Request {
   @HiveField(24)
   String? targetProviderId;
 
+  @HiveField(25)
+  String? paymentMode;
+
   Request({
     this.id,
     this.title,
@@ -83,6 +86,7 @@ class Request {
     this.isFunded,
     this.price,
     this.targetProviderId,
+    this.paymentMode,
   });
 
   Request.fromJson(Map<String, dynamic> json) {
@@ -149,6 +153,7 @@ class Request {
     price = json['price'] != null
         ? double.tryParse(json['price'].toString())
         : null;
+    paymentMode = json['preferred_payment_mode'] ?? json['payment_mode'];
   }
 
   Map<String, dynamic> toJson() {
@@ -164,6 +169,9 @@ class Request {
     data['scheduled_time'] = scheduledTime?.toIso8601String();
     if (targetProviderId != null) {
       data['target_provider'] = targetProviderId;
+    }
+    if (paymentMode != null) {
+      data['preferred_payment_mode'] = paymentMode;
     }
     return data;
   }
@@ -189,3 +197,5 @@ class Request {
     return data;
   }
 }
+
+

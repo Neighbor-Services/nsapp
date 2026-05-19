@@ -1,4 +1,7 @@
 class Failure {
-  final String? massege;
-  Failure({this.massege});
+  final String? message;
+  Failure({this.message});
 }
+
+
+

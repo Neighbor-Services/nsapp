@@ -1,25 +1,31 @@
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/notification.dart' as not;
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_details_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/chat_page.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' hide GetAppointmentsEvent;
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' as provider_bloc show GetAppointmentsEvent;
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' hide GetAppointmentsEvent;
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as seeker_bloc show GetAppointmentsEvent;
-import '../bloc/shared_bloc.dart';
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart'
+    hide GetAppointmentsEvent;
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart'
+    as provider_bloc
+    show GetAppointmentsEvent;
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart'
+    hide GetAppointmentsEvent;
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart'
+    as seeker_bloc
+    show GetAppointmentsEvent;
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/core/models/profile.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -29,14 +35,29 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  Profile? _currentProfile;
+
+  final PagingController<int, not.NotificationData> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(GetMyNotificationsEvent());
+    _pagingController.addPageRequestListener((pageKey) {
+      if (pageKey == 1) {
+        context.read<NotificationBloc>().add(GetMyNotificationsEvent(page: 1));
+      } else {
+        context.read<NotificationBloc>().add(
+          LoadMoreNotificationsEvent(page: pageKey),
+        );
+      }
+    });
+
+    // Get initial profile
+    _currentProfile = context.read<ProfileBloc>().state.profile;
 
     _fadeController = AnimationController(
       vsync: this,
@@ -51,166 +72,241 @@ class _NotificationsPageState extends State<NotificationsPage>
 
   @override
   void dispose() {
+    _pagingController.dispose();
     _fadeController.dispose();
     super.dispose();
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      body: BlocConsumer<SharedBloc, SharedState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          return GradientBackground(
-            child: SafeArea(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 700.w),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isLargeScreen ? 32.w : 20.w,
-                            vertical: 24.h,
-                          ),
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (DashboardState.isProvider) {
-                                    context.read<ProviderBloc>().add(
-                                      ProviderBackPressedEvent(),
-                                    );
-                                  } else {
-                                    context.read<SeekerBloc>().add(
-                                      SeekerBackPressedEvent(),
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(12.r),
-                                  decoration: BoxDecoration(
-                                    color: context.appColors.cardBackground,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    border: Border.all(
-                                      color: context.appColors.glassBorder,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ProfileBloc, ProfileState>(
+            listener: (context, state) {
+              setState(() => _currentProfile = state.profile);
+            },
+          ),
+          BlocListener<NotificationBloc, NotificationState>(
+            listener: (context, state) {
+              if (state is SuccessGetMyNotificationsState) {
+                final isLastPage = state.hasReachedMax;
+                if (isLastPage) {
+                  _pagingController.appendLastPage(
+                    state.notifications
+                        .skip(_pagingController.itemList?.length ?? 0)
+                        .toList(),
+                  );
+                } else {
+                  final nextPageKey = state.currentPage + 1;
+                  final newItems = state.notifications
+                      .skip(_pagingController.itemList?.length ?? 0)
+                      .toList();
+                  _pagingController.appendPage(newItems, nextPageKey);
+                }
+              } else if (state is NotificationFailure) {
+                _pagingController.error = state.message;
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, settingsState) {
+            return BlocBuilder<NotificationBloc, NotificationState>(
+              builder: (context, state) {
+                return GradientBackground(
+                  child: SafeArea(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 700.w),
+                        child: FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: RefreshIndicator(
+                            onRefresh: () async {
+                              _pagingController.refresh();
+                              context.read<ProfileBloc>().add(
+                                GetProfileStreamEvent(),
+                              );
+                              context.read<ProfileBloc>().add(
+                                GetProfileEvent(),
+                              );
+                            },
+                            child: CustomScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              slivers: [
+                                SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isLargeScreen ? 32.w : 20.w,
+                                      vertical: 24.h,
                                     ),
-                                  ),
-                                  child: Icon(
-                                    Icons.arrow_back_ios_new_rounded,
-                                    color: context.appColors.primaryTextColor,
-                                    size: 20.r,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 16.w),
-                              Text(
-                                "NOTIFICATIONS",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w900,
-                                  color: context.appColors.primaryTextColor,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Expanded(
-                          child: FutureBuilder<List<not.NotificationData>>(
-                            future:
-                                SuccessGetMyNotificationsState.notifications,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.isNotEmpty) {
-                                  return ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    padding: EdgeInsets.only(
-                                      left: isLargeScreen ? 32.w : 16.w,
-                                      right: isLargeScreen ? 32.w : 16.w,
-                                      bottom: 24.h,
-                                    ),
-                                    itemCount: snapshot.data!.length,
-                                    itemBuilder: (context, index) {
-                                      return _buildNotificationCard(
-                                        context,
-                                        snapshot.data![index],
-                                        index,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  return Center(
-                                    child: Container(
-                                    padding: EdgeInsets.all(40.r),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(24.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
-                                      ),
-                                    ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(20.r),
+                                    child: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (Navigator.of(
+                                              context,
+                                            ).canPop()) {
+                                              context.pop();
+                                            } else {
+                                              if (settingsState.isProvider) {
+                                                context
+                                                    .read<ProviderBloc>()
+                                                    .add(
+                                                      ChangeProviderTabEvent(
+                                                        tabIndex: 1,
+                                                      ),
+                                                    );
+                                              } else {
+                                                context.read<SeekerBloc>().add(
+                                                  ChangeSeekerTabEvent(
+                                                    tabIndex: 1,
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(12.r),
                                             decoration: BoxDecoration(
-                                              color: context.appColors.glassBorder,
-                                              shape: BoxShape.circle,
+                                              color: context
+                                                  .appColors
+                                                  .cardBackground,
+                                              borderRadius:
+                                                  BorderRadius.circular(12.r),
+                                              border: Border.all(
+                                                color: context
+                                                    .appColors
+                                                    .glassBorder,
+                                              ),
                                             ),
                                             child: Icon(
-                                              Icons.notifications_off_rounded,
-                                              size: 50.r,
-                                              color: context.appColors.glassBorder,
+                                              FontAwesomeIcons.chevronLeft,
+                                              color: context
+                                                  .appColors
+                                                  .primaryTextColor,
+                                              size: 20.r,
                                             ),
                                           ),
-                                          SizedBox(height: 24.h),
-                                          Text(
-                                            "NO NOTIFICATIONS YET",
-                                            style: TextStyle(
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w900,
-                                              color: context.appColors.glassBorder,
-                                              letterSpacing: 1.0,
-                                            ),
+                                        ),
+                                        SizedBox(width: 16.w),
+                                        Text(
+                                          "NOTIFICATIONS",
+                                          style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: context
+                                                .appColors
+                                                .primaryTextColor,
+                                            letterSpacing: 1.2,
                                           ),
-                                          SizedBox(height: 12.h),
-                                          Text(
-                                            "You'll see your notifications here\nas soon as they arrive.",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: context.appColors.glassBorder,
-                                              height: 1.5,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                }
-                              } else {
-                                return const Center(child: LoadingWidget());
-                              }
-                            },
+                                  ),
+                                ),
+                                SliverPadding(
+                                  padding: EdgeInsets.only(
+                                    left: isLargeScreen ? 32.w : 16.w,
+                                    right: isLargeScreen ? 32.w : 16.w,
+                                    bottom: 24.h,
+                                  ),
+                                  sliver: PagedSliverList<int, not.NotificationData>(
+                                    pagingController: _pagingController,
+                                    builderDelegate:
+                                        PagedChildBuilderDelegate<
+                                          not.NotificationData
+                                        >(
+                                          itemBuilder: (context, item, index) =>
+                                              _buildNotificationCard(
+                                                context,
+                                                item,
+                                                index,
+                                              ),
+                                          firstPageProgressIndicatorBuilder:
+                                              (_) => const ListSkeletonLoader(),
+                                          newPageProgressIndicatorBuilder:
+                                              (_) => const Padding(
+                                                padding: EdgeInsets.all(16.0),
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                              ),
+                                          noItemsFoundIndicatorBuilder: (_) =>
+                                              _buildEmptyState(),
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(40.r),
+        decoration: BoxDecoration(
+          color: context.appColors.cardBackground,
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: context.appColors.glassBorder),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(20.r),
+              decoration: BoxDecoration(
+                color: context.appColors.glassBorder,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                FontAwesomeIcons.bellSlash,
+                size: 50.r,
+                color: context.appColors.glassBorder,
               ),
             ),
-          );
-        },
+            SizedBox(height: 24.h),
+            Text(
+              "NO NOTIFICATIONS YET",
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                color: context.appColors.glassBorder,
+                letterSpacing: 1.0,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              "You'll see your notifications here\nas soon as they arrive.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: context.appColors.glassBorder,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -234,24 +330,19 @@ class _NotificationsPageState extends State<NotificationsPage>
         );
       },
       child: GestureDetector(
-        onTap: () => _showNotificationDetails(context, notificationData),
+        onTap: () => _showNotificationDetails(notificationData),
         child: Builder(
           builder: (context) {
             return Container(
               margin: EdgeInsets.only(bottom: 16.h),
               padding: EdgeInsets.all(18.r),
               decoration: BoxDecoration(
-                color: isUnread
-                    ? context.appColors.cardBackground
-                    : context.appColors.cardBackground,
+                color: context.appColors.cardBackground,
                 borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
-                  color: isUnread
-                      ? context.appColors.glassBorder
-                      : context.appColors.glassBorder,
+                  color: context.appColors.glassBorder,
                   width: isUnread ? 1.2.r : 0.8.r,
                 ),
-            
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,7 +376,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 (notification.title ?? "").toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 14.sp,
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: FontWeight.w500,
                                   color: context.appColors.primaryTextColor,
                                   letterSpacing: 0.5,
                                 ),
@@ -318,7 +409,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                         Row(
                           children: [
                             Icon(
-                              Icons.access_time_filled_rounded,
+                              FontAwesomeIcons.clock,
                               size: 12.r,
                               color: context.appColors.hintTextColor,
                             ),
@@ -327,7 +418,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                               _formatDate(notification.createdAt!),
                               style: TextStyle(
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w400,
                                 color: context.appColors.hintTextColor,
                               ),
                             ),
@@ -348,33 +439,21 @@ class _NotificationsPageState extends State<NotificationsPage>
   IconData _getNotificationIcon(String? notificationType) {
     switch (notificationType?.toLowerCase()) {
       case "message":
-        return Icons.chat_bubble_rounded;
+        return FontAwesomeIcons.comment;
       case "proposal":
       case "request":
-        return Icons.assignment_rounded;
+        return FontAwesomeIcons.fileLines;
       case "appointment":
-        return Icons.calendar_month_rounded;
+        return FontAwesomeIcons.calendar;
       case "system":
-        return Icons.info_outline_rounded;
+        return FontAwesomeIcons.circleInfo;
       default:
-        return Icons.notifications_active_rounded;
+        return FontAwesomeIcons.bell;
     }
   }
 
   Color _getNotificationColor(String? notificationType) {
-    switch (notificationType?.toLowerCase()) {
-      case "message":
-        return context.appColors.primaryColor;
-      case "proposal":
-      case "request":
-        return context.appColors.primaryColor;
-      case "appointment":
-        return context.appColors.primaryColor;
-      case "system":
-        return context.appColors.primaryColor;
-      default:
-        return context.appColors.primaryColor;
-    }
+    return context.appColors.primaryColor;
   }
 
   String _formatDate(DateTime date) {
@@ -387,23 +466,26 @@ class _NotificationsPageState extends State<NotificationsPage>
     return DateFormat("MMM dd, yyyy").format(date);
   }
 
-  void _showNotificationDetails(
-    BuildContext context,
-    not.NotificationData notificationData,
-  ) {
-    context.read<SharedBloc>().add(
+  void _showNotificationDetails(not.NotificationData notificationData) {
+    // sheet, because showModalBottomSheet can be tricky with context inheritance
+    // if not using the correct context level.
+    final pageContext = context;
+    pageContext.read<NotificationBloc>().add(
       SetNotificationSeenEvent(
         notificationID: notificationData.notification!.id!,
       ),
     );
-    Get.bottomSheet(
-      Container(
+    showModalBottomSheet(
+      context: pageContext,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
         padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 40.h),
         decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
+          color: pageContext.appColors.cardBackground,
           borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
           border: Border.all(
-            color: context.appColors.glassBorder,
+            color: pageContext.appColors.glassBorder,
             width: 1.r,
           ),
         ),
@@ -414,7 +496,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               width: 45.w,
               height: 5.h,
               decoration: BoxDecoration(
-                color: context.appColors.glassBorder,
+                color: pageContext.appColors.glassBorder,
                 borderRadius: BorderRadius.circular(10.r),
               ),
             ),
@@ -440,11 +522,12 @@ class _NotificationsPageState extends State<NotificationsPage>
             ),
             SizedBox(height: 24.h),
             Text(
-              (notificationData.notification!.title ?? "NOTIFICATION").toUpperCase(),
+              (notificationData.notification!.title ?? "NOTIFICATION")
+                  .toUpperCase(),
               style: TextStyle(
                 fontSize: 16.sp,
-                fontWeight: FontWeight.w900,
-                color: context.appColors.primaryTextColor,
+                fontWeight: FontWeight.w500,
+                color: pageContext.appColors.primaryTextColor,
                 letterSpacing: 1.0,
               ),
               textAlign: TextAlign.center,
@@ -454,7 +537,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               notificationData.notification!.message ?? "",
               style: TextStyle(
                 fontSize: 16.sp,
-                color: context.appColors.hintTextColor,
+                color: pageContext.appColors.hintTextColor,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -467,8 +550,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 width: double.infinity,
                 height: 56.h,
                 child: ElevatedButton(
-                  onPressed: () =>
-                      _navigateToDetails(context, notificationData),
+                  onPressed: () => _navigateToDetails(notificationData),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _getNotificationColor(
                       notificationData.notification!.notificationType,
@@ -483,7 +565,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                     "VIEW DETAILS",
                     style: TextStyle(
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 1.0,
                       color: Colors.white,
                     ),
@@ -496,11 +578,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                 width: double.infinity,
                 height: 56.h,
                 child: OutlinedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () => Navigator.of(context).pop(),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: context.appColors.glassBorder,
-                    ),
+                    side: BorderSide(color: pageContext.appColors.glassBorder),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.r),
                     ),
@@ -508,11 +588,10 @@ class _NotificationsPageState extends State<NotificationsPage>
                   child: Text(
                     "DISMISS",
                     style: TextStyle(
-                      color: context.appColors.primaryTextColor,
+                      color: pageContext.appColors.primaryTextColor,
                       fontSize: 14.sp,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 1.0,
-                    
                     ),
                   ),
                 ),
@@ -521,188 +600,159 @@ class _NotificationsPageState extends State<NotificationsPage>
           ],
         ),
       ),
-      isScrollControlled: true,
     );
   }
 
-  Future<void> _navigateToDetails(
-    BuildContext context,
-    not.NotificationData notificationData,
-  ) async {
+  Future<void> _navigateToDetails(not.NotificationData notificationData) async {
     final notification = notificationData.notification;
     final data = notification?.data;
     final type = notification?.notificationType?.toLowerCase();
 
-    // Show loading for types that require data fetching
-    bool showLoading = false;
-    if (type == "message" ||
-        type == "proposal" ||
-        type == "request" ||
-        type == "direct_request") {
-      showLoading = true;
-    }
+    // Capture all BLoC references from the page's own mounted context.
+    final isProvider = context.read<SettingsBloc>().state.isProvider;
+    final messageBloc = context.read<MessageBloc>();
+    final providerBloc = context.read<ProviderBloc>();
+    final seekerBloc = context.read<SeekerBloc>();
 
-    Get.back(); // Close bottom sheet
+    Navigator.of(context).pop(); // Close bottom sheet
 
-    if (showLoading) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(child: LoadingWidget()),
-      );
+    if (!mounted) return;
+    final pageContext = context;
+
+    BuildContext? dialogContext;
+    showDialog(
+      context: pageContext,
+      barrierDismissible: false,
+      builder: (ctx) {
+        dialogContext = ctx;
+        return const ListSkeletonLoader();
+      },
+    );
+
+    void dismissLoader() {
+      if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+        Navigator.of(dialogContext!).pop();
+      }
     }
 
     switch (type) {
       case "message":
-        // Navigate to the specific chat with the sender
         if (notificationData.from != null) {
-          context.read<MessageBloc>().add(
+          messageBloc.add(
             SetMessageReceiverEvent(profile: notificationData.from!),
           );
-          // Wait for state update
-          await context.read<MessageBloc>().stream.firstWhere(
-                (state) => state is MessageReceiverState,
-              ).timeout(const Duration(seconds: 5), onTimeout: () => MessageReceiverState());
+          await messageBloc.stream
+              .firstWhere((state) => state is MessageReceiverState)
+              .timeout(
+                const Duration(seconds: 5),
+                onTimeout: () => MessageReceiverState(profile: Profile()),
+              );
         }
-        
-        if (showLoading) Navigator.pop(context);
 
-        if (DashboardState.isProvider) {
-          context.read<ProviderBloc>().add(
-            NavigateProviderEvent(page: 4, widget: const ChatPage()),
-          );
-        } else {
-          context.read<SeekerBloc>().add(
-            NavigateSeekerEvent(page: 4, widget: const ChatPage()),
-          );
-        }
+        dismissLoader();
+        context.push('/chat');
         break;
 
       case "proposal":
       case "request":
       case "direct_request":
         final requestId = data?['request_id']?.toString();
-        if (DashboardState.isProvider) {
+        if (isProvider) {
           if (requestId != null && requestId.isNotEmpty) {
-            // Fetch the specific request, then navigate to it
-            context.read<ProviderBloc>().add(
-              GetRequestDetailEvent(id: requestId),
-            );
+            providerBloc.add(GetRequestDetailEvent(id: requestId));
 
-            // Wait for data
-            final state = await context.read<ProviderBloc>().stream.firstWhere(
-              (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
-            ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
+            final state = await providerBloc.stream
+                .firstWhere(
+                  (state) =>
+                      state is SuccessGetRequestDetailState ||
+                      state is FailureGetRecentRequestState,
+                )
+                .timeout(
+                  const Duration(seconds: 10),
+                  onTimeout: () => FailureGetRecentRequestState(),
+                );
 
-            if (showLoading) Navigator.pop(context);
+            dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
-              context.read<ProviderBloc>().add(
-                NavigateProviderEvent(
-                  page: 1,
-                  widget: const ProviderRequestDetailPage(),
-                ),
+              context.push(
+                '/app/provider/requests/$requestId',
+                extra: state.request,
               );
-            } else {
-              customAlert(context, AlertType.error, "Failed to load request details");
+            } else if (mounted) {
+              customAlert(
+                pageContext,
+                AlertType.error,
+                "Failed to load request details",
+              );
             }
-          } else if (type == "proposal" && notificationData.from != null) {
-            // For proposals, go to chat for appointment scheduling
-            context.read<MessageBloc>().add(
-              SetMessageReceiverEvent(profile: notificationData.from!),
-            );
-            context.read<MessageBloc>().add(
-              CalenderAppointmentEvent(setAppointment: true),
-            );
-            
-            if (showLoading) Navigator.pop(context);
-
-            context.read<ProviderBloc>().add(
-              NavigateProviderEvent(page: 4, widget: const ChatPage()),
-            );
           } else {
-            if (showLoading) Navigator.pop(context);
-
-            context.read<ProviderBloc>().add(
-              NavigateProviderEvent(
-                page: 3,
-                widget: const ProviderAcceptedRequestPage(),
-              ),
-            );
+            dismissLoader();
+            providerBloc.add(ChangeProviderTabEvent(tabIndex: 3));
           }
         } else {
-          // Seeker: navigate to specific request details if we have the ID
           if (requestId != null && requestId.isNotEmpty) {
-            context.read<ProviderBloc>().add(
-              GetRequestDetailEvent(id: requestId),
-            );
+            providerBloc.add(GetRequestDetailEvent(id: requestId));
 
-            // Wait for data
-            final state = await context.read<ProviderBloc>().stream.firstWhere(
-              (state) => state is SuccessGetRequestDetailState || state is FailureGetRecentRequestState,
-            ).timeout(const Duration(seconds: 10), onTimeout: () => FailureGetRecentRequestState());
+            final state = await providerBloc.stream
+                .firstWhere(
+                  (state) =>
+                      state is SuccessGetRequestDetailState ||
+                      state is FailureGetRecentRequestState,
+                )
+                .timeout(
+                  const Duration(seconds: 10),
+                  onTimeout: () => FailureGetRecentRequestState(),
+                );
 
-            if (showLoading) Navigator.pop(context);
+            dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
-              final requestData = SuccessGetRequestDetailState.request;
+              final requestData = state.request;
               requestData.user = notificationData.from;
-              
-              if (requestData.request?.userId != SuccessGetProfileState.profile.user?.id) {
-                customAlert(context, AlertType.error, "You can't view this request");
+
+              if (requestData.request?.userId != _currentProfile?.user?.id) {
+                if (mounted)
+                  customAlert(
+                    pageContext,
+                    AlertType.error,
+                    "You can't view this request",
+                  );
                 return;
               }
-              
-              context.read<SeekerBloc>().add(
-                SeekerRequestDetailEvent(request: requestData),
+
+              seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
+              context.push(
+                '/app/requests/${requestData.request?.id}',
+                extra: requestData,
               );
-              context.read<SeekerBloc>().add(
-                NavigateSeekerEvent(
-                  page: 1,
-                  widget: const SeekerRequestDetailsPage(),
-                ),
+            } else if (mounted) {
+              customAlert(
+                pageContext,
+                AlertType.error,
+                "Failed to load request details",
               );
-            } else {
-              customAlert(context, AlertType.error, "Failed to load request details");
             }
           } else {
-            if (showLoading) Navigator.pop(context);
-
-            context.read<SeekerBloc>().add(
-              NavigateSeekerEvent(
-                page: 4,
-                widget: const SeekerRequestPage(),
-              ),
-            );
+            dismissLoader();
+            context.push('/seeker-requests');
           }
         }
         break;
 
       case "appointment":
-        final appointmentId = data?['appointment_id']?.toString();
-        if (appointmentId != null && appointmentId.isNotEmpty) {
-          // Navigate to the appointments tab and refresh
-          if (DashboardState.isProvider) {
-            context.read<ProviderBloc>().add(provider_bloc.GetAppointmentsEvent());
-            context.read<ProviderBloc>().add(
-              NavigateProviderEvent(
-                page: 2,
-                widget: const ProviderAcceptedRequestPage(),
-              ),
-            );
-          } else {
-            context.read<SeekerBloc>().add(seeker_bloc.GetAppointmentsEvent());
-            context.read<SeekerBloc>().add(
-              NavigateSeekerEvent(
-                page: 3,
-                widget: const SeekerRequestPage(),
-              ),
-            );
-          }
+        dismissLoader();
+        if (isProvider) {
+          providerBloc.add(provider_bloc.GetAppointmentsEvent());
+          providerBloc.add(ChangeProviderTabEvent(tabIndex: 5));
+        } else {
+          seekerBloc.add(seeker_bloc.GetAppointmentsEvent());
+          context.push('/seeker-requests');
         }
         break;
 
       default:
+        dismissLoader();
         break;
     }
   }

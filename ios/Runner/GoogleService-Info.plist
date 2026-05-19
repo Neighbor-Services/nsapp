@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:681650672596:ios:f2ae78668140dae041fc41</string>
+	<string>1:681650672596:ios:e56bc1db308dda5141fc41</string>
 	<key>DATABASE_URL</key>
 	<string>https://neighbor-service-app-default-rtdb.firebaseio.com</string>
 </dict>

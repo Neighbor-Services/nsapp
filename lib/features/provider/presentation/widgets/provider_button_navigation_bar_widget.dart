@@ -1,14 +1,11 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
-import 'package:nsapp/features/messages/presentation/pages/my_messages_page.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_accepted_request_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_appointment_calendar_page.dart';
-import 'package:nsapp/features/provider/presentation/pages/provider_home_page.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
-import 'package:nsapp/features/shared/presentation/pages/notifications_page.dart';
+import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
+// Removed UI imports since BLoC no longer stores Widgets
 
 class ProviderButtonNavigationBarWidget extends StatelessWidget {
   const ProviderButtonNavigationBarWidget({super.key});
@@ -17,88 +14,99 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final backgroundColor = context.appColors.cardBackground;
     final borderColor = context.appColors.glassBorder;
+    final shadowColor = context.appColors.glassBorder;
 
     return BlocBuilder<MessageBloc, MessageState>(
       builder: (context, messageState) {
-        return BlocBuilder<SharedBloc, SharedState>(
-          builder: (context, sharedState) {
+        return BlocBuilder<NotificationBloc, NotificationState>(
+          builder: (context, notificationState) {
             return BlocConsumer<ProviderBloc, ProviderState>(
               listener: (context, state) {},
               builder: (context, state) {
-                return Container(
-                  height: 72.h,
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  decoration: BoxDecoration(
-                    color: backgroundColor,
-                    border: Border(
-                      top: BorderSide(
-                        color: borderColor,
-                        width: 1.5.r,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                return SizedBox(
+                  height: 95.h,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    clipBehavior: Clip.none,
                     children: [
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.home_rounded,
-                        label: 'Home',
-                        isActive: NavigatorProviderState.page == 1,
-                        onTap: () {
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 1,
-                              widget: ProviderHomePage(),
+                      Container(
+                        height: 70.h,
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        decoration: BoxDecoration(
+                          color: backgroundColor,
+                          border: Border(top: BorderSide(color: borderColor, width: 1)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: shadowColor,
+                              blurRadius: 15.r,
+                              offset: Offset(0, -4.h),
                             ),
-                          );
-                        },
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.house,
+                                label: 'Home',
+                                isActive: context.read<ProviderBloc>().currentTab == 1,
+                                onTap: () {
+                                  context.read<ProviderBloc>().add(
+                                    ChangeProviderTabEvent(tabIndex: 1),
+                                  );
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.bell,
+                                label: 'Notifications',
+                                isActive: context.read<ProviderBloc>().currentTab == 2,
+                                badgeCount: (notificationState is SuccessGetMyNotificationsState) ? notificationState.unreadCount : 0,
+                                onTap: () {
+                                  context.read<ProviderBloc>().add(
+                                    ChangeProviderTabEvent(tabIndex: 2),
+                                  );
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 70.w), // Space for center FAB
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.comment,
+                                label: 'Chat',
+                                isActive: context.read<ProviderBloc>().currentTab == 4,
+                                badgeCount: (messageState is SuccessGetMyMessagesState) ? messageState.unreadMessageCount : 0,
+                                onTap: () {
+                                  context.read<ProviderBloc>().add(
+                                    ChangeProviderTabEvent(tabIndex: 4),
+                                  );
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildNavIcon(
+                                context: context,
+                                icon: FontAwesomeIcons.calendar,
+                                label: 'Appointments',
+                                isActive: context.read<ProviderBloc>().currentTab == 5,
+                                onTap: () {
+                                  context.read<ProviderBloc>().add(
+                                    ChangeProviderTabEvent(tabIndex: 5),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.notifications_rounded,
-                        label: 'Notifications',
-                        isActive: NavigatorProviderState.page == 2,
-                        badgeCount: SuccessGetMyNotificationsState.unreadCount,
-                        onTap: () {
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 2,
-                              widget: NotificationsPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildCenterButton(context),
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.chat_bubble_rounded,
-                        label: 'Chat',
-                        isActive: NavigatorProviderState.page == 4,
-                        badgeCount:
-                            SuccessGetMyMessagesState.unreadMessageCount,
-                        onTap: () {
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 4,
-                              widget: MyMessagesPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildNavIcon(
-                        context: context,
-                        icon: Icons.calendar_month_rounded,
-                        label: 'Appointments',
-                        isActive: NavigatorProviderState.page == 5,
-                        onTap: () {
-                          context.read<ProviderBloc>().add(
-                            NavigateProviderEvent(
-                              page: 5,
-                              widget: ProviderAppointmentCalendarPage(),
-                            ),
-                          );
-                        },
+                      Positioned(
+                        top: 0,
+                        child: _buildCenterButton(context),
                       ),
                     ],
                   ),
@@ -130,7 +138,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
           isLabelVisible: badgeCount > 0,
           label: Text(
             badgeCount.toString(),
-            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w500),
           ),
           backgroundColor: context.appColors.errorColor,
           child: Column(
@@ -141,9 +149,16 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
                 size: 26.r,
                 color: isActive ? context.appColors.primaryColor : inactiveColor,
               ),
-                SizedBox(height: 4.h),
-                Text(label, style: TextStyle(color: isActive ? context.appColors.primaryTextColor : inactiveColor, fontSize: 9.sp)),
-             
+              SizedBox(height: 4.h),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? context.appColors.primaryTextColor : inactiveColor,
+                  fontSize: 9.sp,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
@@ -152,38 +167,42 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
   }
 
   Widget _buildCenterButton(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = context.appColors.primaryColor;
+
     return GestureDetector(
       onTap: () {
         context.read<ProviderBloc>().add(
-          NavigateProviderEvent(page: 3, widget: ProviderAcceptedRequestPage()),
+          ChangeProviderTabEvent(tabIndex: 3),
         );
       },
       child: Container(
-        width: 52.r,
-        height: 52.r,
+        width: 68.r,
+        height: 68.r,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: context.appColors.primaryColor,
-          border: Border.all(
-            color: Colors.white24,
-            width: 2.r,
-          ),
+          color: isDark ? primary : context.appColors.primaryBackground,
+          border: !isDark
+              ? Border.all(color: primary.withAlpha(100), width: 1.5.r)
+              : null,
           boxShadow: [
             BoxShadow(
-              color: context.appColors.primaryColor.withAlpha(80),
-              blurRadius: 12.r,
+              color: primary.withAlpha(isDark ? 80 : 30),
+              blurRadius: 15.r,
               offset: Offset(0, 4.h),
             ),
           ],
         ),
         child: Center(
           child: Icon(
-            Icons.work_rounded,
+            FontAwesomeIcons.briefcase,
             size: 26.r,
-            color: Colors.white,
+            color: isDark ? Colors.white : primary,
           ),
         ),
       ),
     );
   }
 }
+
+

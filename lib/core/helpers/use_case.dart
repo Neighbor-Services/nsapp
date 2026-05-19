@@ -5,6 +5,12 @@ abstract class UseCase<Type, Params> {
 
 abstract class Params {}
 
+class NoParams extends Params {}
+class BackgroundCheckParams extends Params {
+  final String paymentIntentId;
+  BackgroundCheckParams({required this.paymentIntentId});
+}
+
 class AuthParams extends Params {
   final String email;
   final String password;
@@ -24,4 +30,19 @@ class ResetPasswordParams extends Params {
   final String password;
 
   ResetPasswordParams({required this.otp, required this.password});
+}
+
+class ProfileParams extends Params {
+  final dynamic profile;
+  final String? profilePicturePath;
+
+  ProfileParams({required this.profile, this.profilePicturePath});
+}
+
+
+class RequestParams extends Params {
+  final dynamic request;
+  final String? imagePath;
+
+  RequestParams({required this.request, this.imagePath});
 }

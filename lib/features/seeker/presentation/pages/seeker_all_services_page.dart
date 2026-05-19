@@ -1,9 +1,13 @@
+import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
+import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-import 'package:nsapp/features/seeker/presentation/pages/providers_by_service_page.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/core/core.dart';
 
 class SeekerAllServicesPage extends StatelessWidget {
@@ -26,9 +30,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        context.read<SeekerBloc>().add(
-                          SeekerBackPressedEvent(),
-                        );
+                        context.pop();
                       },
                       child: Container(
                         padding: EdgeInsets.all(12.r),
@@ -41,7 +43,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                           ),
                         ),
                         child: Icon(
-                          Icons.arrow_back_ios_new_rounded,
+                          FontAwesomeIcons.chevronLeft,
                           color: textColor,
                           size: 20.r,
                         ),
@@ -56,7 +58,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                             "SERVICE SELECTION",
                             style: TextStyle(
                               fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor,
                               letterSpacing: 1.2,
                             ),
@@ -66,7 +68,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                             "FIND THE BEST PROFESSIONALS",
                             style: TextStyle(
                               fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: textColor.withAlpha(150),
                               letterSpacing: 1.0,
                             ),
@@ -80,17 +82,24 @@ class SeekerAllServicesPage extends StatelessWidget {
 
               // Services Grid
               Expanded(
-                child: BlocBuilder<SharedBloc, SharedState>(
+                child: BlocBuilder<CommonBloc, CommonState>(
                   builder: (context, state) {
-                    final services = SuccessGetServicesState.services;
-
-                    if (services.isEmpty) {
+                    // Always try to get services from the Bloc's internal cache first
+                    final cachedServices = context.read<CommonBloc>().services;
+                    final services = state is SuccessGetServicesState ? state.services : cachedServices;
+                    
+                    if (state is CommonLoading && services.isEmpty) {
+                      return const Center(
+                        child: LoadingWidget(),
+                      );
+                    }
+                    if (services.isEmpty && state is! CommonLoading) {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.search_off_rounded,
+                              FontAwesomeIcons.magnifyingGlass,
                               size: 64.r,
                               color: textColor.withAlpha(50),
                             ),
@@ -104,22 +113,31 @@ class SeekerAllServicesPage extends StatelessWidget {
                       );
                     }
 
-                    return GridView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 10.h,
-                      ),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: isLargeScreen ? 3 : 2,
-                        crossAxisSpacing: 12.w,
-                        mainAxisSpacing: 12.h,
-                        childAspectRatio: 1.3,
-                      ),
-                      itemCount: services.length,
-                      itemBuilder: (context, index) {
-                        final service = services[index];
-                        return _buildServiceCard(context, service, index);
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        context.read<CommonBloc>().add(GetServicesEvent());
+                        context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                        context.read<ProfileBloc>().add(GetProfileEvent());
+                        await Future.delayed(const Duration(seconds: 1));
                       },
+                      child: GridView.builder(
+                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 10.h,
+                        ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isLargeScreen ? 3 : 2,
+                          crossAxisSpacing: 12.w,
+                          mainAxisSpacing: 12.h,
+                          childAspectRatio: 1.3,
+                        ),
+                        itemCount: services.length,
+                        itemBuilder: (context, index) {
+                          final service = services[index];
+                          return _buildServiceCard(context, service, index);
+                        },
+                      ),
                     );
                   },
                 ),
@@ -135,80 +153,94 @@ class SeekerAllServicesPage extends StatelessWidget {
     
 
     final icons = [
-      Icons.build_rounded,
-      Icons.cleaning_services_rounded,
-      Icons.electrical_services_rounded,
-      Icons.plumbing_rounded,
-      Icons.local_shipping_rounded,
-      Icons.home_repair_service_rounded,
+      FontAwesomeIcons.wrench,
+      FontAwesomeIcons.broom,
+      FontAwesomeIcons.plug,
+      FontAwesomeIcons.wrench,
+      FontAwesomeIcons.truck,
+      FontAwesomeIcons.toolbox,
     ];
 
     final icon = icons[index % icons.length];
 
-    return GestureDetector(
-      onTap: () {
-        context.read<SeekerBloc>().add(
-          NavigateSeekerEvent(
-            page: 1,
-            widget: ProvidersByServicePage(
-              serviceId: service.id ?? '',
-              serviceName: service.name ?? 'Service',
-            ),
-          ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 50)),
+      curve: Curves.easeOut,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(opacity: value, child: child),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(
-            color: context.appColors.glassBorder,
-            width: 1.5.r,
+      child: GestureDetector(
+        onTap: () {
+          context.push(
+            '/providers-by-service',
+            extra: {
+              'serviceId': service.id ?? '',
+              'serviceName': service.name ?? 'Service',
+            },
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.appColors.cardBackground,
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: context.appColors.glassBorder,
+              width: 1.5.r,
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              right: -5.r,
-              bottom: -5.r,
-              child: Icon(
-                icon,
-                size: 60.r,
-                color: context.appColors.primaryColor.withAlpha(20),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -5.r,
+                bottom: -5.r,
+                child: Icon(
+                  icon,
+                  size: 60.r,
+                  color: context.appColors.primaryColor.withAlpha(20),
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.r),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      color: context.appColors.primaryColor,
-                      borderRadius: BorderRadius.circular(10.r),
+              Padding(
+                padding: EdgeInsets.all(16.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.r),
+                      decoration: BoxDecoration(
+                        color: context.appColors.primaryColor,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(icon, color: Colors.white, size: 20.r),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 20.r),
-                  ),
-                  Text(
-                    (service.name ?? "Service").toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w900,
-                      color: context.appColors.primaryTextColor,
-                      letterSpacing: 0.5,
-                      height: 1.2,
+                    Text(
+                      (service.name ?? "Service").toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        color: context.appColors.primaryTextColor,
+                        letterSpacing: 0.5,
+                        height: 1.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+
+
+
+

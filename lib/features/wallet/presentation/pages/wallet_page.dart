@@ -1,12 +1,12 @@
+import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nsapp/core/core.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
-import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
-import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -28,7 +28,7 @@ class _WalletPageState extends State<WalletPage> {
   @override
   void initState() {
     super.initState();
-    context.read<SharedBloc>().add(GetMyWalletEvent());
+    context.read<WalletBloc>().add(GetMyWalletEvent());
   }
 
   @override
@@ -47,7 +47,7 @@ class _WalletPageState extends State<WalletPage> {
           "MY WALLET",
           style: TextStyle(
             color: context.appColors.primaryTextColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -55,50 +55,55 @@ class _WalletPageState extends State<WalletPage> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: GestureDetector(
-          onTap: () {
-            if (Helpers.isProvider(SuccessGetProfileState.profile.userType)) {
-              context.read<ProviderBloc>().add(ProviderBackPressedEvent());
-            } else {
-              context.read<SeekerBloc>().add(SeekerBackPressedEvent());
-            }
-          },
-          child: Container(
-            margin: EdgeInsets.all(10.r),
-            decoration: BoxDecoration(
-              color: context.appColors.iconContainerBackground,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: context.appColors.glassBorder,
+        leading: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            return GestureDetector(
+              onTap: () {
+                if (state is SuccessGetProfileState &&
+                    Helpers.isProvider(state.profile.userType)) {
+                  context.pop();
+                } else {
+                  context.pop();
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.all(10.r),
+                decoration: BoxDecoration(
+                  color: context.appColors.iconContainerBackground,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: context.appColors.glassBorder,
+                  ),
+                  boxShadow: Theme.of(context).brightness == Brightness.dark
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(10),
+                            blurRadius: 10.r,
+                            spreadRadius: 2.r,
+                          ),
+                        ],
+                ),
+                child: Icon(
+                  FontAwesomeIcons.chevronLeft,
+                  color: context.appColors.primaryTextColor,
+                  size: 16.r,
+                ),
               ),
-              boxShadow: Theme.of(context).brightness == Brightness.dark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(10),
-                        blurRadius: 10.r,
-                        spreadRadius: 2.r,
-                      ),
-                    ],
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: context.appColors.primaryTextColor,
-              size: 16.r,
-            ),
-          ),
+            );
+          },
         ),
         actions: [
           IconButton(
-            onPressed: () => context.read<SharedBloc>().add(GetMyWalletEvent()),
-            icon: Icon(Icons.refresh_rounded, color: context.appColors.primaryTextColor),
+            onPressed: () => context.read<WalletBloc>().add(GetMyWalletEvent()),
+            icon: FaIcon(FontAwesomeIcons.rotateRight, color: context.appColors.primaryTextColor),
           ),
         ],
       ),
-      body: BlocBuilder<SharedBloc, SharedState>(
+      body: BlocBuilder<WalletBloc, WalletState>(
         builder: (context, state) {
           return LoadingView(
-            isLoading: state is SharedLoadingState,
+            isLoading: state is WalletLoading,
             child: GradientBackground(
               child: SafeArea(
                 child: Padding(
@@ -133,20 +138,20 @@ class _WalletPageState extends State<WalletPage> {
                                 text: "TOTAL BALANCE",
                                 color: context.appColors.secondaryTextColor,
                                 fontSize: 15.sp,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 letterSpacing: 1.2,
                               ),
                               SizedBox(height: 12.h),
                               Builder(
                                 builder: (context) {
-                                  final wallet = SuccessGetMyWalletState.wallet;
+                                  final wallet = (state is SuccessGetMyWalletState) ? state.wallet : null;
                                   final balance = wallet?.balance ?? 0;
                                   return Text(
                                     "${wallet?.currency ?? "\$"} ${balance.toStringAsFixed(2)}",
                                     style: TextStyle(
                                       color: context.appColors.primaryColor,
                                       fontSize: 42.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: -0.5,
                                     ),
                                   );
@@ -182,7 +187,7 @@ class _WalletPageState extends State<WalletPage> {
                       Row(
                         children: [
                           Icon(
-                            Icons.history_rounded,
+                            FontAwesomeIcons.clockRotateLeft,
                             color: context.appColors.secondaryTextColor,
                             size: 20.r,
                           ),
@@ -190,7 +195,7 @@ class _WalletPageState extends State<WalletPage> {
                           CustomTextWidget(
                             text: "RECENT TRANSACTIONS",
                             fontSize: 14.sp,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w500,
                             color: context.appColors.primaryTextColor,
                             letterSpacing: 1.1,
                           ),
@@ -200,16 +205,16 @@ class _WalletPageState extends State<WalletPage> {
                       Expanded(
                         child: Builder(
                           builder: (context) {
-                            final transactions =
-                                SuccessGetMyWalletState.wallet?.transactions ??
-                                [];
+                            final transactions = (state is SuccessGetMyWalletState) 
+                                ? state.wallet?.transactions ?? [] 
+                                : [];
                             if (transactions.isEmpty) {
                               return Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      Icons.receipt_long_rounded,
+                                      FontAwesomeIcons.fileInvoice,
                                       size: 64.r,
                                       color: context.appColors.secondaryTextColor.withAlpha(30),
                                     ),
@@ -218,7 +223,7 @@ class _WalletPageState extends State<WalletPage> {
                                       text: "NO TRANSACTIONS YET",
                                       color: context.appColors.secondaryTextColor.withAlpha(100),
                                       fontSize: 12.sp,
-                                      fontWeight: FontWeight.w900,
+                                      fontWeight: FontWeight.w500,
                                       letterSpacing: 1.0,
                                     ),
                                   ],
@@ -241,8 +246,18 @@ class _WalletPageState extends State<WalletPage> {
                                           ? context.appColors.warningColor
                                           : context.appColors.errorColor);
 
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: 12.h),
+                                return TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 0.0, end: 1.0),
+                                  duration: Duration(milliseconds: 400 + (index * 100)),
+                                  curve: Curves.easeOut,
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, 20 * (1 - value)),
+                                      child: Opacity(opacity: value, child: child),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 12.h),
                                   child: SolidContainer(
                                     padding: EdgeInsets.all(16.r),
                                     child: Row(
@@ -263,8 +278,8 @@ class _WalletPageState extends State<WalletPage> {
                                           ),
                                           child: Icon(
                                             isCredit
-                                                ? Icons.call_received_rounded
-                                                : Icons.call_made_rounded,
+                                                ? FontAwesomeIcons.arrowDown
+                                                : FontAwesomeIcons.arrowUp,
                                             color: isCredit
                                                 ? context.appColors.successColor
                                                 : (isPayout
@@ -282,7 +297,7 @@ class _WalletPageState extends State<WalletPage> {
                                               CustomTextWidget(
                                                 text:
                                                     (tx.description ?? "Transaction").toUpperCase(),
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.w500,
                                                 fontSize: 14.sp,
                                                 color: context.appColors.primaryTextColor,
                                               ),
@@ -290,7 +305,7 @@ class _WalletPageState extends State<WalletPage> {
                                               CustomTextWidget(
                                                 text: tx.createdAt != null
                                                     ? DateFormat(
-                                                        "MMM dd, yyyy • h:mm a",
+                                                        "MMM dd, yyyy â€¢ h:mm a",
                                                       ).format(tx.createdAt!)
                                                     : "Date Unknown",
                                                 fontSize: 12.sp,
@@ -311,7 +326,7 @@ class _WalletPageState extends State<WalletPage> {
                                                     : (isPayout
                                                           ? context.appColors.warningColor
                                                           : context.appColors.errorColor),
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.w500,
                                                 fontSize: 16.sp,
                                               ),
                                             ),
@@ -334,13 +349,14 @@ class _WalletPageState extends State<WalletPage> {
                                                     tx.status?.toUpperCase() ??
                                                     "PENDING",
                                                 fontSize: 10.sp,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w500,
                                                 color: statusColor,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ],
+                                    ),
                                     ),
                                   ),
                                 );
@@ -377,7 +393,7 @@ class _WalletPageState extends State<WalletPage> {
           "WITHDRAW FUNDS",
           style: TextStyle(
             color: textColor,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 18.sp,
             letterSpacing: 1.2,
           ),
@@ -396,19 +412,19 @@ class _WalletPageState extends State<WalletPage> {
             SolidTextField(
               controller: amountController,
               hintText: "Amount (e.g. 50.00)",
-              prefixIcon: Icons.attach_money_rounded,
+              prefixIcon: FontAwesomeIcons.dollarSign,
               keyboardType: TextInputType.number,
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(),
             child: Text(
               "CANCEL",
               style: TextStyle(
                 color: context.appColors.secondaryTextColor.withAlpha(150),
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w500,
                 fontSize: 12.sp,
                 letterSpacing: 1.0,
               ),
@@ -418,10 +434,10 @@ class _WalletPageState extends State<WalletPage> {
             onPressed: () {
               final amount = double.tryParse(amountController.text);
               if (amount != null && amount > 0) {
-                context.read<SharedBloc>().add(
+                context.read<WalletBloc>().add(
                   RequestPayoutEvent(amount: amount),
                 );
-                Navigator.pop(context);
+                context.pop();
               }
             },
             label: "Confirm",
@@ -432,13 +448,13 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   void _openStripeDashboard(BuildContext context) async {
-    context.read<SharedBloc>().add(GetStripeDashboardLinkEvent());
-    final subscription = context.read<SharedBloc>().stream.listen((
+    context.read<WalletBloc>().add(GetStripeDashboardLinkEvent());
+    final subscription = context.read<WalletBloc>().stream.listen((
       state,
     ) async {
       if (state is SuccessGetStripeDashboardLinkState) {
-        final url = SuccessGetStripeDashboardLinkState.dashboardUrl;
-        if (url != null && context.mounted) {
+        final url = state.dashboardUrl;
+        if (url.isNotEmpty && context.mounted) {
           try {
             final uri = Uri.parse(url);
             if (await canLaunchUrl(uri)) {
@@ -455,7 +471,7 @@ class _WalletPageState extends State<WalletPage> {
             }
           }
         }
-      } else if (state is FailureGetStripeDashboardLinkState) {
+      } else if (state is WalletFailure) {
         if (context.mounted) {
           showDialog(
             context: context,
@@ -473,7 +489,7 @@ class _WalletPageState extends State<WalletPage> {
                   "STRIPE CONNECT REQUIRED",
                   style: TextStyle(
                     color: textColor,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w500,
                     fontSize: 18.sp,
                     letterSpacing: 1.2,
                   ),
@@ -487,7 +503,7 @@ class _WalletPageState extends State<WalletPage> {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.pop(dialogContext),
+                    onPressed: () => context.pop(),
                     child: Text(
                       "Cancel",
                       style: TextStyle(
@@ -497,8 +513,8 @@ class _WalletPageState extends State<WalletPage> {
                   ),
                   SolidButton(
                     onPressed: () {
-                      Navigator.pop(dialogContext);
-                      context.read<SharedBloc>().add(
+                      context.pop();
+                      context.read<WalletBloc>().add(
                         CreateConnectAccountEvent(),
                       );
                     },
@@ -510,8 +526,8 @@ class _WalletPageState extends State<WalletPage> {
           );
         }
       } else if (state is SuccessConnectAccountState) {
-        final accountLink = SuccessConnectAccountState.accountLink;
-        if (accountLink != null && context.mounted) {
+        final accountLink = state.accountLink;
+        if (accountLink.url.isNotEmpty && context.mounted) {
           launchUrl(
             Uri.parse(accountLink.url),
             mode: LaunchMode.externalApplication,
@@ -522,3 +538,5 @@ class _WalletPageState extends State<WalletPage> {
     Future.delayed(const Duration(seconds: 5), () => subscription.cancel());
   }
 }
+
+

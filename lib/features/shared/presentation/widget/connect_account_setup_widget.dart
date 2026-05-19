@@ -1,6 +1,7 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nsapp/features/shared/presentation/bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/wallet/wallet_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -22,7 +23,7 @@ class ConnectAccountSetupWidget extends StatelessWidget {
           "Payment Setup",
           style: TextStyle(
             fontSize: 24.sp,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: textColor,
           ),
         ),
@@ -41,7 +42,7 @@ class ConnectAccountSetupWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: context.appColors.infoColor, size: 24.r),
+              FaIcon(FontAwesomeIcons.circleInfo, color: context.appColors.infoColor, size: 24.r),
               SizedBox(width: 12.w),
               Expanded(
                 child: Text(
@@ -59,10 +60,14 @@ class ConnectAccountSetupWidget extends StatelessWidget {
         SolidButton(
           label: "CONTINUE TO SETUP",
           onPressed: () {
-            context.read<SharedBloc>().add(CreateConnectAccountEvent());
+            context.read<WalletBloc>().add(CreateConnectAccountEvent());
           },
         ),
       ],
     );
   }
 }
+
+
+
+

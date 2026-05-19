@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +15,8 @@ class SenderAppointmentChatWidget extends StatelessWidget {
   final String from;
   final String chatID;
   final String seekerId;
+  final bool isDelivered;
+  final bool isSeen;
   final VoidCallback onLongPressed;
 
   const SenderAppointmentChatWidget({
@@ -22,6 +25,8 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     required this.appointmentDate,
     required this.message,
     required this.from,
+    this.isDelivered = false,
+    this.isSeen = false,
     required this.onLongPressed,
     required this.chatID,
     required this.seekerId,
@@ -92,7 +97,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                Icons.calendar_today_rounded,
+                                FontAwesomeIcons.calendar,
                                 color: Colors.white,
                                 size: 18.r,
                               ),
@@ -102,7 +107,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                               "Appointment",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                                 letterSpacing: -0.2,
                               ),
@@ -111,7 +116,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                         ),
                         PopupMenuButton(
                           icon: Icon(
-                            Icons.more_horiz_rounded,
+                            FontAwesomeIcons.ellipsis,
                             color: context.appColors.primaryTextColor,
                           ),
                           shape: RoundedRectangleBorder(
@@ -158,7 +163,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Icon(
-                                    Icons.add_to_drive_rounded,
+                                    FontAwesomeIcons.hardDrive,
                                     size: 18.r,
                                     color: popupIconColor,
                                   ),
@@ -179,13 +184,13 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                       child: Divider(color: context.appColors.primaryColor, height: 1.h),
                     ),
                     _buildInfoRow(
-                      Icons.event_available_rounded,
+                      FontAwesomeIcons.calendarCheck,
                       DateFormat("EEEE, MMM dd, yyyy").format(appointmentDate),
                       context,
                     ),
                     SizedBox(height: 10.h),
                     _buildInfoRow(
-                      Icons.access_time_rounded,
+                      FontAwesomeIcons.clock,
                       DateFormat.jm().format(startTime),
                       context,
                     ),
@@ -211,19 +216,19 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.done_all_rounded,
-                      size: 14.r,
-                      color: timestampColor,
-                    ),
-                    SizedBox(width: 4.w),
                     Text(
                       DateFormat("HH:mm").format(appointmentDate.toLocal()),
                       style: TextStyle(
                         color: timestampColor,
                         fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(
+                      isSeen ? Icons.done_all : (isDelivered ? Icons.done_all : Icons.check),
+                      size: 14.sp,
+                      color: isSeen ? Colors.blue : timestampColor,
                     ),
                   ],
                 ),
@@ -253,7 +258,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
             style: TextStyle(
               color: context.appColors.primaryTextColor,
               fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -261,3 +266,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     );
   }
 }
+
+
+
+

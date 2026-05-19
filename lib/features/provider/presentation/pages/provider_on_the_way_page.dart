@@ -1,9 +1,11 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/services/tracking_service.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 
@@ -46,7 +48,10 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
         children: [
           GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: LatLng(locationData.latitude, locationData.longitude),
+              target: LatLng(
+                context.read<LocationBloc>().state.location.position.latitude,
+                context.read<LocationBloc>().state.location.position.longitude,
+              ),
               zoom: 15,
             ),
             style: mapStyle,
@@ -74,7 +79,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                 borderColor: context.appColors.glassBorder,
                 borderWidth: 1.5.r,
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
                 ),
@@ -99,7 +104,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                           shape: BoxShape.circle,
                         ),
                         child:  Icon(
-                          Icons.navigation_rounded,
+                          FontAwesomeIcons.compass,
                           color: context.appColors.successColor,
                         ),
                       ),
@@ -112,7 +117,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               "YOU ARE ON THE WAY",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -121,7 +126,7 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
                               "YOUR LOCATION IS SHARED WITH THE SEEKER.",
                               style: TextStyle(
                                 color: context.appColors.secondaryTextColor.withAlpha(150),
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 9.sp,
                                 letterSpacing: 0.5,
                               ),
@@ -150,3 +155,8 @@ class _ProviderOnTheWayPageState extends State<ProviderOnTheWayPage> {
     );
   }
 }
+
+
+
+
+

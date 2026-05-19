@@ -1,13 +1,17 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
-import 'package:nsapp/core/initialize/init.dart';
 
-import '../bloc/shared_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_event.dart';
+import 'package:nsapp/features/shared/presentation/bloc/common/common_state.dart';
+import '../bloc/location/location_bloc.dart';
 import '../widget/search_location_map_widget.dart';
 import 'package:nsapp/core/core.dart';
 
@@ -25,10 +29,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  CameraPosition initialCameraPosition = CameraPosition(
-    target: LatLng(locationData.latitude, locationData.longitude),
-    zoom: 15,
-  );
+  late CameraPosition initialCameraPosition;
   LatLng? pos;
 
   bool isMoving = false;
@@ -36,6 +37,11 @@ class _MapLocationPageState extends State<MapLocationPage> {
   @override
   void initState() {
     super.initState();
+    final location = context.read<LocationBloc>().state.location;
+    initialCameraPosition = CameraPosition(
+      target: LatLng(location.position.latitude, location.position.longitude),
+      zoom: 15,
+    );
     pos = initialCameraPosition.target;
   }
 
@@ -43,28 +49,28 @@ class _MapLocationPageState extends State<MapLocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      body: BlocConsumer<SharedBloc, SharedState>(
+      body: BlocConsumer<CommonBloc, CommonState>(
         listener: (context, state) async {
           if (state is SuccessPlaceState) {
-            context.read<SharedBloc>().add(
+            context.read<CommonBloc>().add(
               MapLocationEvent(
                 location: LatLng(
-                  SuccessPlaceState.places.lat!,
-                  SuccessPlaceState.places.lng!,
+                  state.place.lat!,
+                  state.place.lng!,
                 ),
               ),
             );
             pos = LatLng(
-              SuccessPlaceState.places.lat!,
-              SuccessPlaceState.places.lng!,
+              state.place.lat!,
+              state.place.lng!,
             );
             GoogleMapController con = await _controller.future;
             con.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
                   target: LatLng(
-                    SuccessPlaceState.places.lat!,
-                    SuccessPlaceState.places.lng!,
+                    state.place.lat!,
+                    state.place.lng!,
                   ),
                   zoom: 15,
                 ),
@@ -99,16 +105,15 @@ class _MapLocationPageState extends State<MapLocationPage> {
                     });
                   },
                   onCameraMove: (position) async {
-                    context.read<SharedBloc>().add(
+                    context.read<CommonBloc>().add(
                       MapLocationEvent(location: position.target),
                     );
                     pos = position.target;
                     locationTextController.text =
                         await Helpers.getAddressFromMap(position.target);
-                    locController.text = locationTextController.text;
                   },
                   onTap: (position) {
-                    context.read<SharedBloc>().add(
+                    context.read<CommonBloc>().add(
                       MapLocationEvent(location: position),
                     );
                   },
@@ -144,7 +149,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                                 ),
                               ),
                               Icon(
-                                Icons.location_on_rounded,
+                                FontAwesomeIcons.locationDot,
                                 size: 50.r,
                                 color: context.appColors.errorColor,
                               ),
@@ -161,8 +166,11 @@ class _MapLocationPageState extends State<MapLocationPage> {
                   top: 60.h,
                   child: GestureDetector(
                     onTap: () {
-                      Get.bottomSheet(
-                        Container(
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => Container(
                           padding: EdgeInsets.all(24.r),
                           width: size(context).width,
                           height: size(context).height * 0.85,
@@ -174,7 +182,6 @@ class _MapLocationPageState extends State<MapLocationPage> {
                           ),
                           child: const SearchLocationMapWidget(),
                         ),
-                        isScrollControlled: true,
                       );
                     },
                     child: Hero(
@@ -193,7 +200,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.search_rounded,
+                              FontAwesomeIcons.magnifyingGlass,
                               color: context.appColors.secondaryTextColor,
                               size: 20.r,
                             ),
@@ -206,7 +213,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                                 style: TextStyle(
                                   color: context.appColors.primaryTextColor,
                                   fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w400,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -224,14 +231,23 @@ class _MapLocationPageState extends State<MapLocationPage> {
                   child: GestureDetector(
                     onTap: () async {
                       GoogleMapController con = await _controller.future;
+                      final locState = context.read<LocationBloc>().state;
                       con.animateCamera(
                         CameraUpdate.newCameraPosition(
                           CameraPosition(
                             target: LatLng(
-                              locationData.latitude,
-                              locationData.longitude,
+                              locState.location.position.latitude,
+                              locState.location.position.longitude,
                             ),
                             zoom: 15,
+                          ),
+                        ),
+                      );
+                      context.read<CommonBloc>().add(
+                        MapLocationEvent(
+                          location: LatLng(
+                            locState.location.position.latitude,
+                            locState.location.position.longitude,
                           ),
                         ),
                       );
@@ -245,7 +261,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                             Border.all(color: context.appColors.glassBorder),
                       ),
                       child: Icon(
-                        Icons.my_location_rounded,
+                        FontAwesomeIcons.locationCrosshairs,
                         color: context.appColors.primaryTextColor,
                         size: 24.r,
                       ),
@@ -260,10 +276,17 @@ class _MapLocationPageState extends State<MapLocationPage> {
       floatingActionButton: GestureDetector(
         onTap: () async {
           if (pos != null) {
-            locationTextController.text = await Helpers.getAddressFromMap(pos!);
+            final userLocation = await LocationService.getUserLocationFromLatLng(pos!);
+            if (userLocation != null) {
+              if (mounted) {
+                context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
+                locationTextController.text = userLocation.address;
+              }
+            } else {
+              locationTextController.text = await Helpers.getAddressFromMap(pos!);
+            }
           }
-          locController.text = locationTextController.text;
-          Get.back();
+          context.pop(locationTextController.text);
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 16.h),
@@ -281,14 +304,14 @@ class _MapLocationPageState extends State<MapLocationPage> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.check_circle_outline_rounded,
+              FaIcon(FontAwesomeIcons.circleCheck,
                   color: Colors.white, size: 24.r),
               SizedBox(width: 8.w),
               Text(
                 "Confirm Location",
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   fontSize: 16.sp,
                 ),
               ),
@@ -300,3 +323,5 @@ class _MapLocationPageState extends State<MapLocationPage> {
     );
   }
 }
+
+

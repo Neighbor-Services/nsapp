@@ -78,6 +78,14 @@ class Profile {
   List<PerformanceBadge>? performanceBadges;
   @HiveField(34)
   String? preferredPaymentMode;
+  @HiveField(35)
+  int? streakCount;
+  @HiveField(36)
+  int? xp;
+  @HiveField(37)
+  int? level;
+  @HiveField(38)
+  int? neighborScore;
 
   Profile({
     this.id,
@@ -112,6 +120,10 @@ class Profile {
     this.subscriptionTier,
     this.performanceBadges,
     this.preferredPaymentMode,
+    this.streakCount,
+    this.xp,
+    this.level,
+    this.neighborScore,
   });
 
   Profile.fromJson(Map<String, dynamic> json) {
@@ -177,6 +189,10 @@ class Profile {
       });
     }
     preferredPaymentMode = json['preferred_payment_mode'];
+    streakCount = json['streak_count'];
+    xp = json['xp'];
+    level = json['level'];
+    neighborScore = json['neighbor_score'];
   }
 
   Map<String, dynamic> toJson() {
@@ -207,16 +223,13 @@ class Profile {
     data['latitude'] = (latitude != null && latitude!.isNotEmpty)
         ? latitude
         : null;
-    data['average_rating'] = averageRating;
-    data['total_reviews'] = totalReviews;
     data['bio'] = bio;
     data['subscription_tier'] = subscriptionTier ?? 'NONE';
     data['preferred_payment_mode'] = preferredPaymentMode ?? 'ON_SITE';
-    if (performanceBadges != null) {
-      data['performance_badges'] = performanceBadges!
-          .map((v) => v.toJson())
-          .toList();
-    }
+    
+    data.removeWhere((key, value) => value == null);
     return data;
   }
 }
+
+

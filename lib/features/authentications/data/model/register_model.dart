@@ -8,3 +8,5 @@ class RegisterModel {
     return {'email': email, 'password': password};
   }
 }
+
+

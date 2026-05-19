@@ -15,3 +15,5 @@ class GetAppointmentsUseCase extends UseCase<List<AppointmentData>, dynamic> {
     return results.fold((l) => Left(l), (r) => Right(r));
   }
 }
+
+

@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -57,7 +58,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
             CustomTextWidget(
               text: "Send Appointment",
               fontSize: 22.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: textColor,
             ),
             SizedBox(height: 24.h),
@@ -124,7 +125,7 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
               controller: messageController,
               hintText: 'Add a message (optional)',
               suffixIcon: IconButton(
-                icon: Icon(Icons.send_rounded, color: context.appColors.secondaryColor),
+                icon: FaIcon(FontAwesomeIcons.paperPlane, color: context.appColors.secondaryColor),
                 onPressed: () async {
                   if (appointmentStartTime == null ||
                       appointmentDate == null) {
@@ -135,22 +136,44 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
                     );
                     return;
                   }
-                  Message message = Message(
-                    isCalender: true,
-                    chatRoomId: Helpers.createChatRoom(
-                      sender: SuccessGetProfileState.profile.user!.id!,
-                      receiver: MessageReceiverState.profile.user!.id!,
-                    ),
-                    withImage: false,
-                    withImageAndText: false,
-                    message: messageController.text.trim(),
-                    sender: SuccessGetProfileState.profile.user!.id!,
-                    receiver: MessageReceiverState.profile.user!.id!,
-                    calenderDate: appointmentDate,
-                  );
-                  context.read<MessageBloc>().add(ChatEvent(message: message));
-                  messageController.text = "";
-                  Navigator.pop(context);
+
+                  final profileState = context.read<ProfileBloc>().state;
+                  final messageState = context.read<MessageBloc>().state;
+
+                  String? senderId;
+                  if (profileState is SuccessGetProfileState) {
+                    senderId = profileState.profile.user?.id;
+                  }
+
+                  String? receiverId;
+                  if (messageState is MessageReceiverState) {
+                    receiverId = messageState.profile.user?.id;
+                  }
+
+                  if (senderId != null && receiverId != null) {
+                    Message message = Message(
+                      isCalender: true,
+                      chatRoomId: Helpers.createChatRoom(
+                        sender: senderId,
+                        receiver: receiverId,
+                      ),
+                      withImage: false,
+                      withImageAndText: false,
+                      message: messageController.text.trim(),
+                      sender: senderId,
+                      receiver: receiverId,
+                      calenderDate: appointmentDate,
+                    );
+                    context.read<MessageBloc>().add(ChatEvent(message: message));
+                    messageController.text = "";
+                    Navigator.pop(context);
+                  } else {
+                    customAlert(
+                      context,
+                      AlertType.error,
+                      "Could not identify sender or receiver",
+                    );
+                  }
                 },
               ),
             ),
@@ -161,3 +184,5 @@ class _AppointmentChatWidgetState extends State<AppointmentChatWidget> {
     );
   }
 }
+
+

@@ -1,11 +1,13 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nsapp/core/core.dart';
-import 'package:nsapp/core/initialize/init.dart';
 import 'package:nsapp/core/services/location_service.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/features/shared/presentation/bloc/location/location_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
 
 class MapDirectionPage extends StatefulWidget {
@@ -32,17 +34,27 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
 
   Future<void> _fetchDirections() async {
     try {
-      final destinationLat = RequestDirectionState.request.latitude ?? 0.0;
-      final destinationLng = RequestDirectionState.request.longitude ?? 0.0;
+      final state = context.read<ProviderBloc>().state;
+      double destinationLat = 0.0;
+      double destinationLng = 0.0;
+
+      if (state is RequestDirectionState) {
+        destinationLat = state.request.latitude ?? 0.0;
+        destinationLng = state.request.longitude ?? 0.0;
+      }
+
+      final userLoc = context.read<LocationBloc>().state.location;
 
       final results = await LocationService.getFullDirections(
-        lat: destinationLat,
-        lng: destinationLng,
+        sourceLat: userLoc.position.latitude,
+        sourceLng: userLoc.position.longitude,
+        destLat: destinationLat,
+        destLng: destinationLng,
       );
       
       final points = await LocationService.getPolylinePoints(
-        sourceLat: locationData.latitude,
-        sourceLng: locationData.longitude,
+        sourceLat: userLoc.position.latitude,
+        sourceLng: userLoc.position.longitude,
         destLat: destinationLat,
         destLng: destinationLng,
       );
@@ -56,7 +68,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
         markers = {
           Marker(
             markerId: const MarkerId("source"),
-            position: LatLng(locationData.latitude, locationData.longitude),
+            position: LatLng(userLoc.position.latitude, userLoc.position.longitude),
             infoWindow: const InfoWindow(title: "My Location"),
             icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
           ),
@@ -80,10 +92,11 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
   }
 
   void _fitBounds(GoogleMapController controller, double destLat, double destLng) {
-    double minLat = locationData.latitude < destLat ? locationData.latitude : destLat;
-    double maxLat = locationData.latitude > destLat ? locationData.latitude : destLat;
-    double minLng = locationData.longitude < destLng ? locationData.longitude : destLng;
-    double maxLng = locationData.longitude > destLng ? locationData.longitude : destLng;
+    final userLoc = context.read<LocationBloc>().state.location;
+    double minLat = userLoc.position.latitude < destLat ? userLoc.position.latitude : destLat;
+    double maxLat = userLoc.position.latitude > destLat ? userLoc.position.latitude : destLat;
+    double minLng = userLoc.position.longitude < destLng ? userLoc.position.longitude : destLng;
+    double maxLng = userLoc.position.longitude > destLng ? userLoc.position.longitude : destLng;
 
     LatLngBounds bounds = LatLngBounds(
       southwest: LatLng(minLat, minLng),
@@ -103,7 +116,10 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
             height: size(context).height,
             child: GoogleMap(
               initialCameraPosition: CameraPosition(
-                target: LatLng(locationData.latitude, locationData.longitude),
+                target: LatLng(
+                  context.read<LocationBloc>().state.location.position.latitude,
+                  context.read<LocationBloc>().state.location.position.longitude,
+                ),
                 zoom: 13.0,
               ),
               onMapCreated: (GoogleMapController controller) {
@@ -143,7 +159,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.navigation_rounded,
+                          FontAwesomeIcons.compass,
                           color: context.appColors.primaryColor,
                           size: 24.r,
                         ),
@@ -157,7 +173,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                               "Heading to Request Location",
                               style: TextStyle(
                                 color: context.appColors.primaryTextColor,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 16.sp,
                               ),
                             ),
@@ -180,9 +196,9 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildInfoItem(Icons.timer_outlined, "ETA", duration),
+                      _buildInfoItem(FontAwesomeIcons.clock, "ETA", duration),
                       _buildInfoItem(
-                        Icons.straighten_rounded,
+                        FontAwesomeIcons.ruler,
                         "Distance",
                         distance,
                       ),
@@ -201,7 +217,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
               child: SolidContainer(
                 padding: EdgeInsets.all(12.r),
                 child: Icon(
-                  Icons.arrow_back_ios_new_rounded,
+                  FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
                 ),
@@ -232,7 +248,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
               value,
               style: TextStyle(
                 color: context.appColors.primaryTextColor,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 fontSize: 14.sp,
               ),
             ),

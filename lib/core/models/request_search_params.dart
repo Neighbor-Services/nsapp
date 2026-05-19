@@ -14,9 +14,11 @@ class RequestSearchParams extends Params {
     this.query,
     this.lat,
     this.lng,
-    this.radius,
+    this.radius = 25.0,
     this.page,
     this.targeted,
     this.catalogServiceId,
   });
 }
+
+

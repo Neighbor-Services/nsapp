@@ -2,11 +2,10 @@ part of 'provider_bloc.dart';
 
 sealed class ProviderEvent {}
 
-class NavigateProviderEvent extends ProviderEvent {
-  final Widget widget;
-  final int page;
+class ChangeProviderTabEvent extends ProviderEvent {
+  final int tabIndex;
 
-  NavigateProviderEvent({required this.page, required this.widget});
+  ChangeProviderTabEvent({required this.tabIndex});
 }
 
 class GetRecentRequestEvent extends ProviderEvent {
@@ -103,8 +102,7 @@ class SearchRequestEvent extends ProviderEvent {
   });
 }
 
-class ProviderBackPressedEvent extends ProviderEvent {}
-
+// Removed ProviderBackPressedEvent as native back-button will now be handled by standard navigator.
 class SearchEvent extends ProviderEvent {
   final bool isSearching;
 
@@ -119,8 +117,9 @@ class CancelAppointmentEvent extends ProviderEvent {
 
 class IsRequestAcceptedEvent extends ProviderEvent {
   final String id;
+  final String? uid;
 
-  IsRequestAcceptedEvent({required this.id});
+  IsRequestAcceptedEvent({required this.id, this.uid});
 }
 
 class AddPortfolioItemEvent extends ProviderEvent {
@@ -153,3 +152,11 @@ class GetRequestDetailEvent extends ProviderEvent {
   final String id;
   GetRequestDetailEvent({required this.id});
 }
+
+class VerifyAppointmentCodeEvent extends ProviderEvent {
+  final String appointmentId;
+  final String code;
+  VerifyAppointmentCodeEvent({required this.appointmentId, required this.code});
+}
+
+

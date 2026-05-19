@@ -1,13 +1,16 @@
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
-import 'package:nsapp/features/shared/presentation/widget/loading_widget.dart';
+import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 
-import '../../../profile/presentation/bloc/profile_bloc.dart';
-import '../../../profile/presentation/pages/about_page.dart';
 import 'package:nsapp/core/core.dart';
 
 
@@ -19,6 +22,8 @@ class PopularProviderWidget extends StatefulWidget {
 }
 
 class _PopularProviderWidgetState extends State<PopularProviderWidget> {
+  List<Favorite> _favorites = [];
+
   @override
   void initState() {
     context.read<SeekerBloc>().add(GetPopularProvidersEvent());
@@ -30,6 +35,9 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
   Widget build(BuildContext context) {
     return BlocConsumer<SeekerBloc, SeekerState>(
       listener: (context, state) {
+        if (state is SuccessGetMyFavoritesState) {
+          setState(() => _favorites = state.profiles);
+        }
         if (state is SuccessAddToFavoriteState) {
           context.read<SeekerBloc>().add(GetMyFavoritesEvent());
         }
@@ -40,172 +48,239 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           context.read<SeekerBloc>().add(GetMyFavoritesEvent());
         }
       },
+      buildWhen: (previous, current) =>
+          current is SuccessPopularProvidersState ||
+          current is FailurePopularProviderState ||
+          current is SuccessGetMyFavoritesState ||
+          current is PopularProvidersLoadingState ||
+          current is LoadingSeekerState ||
+          current is InitialSeekerState,
       builder: (context, state) {
-        return Container(
-          height: 200.h,
-          width: size(context).width,
-          decoration: BoxDecoration(),
-          child: FutureBuilder<List<Profile>>(
-            future: SuccessPopularProvidersState.providers,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isNotEmpty) {
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      Profile profile = snapshot.data![index];
+        // Resolve canonical providers list from bloc state or cache
+        final List<Profile> providers = context.read<SeekerBloc>().popularProviders;
+        final bool isLoading = state is PopularProvidersLoadingState;
 
-                      return GestureDetector(
-                        onTap: () {
-                          PortfolioUserState.userId = profile.user!.id!;
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          child: Container(
+            key: ValueKey(state.runtimeType),
+            height: 200.h,
+            width: size(context).width,
+            decoration: const BoxDecoration(),
+            child: () {
+                if (isLoading && providers.isEmpty) {
+                   return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
+                }
 
-                          context.read<SeekerBloc>().add(
-                            SetProviderToReviewEvent(
-                              provider: profile,
-                              providerUserId: profile.user!.id!,
-                            ),
-                          );
-                          context.read<ProfileBloc>().add(
-                            AboutUserEvent(userID: profile.user!.id!),
-                          );
-                          context.read<SeekerBloc>().add(
-                            NavigateSeekerEvent(
-                              page: 1,
-                              widget: const AboutPage(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 200.w,
-                          margin: EdgeInsets.only(
-                            right: 20.w,
-                            bottom: 10.h,
-                            top: 4.h,
+                if (state is SuccessPopularProvidersState) {
+                  if (state.providers.isNotEmpty) {
+                    return _buildProviderList(state.providers);
+                  } else {
+                    return EmptyWidget(
+                      message: "No popular providers available",
+                      height: 180.h,
+                    );
+                  }
+                } else if (state is FailurePopularProviderState) {
+                  return EmptyWidget(
+                    message: "Failed to load providers: ${state.message}",
+                    height: 180.h,
+                  );
+                } else {
+                  // Fallback to existing data if available
+                  if (providers.isNotEmpty) {
+                    return _buildProviderList(providers);
+                  }
+                  
+                  // Show skeleton as ultimate fallback if still loading or initial
+                  if (state is InitialSeekerState || state is LoadingSeekerState || isLoading) {
+                    return const HorizontalSkeletonLoader(height: 200, itemWidth: 200);
+                  }
+
+                  return EmptyWidget(
+                    message: "No popular providers found",
+                    height: 180.h,
+                  );
+                }
+              }()
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProviderList(List<Profile> providers) {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: providers.length,
+      itemBuilder: (context, index) {
+        Profile profile = providers[index];
+
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: Duration(milliseconds: 600 + (index * 150)),
+          curve: Curves.easeOut,
+          builder: (context, value, child) {
+            return Transform.translate(
+              offset: Offset(30 * (1 - value), 0),
+              child: Opacity(opacity: value, child: child),
+            );
+          },
+          child: GestureDetector(
+            onTap: () {
+              context.read<SeekerBloc>().add(
+                    SetProviderToReviewEvent(
+                      provider: profile,
+                      providerUserId: profile.user!.id!,
+                    ),
+                  );
+              context.push('/portfolio-view', extra: profile);
+            },
+            child: Container(
+              width: 200.w,
+              margin: EdgeInsets.only(
+                right: 20.w,
+                bottom: 10.h,
+                top: 4.h,
+              ),
+              decoration: BoxDecoration(
+                color: context.appColors.cardBackground,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: context.appColors.glassBorder,
+                  width: 1.5.r,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Background Image
+                    (profile.profilePictureUrl != null && profile.profilePictureUrl!.isNotEmpty)
+                        ? CachedNetworkImage(
+                            imageUrl: profile.profilePictureUrl!,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const HorizontalSkeletonLoader(height: 200, itemWidth: 200),
+                            errorWidget: (context, url, error) => Image.asset(logo2Assets, fit: BoxFit.contain),
+                          )
+                        : Image.asset(
+                            logo2Assets,
+                            fit: BoxFit.contain,
+                            color: context.appColors.primaryColor.withAlpha(20),
                           ),
-                          decoration: BoxDecoration(
-                            color: context.appColors.cardBackground,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color: context.appColors.glassBorder,
-                              width: 1.5.r,
-                            ),
+                    
+                    // Gradient Overlay
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withAlpha(50),
+                              Colors.black.withAlpha(200),
+                            ],
+                            stops: const [0.0, 0.4, 1.0],
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: Stack(
-                              fit: StackFit.expand,
+                        ),
+                      ),
+                    ),
+
+                    // Top Action Buttons
+                    Positioned(
+                      top: 12.h,
+                      left: 12.w,
+                      child: _buildFloatingRating(profile.rating ?? "0.0"),
+                    ),
+                    Positioned(
+                      top: 12.h,
+                      right: 12.w,
+                      child: _buildFavoriteAction(profile, _favorites),
+                    ),
+
+                    // Subscription Tier Badge
+                    if (profile.subscriptionTier != null && profile.subscriptionTier != 'NONE')
+                      Positioned(
+                        top: 45.h,
+                        left: 12.w,
+                        child: _buildTierBadge(profile.subscriptionTier!),
+                      ),
+
+                    // Bottom Content
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Padding(
+                        padding: EdgeInsets.all(16.r),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
                               children: [
-                                // (profile.profilePictureUrl != "" &&
-                                //         profile.profilePictureUrl != "picture")
-                                //     ? Image.network(
-                                //         profile.profilePictureUrl ?? "",
-                                //         fit: BoxFit.cover,
-                                //         errorBuilder: (context, _, _) =>
-                                //             Image.asset(
-                                //               logo2Assets,
-                                //               fit: BoxFit.cover,
-                                //             ),
-                                //       )
-                                //     : Image.asset(
-                                //         logo2Assets,
-                                //         fit: BoxFit.cover,
-                                //       ),
-
-                                Positioned(
-                                  top: 12.h,
-                                  left: 12.w,
-                                  child: _buildFloatingRating(
-                                    profile.rating ?? "0.0",
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 12.h,
-                                  right: 12.w,
-                                  child: _buildFavoriteAction(profile),
-                                ),
-
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Container(
-                                    height: 100.h,
+                                // Pulsing Online Indicator
+                                if ((profile.totalReviews ?? 0) > 2)
+                                  Container(
+                                    margin: EdgeInsets.only(right: 6.w),
+                                    width: 8.r,
+                                    height: 8.r,
                                     decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                    ),
-                                  ),
-                                ),
-
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(16.r),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                profile.firstName ?? "User",
-                                                style: TextStyle(
-                                                  color: context.appColors.primaryTextColor,
-                                                  fontWeight: FontWeight.w900,
-                                                  fontSize: 16.sp,
-                                                  letterSpacing: 0.5,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            if (profile.isIdentityVerified ==
-                                                true)
-                                               Icon(
-                                                Icons.verified_rounded,
-                                                color: context.appColors.primaryColor,
-                                                size: 16.r,
-                                              ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 2.h),
-                                        Text(
-                                          getServiceName(profile.service ?? "").toUpperCase(),
-                                          style: TextStyle(
-                                            color: context.appColors.primaryTextColor,
-                                            fontSize: 10.sp,
-                                            fontWeight: FontWeight.w900,
-                                            letterSpacing: 0.5,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                      color: Colors.greenAccent,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.greenAccent.withAlpha(100),
+                                          blurRadius: 4.r,
+                                          spreadRadius: 2.r,
                                         ),
                                       ],
                                     ),
                                   ),
+                                Expanded(
+                                  child: Text(
+                                    (profile.firstName ?? "User").toUpperCase(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15.sp,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
+                                if (profile.isIdentityVerified == true)
+                                  Icon(
+                                    FontAwesomeIcons.circleCheck,
+                                    color: Colors.blueAccent,
+                                    size: 16.r,
+                                  ),
                               ],
                             ),
-                          ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              getServiceName(profile.service ?? "").toUpperCase(),
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.0,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  );
-                } else {
-                   return  EmptyWidget(
-                    message: "No popular providers available",
-                    height: 180.h,
-                  );
-                }
-              } else {
-                return const LoadingWidget();
-              }
-            },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -216,23 +291,23 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: context.appColors.cardBackground,
+        color: Colors.black.withAlpha(150),
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
-          color: context.appColors.glassBorder,
-          width: 1.5.r,
+          color: Colors.white.withAlpha(30),
+          width: 1.r,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.star_rounded, color: Colors.yellow, size: 14.r),
+          FaIcon(FontAwesomeIcons.solidStar, color: Colors.orangeAccent, size: 12.r),
           SizedBox(width: 4.w),
           Text(
-            double.parse(rating).toStringAsFixed(1),
+            double.tryParse(rating)?.toStringAsFixed(1) ?? "0.0",
             style: TextStyle(
-              color: context.appColors.primaryTextColor,
-              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
               fontSize: 11.sp,
             ),
           ),
@@ -241,22 +316,81 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
     );
   }
 
-  Widget _buildFavoriteAction(Profile profile) {
-    final bool isFavorite = Helpers.isMyFavorite(profile.user!.id!);
+  Widget _buildTierBadge(String tier) {
+    Color tierColor;
+    IconData icon;
+    
+    switch (tier.toUpperCase()) {
+      case 'PLATINUM':
+        tierColor = const Color(0xFFE5E4E2);
+        icon = FontAwesomeIcons.crown;
+        break;
+      case 'GOLD':
+        tierColor = const Color(0xFFFFD700);
+        icon = FontAwesomeIcons.medal;
+        break;
+      case 'SILVER':
+        tierColor = const Color(0xFFC0C0C0);
+        icon = FontAwesomeIcons.award;
+        break;
+      default:
+        return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: tierColor.withAlpha(200),
+        borderRadius: BorderRadius.circular(8.r),
+        boxShadow: [
+          BoxShadow(
+            color: tierColor.withAlpha(50),
+            blurRadius: 4,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FaIcon(icon, color: Colors.black87, size: 10.r),
+          SizedBox(width: 4.w),
+          Text(
+            tier.toUpperCase(),
+            style: TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 9.sp,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFavoriteAction(Profile profile, List<Favorite> favorites) {
+    final String? userId = profile.user?.id;
+    if (userId == null) return const SizedBox.shrink();
+
+    final bool isFavorite = Helpers.isMyFavorite(userId, favorites);
     return GestureDetector(
       onTap: () {
+        HapticFeedback.lightImpact();
         if (isFavorite) {
           String id = "";
-          for (var favorite in SuccessGetMyFavoritesNoFutureState.profiles) {
-            if (favorite.favoriteUser!.user!.id == profile.user!.id!) {
-              id = favorite.id!;
+          for (var favorite in favorites) {
+            if (favorite.favoriteUser?.user?.id == userId) {
+              id = favorite.id ?? "";
               break;
             }
           }
-          context.read<SeekerBloc>().add(RemoveFromFavoriteEvent(userId: id));
+          if (id.isNotEmpty) {
+            context.read<SeekerBloc>().add(RemoveFromFavoriteEvent(userId: id));
+          }
         } else {
           context.read<SeekerBloc>().add(
-            AddToFavoriteEvent(userId: profile.user!.id!),
+            AddToFavoriteEvent(userId: userId),
           );
         }
       },
@@ -264,15 +398,22 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
         height: 32.h,
         width: 32.w,
         decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
+          color: Colors.black.withAlpha(100),
           shape: BoxShape.circle,
         ),
         child: Icon(
-          isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
-          color: isFavorite ? context.appColors.errorColor : Colors.white,
-          size: 18.r,
+          isFavorite ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
+          color: isFavorite ? Colors.redAccent : Colors.white,
+          size: 16.r,
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
+
