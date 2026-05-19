@@ -1,5 +1,10 @@
+<<<<<<< HEAD
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+=======
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 import 'package:nsapp/core/models/notification.dart' as not;
 import 'package:nsapp/features/shared/domain/usecase/add_notification_use_case.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_my_notifications_use_case.dart';
@@ -11,7 +16,11 @@ import 'package:nsapp/core/services/local_notification_service.dart';
 part 'notification_event.dart';
 part 'notification_state.dart';
 
+<<<<<<< HEAD
+class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
+=======
 class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState> {
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
   final AddNotificationUseCase addNotificationUseCase;
   final GetMyNotificationsUseCase getMyNotificationsUseCase;
   final SetSeenNotificationUseCase seenNotificationUseCase;
@@ -33,20 +42,35 @@ class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState
     });
 
     on<GetMyNotificationsEvent>((event, emit) async {
+<<<<<<< HEAD
+      final results = await getMyNotificationsUseCase(null);
+=======
       final results = await getMyNotificationsUseCase(event.page);
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
       results.fold(
         (l) => emit(NotificationFailure(l.message)),
         (r) {
           emit(SuccessGetMyNotificationsState(
             notifications: r,
             unreadCount: r.where((n) => n.notification?.isRead == false).length,
+<<<<<<< HEAD
+=======
             hasReachedMax: r.length < 10, // Assuming PAGE_SIZE is 10
             currentPage: event.page,
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
           ));
         },
       );
     }, transformer: sequential());
 
+<<<<<<< HEAD
+    on<SetNotificationSeenEvent>((event, emit) async {
+      final results = await seenNotificationUseCase(event.notificationID);
+      results.fold(
+        (l) => emit(NotificationFailure(l.message)),
+        (r) {
+          add(GetMyNotificationsEvent());
+=======
     on<LoadMoreNotificationsEvent>((event, emit) async {
       final currentState = state;
       if (currentState is SuccessGetMyNotificationsState && !currentState.hasReachedMax) {
@@ -117,6 +141,7 @@ class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState
         },
         (r) {
           // No need to reload full list on success as we already updated optimistically
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
           emit(SuccessSetSeentState());
         },
       );
@@ -157,6 +182,8 @@ class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState
       );
     });
   }
+<<<<<<< HEAD
+=======
 
   @override
   NotificationState? fromJson(Map<String, dynamic> json) {
@@ -190,4 +217,5 @@ class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState
     }
     return null;
   }
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 }

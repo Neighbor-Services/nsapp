@@ -1,12 +1,21 @@
+<<<<<<< HEAD
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nsapp/features/shared/domain/usecase/get_legal_document_use_case.dart';
+=======
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:nsapp/features/shared/domain/usecase/get_legal_document_use_case.dart';
 import 'package:nsapp/core/models/legal_document.dart';
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 export 'legal_event.dart';
 export 'legal_state.dart';
 import 'legal_event.dart';
 import 'legal_state.dart';
 
+<<<<<<< HEAD
+class LegalBloc extends Bloc<LegalEvent, LegalState> {
+=======
 class LegalBloc extends HydratedBloc<LegalEvent, LegalState> {
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
   final GetLegalDocumentUseCase getLegalDocumentUseCase;
 
   LegalBloc({required this.getLegalDocumentUseCase}) : super(LegalInitial()) {
@@ -19,6 +28,8 @@ class LegalBloc extends HydratedBloc<LegalEvent, LegalState> {
       );
     });
   }
+<<<<<<< HEAD
+=======
 
   @override
   LegalState? fromJson(Map<String, dynamic> json) {
@@ -42,4 +53,5 @@ class LegalBloc extends HydratedBloc<LegalEvent, LegalState> {
     }
     return null;
   }
+>>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 }
