@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import 'package:flutter_bloc/flutter_bloc.dart';
-=======
 import 'package:hydrated_bloc/hydrated_bloc.dart';
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/account_link.dart';
 import 'package:nsapp/core/models/wallet.dart';
@@ -13,11 +10,7 @@ import 'package:nsapp/features/shared/domain/usecase/get_stripe_dashboard_link_u
 part 'wallet_event.dart';
 part 'wallet_state.dart';
 
-<<<<<<< HEAD
-class WalletBloc extends Bloc<WalletEvent, WalletState> {
-=======
 class WalletBloc extends HydratedBloc<WalletEvent, WalletState> {
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
   final GetMyWalletUseCase getMyWalletUseCase;
   final RequestPayoutUseCase requestPayoutUseCase;
   final GetStripeDashboardLinkUseCase getStripeDashboardLinkUseCase;
@@ -64,8 +57,6 @@ class WalletBloc extends HydratedBloc<WalletEvent, WalletState> {
       }
     });
   }
-<<<<<<< HEAD
-=======
 
   @override
   WalletState? fromJson(Map<String, dynamic> json) {
@@ -90,5 +81,4 @@ class WalletBloc extends HydratedBloc<WalletEvent, WalletState> {
     }
     return null;
   }
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 }

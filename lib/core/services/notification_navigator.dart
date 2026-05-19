@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
-import 'package:get/get.dart';
-=======
 import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/routes/app_router.dart';
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' hide GetAppointmentsEvent;
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' as provider_bloc show GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' hide GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as seeker_bloc show GetAppointmentsEvent;
-<<<<<<< HEAD
-import 'package:nsapp/features/provider/presentation/pages/provider_request_detail_page.dart';
-import 'package:nsapp/features/seeker/presentation/pages/seeker_request_page.dart';
-=======
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
+
 
 /// Holds a pending notification payload that arrived when the app was
 /// terminated or in the background, so the home screen can act on it
@@ -51,10 +43,6 @@ class NotificationNavigator {
 
   /// Determine whether we can navigate right now (home page is in the stack).
   static bool get _isHomeReady {
-<<<<<<< HEAD
-    final current = Get.currentRoute;
-    return current == '/home' || current.startsWith('/app/');
-=======
     final context = rootNavigatorKey.currentContext;
     if (context == null) return false;
     try {
@@ -63,7 +51,6 @@ class NotificationNavigator {
     } catch (_) {
       return false;
     }
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
   }
 
   /// Navigate immediately or stash for later consumption by the home screen.
@@ -93,15 +80,9 @@ class NotificationNavigator {
   }
 
   static Future<void> _navigate(Map<String, dynamic> data) async {
-<<<<<<< HEAD
-    final context = Get.context;
-    if (context == null) {
-      debugPrint("DEBUG [NotificationNavigator]: Get.context is null, cannot navigate.");
-=======
     final context = rootNavigatorKey.currentContext;
     if (context == null) {
       debugPrint("DEBUG [NotificationNavigator]: rootNavigatorKey context is null, cannot navigate.");
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
       return;
     }
 
@@ -112,16 +93,9 @@ class NotificationNavigator {
       "DEBUG [NotificationNavigator]: Navigating for type=$type, request_id=$requestId",
     );
 
-<<<<<<< HEAD
-    // Make sure we are actually on the home route layout before dispatching tab events
-    if (Get.currentRoute != '/home' && !Get.currentRoute.startsWith('/app/')) {
-      Get.until((route) => route.settings.name == '/home');
-    }
-=======
     // If we are not on home, we might need to go there first. 
     // However, context.go('/home') might clear the stack. 
     // For now, we'll assume the home is ready as per _isHomeReady check.
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 
     final isProvider = context.read<SettingsBloc>().state.isProvider;
 
@@ -143,25 +117,15 @@ class NotificationNavigator {
             context.read<ProviderBloc>().add(
                   GetRequestDetailEvent(id: requestId),
                 );
-<<<<<<< HEAD
-            Get.to(() => const ProviderRequestDetailPage());
-          } else {
-            Get.to(() => const SeekerRequestPage());
-=======
             context.push('/app/provider/requests/$requestId');
           } else {
             context.push('/seeker-requests');
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
           }
         } else {
           if (isProvider) {
             context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 3));
           } else {
-<<<<<<< HEAD
-            Get.to(() => const SeekerRequestPage());
-=======
             context.push('/seeker-requests');
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
           }
         }
         break;
@@ -172,11 +136,7 @@ class NotificationNavigator {
           context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 5));
         } else {
           context.read<SeekerBloc>().add(seeker_bloc.GetAppointmentsEvent());
-<<<<<<< HEAD
-          Get.to(() => const SeekerRequestPage());
-=======
           context.push('/seeker-requests');
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
         }
         break;
 

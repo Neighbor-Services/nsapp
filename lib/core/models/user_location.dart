@@ -56,8 +56,7 @@ class UserLocation {
       zipCode: zipCode ?? this.zipCode,
     );
   }
-<<<<<<< HEAD
-=======
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -92,5 +91,4 @@ class UserLocation {
       zipCode: json['zipCode'] ?? "",
     );
   }
->>>>>>> cc9c85db158902495bd6a3b3dbcc216bd8feb0e7
 }
