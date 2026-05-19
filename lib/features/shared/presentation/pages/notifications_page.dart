@@ -439,7 +439,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              _formatDate(notification.createdAt!),
+                              _formatDate(notification.createdAt ?? DateTime.now()),
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
