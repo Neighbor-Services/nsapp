@@ -57,6 +57,8 @@ import 'package:nsapp/features/seeker/presentation/pages/seeker_update_request_p
 import 'package:nsapp/features/provider/presentation/pages/provider_search_request_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_targeted_requests_page.dart';
 import 'package:nsapp/features/provider/presentation/pages/provider_more_requests_page.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:nsapp/features/provider/presentation/pages/provider_on_the_way_page.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -295,6 +297,16 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/provider-tasks',
       builder: (context, state) => const ProviderActiveTasksPage(),
+    ),
+    GoRoute(
+      path: '/provider-on-the-way',
+      builder: (context, state) {
+        final args = state.extra as Map<String, dynamic>;
+        return ProviderOnTheWayPage(
+          appointmentId: args['appointmentId'] as String,
+          destination: args['destination'] as LatLng,
+        );
+      },
     ),
     GoRoute(
       path: '/portfolio-view',

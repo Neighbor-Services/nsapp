@@ -48,6 +48,12 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
   bool _isWithImage = false;
   bool _isConnected = false;
 
+  // Getters for synchronous initial state reading by UI
+  List<ChatMessage> get currentMessages => _currentMessages;
+  Profile get receiverProfile => _receiverProfile;
+  bool get isTyping => _isTyping;
+  bool get isOnline => _isOnline;
+
   WebSocketChannel? _messageChannel;
   StreamSubscription? _wsSubscription;
   Timer? _reconnectTimer;
@@ -199,8 +205,36 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
       results.fold(
         (l) => emit(FailureGetMessageState(message: l.message ?? "")),
         (r) {
-          // Sync with API and update Hive
-          _currentMessages = r;
+          if (event.before != null) {
+            // Pagination (older messages)
+            final existingIds = _currentMessages
+                .map((m) => m.message?.id)
+                .where((id) => id != null)
+                .toSet();
+            final uniqueOlder = r.where((m) {
+              final id = m.message?.id;
+              return id == null || !existingIds.contains(id);
+            }).toList();
+            _currentMessages = [...uniqueOlder, ..._currentMessages];
+          } else {
+            // Initial fetch or refresh
+            // We want to combine the API messages (r) with the current local messages (_currentMessages)
+            // so we don't discard any optimistic messages or messages that arrived via WebSocket during the HTTP request.
+            final rIds = r.map((m) => m.message?.id).where((id) => id != null).toSet();
+            final additionalMessages = _currentMessages.where((m) {
+              final id = m.message?.id;
+              return id == null || !rIds.contains(id);
+            }).toList();
+            
+            final merged = [...r, ...additionalMessages];
+            // Sort chronologically by createdAt
+            merged.sort((a, b) {
+              final aTime = a.message?.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+              final bTime = b.message?.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+              return aTime.compareTo(bTime);
+            });
+            _currentMessages = merged;
+          }
           final roomId = Helpers.createChatRoom(sender: _currentSenderId!, receiver: event.receiver);
           _saveMessagesToHive(roomId, _currentMessages);
           emit(SuccessGetMessageState(messages: List.from(_currentMessages)));

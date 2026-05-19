@@ -3,6 +3,7 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -573,8 +574,12 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                     );
                     if (appointmentData.appointment != null) {
                       Navigator.of(context).pop();
-                      context.push('/live-tracking/${appointmentData.appointment!.id}', extra: {
-                        'providerName': "${appointmentData.user?.firstName ?? ''} ${appointmentData.user?.lastName ?? ''}".trim(),
+                      context.push('/live-tracking', extra: {
+                        'appointmentId': appointmentData.appointment!.id ?? '',
+                        'jobLocation': LatLng(
+                          double.tryParse(appointmentData.user?.latitude ?? '0.0') ?? 0.0,
+                          double.tryParse(appointmentData.user?.longitude ?? '0.0') ?? 0.0,
+                        ),
                       });
                     }
                   } catch (e) {
@@ -611,13 +616,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       (element) => element.appointment?.id == data[0].event,
                     );
                     if (dataApp.appointment != null) {
-                      final providerName =
-                          "${dataApp.user?.firstName ?? ''} ${dataApp.user?.lastName ?? ''}"
-                              .trim();
-                      context.push('/create-dispute/${dataApp.appointment!.id}', extra: {
-                        'providerName': providerName.isNotEmpty ? providerName : "Provider",
-                        'defendantId': dataApp.user?.id,
-                      });
+                      context.push('/create-dispute');
                     }
                   } catch (e) {
                     debugPrint("Appointment not found: $e");

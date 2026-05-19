@@ -80,318 +80,320 @@ class _AboutPageState extends State<AboutPage>
           final profileState = context.read<ProfileBloc>().state;
           final myProfile = profileState is SuccessGetProfileState ? profileState.profile : null;
 
-          return Scaffold(
-            backgroundColor: context.appColors.surfaceBackground,
-            body: FutureBuilder<Profile?>(
-              future: _profileFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: LoadingWidget());
-                }
-                if (!snapshot.hasData || snapshot.data == null) {
-                  return const Center(child: Text("Provider not found"));
-                }
-
-                final profile = snapshot.data!;
-
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    _loadProfile();
-                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
-                    context.read<ProfileBloc>().add(GetProfileEvent());
-                  },
-                  child: NestedScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                  headerSliverBuilder: (context, innerBoxIsScrolled) {
-                    return [
-                     
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (isProvider) {
-                                    context.pop();
-                                  } else {
-                                    context.pop();
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(12.r),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: context.appColors.glassBorder,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    FontAwesomeIcons.chevronLeft,
-                                    color: context.appColors.primaryTextColor,
-                                    size: 16.r,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20.h),
-                              TweenAnimationBuilder<double>(
-                                tween: Tween(begin: 0.0, end: 1.0),
-                                duration: const Duration(milliseconds: 600),
-                                curve: Curves.easeOutCubic,
-                                builder: (context, value, child) {
-                                  return Transform.translate(
-                                    offset: Offset(0, 40 * (1 - value)),
-                                    child: Opacity(opacity: value, child: child),
-                                  );
-                                },
-                                child: SolidContainer(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(20.r),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: 180.h,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.primaryColor
-                                              .withValues(alpha: 0.1),
-                                          borderRadius: BorderRadius.circular(20.r),
-                                        ),
-                                      child: Icon(
-                                        FontAwesomeIcons.images,
-                                        size: 60.r,
-                                        color: context.appColors.primaryColor,
+          return SafeArea(
+            child: Scaffold(
+              backgroundColor: context.appColors.surfaceBackground,
+              body: FutureBuilder<Profile?>(
+                future: _profileFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: LoadingWidget());
+                  }
+                  if (!snapshot.hasData || snapshot.data == null) {
+                    return const Center(child: Text("Provider not found"));
+                  }
+            
+                  final profile = snapshot.data!;
+            
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      _loadProfile();
+                      context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                      context.read<ProfileBloc>().add(GetProfileEvent());
+                    },
+                    child: NestedScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                    headerSliverBuilder: (context, innerBoxIsScrolled) {
+                      return [
+                       
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (isProvider) {
+                                      context.pop();
+                                    } else {
+                                      context.pop();
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(12.r),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
                                       ),
                                     ),
-                                    Transform.translate(
-                                      offset: Offset(0, -40.h),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(3.r),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  context.appColors.primaryColor,
-                                                  Colors.purpleAccent,
-                                                ],
-                                              ),
-                                            ),
-                                            child: CircleAvatar(
-                                              radius: 40.r,
-                                              backgroundImage: (profile
-                                                              .profilePictureUrl !=
-                                                          null &&
-                                                      profile.profilePictureUrl!
-                                                          .isNotEmpty)
-                                                  ? CachedNetworkImageProvider(
-                                                    profile.profilePictureUrl!,
-                                                  )
-                                                  : null,
-                                            ),
+                                    child: Icon(
+                                      FontAwesomeIcons.chevronLeft,
+                                      color: context.appColors.primaryTextColor,
+                                      size: 16.r,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 20.h),
+                                TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 0.0, end: 1.0),
+                                  duration: const Duration(milliseconds: 600),
+                                  curve: Curves.easeOutCubic,
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, 40 * (1 - value)),
+                                      child: Opacity(opacity: value, child: child),
+                                    );
+                                  },
+                                  child: SolidContainer(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.all(20.r),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 180.h,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: context.appColors.primaryColor
+                                                .withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(20.r),
                                           ),
-                                          SizedBox(height: 12.h),
-                                          Text(
-                                            (profile.firstName ?? "User")
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                              color: context
-                                                  .appColors.primaryTextColor,
-                                              fontSize: 22.sp,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Text(
-                                            getServiceName(profile.service ?? "")
-                                                .toUpperCase(),
-                                            style: TextStyle(
-                                              color: context
-                                                  .appColors.secondaryTextColor,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8.h),
-                                          Text(
-                                            "Payment Mode : On Site",
-                                            style: TextStyle(
-                                              color: context.appColors.successColor,
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8.h),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              RatingBarIndicator(
-                                                rating: double.tryParse(
-                                                      profile.rating ?? "0",
-                                                    ) ??
-                                                    0.0,
-                                                itemBuilder: (context, index) =>
-                                                    const Icon(
-                                                      FontAwesomeIcons.star,
-                                                      color: Colors.amber,
-                                                    ),
-                                                itemCount: 5,
-                                                itemSize: 14.r,
-                                              ),
-                                              SizedBox(width: 8.w),
-                                              Text(
-                                                "${profile.rating ?? "0.0"} (${profile.totalReviews ?? 0} reviews)",
-                                                style: TextStyle(
-                                                  color: context
-                                                      .appColors.secondaryTextColor,
-                                                  fontSize: 12.sp,
+                                        child: Icon(
+                                          FontAwesomeIcons.images,
+                                          size: 60.r,
+                                          color: context.appColors.primaryColor,
+                                        ),
+                                      ),
+                                      Transform.translate(
+                                        offset: Offset(0, -40.h),
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(3.r),
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                gradient: LinearGradient(
+                                                  colors: [
+                                                    context.appColors.primaryColor,
+                                                    Colors.purpleAccent,
+                                                  ],
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
+                                              child: CircleAvatar(
+                                                radius: 40.r,
+                                                backgroundImage: (profile
+                                                                .profilePictureUrl !=
+                                                            null &&
+                                                        profile.profilePictureUrl!
+                                                            .isNotEmpty)
+                                                    ? CachedNetworkImageProvider(
+                                                      profile.profilePictureUrl!,
+                                                    )
+                                                    : null,
+                                              ),
+                                            ),
+                                            SizedBox(height: 12.h),
+                                            Text(
+                                              (profile.firstName ?? "User")
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                color: context
+                                                    .appColors.primaryTextColor,
+                                                fontSize: 22.sp,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Text(
+                                              getServiceName(profile.service ?? "")
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                color: context
+                                                    .appColors.secondaryTextColor,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8.h),
+                                            Text(
+                                              "Payment Mode : On Site",
+                                              style: TextStyle(
+                                                color: context.appColors.successColor,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8.h),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                RatingBarIndicator(
+                                                  rating: double.tryParse(
+                                                        profile.rating ?? "0",
+                                                      ) ??
+                                                      0.0,
+                                                  itemBuilder: (context, index) =>
+                                                      const Icon(
+                                                        FontAwesomeIcons.star,
+                                                        color: Colors.amber,
+                                                      ),
+                                                  itemCount: 5,
+                                                  itemSize: 14.r,
+                                                ),
+                                                SizedBox(width: 8.w),
+                                                Text(
+                                                  "${profile.rating ?? "0.0"} (${profile.totalReviews ?? 0} reviews)",
+                                                  style: TextStyle(
+                                                    color: context
+                                                        .appColors.secondaryTextColor,
+                                                    fontSize: 12.sp,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                              SizedBox(height: 12.h),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildActionBtn(
-                                      label: "CHAT",
-                                      icon: FontAwesomeIcons.comment,
-                                      color: context.appColors.primaryColor,
-                                      onTap: () {
-                                        if (profile.user != null) {
-                                          context.read<MessageBloc>().add(
-                                            SetMessageReceiverEvent(
-                                              profile: profile,
-                                            ),
-                                          );
-                                          context.read<MessageBloc>().add(
-                                            SetSeenMessageEvent(
-                                              reciever: profile.user!.id!,
-                                            ),
-                                          );
-                                          context.push('/chat');
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  (!isProvider) ? Expanded(
-                                    child: _buildActionBtn(
-                                      label: "REQUEST SERVICE",
-                                      icon: FontAwesomeIcons.fileLines,
-                                      color: Colors.transparent,
-                                      isBorder: true,
-                                      onTap: () {
-                                        if (profile.user != null) {
-                                          if (isProvider) {
-                                            customAlert(
-                                              context,
-                                              AlertType.error,
-                                              "Switch to Seeker mode to request service",
+                                SizedBox(height: 12.h),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildActionBtn(
+                                        label: "CHAT",
+                                        icon: FontAwesomeIcons.comment,
+                                        color: context.appColors.primaryColor,
+                                        onTap: () {
+                                          if (profile.user != null) {
+                                            context.read<MessageBloc>().add(
+                                              SetMessageReceiverEvent(
+                                                profile: profile,
+                                              ),
                                             );
-                                            return;
+                                            context.read<MessageBloc>().add(
+                                              SetSeenMessageEvent(
+                                                reciever: profile.user!.id!,
+                                              ),
+                                            );
+                                            context.push('/chat');
                                           }
-                                          context.push('/new-request', extra: {
-                                            'targetProviderId': profile.user!.id,
-                                            'initialServiceId': profile.catalogServiceId,
-                                            'initialServiceName': profile.catalogServiceName,
-                                          });
-                                        }
-                                      },
+                                        },
+                                      ),
                                     ),
-                                  ): const SizedBox.shrink(),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _SliverAppBarDelegate(
-                          TabBar(
-                            controller: controller,
-                            isScrollable: true,
-                            tabAlignment: TabAlignment.start,
-                            labelColor: context.appColors.primaryTextColor,
-                            unselectedLabelColor:
-                                context.appColors.secondaryTextColor,
-                            indicatorColor: context.appColors.primaryColor,
-                            indicatorWeight: 4.r,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            dividerColor: Colors.transparent,
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16.sp,
-                              letterSpacing: 0.5,
+                                    const SizedBox(width: 12),
+                                    (!isProvider) ? Expanded(
+                                      child: _buildActionBtn(
+                                        label: "REQUEST SERVICE",
+                                        icon: FontAwesomeIcons.fileLines,
+                                        color: Colors.transparent,
+                                        isBorder: true,
+                                        onTap: () {
+                                          if (profile.user != null) {
+                                            if (isProvider) {
+                                              customAlert(
+                                                context,
+                                                AlertType.error,
+                                                "Switch to Seeker mode to request service",
+                                              );
+                                              return;
+                                            }
+                                            context.push('/new-request', extra: {
+                                              'targetProviderId': profile.user!.id,
+                                              'initialServiceId': profile.catalogServiceId,
+                                              'initialServiceName': profile.catalogServiceName,
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ): const SizedBox.shrink(),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                              ],
                             ),
-                            tabs: const [
-                              Tab(text: "PORTFOLIO"),
-                              Tab(text: "REVIEWS"),
-                            ],
+                          ),
+                        ),
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: _SliverAppBarDelegate(
+                            TabBar(
+                              controller: controller,
+                              isScrollable: true,
+                              tabAlignment: TabAlignment.start,
+                              labelColor: context.appColors.primaryTextColor,
+                              unselectedLabelColor:
+                                  context.appColors.secondaryTextColor,
+                              indicatorColor: context.appColors.primaryColor,
+                              indicatorWeight: 4.r,
+                              indicatorSize: TabBarIndicatorSize.label,
+                              dividerColor: Colors.transparent,
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
+                                letterSpacing: 0.5,
+                              ),
+                              tabs: const [
+                                Tab(text: "PORTFOLIO"),
+                                Tab(text: "REVIEWS"),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ];
+                    },
+                    body: TabBarView(
+                      controller: controller,
+                      children: [
+                        PortfolioWidget(userId: _viewingUserId),
+                        ReviewsWidget(userId: _viewingUserId)
+                      ],
+                    ),
+                  ),
+                  );
+                },
+              ),
+              floatingActionButton:
+                  _showFab &&
+                      (_viewingUserId != myProfile?.user?.id)
+                  ? Container(
+                      margin: EdgeInsets.only(bottom: 100.h),
+                      child: FloatingActionButton.extended(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            barrierColor: Colors.black.withAlpha(180),
+                            builder: (context) => RatingReviewFormWidget(profile: widget.profile),
+                          );
+                        },
+                        label: Text(
+                          "WRITE A REVIEW",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: context.appColors.primaryColor,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                        icon: Icon(
+                          FontAwesomeIcons.penToSquare,
+                          color: context.appColors.primaryColor,
+                        ),
+                        backgroundColor: context.appColors.primaryColor.withAlpha(40),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: context.appColors.glassBorder,
+                            width: 1.5,
                           ),
                         ),
                       ),
-                    ];
-                  },
-                  body: TabBarView(
-                    controller: controller,
-                    children: [
-                      PortfolioWidget(userId: _viewingUserId),
-                      ReviewsWidget(userId: _viewingUserId)
-                    ],
-                  ),
-                ),
-                );
-              },
+                    )
+                  : null,
             ),
-            floatingActionButton:
-                _showFab &&
-                    (_viewingUserId != myProfile?.user?.id)
-                ? Container(
-                    margin: EdgeInsets.only(bottom: 100.h),
-                    child: FloatingActionButton.extended(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          barrierColor: Colors.black.withAlpha(180),
-                          builder: (context) => RatingReviewFormWidget(profile: widget.profile),
-                        );
-                      },
-                      label: Text(
-                        "WRITE A REVIEW",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          color: context.appColors.primaryColor,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                      icon: Icon(
-                        FontAwesomeIcons.penToSquare,
-                        color: context.appColors.primaryColor,
-                      ),
-                      backgroundColor: context.appColors.primaryColor.withAlpha(40),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: context.appColors.glassBorder,
-                          width: 1.5,
-                        ),
-                      ),
-                    ),
-                  )
-                : null,
           );
         },
       );

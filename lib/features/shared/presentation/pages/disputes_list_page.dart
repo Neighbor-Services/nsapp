@@ -33,115 +33,117 @@ class _DisputesListPageState extends State<DisputesListPage> {
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.hintTextColor;
 
-    return Scaffold(
-      body: BlocBuilder<SettingsBloc, SettingsState>(
-        builder: (context, settingsState) {
-
-          return BlocBuilder<DisputeBloc, DisputeState>(
-            builder: (context, state) {
-              return GradientBackground(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(12.r),
-                      child: SizedBox(
-                        height: 60.h,
-                        width: size(context).width,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            GestureDetector(
-                              onTap: () => context.pop(),
-                              child: Container(
-                                padding: EdgeInsets.all(12.r),
-                                margin: EdgeInsets.all(8.r),
-                                decoration: BoxDecoration(
-                                  color: context.appColors.cardBackground,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(
-                                    color: context.appColors.glassBorder,
+    return SafeArea(
+      child: Scaffold(
+        body: BlocBuilder<SettingsBloc, SettingsState>(
+          builder: (context, settingsState) {
+      
+            return BlocBuilder<DisputeBloc, DisputeState>(
+              builder: (context, state) {
+                return GradientBackground(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(12.r),
+                        child: SizedBox(
+                          height: 60.h,
+                          width: size(context).width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () => context.pop(),
+                                child: Container(
+                                  padding: EdgeInsets.all(12.r),
+                                  margin: EdgeInsets.all(8.r),
+                                  decoration: BoxDecoration(
+                                    color: context.appColors.cardBackground,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    border: Border.all(
+                                      color: context.appColors.glassBorder,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    FontAwesomeIcons.chevronLeft,
+                                    color: textColor,
+                                    size: 18.r,
                                   ),
                                 ),
-                                child: Icon(
-                                  FontAwesomeIcons.chevronLeft,
+                              ),
+                              Text(
+                                'MY DISPUTES',
+                                style: TextStyle(
                                   color: textColor,
-                                  size: 18.r,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18.sp,
+                                  letterSpacing: 1.2,
                                 ),
                               ),
-                            ),
-                            Text(
-                              'MY DISPUTES',
-                              style: TextStyle(
-                                color: textColor,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18.sp,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                context.push('/create-dispute');
-                              },
-                              child: Container(
-                                margin: EdgeInsets.all(8.r),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 10.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: context.appColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    FaIcon(FontAwesomeIcons.plus,
-                                        color: Colors.white, size: 18.r),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      'NEW',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 13.sp,
-                                        letterSpacing: 1.0,
+                              GestureDetector(
+                                onTap: () {
+                                  context.push('/create-dispute');
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.all(8.r),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 10.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: context.appColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      FaIcon(FontAwesomeIcons.plus,
+                                          color: Colors.white, size: 18.r),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        'NEW',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 13.sp,
+                                          letterSpacing: 1.0,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Builder(
-                        builder: (context) {
-                          if (state is DisputeLoading) {
-                            return const LoadingWidget();
-                          }
-
-                          if (state is SuccessGetMyDisputesState) {
-                            final disputes = state.disputes;
-                            return disputes.isEmpty
-                                ? _buildEmptyState(textColor, secondaryTextColor)
-                                : _buildDisputesList(
-                                    disputes,
-                                    textColor,
-                                    secondaryTextColor,
-                                  );
-                          }
-
-                          return _buildEmptyState(textColor, secondaryTextColor);
-                        },
+                      Expanded(
+                        child: Builder(
+                          builder: (context) {
+                            if (state is DisputeLoading) {
+                              return const LoadingWidget();
+                            }
+      
+                            if (state is SuccessGetMyDisputesState) {
+                              final disputes = state.disputes;
+                              return disputes.isEmpty
+                                  ? _buildEmptyState(textColor, secondaryTextColor)
+                                  : _buildDisputesList(
+                                      disputes,
+                                      textColor,
+                                      secondaryTextColor,
+                                    );
+                            }
+      
+                            return _buildEmptyState(textColor, secondaryTextColor);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

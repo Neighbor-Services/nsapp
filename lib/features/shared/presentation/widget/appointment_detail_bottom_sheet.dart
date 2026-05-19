@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/services/dialog_utils.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
@@ -131,13 +133,17 @@ class _AppointmentDetailBottomSheetState
             _isVerifying = false;
             widget.data.appointment?.status = 'IN_PROGRESS';
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Code verified successfully!")),
+          DialogUtils.showCustomAlert(
+            context,
+            AlertType.success,
+            "Appointment code verified successfully!",
           );
         } else if (state is FailureVerifyAppointmentCodeState) {
           setState(() => _isVerifying = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to verify code. Please try again.")),
+          DialogUtils.showCustomAlert(
+            context,
+            AlertType.error,
+            (state.message != null && state.message!.isNotEmpty) ? state.message! : "Failed to verify code. Please try again.",
           );
         }
       },

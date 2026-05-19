@@ -2,6 +2,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:ui';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
@@ -46,6 +47,20 @@ class _NotificationsPageState extends State<NotificationsPage>
   @override
   void initState() {
     super.initState();
+    
+    // Check if we have cached notifications in the Bloc state to show instantly
+    final cachedState = context.read<NotificationBloc>().state;
+    if (cachedState is SuccessGetMyNotificationsState &&
+        cachedState.notifications.isNotEmpty) {
+      _pagingController.value = PagingState(
+        nextPageKey: cachedState.hasReachedMax ? null : cachedState.currentPage + 1,
+        error: null,
+        itemList: cachedState.notifications,
+      );
+      // Trigger a silent background refresh to sync with backend
+      context.read<NotificationBloc>().add(GetMyNotificationsEvent(page: 1));
+    }
+
     _pagingController.addPageRequestListener((pageKey) {
       if (pageKey == 1) {
         context.read<NotificationBloc>().add(GetMyNotificationsEvent(page: 1));
@@ -98,18 +113,27 @@ class _NotificationsPageState extends State<NotificationsPage>
             listener: (context, state) {
               if (state is SuccessGetMyNotificationsState) {
                 final isLastPage = state.hasReachedMax;
-                if (isLastPage) {
-                  _pagingController.appendLastPage(
-                    state.notifications
-                        .skip(_pagingController.itemList?.length ?? 0)
-                        .toList(),
+                if (state.currentPage == 1) {
+                  // Direct update for the first page to avoid full screen skeleton reload and resolve duplicates
+                  _pagingController.value = PagingState(
+                    nextPageKey: isLastPage ? null : 2,
+                    error: null,
+                    itemList: state.notifications,
                   );
                 } else {
-                  final nextPageKey = state.currentPage + 1;
-                  final newItems = state.notifications
-                      .skip(_pagingController.itemList?.length ?? 0)
-                      .toList();
-                  _pagingController.appendPage(newItems, nextPageKey);
+                  if (isLastPage) {
+                    _pagingController.appendLastPage(
+                      state.notifications
+                          .skip(_pagingController.itemList?.length ?? 0)
+                          .toList(),
+                    );
+                  } else {
+                    final nextPageKey = state.currentPage + 1;
+                    final newItems = state.notifications
+                        .skip(_pagingController.itemList?.length ?? 0)
+                        .toList();
+                    _pagingController.appendPage(newItems, nextPageKey);
+                  }
                 }
               } else if (state is NotificationFailure) {
                 _pagingController.error = state.message;
@@ -625,7 +649,45 @@ class _NotificationsPageState extends State<NotificationsPage>
       barrierDismissible: false,
       builder: (ctx) {
         dialogContext = ctx;
-        return const ListSkeletonLoader();
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 28.h),
+                decoration: BoxDecoration(
+                  color: pageContext.appColors.cardBackground.withAlpha(217),
+                  borderRadius: BorderRadius.circular(24.r),
+                  border: Border.all(
+                    color: pageContext.appColors.glassBorder,
+                    width: 1.2.r,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(
+                      color: pageContext.appColors.primaryColor,
+                      strokeWidth: 3.5.r,
+                    ),
+                    SizedBox(height: 20.h),
+                    Text(
+                      "LOADING DETAILS...",
+                      style: TextStyle(
+                        color: pageContext.appColors.primaryTextColor,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
       },
     );
 
@@ -712,12 +774,13 @@ class _NotificationsPageState extends State<NotificationsPage>
               requestData.user = notificationData.from;
 
               if (requestData.request?.userId != _currentProfile?.user?.id) {
-                if (mounted)
+                if (mounted){
                   customAlert(
                     pageContext,
                     AlertType.error,
                     "You can't view this request",
                   );
+                }
                 return;
               }
 

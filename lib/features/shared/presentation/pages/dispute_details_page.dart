@@ -17,194 +17,196 @@ class DisputeDetailsPage extends StatelessWidget {
     final textColor = context.appColors.primaryTextColor;
     final secondaryTextColor = context.appColors.hintTextColor;
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(
-          'DISPUTE DETAILS',
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 18.sp,
-            letterSpacing: 1.2,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: GestureDetector(
-          onTap: () => context.pop(),
-          child: Container(
-            margin: EdgeInsets.all(8.r),
-            decoration: BoxDecoration(
-              color: context.appColors.cardBackground,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: context.appColors.glassBorder),
-            ),
-            child: Icon(
-              FontAwesomeIcons.chevronLeft,
+    return SafeArea(
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          title: Text(
+            'DISPUTE DETAILS',
+            style: TextStyle(
               color: textColor,
-              size: 18.r,
+              fontWeight: FontWeight.w500,
+              fontSize: 18.sp,
+              letterSpacing: 1.2,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: GestureDetector(
+            onTap: () => context.pop(),
+            child: Container(
+              margin: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: context.appColors.cardBackground,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: context.appColors.glassBorder),
+              ),
+              child: Icon(
+                FontAwesomeIcons.chevronLeft,
+                color: textColor,
+                size: 18.r,
+              ),
             ),
           ),
         ),
-      ),
-      body: GradientBackground(
-        child: SizedBox(
-          height: size(context).height,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(20.w, 110.h, 20.w, 20.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Card
-                SolidContainer(
-                  padding: EdgeInsets.all(24.r),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 64.w,
-                            height: 64.h,
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(
-                                context,
-                                dispute.status,
-                              ).withAlpha(30),
-                              borderRadius: BorderRadius.circular(16.r),
-                              border: Border.all(
+        body: GradientBackground(
+          child: SizedBox(
+            height: size(context).height,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(20.w, 110.h, 20.w, 20.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header Card
+                  SolidContainer(
+                    padding: EdgeInsets.all(24.r),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 64.w,
+                              height: 64.h,
+                              decoration: BoxDecoration(
                                 color: _getStatusColor(
                                   context,
                                   dispute.status,
-                                ).withAlpha(50),
+                                ).withAlpha(30),
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: _getStatusColor(
+                                    context,
+                                    dispute.status,
+                                  ).withAlpha(50),
+                                ),
                               ),
-                            ),
-                            child: Icon(
-                              FontAwesomeIcons.gavel,
-                              color: _getStatusColor(context, dispute.status),
-                              size: 32.r,
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 8.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(
-                                context,
-                                dispute.status,
-                              ).withAlpha(30),
-                              borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(
-                                color: _getStatusColor(
-                                  context,
-                                  dispute.status,
-                                ).withAlpha(50),
-                              ),
-                            ),
-                            child: Text(
-                              dispute.status ?? 'OPEN',
-                              style: TextStyle(
+                              child: Icon(
+                                FontAwesomeIcons.gavel,
                                 color: _getStatusColor(context, dispute.status),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 1.0,
+                                size: 32.r,
                               ),
                             ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(
+                                  context,
+                                  dispute.status,
+                                ).withAlpha(30),
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(
+                                  color: _getStatusColor(
+                                    context,
+                                    dispute.status,
+                                  ).withAlpha(50),
+                                ),
+                              ),
+                              child: Text(
+                                dispute.status ?? 'OPEN',
+                                style: TextStyle(
+                                  color: _getStatusColor(context, dispute.status),
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          dispute.reason.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        dispute.reason.toUpperCase(),
-                        textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 12.h),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+            
+                  // Information Section
+                  _buildSection(
+                    title: 'Information',
+                    textColor: textColor,
+                    secondaryTextColor: secondaryTextColor,
+                    child: Column(
+                      children: [
+                        _buildInfoRow(
+                          context,
+                          FontAwesomeIcons.calendar,
+                          'Date Raised',
+                          dispute.createdAt != null
+                              ? DateFormat.yMMMMd().add_jm().format(
+                                  DateTime.parse(dispute.createdAt!),
+                                )
+                              : 'N/A',
+                         
+                          textColor,
+                          secondaryTextColor
+                        ),
+                        Divider(color: context.appColors.glassBorder, height: 24),
+                        _buildInfoRow(
+                          context,
+                          FontAwesomeIcons.fileLines,
+                          'Appointment ID',
+                          dispute.appointment ?? 'Global / General',
+                          
+                          textColor,
+                          secondaryTextColor
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+            
+                  // Description Section
+                    _buildSection(
+                      title: 'Description',
+                      textColor: textColor,
+                      secondaryTextColor: secondaryTextColor,
+                      child: Text(
+                        dispute.description,
                         style: TextStyle(
-                          color: textColor,
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
+                          color: textColor.withAlpha(200),
+                          fontSize: 16.sp,
+                          height: 1.6,
                         ),
                       ),
-                      SizedBox(height: 12.h),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20.h),
-          
-                // Information Section
-                _buildSection(
-                  title: 'Information',
-                  textColor: textColor,
-                  secondaryTextColor: secondaryTextColor,
-                  child: Column(
-                    children: [
-                      _buildInfoRow(
-                        context,
-                        FontAwesomeIcons.calendar,
-                        'Date Raised',
-                        dispute.createdAt != null
-                            ? DateFormat.yMMMMd().add_jm().format(
-                                DateTime.parse(dispute.createdAt!),
-                              )
-                            : 'N/A',
-                       
-                        textColor,
-                        secondaryTextColor
-                      ),
-                      Divider(color: context.appColors.glassBorder, height: 24),
-                      _buildInfoRow(
-                        context,
-                        FontAwesomeIcons.fileLines,
-                        'Appointment ID',
-                        dispute.appointment ?? 'Global / General',
-                        
-                        textColor,
-                        secondaryTextColor
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-          
-                // Description Section
-                  _buildSection(
-                    title: 'Description',
-                    textColor: textColor,
-                    secondaryTextColor: secondaryTextColor,
-                    child: Text(
-                      dispute.description,
-                      style: TextStyle(
-                        color: textColor.withAlpha(200),
-                        fontSize: 16.sp,
-                        height: 1.6,
+                    ),
+            
+                  if (dispute.resolutionNotes != null &&
+                      dispute.resolutionNotes!.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    // Resolution Section
+                    _buildSection(
+                      title: 'Resolution Details',
+                      color: context.appColors.successColor,
+                      textColor: textColor,
+                      secondaryTextColor: secondaryTextColor,
+                      child: Text(
+                        dispute.resolutionNotes!,
+                        style: TextStyle(
+                          color: textColor.withAlpha(200),
+                          fontSize: 16.sp,
+                          height: 1.6,
+                        ),
                       ),
                     ),
-                  ),
-          
-                if (dispute.resolutionNotes != null &&
-                    dispute.resolutionNotes!.isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  // Resolution Section
-                  _buildSection(
-                    title: 'Resolution Details',
-                    color: context.appColors.successColor,
-                    textColor: textColor,
-                    secondaryTextColor: secondaryTextColor,
-                    child: Text(
-                      dispute.resolutionNotes!,
-                      style: TextStyle(
-                        color: textColor.withAlpha(200),
-                        fontSize: 16.sp,
-                        height: 1.6,
-                      ),
-                    ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

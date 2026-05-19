@@ -60,10 +60,7 @@ class _LoadingViewState extends State<LoadingView>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      RotationTransition(
-                        turns: Tween(begin: 0.0, end: 1.0).animate(controller),
-                        child: Image.asset(logo2Assets, width: 60.r),
-                      ),
+                      CircularProgressIndicator(color:  context.appColors.primaryTextColor),
                       SizedBox(height: 12.h),
                       CustomTextWidget(
                         text: "Processing",

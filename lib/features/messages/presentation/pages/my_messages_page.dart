@@ -132,7 +132,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                     ),
                                     SizedBox(height: 4.h),
                                     Text(
-                                      "Connect with your partners",
+                                      "Connect with your providers",
                                       style: TextStyle(
                                         fontSize: 14.sp,
                                         color: context.appColors.hintTextColor,

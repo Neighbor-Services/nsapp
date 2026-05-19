@@ -53,8 +53,16 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     
     _scrollController.addListener(_onScroll);
 
-    // Get initial receiver from Bloc state
-    final messageState = context.read<MessageBloc>().state;
+    final messageBloc = context.read<MessageBloc>();
+    
+    // Synchronously initialize the local state from the BLoC's in-memory data
+    _messages = List.from(messageBloc.currentMessages);
+    _receiver = messageBloc.receiverProfile;
+    _isTyping = messageBloc.isTyping;
+    _isOnline = messageBloc.isOnline;
+
+    // Get initial receiver from Bloc state as fallback
+    final messageState = messageBloc.state;
     if (messageState is MessageReceiverState) {
       _receiver = messageState.profile;
     }

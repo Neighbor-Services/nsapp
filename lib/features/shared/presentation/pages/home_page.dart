@@ -13,6 +13,8 @@ import 'package:nsapp/features/seeker/presentation/widgets/seeker_drawer_widget.
 import 'package:nsapp/features/shared/presentation/bloc/notification/notification_bloc.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
+import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart';
+import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart';
 
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/home_app_bar.dart';
@@ -69,75 +71,86 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsBloc, SettingsState>(
-      builder: (context, state) {
-        return Scaffold(
-          extendBodyBehindAppBar: true,
-          key: scaffold,
-          appBar: homeAppBar(
-            context: context,
-            color: context.appColors.surfaceBackground,
-            title: state.isProvider ? 'PROVIDER' : 'SEEKER',
-            actions: [
-              PopupMenuItem(
-                value: 1,
-                child: BlocBuilder<ProfileBloc, ProfileState>(
-                  builder: (context, profileState) {
-                    final profile = profileState.profile ?? Profile();
-                    return Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 15.r,
-                          backgroundImage:
-                              (profile.profilePictureUrl != null &&
-                                  profile.profilePictureUrl!.isNotEmpty &&
-                                  !profile.profilePictureUrl!.startsWith("file:///"))
-                              ? CachedNetworkImageProvider(profile.profilePictureUrl!)
-                              : AssetImage(logo2Assets) as ImageProvider,
+      builder: (context, settingsState) {
+        return BlocBuilder<ProviderBloc, ProviderState>(
+          builder: (context, providerState) {
+            return BlocBuilder<SeekerBloc, SeekerState>(
+              builder: (context, seekerState) {
+                final isProvider = settingsState.isProvider;
+
+
+                return Scaffold(
+                  extendBodyBehindAppBar: true,
+                  key: scaffold,
+                  appBar: homeAppBar(
+                          context: context,
+                          color: context.appColors.surfaceBackground,
+                          title: isProvider ? 'PROVIDER' : 'SEEKER',
+                          actions: [
+                            PopupMenuItem(
+                              value: 1,
+                              child: BlocBuilder<ProfileBloc, ProfileState>(
+                                builder: (context, profileState) {
+                                  final profile = profileState.profile ?? Profile();
+                                  return Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 15.r,
+                                        backgroundImage:
+                                            (profile.profilePictureUrl != null &&
+                                                profile.profilePictureUrl!.isNotEmpty &&
+                                                !profile.profilePictureUrl!.startsWith("file:///"))
+                                            ? CachedNetworkImageProvider(profile.profilePictureUrl!)
+                                            : AssetImage(logo2Assets) as ImageProvider,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      CustomTextWidget(
+                                        text: profile.firstName ?? "",
+                                        color: context.appColors.primaryTextColor,
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 2,
+                              child: Row(
+                                children: [
+                                  FaIcon(FontAwesomeIcons.rightFromBracket, size: 30.r, color: context.appColors.errorColor),
+                                  SizedBox(width: 10.w),
+                                  CustomTextWidget(
+                                    text: "LOGOUT",
+                                    color: context.appColors.errorColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          value: isProvider,
+                          onToggle: (val) {
+                            context.read<SettingsBloc>().add(
+                              ToggleDashboardEvent(isProvider: val),
+                            );
+                          },
                         ),
-                        const SizedBox(width: 10),
-                        CustomTextWidget(
-                          text: profile.firstName ?? "",
-                          color: context.appColors.primaryTextColor,
-                        ),
+                  drawer: isProvider
+                      ? ProviderDrawerWidget()
+                      : SeekerDrawerWidget(),
+                  body: SafeArea(
+                    child: IndexedStack(
+                      index: isProvider ? 0 : 1,
+                      children: const [
+                        ProviderDashboardPage(),
+                        SeekerDashboardPage(),
                       ],
-                    );
-                  },
-                ),
-              ),
-              PopupMenuItem(
-                value: 2,
-                child: Row(
-                  children: [
-                    FaIcon(FontAwesomeIcons.rightFromBracket, size: 30.r, color: context.appColors.errorColor),
-                    SizedBox(width: 10.w),
-                    CustomTextWidget(
-                      text: "LOGOUT",
-                      color: context.appColors.errorColor,
-                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
-              ),
-            ],
-            value: state.isProvider,
-            onToggle: (val) {
-              context.read<SettingsBloc>().add(
-                ToggleDashboardEvent(isProvider: val),
-              );
-            },
-          ),
-          drawer: state.isProvider
-              ? ProviderDrawerWidget()
-              : SeekerDrawerWidget(),
-          body: SafeArea(
-            child: IndexedStack(
-              index: state.isProvider ? 0 : 1,
-              children: const [
-                ProviderDashboardPage(),
-                SeekerDashboardPage(),
-              ],
-            ),
-          ),
+                  ),
+                );
+              },
+            );
+          },
         );
       },
     );

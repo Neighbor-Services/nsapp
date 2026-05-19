@@ -200,7 +200,7 @@ class _ProviderRecentRequestWidgetState
                                             ],
                                           ),
                                         ),
-                                        _buildStatusBadge(requestData.request?.status ?? "OPEN"),
+                                       
                                       ],
                                     ),
                                   ],

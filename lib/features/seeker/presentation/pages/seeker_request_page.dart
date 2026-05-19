@@ -313,8 +313,6 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                             ? context.appColors.successColor
                             : (requestData.request?.status == 'IN_PROGRESS')
                             ? context.appColors.infoColor
-                            : (requestData.request?.status == 'CANCELLED')
-                            ? context.appColors.errorColor
                             : (requestData.request?.approved ?? false)
                             ? context.appColors.infoColor
                             : context.appColors.secondaryColor,

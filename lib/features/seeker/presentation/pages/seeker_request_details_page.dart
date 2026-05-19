@@ -55,7 +55,6 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
     );
     amountController = TextEditingController();
     formKey = GlobalKey<FormState>();
-    super.initState();
   }
 
   void _showSuccessCelebration(BuildContext context) {
@@ -791,12 +790,15 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                           const SizedBox(height: 16),
 
                           BlocBuilder<SeekerBloc, SeekerState>(
+                            buildWhen: (previous, current) =>
+                                current is SuccessAcceptedUsersState ||
+                                current is FailureAcceptedUserstState ||
+                                current is SuccessApprovedProviderState ||
+                                current is SuccessCancelApprovedProviderState,
                             builder: (context, state) {
                               List<RequestAcceptance> acceptedProviders = [];
                               if (state is SuccessAcceptedUsersState) {
                                 acceptedProviders = state.users;
-                              } else if (state is SeekerRequestDetailState) {
-                                // Fallback or initial state
                               }
 
                               // Check if any provider is approved
@@ -1325,35 +1327,51 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
           final proposalId = acceptedProvider.acceptance?.id;
           final userId = user?.id ?? provider?.id ?? "unknown";
 
-          if (requestId.isNotEmpty && proposalId != null) {
-            final requestObj = _cachedRequestData?.request;
-            if (requestObj != null) {
-              final scheduledTime = requestObj.scheduledTime;
-              final now = DateTime.now();
-              
-              if (scheduledTime != null && scheduledTime.isBefore(now)) {
-                // Store pending approval parameters
-                _pendingApproval = RequestAccept(
-                  serviceRequestId: requestId,
-                  proposalId: proposalId,
-                  uid: userId,
-                );
-                // Show prompt dialog to reschedule before proceeding
-                _showReschedulePromptDialog(context, requestObj);
-                return;
-              }
-            }
-
-            context.read<SeekerBloc>().add(
-              ApprovedRequestEvent(
-                requestAccept: RequestAccept(
-                  serviceRequestId: requestId,
-                  proposalId: proposalId,
-                  uid: userId,
-                ),
-              ),
+          if (requestId.isEmpty) {
+            customAlert(
+              context,
+              AlertType.error,
+              "Unable to approve: Request ID is missing.",
             );
+            return;
           }
+
+          if (proposalId == null) {
+            customAlert(
+              context,
+              AlertType.error,
+              "Unable to approve: Proposal ID is missing.",
+            );
+            return;
+          }
+
+          final requestObj = _cachedRequestData?.request;
+          if (requestObj != null) {
+            final scheduledTime = requestObj.scheduledTime;
+            final now = DateTime.now();
+            
+            if (scheduledTime != null && scheduledTime.isBefore(now)) {
+              // Store pending approval parameters
+              _pendingApproval = RequestAccept(
+                serviceRequestId: requestId,
+                proposalId: proposalId,
+                uid: userId,
+              );
+              // Show prompt dialog to reschedule before proceeding
+              _showReschedulePromptDialog(context, requestObj);
+              return;
+            }
+          }
+
+          context.read<SeekerBloc>().add(
+            ApprovedRequestEvent(
+              requestAccept: RequestAccept(
+                serviceRequestId: requestId,
+                proposalId: proposalId,
+                uid: userId,
+              ),
+            ),
+          );
         },
         icon: Container(
           padding: EdgeInsets.all(12.r),

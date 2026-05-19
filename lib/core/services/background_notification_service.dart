@@ -4,6 +4,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:nsapp/core/services/local_notification_service.dart';
 import 'package:nsapp/core/services/notification_navigator.dart';
+import 'package:nsapp/core/routes/app_router.dart';
+import 'package:nsapp/core/services/dialog_utils.dart';
 
 /// MUST be a top-level function (NOT a static class method) so Firebase can
 /// invoke it in a separate background isolate when the app is terminated or
@@ -55,6 +57,33 @@ class BackgroundNotificationService {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint("DEBUG [FCM]: Foreground message received: ${message.data}");
       _showLocalNotification(message);
+
+      // Parse payload and show a high-end alert dialog if it's an appointment verification event
+      final title = message.notification?.title ?? message.data['title'] ?? "";
+      final body = message.notification?.body ?? message.data['message'] ?? "";
+      final type = message.data['notification_type'] ?? message.data['type'] ?? "";
+
+      final isAppointmentVerify = type.toString().toLowerCase() == 'appointment' && 
+          (title.toLowerCase().contains('verify') || 
+           title.toLowerCase().contains('verified') || 
+           title.toLowerCase().contains('started') ||
+           title.toLowerCase().contains('fail') ||
+           body.toLowerCase().contains('verify') || 
+           body.toLowerCase().contains('verified') ||
+           body.toLowerCase().contains('started') ||
+           body.toLowerCase().contains('fail'));
+
+      if (isAppointmentVerify) {
+        final context = rootNavigatorKey.currentContext;
+        if (context != null && context.mounted) {
+          final isFailure = title.toLowerCase().contains('fail') || body.toLowerCase().contains('fail');
+          DialogUtils.showCustomAlert(
+            context,
+            isFailure ? AlertType.error : AlertType.success,
+            body.isNotEmpty ? body : (isFailure ? "Appointment verification failed." : "Appointment code verified successfully!"),
+          );
+        }
+      }
     });
 
     // 4. Handle notification tap when app is in background (not terminated)
