@@ -554,7 +554,7 @@ class _EditProfilePageState extends State<EditProfilePage>
         !_currentProfile!.profilePictureUrl!.startsWith("file:///")) {
       return CachedNetworkImageProvider(_currentProfile!.profilePictureUrl!);
     }
-    return const AssetImage(logo2Assets) as ImageProvider;
+    return const AssetImage(person) as ImageProvider;
   }
 
   Widget _buildServicePicker() {

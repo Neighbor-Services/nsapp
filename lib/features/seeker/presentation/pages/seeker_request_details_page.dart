@@ -1228,7 +1228,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                       provider!.profilePictureUrl!.isNotEmpty &&
                       provider.profilePictureUrl!.startsWith("http"))
                   ? NetworkImage(provider.profilePictureUrl!)
-                  : const AssetImage(logoAssets) as ImageProvider,
+                  : const AssetImage(person) as ImageProvider,
             ),
           ),
           const SizedBox(width: 16),

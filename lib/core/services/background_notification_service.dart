@@ -12,20 +12,30 @@ import 'package:nsapp/core/services/dialog_utils.dart';
 /// in the background. Any static method would be silently ignored.
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Note: Firebase is already initialised by the time this is called, but
-  // FlutterLocalNotificationsPlugin is NOT — calling showNotification here
-  // would require re-initialising it. For now we log and let the system
-  // notification tray handle notification-type messages automatically.
-  // Data-only (silent) messages that arrive in the background must be
-  // processed here if they require local storage updates, etc.
   debugPrint(
     "DEBUG [FCM BG]: Background message received — id: ${message.messageId}, "
     "type: ${message.data['notification_type']}",
   );
+
+  // If this is a data-only message (message.notification is null)
+  // but we still want to show a notification to the user, we must do it manually.
+  if (message.notification == null &&
+      (message.data.containsKey('title') ||
+          message.data.containsKey('message'))) {
+    // Initialize LocalNotificationService in this background isolate
+    await LocalNotificationService.initialize();
+
+    final data = message.data;
+    await LocalNotificationService.showNotification(
+      id: DateTime.now().microsecondsSinceEpoch % 1000000,
+      title: data['title'] ?? "Neighbor Services",
+      body: data['message'] ?? "",
+      payload: json.encode(data),
+    );
+  }
 }
 
 class BackgroundNotificationService {
-
   /// Initialize Firebase Messaging handlers. Call once from main().
   static Future<void> initializeService() async {
     // 1. Register the top-level background handler
@@ -41,13 +51,14 @@ class BackgroundNotificationService {
       provisional: false,
       sound: true,
     );
-    
+
     // Set foreground notification options for iOS
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
     debugPrint(
       "DEBUG [FCM]: Permission status: ${settings.authorizationStatus}",
@@ -61,26 +72,34 @@ class BackgroundNotificationService {
       // Parse payload and show a high-end alert dialog if it's an appointment verification event
       final title = message.notification?.title ?? message.data['title'] ?? "";
       final body = message.notification?.body ?? message.data['message'] ?? "";
-      final type = message.data['notification_type'] ?? message.data['type'] ?? "";
+      final type =
+          message.data['notification_type'] ?? message.data['type'] ?? "";
 
-      final isAppointmentVerify = type.toString().toLowerCase() == 'appointment' && 
-          (title.toLowerCase().contains('verify') || 
-           title.toLowerCase().contains('verified') || 
-           title.toLowerCase().contains('started') ||
-           title.toLowerCase().contains('fail') ||
-           body.toLowerCase().contains('verify') || 
-           body.toLowerCase().contains('verified') ||
-           body.toLowerCase().contains('started') ||
-           body.toLowerCase().contains('fail'));
+      final isAppointmentVerify =
+          type.toString().toLowerCase() == 'appointment' &&
+          (title.toLowerCase().contains('verify') ||
+              title.toLowerCase().contains('verified') ||
+              title.toLowerCase().contains('started') ||
+              title.toLowerCase().contains('fail') ||
+              body.toLowerCase().contains('verify') ||
+              body.toLowerCase().contains('verified') ||
+              body.toLowerCase().contains('started') ||
+              body.toLowerCase().contains('fail'));
 
       if (isAppointmentVerify) {
         final context = rootNavigatorKey.currentContext;
         if (context != null && context.mounted) {
-          final isFailure = title.toLowerCase().contains('fail') || body.toLowerCase().contains('fail');
+          final isFailure =
+              title.toLowerCase().contains('fail') ||
+              body.toLowerCase().contains('fail');
           DialogUtils.showCustomAlert(
             context,
             isFailure ? AlertType.error : AlertType.success,
-            body.isNotEmpty ? body : (isFailure ? "Appointment verification failed." : "Appointment code verified successfully!"),
+            body.isNotEmpty
+                ? body
+                : (isFailure
+                      ? "Appointment verification failed."
+                      : "Appointment code verified successfully!"),
           );
         }
       }
@@ -98,19 +117,25 @@ class BackgroundNotificationService {
     });
 
     // 5. Handle cold-start (app launched from a terminated state by tapping a notification)
-    FirebaseMessaging.instance.getInitialMessage().then((initialMessage) {
-      if (initialMessage != null) {
-        debugPrint(
-          "DEBUG [FCM]: App launched via notification tap (cold start): "
-          "${initialMessage.data}",
-        );
-        // Store the data in PendingNotificationStore. The home screen will
-        // consume it in initState once BLoCs are ready and navigate accordingly.
-        NotificationNavigator.handleTap(initialMessage.data, isColdStart: true);
-      }
-    }).catchError((e) {
-      debugPrint("DEBUG [FCM]: Error getting initial message: $e");
-    });
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((initialMessage) {
+          if (initialMessage != null) {
+            debugPrint(
+              "DEBUG [FCM]: App launched via notification tap (cold start): "
+              "${initialMessage.data}",
+            );
+            // Store the data in PendingNotificationStore. The home screen will
+            // consume it in initState once BLoCs are ready and navigate accordingly.
+            NotificationNavigator.handleTap(
+              initialMessage.data,
+              isColdStart: true,
+            );
+          }
+        })
+        .catchError((e) {
+          debugPrint("DEBUG [FCM]: Error getting initial message: $e");
+        });
   }
 
   static void _showLocalNotification(RemoteMessage message) {

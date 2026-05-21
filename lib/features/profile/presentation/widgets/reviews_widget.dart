@@ -145,7 +145,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                           ? CachedNetworkImageProvider(
                                               review.from!.profilePictureUrl!,
                                             )
-                                          : const AssetImage(logoAssets)
+                                          : const AssetImage(person)
                                                 as ImageProvider,
                                     ),
                                   ),

@@ -29,7 +29,7 @@ class SuccessGetMyNotificationsState extends NotificationState {
 
 class SuccessAddNotificationsState extends NotificationState {}
 
-class SuccessSetSeentState extends NotificationState {}
+class SuccessSetSeenState extends NotificationState {}
 
 class SuccessTokenState extends NotificationState {
   final String token;

@@ -286,7 +286,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                     ),
                                   ),
                             )
-                          : Image.asset(logo2Assets, fit: BoxFit.cover),
+                          : Image.asset(person, fit: BoxFit.cover),
                     ),
                   ),
                   Container(

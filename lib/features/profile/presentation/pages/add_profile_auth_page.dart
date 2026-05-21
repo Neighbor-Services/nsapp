@@ -209,7 +209,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage> {
                                     backgroundColor: Colors.white.withAlpha(15),
                                     backgroundImage: (_profilePicture != null)
                                         ? FileImage(File(_profilePicture!.path))
-                                        : const AssetImage(logo2Assets) as ImageProvider,
+                                        : const AssetImage(person) as ImageProvider,
                                   ),
                                 ),
                               ),

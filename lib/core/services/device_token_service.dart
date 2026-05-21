@@ -17,8 +17,9 @@ class DeviceTokenService {
         if (Platform.isIOS) {
           final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
           if (apnsToken == null) {
-            debugPrint("DEBUG [Dart]: APNS token is null. Skipping FCM token request to prevent exception.");
-            return;
+            debugPrint(
+              "DEBUG [Dart]: APNS token is null. It might take a moment to be assigned. Proceeding to getToken()...",
+            );
           }
         }
         final token = await FirebaseMessaging.instance.getToken();
@@ -33,20 +34,22 @@ class DeviceTokenService {
     });
 
     // Listen for token refresh
-    FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
-      final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
-      debugPrint("DEBUG [Dart]: FCM token refreshed: $token");
-      await _handleTokenUpdate(token, platform);
-    }).onError((error) {
-      debugPrint("DEBUG [Dart]: Error on token refresh: $error");
-    });
+    FirebaseMessaging.instance.onTokenRefresh
+        .listen((token) async {
+          final platform = Platform.isIOS ? 'IOS' : 'ANDROID';
+          debugPrint("DEBUG [Dart]: FCM token refreshed: $token");
+          await _handleTokenUpdate(token, platform);
+        })
+        .onError((error) {
+          debugPrint("DEBUG [Dart]: Error on token refresh: $error");
+        });
   }
 
   static Future<void> _handleTokenUpdate(String token, String platform) async {
     // Save it locally first
     await Helpers.saveString("device_push_token", token);
     await Helpers.saveString("device_platform", platform);
-    
+
     // Attempt registration if user is already logged in
     await registerToken(token, platform);
   }
@@ -55,8 +58,10 @@ class DeviceTokenService {
   static Future<void> tryRegisterStoredToken() async {
     final token = await Helpers.getString("device_push_token");
     final platform = await Helpers.getString("device_platform");
-    final effectivePlatform = platform.isNotEmpty ? platform : (Platform.isIOS ? 'IOS' : 'ANDROID');
-    
+    final effectivePlatform = platform.isNotEmpty
+        ? platform
+        : (Platform.isIOS ? 'IOS' : 'ANDROID');
+
     if (token.isNotEmpty) {
       await registerToken(token, effectivePlatform);
     }
@@ -68,16 +73,20 @@ class DeviceTokenService {
       final userAuthToken = await Helpers.getString("token");
 
       if (userAuthToken.isEmpty) {
-        debugPrint("DEBUG [DeviceTokenService]: No user auth token yet. Skipping registration.");
+        debugPrint(
+          "DEBUG [DeviceTokenService]: No user auth token yet. Skipping registration.",
+        );
         return;
       }
 
       final deviceId = await _getDeviceId();
       // Use the centralized notifications endpoint
       final url = Uri.parse("$baseUrl/notifications/tokens/");
-      
-      debugPrint("DEBUG [DeviceTokenService]: Registering $platform token on backend...");
-      
+
+      debugPrint(
+        "DEBUG [DeviceTokenService]: Registering $platform token on backend...",
+      );
+
       final response = await http.post(
         url,
         headers: {
@@ -92,9 +101,13 @@ class DeviceTokenService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint("DEBUG [DeviceTokenService]: Token registered successfully.");
+        debugPrint(
+          "DEBUG [DeviceTokenService]: Token registered successfully.",
+        );
       } else {
-        debugPrint("DEBUG [DeviceTokenService]: Failed to register token: ${response.body}");
+        debugPrint(
+          "DEBUG [DeviceTokenService]: Failed to register token: ${response.body}",
+        );
       }
     } catch (e) {
       debugPrint("DEBUG [DeviceTokenService]: Error registering token: $e");
@@ -117,5 +130,3 @@ class DeviceTokenService {
     return null;
   }
 }
-
-

@@ -25,7 +25,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
   @override
   void initState() {
     super.initState();
-    context.read<DisputeBloc>().add(GetMyDisputesEvent()); 
+    context.read<DisputeBloc>().add(GetMyDisputesEvent());
   }
 
   @override
@@ -37,7 +37,6 @@ class _DisputesListPageState extends State<DisputesListPage> {
       child: Scaffold(
         body: BlocBuilder<SettingsBloc, SettingsState>(
           builder: (context, settingsState) {
-      
             return BlocBuilder<DisputeBloc, DisputeState>(
               builder: (context, state) {
                 return GradientBackground(
@@ -95,8 +94,11 @@ class _DisputesListPageState extends State<DisputesListPage> {
                                   ),
                                   child: Row(
                                     children: [
-                                      FaIcon(FontAwesomeIcons.plus,
-                                          color: Colors.white, size: 18.r),
+                                      FaIcon(
+                                        FontAwesomeIcons.plus,
+                                        color: Colors.white,
+                                        size: 18.r,
+                                      ),
                                       SizedBox(width: 4.w),
                                       Text(
                                         'NEW',
@@ -121,19 +123,25 @@ class _DisputesListPageState extends State<DisputesListPage> {
                             if (state is DisputeLoading) {
                               return const LoadingWidget();
                             }
-      
+
                             if (state is SuccessGetMyDisputesState) {
                               final disputes = state.disputes;
                               return disputes.isEmpty
-                                  ? _buildEmptyState(textColor, secondaryTextColor)
+                                  ? _buildEmptyState(
+                                      textColor,
+                                      secondaryTextColor,
+                                    )
                                   : _buildDisputesList(
                                       disputes,
                                       textColor,
                                       secondaryTextColor,
                                     );
                             }
-      
-                            return _buildEmptyState(textColor, secondaryTextColor);
+
+                            return _buildEmptyState(
+                              textColor,
+                              secondaryTextColor,
+                            );
                           },
                         ),
                       ),
@@ -244,8 +252,9 @@ class _DisputesListPageState extends State<DisputesListPage> {
                             color: context.appColors.primaryColor.withAlpha(20),
                             borderRadius: BorderRadius.circular(10.r),
                             border: Border.all(
-                              color:
-                                  context.appColors.primaryColor.withAlpha(40),
+                              color: context.appColors.primaryColor.withAlpha(
+                                40,
+                              ),
                             ),
                           ),
                           child: Row(
@@ -312,8 +321,8 @@ class _DisputesListPageState extends State<DisputesListPage> {
                         SizedBox(width: 6.w),
                         Text(
                           dispute.createdAt != null
-                              ? DateFormat.yMMMd().format(
-                                  DateTime.parse(dispute.createdAt!),
+                              ? DateFormat.yMMMd().add_jm().format(
+                                  DateTime.parse(dispute.createdAt!).toLocal(),
                                 )
                               : 'Recent',
                           style: TextStyle(
@@ -343,5 +352,3 @@ class _DisputesListPageState extends State<DisputesListPage> {
     );
   }
 }
-
-

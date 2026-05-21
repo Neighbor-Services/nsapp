@@ -296,9 +296,9 @@ class _ProviderMoreRequestsPageState extends State<ProviderMoreRequestsPage>
                                   child: const Center(child: LoadingWidget(count: 1)),
                                 ),
                                 errorWidget: (context, url, error) =>
-                                    Image.asset(logoAssets, fit: BoxFit.cover),
+                                    Image.asset(person, fit: BoxFit.cover),
                               )
-                            : Image.asset(logoAssets, fit: BoxFit.cover),
+                            : Image.asset(person, fit: BoxFit.cover),
                       ),
                       // Overlay on image
                       Container(

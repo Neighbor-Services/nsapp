@@ -297,7 +297,7 @@ class _ProfilePageState extends State<ProfilePage>
                       profile.profilePictureUrl!.isNotEmpty &&
                       !profile.profilePictureUrl!.startsWith("file:///"))
                   ? CachedNetworkImageProvider(profile.profilePictureUrl!)
-                  : const AssetImage(logoAssets) as ImageProvider,
+                  : const AssetImage(person) as ImageProvider,
             ),
           ),
         ),

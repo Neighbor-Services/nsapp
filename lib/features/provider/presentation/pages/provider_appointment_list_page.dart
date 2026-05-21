@@ -103,11 +103,13 @@ class _ProviderAppointmentListPageState
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: () {
-                      List<AppointmentData> appointments = (state is SuccessGetAppointmentsState) 
-                          ? state.appointments 
+                      List<AppointmentData> appointments =
+                          (state is SuccessGetAppointmentsState)
+                          ? state.appointments
                           : context.read<ProviderBloc>().appointments;
 
-                      if (state is LoadingProviderState && appointments.isEmpty) {
+                      if (state is LoadingProviderState &&
+                          appointments.isEmpty) {
                         return const LoadingWidget();
                       }
 
@@ -122,152 +124,188 @@ class _ProviderAppointmentListPageState
 
                       return RefreshIndicator(
                         onRefresh: () async {
-                          context.read<ProviderBloc>().add(GetAppointmentsEvent());
-                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProviderBloc>().add(
+                            GetAppointmentsEvent(),
+                          );
+                          context.read<ProfileBloc>().add(
+                            GetProfileStreamEvent(),
+                          );
                           context.read<ProfileBloc>().add(GetProfileEvent());
                           await Future.delayed(const Duration(seconds: 1));
                         },
                         child: ListView.separated(
-                          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
                           itemCount: appointments.length,
                           separatorBuilder: (context, index) =>
                               SizedBox(height: 16.h),
-                        itemBuilder: (context, index) {
-                          final data = appointments[index];
-                          final appt = data.appointment;
-                          if (appt == null) return const SizedBox.shrink();
+                          itemBuilder: (context, index) {
+                            final data = appointments[index];
+                            final appt = data.appointment;
+                            if (appt == null) return const SizedBox.shrink();
 
-                          return Container(
-                            margin: EdgeInsets.only(bottom: 0),
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (context) => AppointmentDetailBottomSheet(data: data),
-                                );
-                              },
-                              child: SolidContainer(
-                                padding: EdgeInsets.all(20.r),
-                                borderColor: context.appColors.glassBorder,
-                                borderWidth: 1.5.r,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 0),
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (context) =>
+                                        AppointmentDetailBottomSheet(
+                                          data: data,
+                                        ),
+                                  );
+                                },
+                                child: SolidContainer(
+                                  padding: EdgeInsets.all(20.r),
+                                  borderColor: context.appColors.glassBorder,
+                                  borderWidth: 1.5.r,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CustomTextWidget(
+                                                  text:
+                                                      (appt.title ?? "No Title")
+                                                          .toUpperCase(),
+                                                  fontSize: 16.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: textColor,
+                                                  letterSpacing: 0.5,
+                                                ),
+                                                SizedBox(height: 4.h),
+                                                Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons
+                                                          .person_outline_rounded,
+                                                      size: 14.r,
+                                                      color: secondaryTextColor,
+                                                    ),
+                                                    SizedBox(width: 6.w),
+                                                    CustomTextWidget(
+                                                      text:
+                                                          (data.user?.firstName ??
+                                                                  '')
+                                                              .trim(),
+                                                      fontSize: 12.sp,
+                                                      color: secondaryTextColor,
+                                                    ),
+                                                    if (data.role != null) ...[
+                                                      SizedBox(width: 12.w),
+                                                      Container(
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              horizontal: 8.w,
+                                                              vertical: 2.h,
+                                                            ),
+                                                        decoration: BoxDecoration(
+                                                          color: context
+                                                              .appColors
+                                                              .primaryColor
+                                                              .withAlpha(30),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                6.r,
+                                                              ),
+                                                        ),
+                                                        child: Text(
+                                                          data.role!
+                                                              .toUpperCase(),
+                                                          style: TextStyle(
+                                                            fontSize: 8.sp,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: context
+                                                                .appColors
+                                                                .primaryColor,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          _buildStatusBadge(appt, context),
+                                        ],
+                                      ),
+                                      SizedBox(height: 16.h),
+                                      Divider(color: dividerColor, height: 1.h),
+                                      SizedBox(height: 16.h),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(8.r),
+                                            decoration: BoxDecoration(
+                                              color: iconBgColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                            ),
+                                          ),
+                                          SizedBox(width: 12.w),
+                                          Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              CustomTextWidget(
-                                                text: (appt.title ?? "No Title").toUpperCase(),
-                                                fontSize: 16.sp,
-                                                fontWeight: FontWeight.w500,
-                                                color: textColor,
-                                                letterSpacing: 0.5,
-                                              ),
-                                              SizedBox(height: 4.h),
                                               Row(
                                                 children: [
-                                                  Icon(
-                                                    Icons
-                                                        .person_outline_rounded,
-                                                    size: 14.r,
-                                                    color: secondaryTextColor,
-                                                  ),
-                                                  SizedBox(width: 6.w),
-                                                  CustomTextWidget(
-                                                    text:
-                                                        (data.user?.firstName ?? '').trim(),
-                                                    fontSize: 12.sp,
-                                                    color: secondaryTextColor,
-                                                  ),
-                                                  if (data.role != null) ...[
-                                                    SizedBox(width: 12.w),
-                                                    Container(
-                                                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                                                      decoration: BoxDecoration(
-                                                        color: context.appColors.primaryColor.withAlpha(30),
-                                                        borderRadius: BorderRadius.circular(6.r),
-                                                      ),
-                                                      child: Text(
-                                                        data.role!.toUpperCase(),
-                                                        style: TextStyle(
-                                                          fontSize: 8.sp,
-                                                          fontWeight: FontWeight.w500,
-                                                          color: context.appColors.primaryColor,
-                                                        ),
-                                                      ),
+                                                  Text(
+                                                    "SCHEDULED FOR",
+                                                    style: TextStyle(
+                                                      fontSize: 10.sp,
+                                                      color: secondaryTextColor
+                                                          .withAlpha(180),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      letterSpacing: 0.5,
                                                     ),
-                                                  ],
+                                                  ),
+                                                  _buildTimeStatusBadge(
+                                                    appt,
+                                                    context,
+                                                  ),
                                                 ],
+                                              ),
+                                              SizedBox(height: 2.h),
+                                              CustomTextWidget(
+                                                text: appt.effectiveDate != null
+                                                    ? DateFormat(
+                                                        "MMM dd, yyyy | h:mm a",
+                                                      ).format(
+                                                        appt.effectiveDate!
+                                                            .toLocal(),
+                                                      )
+                                                    : "Date TBD",
+                                                fontSize: 14.sp,
+                                                color: textColor.withAlpha(220),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        _buildStatusBadge(appt, context),
-                                      ],
-                                    ),
-                                    SizedBox(height: 16.h),
-                                    Divider(color: dividerColor, height: 1.h),
-                                    SizedBox(height: 16.h),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(8.r),
-                                          decoration: BoxDecoration(
-                                            color: iconBgColor,
-                                            borderRadius: BorderRadius.circular(
-                                              10.r,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 12.w),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "SCHEDULED FOR",
-                                              style: TextStyle(
-                                                fontSize: 10.sp,
-                                                color: secondaryTextColor
-                                                    .withAlpha(180),
-                                                fontWeight: FontWeight.w500,
-                                                letterSpacing: 0.5,
-                                              ),
-                                            ),
-                                            SizedBox(height: 2.h),
-                                            CustomTextWidget(
-                                              text: appt.effectiveDate != null
-                                                  ? DateFormat(
-                                                      "MMM dd, yyyy | h:mm a",
-                                                    ).format(
-                                                      appt.effectiveDate!
-                                                          .toLocal(),
-                                                    )
-                                                  : "Date TBD",
-                                              fontSize: 14.sp,
-                                              color: textColor.withAlpha(220),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
+                            );
+                          },
+                        ),
+                      );
                     }(),
                   ),
                 ),
@@ -309,6 +347,46 @@ class _ProviderAppointmentListPageState
       ),
     );
   }
+
+  Widget _buildTimeStatusBadge(Appointment appt, BuildContext context) {
+    if (appt.effectiveDate == null) return const SizedBox.shrink();
+
+    final now = DateTime.now();
+    final date = appt.effectiveDate!.toLocal();
+
+    String text;
+    Color color;
+
+    if (date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day) {
+      text = "TODAY";
+      color = context.appColors.warningColor;
+    } else if (date.isBefore(now)) {
+      text = "PAST";
+      color = context.appColors.hintTextColor;
+    } else {
+      text = "UPCOMING";
+      color = context.appColors.successColor;
+    }
+
+    return Container(
+      margin: EdgeInsets.only(left: 8.w),
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: color.withAlpha(20),
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(color: color.withAlpha(50), width: 1.r),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+          fontSize: 8.sp,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
 }
-
-

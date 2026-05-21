@@ -232,7 +232,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
            Text(
             "FIND THE BEST HELP IN SECONDS",
             style: TextStyle(
-              fontSize: 18.sp,
+              fontSize: 15.sp,
               fontWeight: FontWeight.w500,
               color: context.appColors.primaryTextColor,
               height: 1.2,
@@ -241,6 +241,17 @@ class _SeekerHomePageState extends State<SeekerHomePage>
           ),
           SizedBox(height: 24.h),
           _buildHeroSearchBar(context),
+          SizedBox(height: 15.h),
+          Text(
+            "All providers have gone through background check",
+            style: TextStyle(
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w500,
+              color: context.appColors.primaryTextColor,
+              height: 1.2,
+              letterSpacing: 1.0,
+            ),
+          ),
         ],
       ),
     );

@@ -291,7 +291,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 receiver.profilePictureUrl != "" &&
                 receiver.profilePictureUrl != "picture")
             ? CachedNetworkImageProvider(receiver.profilePictureUrl!)
-            : const AssetImage(logo2Assets) as ImageProvider,
+            : const AssetImage(person) as ImageProvider,
       ),
     );
   }

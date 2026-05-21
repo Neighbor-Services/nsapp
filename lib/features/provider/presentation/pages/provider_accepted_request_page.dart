@@ -431,7 +431,7 @@ class _ProviderAcceptedRequestPageState
                         (user.profilePictureUrl != null &&
                             user.profilePictureUrl!.isNotEmpty)
                         ? NetworkImage(user.profilePictureUrl!)
-                        : const AssetImage(logoAssets) as ImageProvider,
+                        : const AssetImage(person) as ImageProvider,
                   ),
                   SizedBox(width: 16.w),
                   Expanded(

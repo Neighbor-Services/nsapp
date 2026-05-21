@@ -76,7 +76,7 @@ class _ProviderRequestPostFeedWidgetState
                                 ? CachedNetworkImageProvider(
                                     requestData.user!.profilePictureUrl!,
                                   )
-                                : const AssetImage(logoAssets) as ImageProvider,
+                                : const AssetImage(person) as ImageProvider,
                           ),
                         ),
                         const SizedBox(width: 16),

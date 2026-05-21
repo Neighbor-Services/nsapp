@@ -110,7 +110,10 @@ class DisputeDetailsPage extends StatelessWidget {
                               child: Text(
                                 dispute.status ?? 'OPEN',
                                 style: TextStyle(
-                                  color: _getStatusColor(context, dispute.status),
+                                  color: _getStatusColor(
+                                    context,
+                                    dispute.status,
+                                  ),
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1.0,
@@ -135,7 +138,7 @@ class DisputeDetailsPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20.h),
-            
+
                   // Information Section
                   _buildSection(
                     title: 'Information',
@@ -149,43 +152,47 @@ class DisputeDetailsPage extends StatelessWidget {
                           'Date Raised',
                           dispute.createdAt != null
                               ? DateFormat.yMMMMd().add_jm().format(
-                                  DateTime.parse(dispute.createdAt!),
+                                  DateTime.parse(dispute.createdAt!).toLocal(),
                                 )
                               : 'N/A',
-                         
+
                           textColor,
-                          secondaryTextColor
+                          secondaryTextColor,
                         ),
-                        Divider(color: context.appColors.glassBorder, height: 24),
+                        Divider(
+                          color: context.appColors.glassBorder,
+                          height: 24,
+                        ),
                         _buildInfoRow(
                           context,
                           FontAwesomeIcons.fileLines,
-                          'Appointment ID',
-                          dispute.appointment ?? 'Global / General',
-                          
+                          'Status',
+                          dispute.status ?? 'N/A',
+
                           textColor,
-                          secondaryTextColor
+                          secondaryTextColor,
                         ),
+
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-            
+
                   // Description Section
-                    _buildSection(
-                      title: 'Description',
-                      textColor: textColor,
-                      secondaryTextColor: secondaryTextColor,
-                      child: Text(
-                        dispute.description,
-                        style: TextStyle(
-                          color: textColor.withAlpha(200),
-                          fontSize: 16.sp,
-                          height: 1.6,
-                        ),
+                  _buildSection(
+                    title: 'Description',
+                    textColor: textColor,
+                    secondaryTextColor: secondaryTextColor,
+                    child: Text(
+                      dispute.description,
+                      style: TextStyle(
+                        color: textColor.withAlpha(200),
+                        fontSize: 16.sp,
+                        height: 1.6,
                       ),
                     ),
-            
+                  ),
+
                   if (dispute.resolutionNotes != null &&
                       dispute.resolutionNotes!.isNotEmpty) ...[
                     const SizedBox(height: 20),
@@ -295,14 +302,6 @@ class DisputeDetailsPage extends StatelessWidget {
   }
 
   Color _getStatusColor(BuildContext context, String? status) {
-    
-        return context.appColors.primaryColor;
-    
+    return context.appColors.primaryColor;
   }
 }
-
-
-
-
-
-

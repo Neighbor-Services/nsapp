@@ -47,13 +47,15 @@ class _NotificationsPageState extends State<NotificationsPage>
   @override
   void initState() {
     super.initState();
-    
+
     // Check if we have cached notifications in the Bloc state to show instantly
     final cachedState = context.read<NotificationBloc>().state;
     if (cachedState is SuccessGetMyNotificationsState &&
         cachedState.notifications.isNotEmpty) {
       _pagingController.value = PagingState(
-        nextPageKey: cachedState.hasReachedMax ? null : cachedState.currentPage + 1,
+        nextPageKey: cachedState.hasReachedMax
+            ? null
+            : cachedState.currentPage + 1,
         error: null,
         itemList: cachedState.notifications,
       );
@@ -340,7 +342,9 @@ class _NotificationsPageState extends State<NotificationsPage>
     not.NotificationData notificationData,
     int index,
   ) {
-    final notification = notificationData.notification!;
+    final notification = notificationData.notification;
+    if (notification == null) return const SizedBox.shrink();
+
     final isUnread = !(notification.isRead ?? false);
 
     return TweenAnimationBuilder<double>(
@@ -439,7 +443,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                             ),
                             SizedBox(width: 4.w),
                             Text(
-                              _formatDate(notification.createdAt ?? DateTime.now()),
+                              _formatDate(
+                                notification.createdAt ?? DateTime.now(),
+                              ),
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
@@ -643,12 +649,20 @@ class _NotificationsPageState extends State<NotificationsPage>
     if (!mounted) return;
     final pageContext = context;
 
+    bool loaderDismissed = false;
     BuildContext? dialogContext;
     showDialog(
       context: pageContext,
       barrierDismissible: false,
       builder: (ctx) {
         dialogContext = ctx;
+        if (loaderDismissed) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (ctx.mounted && Navigator.of(ctx).canPop()) {
+              Navigator.of(ctx).pop();
+            }
+          });
+        }
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
           child: Dialog(
@@ -692,6 +706,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
 
     void dismissLoader() {
+      loaderDismissed = true;
       if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
         Navigator.of(dialogContext!).pop();
       }
@@ -699,20 +714,51 @@ class _NotificationsPageState extends State<NotificationsPage>
 
     switch (type) {
       case "message":
+        final senderId = data?['sender_id']?.toString();
+
         if (notificationData.from != null) {
-          messageBloc.add(
-            SetMessageReceiverEvent(profile: notificationData.from!),
-          );
-          await messageBloc.stream
+          // Subscribe to the stream FIRST, then dispatch — avoids race condition
+          // where the state is emitted before we start listening.
+          final receiverFuture = messageBloc.stream
               .firstWhere((state) => state is MessageReceiverState)
               .timeout(
                 const Duration(seconds: 5),
                 onTimeout: () => MessageReceiverState(profile: Profile()),
               );
-        }
+          messageBloc.add(
+            SetMessageReceiverEvent(profile: notificationData.from!),
+          );
+          await receiverFuture;
 
-        dismissLoader();
-        context.push('/chat');
+          dismissLoader();
+         context.push('/chat');
+        } else if (senderId != null && senderId.isNotEmpty) {
+          // `from` is null but we have a sender_id — fetch the profile by ID.
+          final reloadFuture = messageBloc.stream
+              .firstWhere(
+                (state) =>
+                    state is MessageReceiverState ||
+                    state is FailureGetMyMessagesState,
+              )
+              .timeout(
+                const Duration(seconds: 8),
+                onTimeout: () => FailureGetMyMessagesState(message: "Timeout"),
+              );
+          messageBloc.add(ReloadMessagesEvent(user: senderId));
+          final reloadState = await reloadFuture;
+
+          dismissLoader();
+          if (reloadState is MessageReceiverState) {
+            context.push('/chat');
+          } else{
+            // Fallback: navigate to chat list
+            context.push('/chat');
+          }
+        } else {
+          // No sender info at all — go to chat as fallback.
+          dismissLoader();
+          context.push('/chat');
+        }
         break;
 
       case "proposal":
@@ -721,18 +767,19 @@ class _NotificationsPageState extends State<NotificationsPage>
         final requestId = data?['request_id']?.toString();
         if (isProvider) {
           if (requestId != null && requestId.isNotEmpty) {
-            providerBloc.add(GetRequestDetailEvent(id: requestId));
-
-            final state = await providerBloc.stream
+            // Subscribe FIRST to avoid race condition, then dispatch.
+            final stateFuture = providerBloc.stream
                 .firstWhere(
                   (state) =>
                       state is SuccessGetRequestDetailState ||
-                      state is FailureGetRecentRequestState,
+                      state is FailureGetRequestsState,
                 )
                 .timeout(
                   const Duration(seconds: 10),
-                  onTimeout: () => FailureGetRecentRequestState(),
+                  onTimeout: () => FailureGetRequestsState(message: "Timeout"),
                 );
+            providerBloc.add(GetRequestDetailEvent(id: requestId));
+            final state = await stateFuture;
 
             dismissLoader();
 
@@ -741,7 +788,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 '/app/provider/requests/$requestId',
                 extra: state.request,
               );
-            } else if (mounted) {
+            } else  {
               customAlert(
                 pageContext,
                 AlertType.error,
@@ -754,18 +801,19 @@ class _NotificationsPageState extends State<NotificationsPage>
           }
         } else {
           if (requestId != null && requestId.isNotEmpty) {
-            providerBloc.add(GetRequestDetailEvent(id: requestId));
-
-            final state = await providerBloc.stream
+            // Subscribe FIRST to avoid race condition, then dispatch.
+            final stateFuture = providerBloc.stream
                 .firstWhere(
                   (state) =>
                       state is SuccessGetRequestDetailState ||
-                      state is FailureGetRecentRequestState,
+                      state is FailureGetRequestsState,
                 )
                 .timeout(
                   const Duration(seconds: 10),
-                  onTimeout: () => FailureGetRecentRequestState(),
+                  onTimeout: () => FailureGetRequestsState(message: "Timeout"),
                 );
+            providerBloc.add(GetRequestDetailEvent(id: requestId));
+            final state = await stateFuture;
 
             dismissLoader();
 
@@ -774,14 +822,13 @@ class _NotificationsPageState extends State<NotificationsPage>
               requestData.user = notificationData.from;
 
               if (requestData.request?.userId != _currentProfile?.user?.id) {
-                if (mounted){
+
                   customAlert(
                     pageContext,
                     AlertType.error,
                     "You can't view this request",
                   );
-                }
-                return;
+
               }
 
               seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
@@ -789,7 +836,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 '/app/requests/${requestData.request?.id}',
                 extra: requestData,
               );
-            } else if (mounted) {
+            } else {
               customAlert(
                 pageContext,
                 AlertType.error,
@@ -810,7 +857,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           providerBloc.add(ChangeProviderTabEvent(tabIndex: 5));
         } else {
           seekerBloc.add(seeker_bloc.GetAppointmentsEvent());
-          context.push('/seeker-requests');
+          context.push('/seeker-appointments');
         }
         break;
 

@@ -351,7 +351,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                   (user.profilePictureUrl != null &&
                       user.profilePictureUrl != "")
                   ? NetworkImage(user.profilePictureUrl!)
-                  : const AssetImage(logo2Assets) as ImageProvider,
+                  : const AssetImage(person) as ImageProvider,
             ),
           ),
           SizedBox(width: 16.w),

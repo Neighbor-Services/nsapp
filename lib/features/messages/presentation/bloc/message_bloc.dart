@@ -205,6 +205,8 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
       results.fold(
         (l) => emit(FailureGetMessageState(message: l.message ?? "")),
         (r) {
+          if (event.receiver != _targetUserId) return;
+
           if (event.before != null) {
             // Pagination (older messages)
             final existingIds = _currentMessages
@@ -338,6 +340,17 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
           if (type == 'message') {
             final chatMessage = ChatMessage.fromJson(data);
             
+            // Security/Bleed check: ensure the message belongs to the current chat
+            final msgSender = chatMessage.message?.sender;
+            final msgReceiver = chatMessage.message?.receiver;
+            final isForThisChat = (msgSender == _currentSenderId && msgReceiver == _targetUserId) || 
+                                  (msgSender == _targetUserId && msgReceiver == _currentSenderId);
+            
+            if (!isForThisChat) {
+               debugPrint("DEBUG: Ignored message from another chat room: sender=$msgSender receiver=$msgReceiver");
+               return;
+            }
+
             // Deduplication/Replacement logic for optimistic updates
             final tempIndex = _currentMessages.indexWhere((m) => 
               m.message?.id?.startsWith("temp_") == true && 

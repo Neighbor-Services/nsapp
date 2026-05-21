@@ -323,7 +323,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                                 "http",
                               ))
                           ? CachedNetworkImageProvider(favorite.favoriteUser!.profilePictureUrl!)
-                          : const AssetImage(logoAssets) as ImageProvider,
+                          : const AssetImage(person) as ImageProvider,
                     ),
                 ),
                 SizedBox(width: 18.w),

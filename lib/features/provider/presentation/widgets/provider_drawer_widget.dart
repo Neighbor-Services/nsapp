@@ -228,7 +228,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                           profile.profilePictureUrl!.isNotEmpty &&
                           !profile.profilePictureUrl!.startsWith("file:///"))
                       ? CachedNetworkImageProvider(profile.profilePictureUrl!)
-                      : const AssetImage(logo2Assets) as ImageProvider,
+                      : const AssetImage(person) as ImageProvider,
                 ),
               ),
               const Spacer(),

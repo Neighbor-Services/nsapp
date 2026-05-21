@@ -2,6 +2,7 @@ import 'package:nsapp/core/config/app_config.dart';
 
 const String logoAssets = 'assets/images/logo2.png';
 const String logo2Assets = 'assets/images/logo.png';
+const String person = 'assets/images/person.png';
 const String googleLogo = 'assets/icons/google_icon.png';
 const String providerJobLogo = 'assets/icons/job_provider_icon_1.png';
 const String seekerDoctorLogo = "assets/images/job_seeker_1.png";

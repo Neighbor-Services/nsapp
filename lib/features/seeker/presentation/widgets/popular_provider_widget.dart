@@ -164,10 +164,10 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                             imageUrl: profile.profilePictureUrl!,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => const HorizontalSkeletonLoader(height: 200, itemWidth: 200),
-                            errorWidget: (context, url, error) => Image.asset(logo2Assets, fit: BoxFit.contain),
+                            errorWidget: (context, url, error) => Image.asset(person, fit: BoxFit.contain),
                           )
                         : Image.asset(
-                            logo2Assets,
+                            person,
                             fit: BoxFit.contain,
                             color: context.appColors.primaryColor.withAlpha(20),
                           ),

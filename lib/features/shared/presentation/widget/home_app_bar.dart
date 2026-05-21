@@ -74,7 +74,7 @@ AppBar homeAppBar({
                               profile.profilePictureUrl!.isNotEmpty &&
                               !profile.profilePictureUrl!.startsWith("file:///"))
                           ? CachedNetworkImageProvider(profile.profilePictureUrl!)
-                          : AssetImage(logo2Assets) as ImageProvider,
+                          : AssetImage(person) as ImageProvider,
                     ),
                   );
                 },

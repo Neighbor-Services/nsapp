@@ -323,7 +323,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                     (chat.other!.profilePictureUrl != null &&
                         chat.other!.profilePictureUrl!.isNotEmpty)
                     ? CachedNetworkImageProvider(chat.other!.profilePictureUrl!)
-                    : const AssetImage(logoAssets) as ImageProvider,
+                    : const AssetImage(person) as ImageProvider,
               ),
               SizedBox(width: 16.w),
               Expanded(

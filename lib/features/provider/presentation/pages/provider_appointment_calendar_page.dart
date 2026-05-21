@@ -52,9 +52,11 @@ class _ProviderAppointmentCalendarPageState
     super.initState();
     _calendarSelectedDate = DateTime.now();
     context.read<ProviderBloc>().add(GetAppointmentsEvent());
-    
+
     // Pre-initialize date controller with today
-    dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(_calendarSelectedDate!);
+    dateController.text = DateFormat(
+      "EEEE, MMM dd, yyyy",
+    ).format(_calendarSelectedDate!);
     appointmentDate = _calendarSelectedDate;
 
     _fadeController = AnimationController(
@@ -105,7 +107,11 @@ class _ProviderAppointmentCalendarPageState
             customAlert(context, AlertType.success, "Appointment scheduled");
           }
           if (state is FailureAddAppointmentState) {
-            customAlert(context, AlertType.error, "Failed to schedule appointment");
+            customAlert(
+              context,
+              AlertType.error,
+              "Failed to schedule appointment",
+            );
           }
           if (state is SuccessUpdateAppointmentState) {
             Future.delayed(const Duration(milliseconds: 500), () {
@@ -116,7 +122,11 @@ class _ProviderAppointmentCalendarPageState
             customAlert(context, AlertType.success, "Appointment updated");
           }
           if (state is FailureUpdateAppointmentState) {
-            customAlert(context, AlertType.error, "Failed to update appointment");
+            customAlert(
+              context,
+              AlertType.error,
+              "Failed to update appointment",
+            );
           }
           if (state is SuccessCompleteAppointmentState) {
             context.read<ProviderBloc>().add(GetAppointmentsEvent());
@@ -149,63 +159,64 @@ class _ProviderAppointmentCalendarPageState
                               horizontal: 24.w,
                               vertical: 32.h,
                             ),
-                                child: Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        if (Navigator.of(context).canPop()) {
-                                          context.pop();
-                                        } else {
-                                          context.read<ProviderBloc>().add(
-                                              ChangeProviderTabEvent(tabIndex: 1));
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(12.r),
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.circular(14.r),
-                                          border: Border.all(
-                                            color: context.appColors.glassBorder,
-                                            width: 1.5.r,
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          FontAwesomeIcons.chevronLeft,
-                                          color: context.appColors.primaryTextColor,
-                                          size: 20.r,
-                                        ),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    if (Navigator.of(context).canPop()) {
+                                      context.pop();
+                                    } else {
+                                      context.read<ProviderBloc>().add(
+                                        ChangeProviderTabEvent(tabIndex: 1),
+                                      );
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(12.r),
+                                    decoration: BoxDecoration(
+                                      color: context.appColors.cardBackground,
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      border: Border.all(
+                                        color: context.appColors.glassBorder,
+                                        width: 1.5.r,
                                       ),
                                     ),
-                                    SizedBox(width: 16.w),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "CALENDAR",
-                                          style: TextStyle(
-                                            fontSize: 22.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: textColor,
-                                            letterSpacing: 1.2,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4.h),
-                                        Text(
-                                          "MANAGE YOUR SCHEDULE",
-                                          style: TextStyle(
-                                            fontSize: 9.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: secondaryTextColor,
-                                            letterSpacing: 0.8,
-                                          ),
-                                        ),
-                                      ],
+                                    child: Icon(
+                                      FontAwesomeIcons.chevronLeft,
+                                      color: context.appColors.primaryTextColor,
+                                      size: 20.r,
                                     ),
-                                    const Spacer(),
-                                    _buildAddButton(),
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "CALENDAR",
+                                      style: TextStyle(
+                                        fontSize: 22.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: textColor,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    Text(
+                                      "MANAGE YOUR SCHEDULE",
+                                      style: TextStyle(
+                                        fontSize: 9.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: secondaryTextColor,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
                                   ],
                                 ),
+                                const Spacer(),
+                                _buildAddButton(),
+                              ],
+                            ),
                           ),
 
                           // Calendar
@@ -233,8 +244,8 @@ class _ProviderAppointmentCalendarPageState
 
   void _handleAddToCalendar(ProviderState state, String appointmentId) async {
     try {
-      final list = (state is SuccessGetAppointmentsState) 
-          ?  state.appointments 
+      final list = (state is SuccessGetAppointmentsState)
+          ? state.appointments
           : <AppointmentData>[];
       final appointmentWrapper = list.firstWhere(
         (element) => element.appointment?.id == appointmentId,
@@ -262,7 +273,10 @@ class _ProviderAppointmentCalendarPageState
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [context.appColors.secondaryColor, context.appColors.secondaryColor],
+            colors: [
+              context.appColors.secondaryColor,
+              context.appColors.secondaryColor,
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -335,7 +349,9 @@ class _ProviderAppointmentCalendarPageState
         },
         child: SingleChildScrollView(
           key: const PageStorageKey('provider_calendar_scroll'),
-          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           child: SizedBox(
             height: 600.h,
             child: CalendarControllerProvider(
@@ -343,32 +359,34 @@ class _ProviderAppointmentCalendarPageState
               child: SolidContainer(
                 child: MonthView(
                   borderColor: borderColor,
-                  cellBuilder: (date, events, isToday, isInMonth, hideDaysNotInMonth) {
-                    return FilledCell(
-                      date: date,
-                      shouldHighlight: isToday,
-                      backgroundColor: isInMonth
-                          ? context.appColors.cardBackground
-                          : context.appColors.primaryBackground,
-                      events: events,
-                      isInMonth: isInMonth,
-                      hideDaysNotInMonth: hideDaysNotInMonth,
-                      titleColor: isInMonth
-                          ? context.appColors.primaryTextColor
-                          : context.appColors.secondaryTextColor,
-                      highlightColor: context.appColors.primaryColor,
-                      tileColor: context.appColors.primaryColor,
-                      onTileTap: (event, date) {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          barrierColor: Colors.black.withAlpha(150),
-                          builder: (context) => _buildEventDetailsSheet(event, isDark),
+                  cellBuilder:
+                      (date, events, isToday, isInMonth, hideDaysNotInMonth) {
+                        return FilledCell(
+                          date: date,
+                          shouldHighlight: isToday,
+                          backgroundColor: isInMonth
+                              ? context.appColors.cardBackground
+                              : context.appColors.primaryBackground,
+                          events: events,
+                          isInMonth: isInMonth,
+                          hideDaysNotInMonth: hideDaysNotInMonth,
+                          titleColor: isInMonth
+                              ? context.appColors.primaryTextColor
+                              : context.appColors.secondaryTextColor,
+                          highlightColor: context.appColors.primaryColor,
+                          tileColor: context.appColors.primaryColor,
+                          onTileTap: (event, date) {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              barrierColor: Colors.black.withAlpha(150),
+                              builder: (context) =>
+                                  _buildEventDetailsSheet(event, isDark),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
                   weekDayBuilder: (day) {
                     return Container(
                       alignment: Alignment.center,
@@ -391,16 +409,19 @@ class _ProviderAppointmentCalendarPageState
                     setState(() {
                       _calendarSelectedDate = date;
                       appointmentDate = date;
-                      dateController.text = DateFormat("EEEE, MMM dd, yyyy").format(date);
+                      dateController.text = DateFormat(
+                        "EEEE, MMM dd, yyyy",
+                      ).format(date);
                     });
-                    
+
                     if (events.isNotEmpty) {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
                         barrierColor: Colors.black.withAlpha(150),
-                        builder: (context) => _buildEventDetailsSheet(events[0], isDark),
+                        builder: (context) =>
+                            _buildEventDetailsSheet(events[0], isDark),
                       );
                     }
                   },
@@ -410,7 +431,8 @@ class _ProviderAppointmentCalendarPageState
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
                       barrierColor: Colors.black.withAlpha(150),
-                      builder: (context) => _buildEventDetailsSheet(event, isDark),
+                      builder: (context) =>
+                          _buildEventDetailsSheet(event, isDark),
                     );
                   },
                   headerStyle: HeaderStyle(
@@ -431,13 +453,9 @@ class _ProviderAppointmentCalendarPageState
         ),
       ),
     );
-
   }
 
-  Widget _buildEventDetailsSheet(
-    CalendarEventData data,
-    bool isDark,
-  ) {
+  Widget _buildEventDetailsSheet(CalendarEventData data, bool isDark) {
     // Use the State's own context to ensure Provider access inside showModalBottomSheet
     final textColor = context.appColors.primaryTextColor;
     final handleColor = context.appColors.glassBorder;
@@ -471,11 +489,18 @@ class _ProviderAppointmentCalendarPageState
                   letterSpacing: 1.0,
                 ),
                 SizedBox(height: 24.h),
-                _buildDetailRow(FontAwesomeIcons.heading, "TITLE", data.title, isDark),
+                _buildDetailRow(
+                  FontAwesomeIcons.heading,
+                  "TITLE",
+                  data.title,
+                  isDark,
+                ),
                 _buildDetailRow(
                   FontAwesomeIcons.calendar,
                   "TIME",
-                  data.startTime != null ? DateFormat.jm().format(data.startTime!.toLocal()) : '',
+                  data.startTime != null
+                      ? DateFormat.jm().format(data.startTime!.toLocal())
+                      : '',
                   isDark,
                 ),
                 if (data.description != null && data.description!.isNotEmpty)
@@ -486,7 +511,7 @@ class _ProviderAppointmentCalendarPageState
                     isDark,
                   ),
                 SizedBox(height: 16.h),
-                
+
                 // Linked Request Details
                 // Linked Request Details
                 () {
@@ -536,8 +561,9 @@ class _ProviderAppointmentCalendarPageState
                             "\$${req.price}",
                             isDark,
                           ),
-                        if (req.description != null && req.description!.isNotEmpty)
-                           _buildDetailRow(
+                        if (req.description != null &&
+                            req.description!.isNotEmpty)
+                          _buildDetailRow(
                             FontAwesomeIcons.fileLines,
                             "REQ. DESCRIPTION",
                             req.description!,
@@ -557,9 +583,14 @@ class _ProviderAppointmentCalendarPageState
                                 RequestDetailEvent(request: requestData),
                               );
                               context.read<ProviderBloc>().add(
-                                ReloadProfileEvent(request: requestData.request!.id!),
+                                ReloadProfileEvent(
+                                  request: requestData.request!.id!,
+                                ),
                               );
-                              context.push('/app/provider/requests/${requestData.request!.id}', extra: requestData);
+                              context.push(
+                                '/app/provider/requests/${requestData.request!.id}',
+                                extra: requestData,
+                              );
                             },
                             icon: Icon(
                               FontAwesomeIcons.arrowUpRightFromSquare,
@@ -568,7 +599,7 @@ class _ProviderAppointmentCalendarPageState
                             ),
                             label: Text(
                               "VIEW FULL DETAILS",
-                                style: TextStyle(
+                              style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
                                 color: context.appColors.primaryColor,
@@ -641,8 +672,8 @@ class _ProviderAppointmentCalendarPageState
                 SolidButton(
                   onPressed: () async {
                     try {
-                      final list = (state is SuccessGetAppointmentsState) 
-                          ?  state.appointments 
+                      final list = (state is SuccessGetAppointmentsState)
+                          ? state.appointments
                           : <AppointmentData>[];
                       final appointmentData = list.firstWhere(
                         (element) =>
@@ -653,7 +684,8 @@ class _ProviderAppointmentCalendarPageState
                         context.push(
                           '/provider-on-the-way',
                           extra: {
-                            'appointmentId': appointmentData.appointment?.id ?? "",
+                            'appointmentId':
+                                appointmentData.appointment?.id ?? "",
                             'destination': LatLng(
                               double.tryParse(
                                     appointmentData.user?.latitude ?? "0.0",
@@ -674,7 +706,7 @@ class _ProviderAppointmentCalendarPageState
                   icon: FontAwesomeIcons.compass,
                   label: "On the Way",
                   isPrimary: false,
-                  
+
                   color: context.appColors.successColor.withAlpha(50),
                   textColor: context.appColors.successColor,
                   height: 55.h,
@@ -820,9 +852,9 @@ class _ProviderAppointmentCalendarPageState
                         colorScheme: ColorScheme.dark(
                           primary: context.appColors.secondaryColor,
                           onPrimary: Colors.white,
-                          surface:  const Color(0xFF1E1E2E),
+                          surface: const Color(0xFF1E1E2E),
                         ),
-                        dialogTheme:  const DialogThemeData(
+                        dialogTheme: const DialogThemeData(
                           backgroundColor: Color(0xFF1E1E2E),
                         ),
                       ),
@@ -859,8 +891,9 @@ class _ProviderAppointmentCalendarPageState
                     time.minute,
                   );
                   appointmentStartTime = mergedDateTime;
-                  appointmentDate = mergedDateTime; // Preserve time in appointmentDate
-                  
+                  appointmentDate =
+                      mergedDateTime; // Preserve time in appointmentDate
+
                   startTimeController.text = DateFormat.jm().format(
                     appointmentStartTime!,
                   );
@@ -910,6 +943,21 @@ class _ProviderAppointmentCalendarPageState
                   return;
                 }
 
+                final isDuplicate = events.any((event) {
+                  return event.startTime != null &&
+                      appointmentDate != null &&
+                      event.startTime!.isAtSameMomentAs(appointmentDate!);
+                });
+
+                if (isDuplicate) {
+                  customAlert(
+                    context,
+                    AlertType.error,
+                    "An appointment already exists at this date and time",
+                  );
+                  return;
+                }
+
                 if (selectedProposalId == null) {
                   customAlert(
                     context,
@@ -920,7 +968,9 @@ class _ProviderAppointmentCalendarPageState
                 }
 
                 final profileState = context.read<ProfileBloc>().state;
-                final profile = (profileState is SuccessGetProfileState) ? profileState.profile : Profile();
+                final profile = (profileState is SuccessGetProfileState)
+                    ? profileState.profile
+                    : Profile();
                 final String? providerId = profile.user?.id;
 
                 // Find the seeker (user) from the selected proposal
@@ -980,7 +1030,9 @@ class _ProviderAppointmentCalendarPageState
     return BlocBuilder<ProviderBloc, ProviderState>(
       builder: (_, state) {
         return FutureBuilder<List<RequestAcceptance>>(
-          future: (state is SuccessGetAcceptRequestState) ? Future.value(state.accepts) : Future.value([]),
+          future: (state is SuccessGetAcceptRequestState)
+              ? Future.value(state.accepts)
+              : Future.value([]),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Padding(
@@ -1041,9 +1093,7 @@ class _ProviderAppointmentCalendarPageState
                     ),
                     hint: Text(
                       "Select a proposal",
-                      style: TextStyle(
-                        color: context.appColors.glassBorder,
-                      ),
+                      style: TextStyle(color: context.appColors.glassBorder),
                     ),
                     items: proposals.map((proposal) {
                       return DropdownMenuItem<String>(
@@ -1070,5 +1120,3 @@ class _ProviderAppointmentCalendarPageState
     );
   }
 }
-
-

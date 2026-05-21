@@ -253,7 +253,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                       fit: BoxFit.cover,
                       errorBuilder: (context, _, __) {
                         return Image.asset(
-                          logo2Assets,
+                          person,
                           width: 70.r,
                           height: 70.r,
                           fit: BoxFit.cover,
@@ -261,7 +261,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                       },
                     )
                   : Image.asset(
-                      logo2Assets,
+                    person,
                       width: 70.r,
                       height: 70.r,
                       fit: BoxFit.cover,

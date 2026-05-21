@@ -1,4 +1,3 @@
-
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:nsapp/core/models/notification.dart' as not;
@@ -12,8 +11,8 @@ import 'package:nsapp/core/services/local_notification_service.dart';
 part 'notification_event.dart';
 part 'notification_state.dart';
 
-class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState> {
-
+class NotificationBloc
+    extends HydratedBloc<NotificationEvent, NotificationState> {
   final AddNotificationUseCase addNotificationUseCase;
   final GetMyNotificationsUseCase getMyNotificationsUseCase;
   final SetSeenNotificationUseCase seenNotificationUseCase;
@@ -36,45 +35,50 @@ class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState
 
     on<GetMyNotificationsEvent>((event, emit) async {
       final results = await getMyNotificationsUseCase(event.page);
-      results.fold(
-        (l) => emit(NotificationFailure(l.message)),
-        (r) {
-          emit(SuccessGetMyNotificationsState(
+      results.fold((l) => emit(NotificationFailure(l.message)), (r) {
+        emit(
+          SuccessGetMyNotificationsState(
             notifications: r,
             unreadCount: r.where((n) => n.notification?.isRead == false).length,
 
             hasReachedMax: r.length < 10, // Assuming PAGE_SIZE is 10
             currentPage: event.page,
-          ));
-        },
-      );
+          ),
+        );
+      });
     }, transformer: sequential());
 
     on<LoadMoreNotificationsEvent>((event, emit) async {
       final currentState = state;
-      if (currentState is SuccessGetMyNotificationsState && !currentState.hasReachedMax) {
+      if (currentState is SuccessGetMyNotificationsState &&
+          !currentState.hasReachedMax) {
         final results = await getMyNotificationsUseCase(event.page);
-        results.fold(
-          (l) => emit(NotificationFailure(l.message)),
-          (r) {
-            if (r.isEmpty) {
-              emit(SuccessGetMyNotificationsState(
+        results.fold((l) => emit(NotificationFailure(l.message)), (r) {
+          if (r.isEmpty) {
+            emit(
+              SuccessGetMyNotificationsState(
                 notifications: currentState.notifications,
                 unreadCount: currentState.unreadCount,
                 hasReachedMax: true,
                 currentPage: currentState.currentPage,
-              ));
-            } else {
-              final updatedNotifications = List<not.NotificationData>.from(currentState.notifications)..addAll(r);
-              emit(SuccessGetMyNotificationsState(
+              ),
+            );
+          } else {
+            final updatedNotifications = List<not.NotificationData>.from(
+              currentState.notifications,
+            )..addAll(r);
+            emit(
+              SuccessGetMyNotificationsState(
                 notifications: updatedNotifications,
-                unreadCount: updatedNotifications.where((n) => n.notification?.isRead == false).length,
+                unreadCount: updatedNotifications
+                    .where((n) => n.notification?.isRead == false)
+                    .length,
                 hasReachedMax: r.length < 10,
                 currentPage: event.page,
-              ));
-            }
-          },
-        );
+              ),
+            );
+          }
+        });
       }
     }, transformer: sequential());
 
@@ -103,24 +107,26 @@ class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState
           return n;
         }).toList();
 
-        emit(SuccessGetMyNotificationsState(
-          notifications: updatedNotifications,
-          unreadCount: (currentState.unreadCount - 1).clamp(0, 999),
-          hasReachedMax: currentState.hasReachedMax,
-          currentPage: currentState.currentPage,
-        ));
+        emit(
+          SuccessGetMyNotificationsState(
+            notifications: updatedNotifications,
+            unreadCount: (currentState.unreadCount - 1).clamp(0, 999),
+            hasReachedMax: currentState.hasReachedMax,
+            currentPage: currentState.currentPage,
+          ),
+        );
       }
 
       final results = await seenNotificationUseCase(event.notificationID);
       results.fold(
         (l) {
           // If server fails, we refresh to get the true state
-          add(GetMyNotificationsEvent());
+          add(GetMyNotificationsEvent(page: 1));
           emit(NotificationFailure(l.message));
         },
         (r) {
           // No need to reload full list on success as we already updated optimistically
-          emit(SuccessSetSeentState());
+          // Emitting SuccessSetSeenState breaks the pagination logic which checks for SuccessGetMyNotificationsState
         },
       );
     });
@@ -140,24 +146,20 @@ class NotificationBloc extends HydratedBloc<NotificationEvent, NotificationState
 
     on<SendNotificationEvent>((event, emit) {
       final model = event.notificationModel;
-      
+
       // If a userId is provided, sync it to the backend as well
       if (model.userId != null) {
-        add(AddNotificationEvent(
-          notification: not.Notification(
-            title: model.title,
-            message: model.body,
-            notificationType: "SYSTEM",
-            targetUserId: model.userId,
-          )
-        ));
+        add(
+          AddNotificationEvent(
+            notification: not.Notification(
+              title: model.title,
+              message: model.body,
+              notificationType: "SYSTEM",
+              targetUserId: model.userId,
+            ),
+          ),
+        );
       }
-
-      LocalNotificationService.showNotification(
-        id: DateTime.now().microsecondsSinceEpoch % 1000000,
-        title: model.title ?? "New Notification",
-        body: model.body ?? "",
-      );
     });
   }
 
