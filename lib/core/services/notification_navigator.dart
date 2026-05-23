@@ -8,6 +8,7 @@ import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' hi
 import 'package:nsapp/features/provider/presentation/bloc/provider_bloc.dart' as provider_bloc show GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' hide GetAppointmentsEvent;
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as seeker_bloc show GetAppointmentsEvent;
+import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 
 
 /// Holds a pending notification payload that arrived when the app was
@@ -101,17 +102,85 @@ class NotificationNavigator {
 
     switch (type) {
       case 'message':
-        // Navigate to the Messages tab (page index 4)
-        if (isProvider) {
-          context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 4));
+        final senderId = data['sender_id']?.toString();
+        if (senderId != null && senderId.isNotEmpty) {
+          final messageBloc = context.read<MessageBloc>();
+
+          bool loaderDismissed = false;
+          BuildContext? dialogContext;
+
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) {
+              dialogContext = ctx;
+              if (loaderDismissed) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (ctx.mounted && Navigator.of(ctx).canPop()) {
+                    Navigator.of(ctx).pop();
+                  }
+                });
+              }
+              return Center(
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            },
+          );
+
+          void dismissLoader() {
+            loaderDismissed = true;
+            if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
+              Navigator.of(dialogContext!).pop();
+            }
+          }
+
+          final reloadFuture = messageBloc.stream
+              .firstWhere(
+                (state) =>
+                    state is MessageReceiverState ||
+                    state is FailureGetMyMessagesState,
+              )
+              .timeout(
+                const Duration(seconds: 8),
+                onTimeout: () => FailureGetMyMessagesState(message: "Timeout"),
+              );
+
+          messageBloc.add(ReloadMessagesEvent(user: senderId));
+          final reloadState = await reloadFuture;
+
+          dismissLoader();
+
+          if (reloadState is MessageReceiverState) {
+            context.push('/chat');
+          } else {
+            if (isProvider) {
+              context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 4));
+            } else {
+              context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 4));
+            }
+          }
         } else {
-          context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 4));
+          if (isProvider) {
+            context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 4));
+          } else {
+            context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 4));
+          }
         }
         break;
 
       case 'proposal':
       case 'request':
       case 'direct_request':
+      case 'broadcast_request':
         if (requestId != null && requestId.isNotEmpty) {
           if (isProvider) {
             context.read<ProviderBloc>().add(
@@ -136,7 +205,7 @@ class NotificationNavigator {
           context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 5));
         } else {
           context.read<SeekerBloc>().add(seeker_bloc.GetAppointmentsEvent());
-          context.push('/seeker-requests');
+          context.push('/seeker-appointments');
         }
         break;
 

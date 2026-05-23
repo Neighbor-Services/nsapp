@@ -60,7 +60,10 @@ class SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {
       final results = await changeUserTypeUseCase(event.type);
       results.fold(
         (l) => emit(SettingsFailure(l.message ?? 'Failed to change user type', state)),
-        (r) => emit(SuccessChangeUserTypeState(state)),
+        (r) {
+          final isProvider = Helpers.isProvider(event.type["type"]);
+          emit(SuccessChangeUserTypeState(state.copyWith(isProvider: isProvider)));
+        },
       );
     });
 

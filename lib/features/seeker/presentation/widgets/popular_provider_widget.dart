@@ -38,13 +38,10 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
         if (state is SuccessGetMyFavoritesState) {
           setState(() => _favorites = state.profiles);
         }
-        if (state is SuccessAddToFavoriteState) {
-          context.read<SeekerBloc>().add(GetMyFavoritesEvent());
-        }
-        if (state is SuccessRemoveFromFavoriteState) {
-          context.read<SeekerBloc>().add(GetMyFavoritesEvent());
-        }
-        if (state is FailureRemoveFromFavoriteState) {
+        // Re-fetch server data once after a successful add/remove to
+        // replace any optimistic placeholder with the real record.
+        if (state is SuccessAddToFavoriteState ||
+            state is SuccessRemoveFromFavoriteState) {
           context.read<SeekerBloc>().add(GetMyFavoritesEvent());
         }
       },
@@ -52,6 +49,8 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           current is SuccessPopularProvidersState ||
           current is FailurePopularProviderState ||
           current is SuccessGetMyFavoritesState ||
+          current is SuccessAddToFavoriteState ||
+          current is SuccessRemoveFromFavoriteState ||
           current is PopularProvidersLoadingState ||
           current is LoadingSeekerState ||
           current is InitialSeekerState,

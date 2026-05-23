@@ -55,6 +55,9 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
           uid: uid,
         ),
       );
+      if (selectedRequest == null) {
+        context.read<ProviderBloc>().add(GetRequestDetailEvent(id: requestId));
+      }
     }
 
     context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());

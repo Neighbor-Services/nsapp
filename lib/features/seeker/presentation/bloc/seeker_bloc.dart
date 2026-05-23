@@ -243,14 +243,13 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
           emit(FailureAddToFavoriteState(message: l.message));
         },
         (r) {
-          // Success: No need to reload full list immediately unless we need more data
-          // But we should replace the temp ID with the real one if possible, 
-          // or just trigger a background refresh.
-          add(GetMyFavoritesEvent());
+          // Emit success — widget listeners will trigger a single
+          // GetMyFavoritesEvent to sync the temp favourite with the
+          // real server record.
           emit(SuccessAddToFavoriteState());
         },
       );
-    });
+    }, transformer: sequential());
 
     on<RemoveFromFavoriteEvent>((event, emit) async {
       // Optimistic Update: Remove from local list
@@ -276,7 +275,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
           emit(SuccessRemoveFromFavoriteState());
         },
       );
-    });
+    }, transformer: sequential());
 
     on<GetMyFavoritesEvent>((event, emit) async {
       debugPrint("SeekerBloc: Fetching favorites...");
@@ -292,7 +291,7 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
           emit(SuccessGetMyFavoritesState(profiles: r));
         },
       );
-    });
+    }, transformer: restartable());
 
     // SeekerBackPressedEvent removed
 

@@ -197,11 +197,9 @@ class _EditProfilePageState extends State<EditProfilePage>
             context.read<ProfileBloc>().add(GetProfileStreamEvent());
             context.read<CommonBloc>().add(GetServicesEvent());
             
-            if (Helpers.isSeeker(userType)) {
-              context.read<SettingsBloc>().add(
-                ToggleDashboardEvent(isProvider: false),
-              );
-            }
+            context.read<SettingsBloc>().add(
+              ToggleDashboardEvent(isProvider: Helpers.isProvider(userType)),
+            );
             customAlert(context, AlertType.success, "Profile updated successfully");
             
             Future.delayed(const Duration(seconds: 2), () {

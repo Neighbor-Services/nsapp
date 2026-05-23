@@ -62,6 +62,7 @@ class _SeekerDashboardPageState extends State<SeekerDashboardPage> {
           );
         }
       },
+      buildWhen: (previous, current) => current is SeekerTabChangedState,
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.transparent,

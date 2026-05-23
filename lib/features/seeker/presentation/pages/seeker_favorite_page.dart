@@ -77,6 +77,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
         },
         buildWhen: (previous, current) =>
           current is SuccessGetMyFavoritesState ||
+          current is SuccessRemoveFromFavoriteState ||
           current is FailureGetMyFavoritesState ||
           current is LoadingSeekerState ||
           current is InitialSeekerState,

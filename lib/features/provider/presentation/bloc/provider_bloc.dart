@@ -211,7 +211,10 @@ class ProviderBloc extends HydratedBloc<ProviderEvent, ProviderState> {
       final results = await getRequestDetailUseCase(event.id);
       results.fold(
         (l) => emit(FailureGetRequestsState(message: l.message)),
-        (r) => emit(SuccessGetRequestDetailState(request: r)),
+        (r) {
+          _selectedRequest = r;
+          emit(SuccessGetRequestDetailState(request: r));
+        },
       );
     });
 

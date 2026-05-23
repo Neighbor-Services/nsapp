@@ -472,6 +472,8 @@ class _NotificationsPageState extends State<NotificationsPage>
         return FontAwesomeIcons.comment;
       case "proposal":
       case "request":
+      case "direct_request":
+      case "broadcast_request":
         return FontAwesomeIcons.fileLines;
       case "appointment":
         return FontAwesomeIcons.calendar;
@@ -717,21 +719,19 @@ class _NotificationsPageState extends State<NotificationsPage>
         final senderId = data?['sender_id']?.toString();
 
         if (notificationData.from != null) {
-          // Subscribe to the stream FIRST, then dispatch — avoids race condition
-          // where the state is emitted before we start listening.
-          final receiverFuture = messageBloc.stream
-              .firstWhere((state) => state is MessageReceiverState)
-              .timeout(
-                const Duration(seconds: 5),
-                onTimeout: () => MessageReceiverState(profile: Profile()),
-              );
+          // Set receiver profile synchronously in the bloc, then navigate.
+          // The ChatPage reads receiverProfile from the bloc in initState,
+          // so we just need to ensure it's set before push.
           messageBloc.add(
             SetMessageReceiverEvent(profile: notificationData.from!),
           );
-          await receiverFuture;
+
+          // Give the bloc a microtask to process the event
+          await Future.delayed(const Duration(milliseconds: 100));
 
           dismissLoader();
-         context.push('/chat');
+          if (!mounted) return;
+          context.push('/chat');
         } else if (senderId != null && senderId.isNotEmpty) {
           // `from` is null but we have a sender_id — fetch the profile by ID.
           final reloadFuture = messageBloc.stream
@@ -748,22 +748,39 @@ class _NotificationsPageState extends State<NotificationsPage>
           final reloadState = await reloadFuture;
 
           dismissLoader();
+          if (!mounted) return;
+
           if (reloadState is MessageReceiverState) {
+            debugPrint(
+              "Navigating to chat with receiver: ${reloadState.profile.user?.id}",
+            );
             context.push('/chat');
-          } else{
-            // Fallback: navigate to chat list
-            context.push('/chat');
+          } else {
+            // Reload failed — navigate to messages tab instead
+            if (isProvider) {
+              providerBloc.add(ChangeProviderTabEvent(tabIndex: 4));
+            } else {
+              seekerBloc.add(ChangeSeekerTabEvent(tabIndex: 4));
+            }
+            context.pop(); // Go back to home
           }
         } else {
-          // No sender info at all — go to chat as fallback.
+          // No sender info at all — go to messages tab as fallback.
           dismissLoader();
-          context.push('/chat');
+          if (!mounted) return;
+          if (isProvider) {
+            providerBloc.add(ChangeProviderTabEvent(tabIndex: 4));
+          } else {
+            seekerBloc.add(ChangeSeekerTabEvent(tabIndex: 4));
+          }
+          context.pop(); // Go back to home
         }
         break;
 
       case "proposal":
       case "request":
       case "direct_request":
+      case "broadcast_request":
         final requestId = data?['request_id']?.toString();
         if (isProvider) {
           if (requestId != null && requestId.isNotEmpty) {
@@ -784,11 +801,15 @@ class _NotificationsPageState extends State<NotificationsPage>
             dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
+              if (Navigator.of(context).canPop()) {
+                context.pop(); // Pop notifications page first
+              }
+              await Future.delayed(const Duration(milliseconds: 100));
               context.push(
                 '/app/provider/requests/$requestId',
                 extra: state.request,
               );
-            } else  {
+            } else {
               customAlert(
                 pageContext,
                 AlertType.error,
@@ -798,40 +819,46 @@ class _NotificationsPageState extends State<NotificationsPage>
           } else {
             dismissLoader();
             providerBloc.add(ChangeProviderTabEvent(tabIndex: 3));
+            if (Navigator.of(context).canPop()) {
+              context.pop();
+            }
           }
         } else {
           if (requestId != null && requestId.isNotEmpty) {
             // Subscribe FIRST to avoid race condition, then dispatch.
-            final stateFuture = providerBloc.stream
+            final stateFuture = seekerBloc.stream
                 .firstWhere(
                   (state) =>
-                      state is SuccessGetRequestDetailState ||
-                      state is FailureGetRequestsState,
+                      state is SuccessReloadRequestState ||
+                      state is FailureReloadRequestState,
                 )
                 .timeout(
                   const Duration(seconds: 10),
-                  onTimeout: () => FailureGetRequestsState(message: "Timeout"),
+                  onTimeout: () =>
+                      FailureReloadRequestState(message: "Timeout"),
                 );
-            providerBloc.add(GetRequestDetailEvent(id: requestId));
+            seekerBloc.add(ReloadRequestEvent(request: requestId));
             final state = await stateFuture;
 
             dismissLoader();
 
-            if (state is SuccessGetRequestDetailState) {
+            if (state is SuccessReloadRequestState) {
               final requestData = state.request;
               requestData.user = notificationData.from;
 
               if (requestData.request?.userId != _currentProfile?.user?.id) {
-
-                  customAlert(
-                    pageContext,
-                    AlertType.error,
-                    "You can't view this request",
-                  );
-
+                customAlert(
+                  pageContext,
+                  AlertType.error,
+                  "You can't view this request",
+                );
+                return;
               }
 
               seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
+              if (Navigator.of(context).canPop()) {
+                context.pop(); // Pop notifications page first
+              }
               context.push(
                 '/app/requests/${requestData.request?.id}',
                 extra: requestData,
@@ -845,6 +872,9 @@ class _NotificationsPageState extends State<NotificationsPage>
             }
           } else {
             dismissLoader();
+            if (Navigator.of(context).canPop()) {
+              context.pop(); // Pop notifications page first
+            }
             context.push('/seeker-requests');
           }
         }
@@ -855,8 +885,14 @@ class _NotificationsPageState extends State<NotificationsPage>
         if (isProvider) {
           providerBloc.add(provider_bloc.GetAppointmentsEvent());
           providerBloc.add(ChangeProviderTabEvent(tabIndex: 5));
+          if (Navigator.of(context).canPop()) {
+            context.pop();
+          }
         } else {
           seekerBloc.add(seeker_bloc.GetAppointmentsEvent());
+          if (Navigator.of(context).canPop()) {
+            context.pop(); // Pop notifications page first
+          }
           context.push('/seeker-appointments');
         }
         break;

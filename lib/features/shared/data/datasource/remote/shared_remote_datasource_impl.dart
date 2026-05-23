@@ -217,9 +217,9 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
           if (data is Map) {
             if (data.containsKey('non_field_errors')) {
               throw data['non_field_errors'][0];
-            } else if (data.containsKey('detail')){
+            } else if (data.containsKey('detail')) {
               throw data['detail'];
-            } else if (data.containsKey('error')){
+            } else if (data.containsKey('error')) {
               throw data['error'];
             }
           } else if (data is List && data.isNotEmpty) {
@@ -237,9 +237,13 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
       final token = await Helpers.getString("token");
       final response = await _dio.patch(
         "$baseUrl/accounts/profile/update_me/",
-        data: json.encode({"user_type": userType, "catalog_service": service}),
+        data: json.encode({
+          "user_type": userType.toUpperCase(),
+          "catalog_service": (service.isNotEmpty) ? service : null,
+        }),
         options: Options(headers: dioHeaders(token)),
       );
+      print(response.statusCode);
       return response.statusCode! >= 200 && response.statusCode! < 300;
     } catch (e) {
       _handleDioError(e);
@@ -415,6 +419,3 @@ class SharedRemoteDatasourceImpl extends SharedRemoteDatasource {
     }
   }
 }
-
-
-

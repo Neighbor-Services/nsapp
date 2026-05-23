@@ -37,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage>
   @override
   void initState() {
     super.initState();
-    
+
     // Get initial profile
     final profileState = context.read<ProfileBloc>().state;
     if (profileState is SuccessGetProfileState) {
@@ -85,7 +85,9 @@ class _SettingsPageState extends State<SettingsPage>
                   FlutterWebBrowser.openWebPage(
                     url: state.accountLink.url,
                     customTabsOptions: CustomTabsOptions(
-                      colorScheme: isDark ? CustomTabsColorScheme.dark : CustomTabsColorScheme.light,
+                      colorScheme: isDark
+                          ? CustomTabsColorScheme.dark
+                          : CustomTabsColorScheme.light,
                       shareState: CustomTabsShareState.on,
                       instantAppsEnabled: true,
                       showTitle: true,
@@ -94,7 +96,8 @@ class _SettingsPageState extends State<SettingsPage>
                     safariVCOptions: SafariViewControllerOptions(
                       barCollapsingEnabled: true,
                       preferredBarTintColor: context.appColors.cardBackground,
-                      preferredControlTintColor: context.appColors.secondaryColor,
+                      preferredControlTintColor:
+                          context.appColors.secondaryColor,
                       dismissButtonStyle:
                           SafariViewControllerDismissButtonStyle.close,
                       modalPresentationCapturesStatusBarAppearance: true,
@@ -108,12 +111,6 @@ class _SettingsPageState extends State<SettingsPage>
             listener: (context, state) {
               if (state is SuccessChangeUserTypeState) {
                 context.read<ProfileBloc>().add(GetProfileEvent());
-                final userType = _currentProfile?.userType ?? "";
-                if (Helpers.isSeeker(userType)) {
-                  context.read<SettingsBloc>().add(
-                    ToggleDashboardEvent(isProvider: false),
-                  );
-                }
                 customAlert(context, AlertType.success, "Update Successful");
               }
               if (state is SettingsFailure) {
@@ -129,7 +126,8 @@ class _SettingsPageState extends State<SettingsPage>
             final useBiometric = state.useBiometric;
 
             return LoadingView(
-              isLoading: false, // SettingsBloc always has state; no separate loading state
+              isLoading:
+                  false, // SettingsBloc always has state; no separate loading state
               child: GradientBackground(
                 child: SafeArea(
                   child: Center(
@@ -148,97 +146,120 @@ class _SettingsPageState extends State<SettingsPage>
                               vertical: 24.h,
                             ),
                             children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    if (isProvider) {
-                                      context.pop();
-                                    } else {
-                                      context.pop();
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(12.r),
-                                    decoration: BoxDecoration(
-                                      color: context.appColors.cardBackground,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: context.appColors.glassBorder,
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (isProvider) {
+                                        context.pop();
+                                      } else {
+                                        context.pop();
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(12.r),
+                                      decoration: BoxDecoration(
+                                        color: context.appColors.cardBackground,
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
+                                        border: Border.all(
+                                          color: context.appColors.glassBorder,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: textColor,
+                                        size: 20.r,
                                       ),
                                     ),
-                                    child: Icon(
-                                      FontAwesomeIcons.chevronLeft,
+                                  ),
+                                  SizedBox(width: 16.w),
+                                  Text(
+                                    "SETTINGS",
+                                    style: TextStyle(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.w500,
                                       color: textColor,
-                                      size: 20.r,
+                                      letterSpacing: 1.2,
                                     ),
                                   ),
-                                ),
-                                SizedBox(width: 16.w),
-                                Text(
-                                  "SETTINGS",
-                                  style: TextStyle(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: textColor,
-                                    letterSpacing: 1.2,
+                                ],
+                              ),
+                              SizedBox(height: 32.h),
+                              _buildSectionHeader("Appearance"),
+                              SizedBox(height: 12.h),
+                              _buildSettingsCard(context, [
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.moon,
+                                  iconColor: Colors.amber,
+                                  title: "Dark Mode",
+                                  subtitle:
+                                      "Toggle between dark and light themes",
+                                  trailing: Switch.adaptive(
+                                    value: themeMode == ThemeMode.dark,
+                                    activeThumbColor:
+                                        context.appColors.secondaryColor,
+                                    onChanged: (val) {
+                                      context.read<SettingsBloc>().add(
+                                        ToggleThemeModeEvent(
+                                          themeMode: val
+                                              ? ThemeMode.dark
+                                              : ThemeMode.light,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: 32.h),
-                            _buildSectionHeader("Appearance"),
-                            SizedBox(height: 12.h),
-                            _buildSettingsCard(context, [
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.moon,
-                                iconColor: Colors.amber,
-                                title: "Dark Mode",
-                                subtitle: "Toggle between dark and light themes",
-                                trailing: Switch.adaptive(
-                                  value: themeMode == ThemeMode.dark,
-                                  activeThumbColor: context.appColors.secondaryColor,
-                                  onChanged: (val) {
-                                    context.read<SettingsBloc>().add(
-                                      ToggleThemeModeEvent(
-                                        themeMode: val
-                                            ? ThemeMode.dark
-                                            : ThemeMode.light,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ]),
-                            SizedBox(height: 24.h),
-                            _buildSectionHeader("Account"),
-                            SizedBox(height: 12.h),
-                            _buildSettingsCard(context, [
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.fingerprint,
-                                iconColor: Colors.purple,
-                                title: "Use Biometric",
-                                subtitle: "Unlock with fingerprint or face",
-                                trailing: Switch.adaptive(
-                                  value: useBiometric,
-                                  activeThumbColor: context.appColors.secondaryColor,
-                                  onChanged: (val) async {
-                                    try {
-                                      final bool hasBiometric =
-                                          await localAuthentication
-                                              .canCheckBiometrics;
-                                      if (hasBiometric) {
-                                        final isAuthenticated =
+                              ]),
+                              SizedBox(height: 24.h),
+                              _buildSectionHeader("Account"),
+                              SizedBox(height: 12.h),
+                              _buildSettingsCard(context, [
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.fingerprint,
+                                  iconColor: Colors.purple,
+                                  title: "Use Biometric",
+                                  subtitle: "Unlock with fingerprint or face",
+                                  trailing: Switch.adaptive(
+                                    value: useBiometric,
+                                    activeThumbColor:
+                                        context.appColors.secondaryColor,
+                                    onChanged: (val) async {
+                                      try {
+                                        final bool hasBiometric =
                                             await localAuthentication
-                                                .authenticate(
-                                                  localizedReason:
-                                                      "Unlock neighbor service",
+                                                .canCheckBiometrics;
+                                        if (hasBiometric) {
+                                          final isAuthenticated =
+                                              await localAuthentication
+                                                  .authenticate(
+                                                    localizedReason:
+                                                        "Unlock neighbor service",
 
-                                                  biometricOnly: true,
+                                                    biometricOnly: true,
+                                                  );
+                                          if (isAuthenticated) {
+                                            scaffold.currentContext!
+                                                .read<SettingsBloc>()
+                                                .add(
+                                                  UseBiometricEvent(
+                                                    useBiometric: val,
+                                                  ),
                                                 );
-                                        if (isAuthenticated) {
+                                          }
+                                        } else if (!val) {
+                                          // Disabling without auth check
+                                          const secureStorage =
+                                              FlutterSecureStorage();
+                                          await secureStorage.delete(
+                                            key: "email",
+                                          );
+                                          await secureStorage.delete(
+                                            key: "password",
+                                          );
                                           scaffold.currentContext!
                                               .read<SettingsBloc>()
                                               .add(
@@ -246,193 +267,195 @@ class _SettingsPageState extends State<SettingsPage>
                                                   useBiometric: val,
                                                 ),
                                               );
+                                        } else {
+                                          customAlert(
+                                            context,
+                                            AlertType.warning,
+                                            "Biometric not available",
+                                          );
                                         }
-                                      } else if (!val) {
-                                        // Disabling without auth check
-                                        const secureStorage =
-                                            FlutterSecureStorage();
-                                        await secureStorage.delete(key: "email");
-                                        await secureStorage.delete(
-                                          key: "password",
-                                        );
-                                        scaffold.currentContext!
-                                            .read<SettingsBloc>()
-                                            .add(
-                                              UseBiometricEvent(
-                                                useBiometric: val,
-                                              ),
-                                            );
-                                      } else {
+                                      } catch (e) {
                                         customAlert(
                                           context,
-                                          AlertType.warning,
+                                          AlertType.error,
                                           "Biometric not available",
                                         );
                                       }
-                                    } catch (e) {
-                                      customAlert(
-                                        context,
-                                        AlertType.error,
-                                        "Biometric not available",
-                                      );
-                                    }
-                                  },
+                                    },
+                                  ),
                                 ),
-                              ),
-                              _buildDivider(context),
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.lock,
-                                iconColor: context.appColors.infoColor,
-                                title: "Change Password",
-                                subtitle: "Update your account password",
-                                onTap: () => context.push("/change-password"),
-                              ),
-                            ]),
-                            SizedBox(height: 24.h),
-                            _buildSectionHeader("Payments"),
-                            SizedBox(height: 12.h),
-                            _buildSettingsCard(context, [
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.creditCard,
-                                iconColor: context.appColors.successColor,
-                                title: "Setup Payment",
-                                subtitle: "Configure payment methods",
-                                onTap: () => Payment.setupStripeCustomer(context),
-                              ),
-                              if (_currentProfile != null && Helpers.isProvider(_currentProfile!.userType)) ...[
                                 _buildDivider(context),
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.lock,
+                                  iconColor: context.appColors.infoColor,
+                                  title: "Change Password",
+                                  subtitle: "Update your account password",
+                                  onTap: () => context.push("/change-password"),
+                                ),
+                              ]),
+                              SizedBox(height: 24.h),
+                              _buildSectionHeader("Payments"),
+                              SizedBox(height: 12.h),
+                              _buildSettingsCard(context, [
                                 _buildSettingsTile(
                                   context: context,
                                   icon: FontAwesomeIcons.creditCard,
-                                  iconColor: context.appColors.warningColor,
-                                  title: "Preferred Payment Method",
-                                  subtitle: _currentProfile!.preferredPaymentMode == 'IN_APP'
-                                      ? "In-App Payments"
-                                      : "On-Site Payments",
-                                  onTap: () => _showPaymentModeSheet(context),
+                                  iconColor: context.appColors.successColor,
+                                  title: "Setup Payment",
+                                  subtitle: "Configure payment methods",
+                                  onTap: () =>
+                                      Payment.setupStripeCustomer(context),
                                 ),
-                              ],
-                              if (_currentProfile != null && Helpers.isProvider(_currentProfile!.userType) &&
-                                  _currentProfile!.preferredPaymentMode != 'ON_SITE') ...[
+                                if (_currentProfile != null &&
+                                    Helpers.isProvider(
+                                      _currentProfile!.userType,
+                                    )) ...[
+                                  _buildDivider(context),
+                                  _buildSettingsTile(
+                                    context: context,
+                                    icon: FontAwesomeIcons.creditCard,
+                                    iconColor: context.appColors.warningColor,
+                                    title: "Preferred Payment Method",
+                                    subtitle:
+                                        _currentProfile!.preferredPaymentMode ==
+                                            'IN_APP'
+                                        ? "In-App Payments"
+                                        : "On-Site Payments",
+                                    onTap: () => _showPaymentModeSheet(context),
+                                  ),
+                                ],
+                                if (_currentProfile != null &&
+                                    Helpers.isProvider(
+                                      _currentProfile!.userType,
+                                    ) &&
+                                    _currentProfile!.preferredPaymentMode !=
+                                        'ON_SITE') ...[
+                                  _buildDivider(context),
+                                  _buildSettingsTile(
+                                    context: context,
+                                    icon: FontAwesomeIcons.buildingColumns,
+                                    iconColor: Colors.teal,
+                                    title: "Payment Account",
+                                    subtitle: "Manage payout settings",
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.transparent,
+                                        builder: (context) => Container(
+                                          width: size(context).width,
+                                          height: 350.h,
+                                          padding: EdgeInsets.all(24.r),
+                                          decoration: BoxDecoration(
+                                            color: context
+                                                .appColors
+                                                .cardBackground,
+                                            borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(25.r),
+                                            ),
+                                          ),
+                                          child:
+                                              const ConnectAccountSetupWidget(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ]),
+                              SizedBox(height: 24.h),
+                              _buildSectionHeader("Legal"),
+                              SizedBox(height: 12.h),
+                              _buildSettingsCard(context, [
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.gavel,
+                                  iconColor: Colors.deepOrange,
+                                  title: "Terms of Service",
+                                  subtitle: "Read our terms and conditions",
+                                  onTap: () =>
+                                      context.push('/legal', extra: 'TERMS'),
+                                ),
                                 _buildDivider(context),
                                 _buildSettingsTile(
                                   context: context,
-                                  icon: FontAwesomeIcons.buildingColumns,
+                                  icon: FontAwesomeIcons.shieldHalved,
                                   iconColor: Colors.teal,
-                                  title: "Payment Account",
-                                  subtitle: "Manage payout settings",
+                                  title: "Privacy Policy",
+                                  subtitle: "Learn how we handle your data",
+                                  onTap: () =>
+                                      context.push('/legal', extra: 'PRIVACY'),
+                                ),
+                              ]),
+                              SizedBox(height: 24.h),
+                              _buildSectionHeader("Account Management"),
+                              SizedBox(height: 12.h),
+                              _buildSettingsCard(context, [
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.rightLeft,
+                                  iconColor: Colors.indigo,
+                                  title: "Change User Type",
+                                  subtitle:
+                                      "Switch between seeker and provider",
                                   onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (context) => Container(
-                                      width: size(context).width,
-                                      height: 350.h,
-                                      padding: EdgeInsets.all(24.r),
-                                      decoration: BoxDecoration(
-                                        color: context.appColors.cardBackground,
-                                        borderRadius:
-                                            BorderRadius.vertical(
-                                              top: Radius.circular(25.r),
-                                            ),
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (context) => Container(
+                                        width: size(context).width,
+                                        padding: EdgeInsets.all(24.r),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              context.appColors.cardBackground,
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(25.r),
+                                          ),
+                                        ),
+                                        child: const ChangeUserTypeWidget(),
                                       ),
-                                      child: const ConnectAccountSetupWidget(),
-                                    ),
-                                  );
+                                    );
                                   },
                                 ),
-                              ],
-                            ]),
-                            SizedBox(height: 24.h),
-                            _buildSectionHeader("Legal"),
-                            SizedBox(height: 12.h),
-                            _buildSettingsCard(context, [
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.gavel,
-                                iconColor: Colors.deepOrange,
-                                title: "Terms of Service",
-                                subtitle: "Read our terms and conditions",
-                                onTap: () => context.push('/legal', extra: 'TERMS'),
-                              ),
-                              _buildDivider(context),
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.shieldHalved,
-                                iconColor: Colors.teal,
-                                title: "Privacy Policy",
-                                subtitle: "Learn how we handle your data",
-                                onTap: () => context.push('/legal', extra: 'PRIVACY'),
-                              ),
-                            ]),
-                            SizedBox(height: 24.h),
-                            _buildSectionHeader("Account Management"),
-                            SizedBox(height: 12.h),
-                            _buildSettingsCard(context, [
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.rightLeft,
-                                iconColor: Colors.indigo,
-                                title: "Change User Type",
-                                subtitle: "Switch between seeker and provider",
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (context) => Container(
-                                      width: size(context).width,
-                                      padding: EdgeInsets.all(24.r),
-                                      decoration: BoxDecoration(
-                                        color: context.appColors.cardBackground,
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(25.r),
-                                        ),
-                                      ),
-                                      child: const ChangeUserTypeWidget(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              _buildDivider(context),
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.clockRotateLeft,
-                                iconColor: Colors.blueGrey,
-                                title: "Audit Logs",
-                                subtitle: "View your account activity history",
-                                onTap: () => context.push("/audit-logs"),
-                              ),
-                              _buildDivider(context),
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.rightFromBracket,
-                                iconColor: context.appColors.errorColor,
-                                title: "Logout",
-                                subtitle: "Sign out of your account",
-                                onTap: () => _showLogoutDialog(context),
-                              ),
-                            ]),
-                            SizedBox(height: 24.h),
-                            _buildSectionHeader("Danger Zone"),
-                            SizedBox(height: 12.h),
-                            _buildSettingsCard(context, [
-                              _buildSettingsTile(
-                                context: context,
-                                icon: FontAwesomeIcons.trashCan,
-                                iconColor: context.appColors.errorColor,
-                                title: "Delete Account",
-                                subtitle: "Permanently delete your account",
-                                onTap: () => _showDeleteAccountDialog(context),
-                              ),
-                            ]),
-                            SizedBox(height: 40.h),
-                          ],
+                                _buildDivider(context),
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.clockRotateLeft,
+                                  iconColor: Colors.blueGrey,
+                                  title: "Audit Logs",
+                                  subtitle:
+                                      "View your account activity history",
+                                  onTap: () => context.push("/audit-logs"),
+                                ),
+                                _buildDivider(context),
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.rightFromBracket,
+                                  iconColor: context.appColors.errorColor,
+                                  title: "Logout",
+                                  subtitle: "Sign out of your account",
+                                  onTap: () => _showLogoutDialog(context),
+                                ),
+                              ]),
+                              SizedBox(height: 24.h),
+                              _buildSectionHeader("Danger Zone"),
+                              SizedBox(height: 12.h),
+                              _buildSettingsCard(context, [
+                                _buildSettingsTile(
+                                  context: context,
+                                  icon: FontAwesomeIcons.trashCan,
+                                  iconColor: context.appColors.errorColor,
+                                  title: "Delete Account",
+                                  subtitle: "Permanently delete your account",
+                                  onTap: () =>
+                                      _showDeleteAccountDialog(context),
+                                ),
+                              ]),
+                              SizedBox(height: 40.h),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   ),
                 ),
               ),
@@ -463,10 +486,7 @@ class _SettingsPageState extends State<SettingsPage>
       decoration: BoxDecoration(
         color: context.appColors.cardBackground,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: context.appColors.glassBorder,
-        ),
-       
+        border: Border.all(color: context.appColors.glassBorder),
       ),
       child: Column(children: children),
     );
@@ -498,7 +518,11 @@ class _SettingsPageState extends State<SettingsPage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(icon, color: context.appColors.primaryColor, size: 22.r),
+              child: Icon(
+                icon,
+                color: context.appColors.primaryColor,
+                size: 22.r,
+              ),
             ),
             SizedBox(width: 14.w),
             Expanded(
@@ -561,18 +585,14 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           content: Text(
             "Are you sure you want to logout?",
-            style: TextStyle(
-              color: context.appColors.secondaryTextColor,
-            ),
+            style: TextStyle(color: context.appColors.secondaryTextColor),
           ),
           actions: [
             TextButton(
               onPressed: () => context.pop(),
               child: Text(
                 "Cancel",
-                style: TextStyle(
-                  color: context.appColors.secondaryTextColor,
-                ),
+                style: TextStyle(color: context.appColors.secondaryTextColor),
               ),
             ),
             SolidButton(
@@ -581,7 +601,7 @@ class _SettingsPageState extends State<SettingsPage>
                   LogoutAuthenticationEvent(),
                 );
                 // Clear state through BLoC instead of static reset
-                context.read<ProfileBloc>().add(LogoutProfileEvent()); 
+                context.read<ProfileBloc>().add(LogoutProfileEvent());
                 context.go("/login");
               },
               label: "LOGOUT",
@@ -612,25 +632,19 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           content: Text(
             "Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be lost.",
-            style: TextStyle(
-              color: context.appColors.secondaryTextColor,
-            ),
+            style: TextStyle(color: context.appColors.secondaryTextColor),
           ),
           actions: [
             TextButton(
               onPressed: () => context.pop(),
               child: Text(
                 "Cancel",
-                style: TextStyle(
-                  color: context.appColors.secondaryTextColor,
-                ),
+                style: TextStyle(color: context.appColors.secondaryTextColor),
               ),
             ),
             SolidButton(
               onPressed: () {
-                context.read<AuthenticationBloc>().add(
-                  DeleteAccountEvent(),
-                );
+                context.read<AuthenticationBloc>().add(DeleteAccountEvent());
                 context.read<ProfileBloc>().add(LogoutProfileEvent());
                 context.go("/login");
               },
@@ -692,7 +706,8 @@ class _SettingsPageState extends State<SettingsPage>
               context: context,
               icon: FontAwesomeIcons.handshake,
               title: "On-Site Payments",
-              description: "Direct payments from seekers at the service location",
+              description:
+                  "Direct payments from seekers at the service location",
               value: "ON_SITE",
               currentValue: _currentProfile!.preferredPaymentMode ?? "ON_SITE",
               onChanged: (val) => _updatePaymentMode(context, val),
@@ -744,7 +759,9 @@ class _SettingsPageState extends State<SettingsPage>
               ),
               child: Icon(
                 icon,
-                color: isSelected ? context.appColors.primaryColor : context.appColors.secondaryTextColor,
+                color: isSelected
+                    ? context.appColors.primaryColor
+                    : context.appColors.secondaryTextColor,
                 size: 24.r,
               ),
             ),
@@ -774,7 +791,11 @@ class _SettingsPageState extends State<SettingsPage>
               ),
             ),
             if (isSelected)
-              FaIcon(FontAwesomeIcons.circleCheck, color: context.appColors.primaryColor, size: 24.r),
+              FaIcon(
+                FontAwesomeIcons.circleCheck,
+                color: context.appColors.primaryColor,
+                size: 24.r,
+              ),
           ],
         ),
       ),
@@ -790,10 +811,10 @@ class _SettingsPageState extends State<SettingsPage>
     final updatedProfile = _currentProfile!;
     updatedProfile.preferredPaymentMode = mode;
 
-    context.read<ProfileBloc>().add(UpdateProfileEvent(profile: updatedProfile));
+    context.read<ProfileBloc>().add(
+      UpdateProfileEvent(profile: updatedProfile),
+    );
     context.pop();
     customAlert(context, AlertType.success, "Payment preference updated");
   }
 }
-
-
