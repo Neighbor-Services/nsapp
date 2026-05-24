@@ -11,6 +11,7 @@ class SubscriptionPlan {
   final int? displayOrder;
   final String? tier;
   final String? interval;
+  final int? maxCatalogServices;
 
   SubscriptionPlan({
     this.id,
@@ -25,6 +26,7 @@ class SubscriptionPlan {
     this.displayOrder,
     this.tier,
     this.interval,
+    this.maxCatalogServices,
   });
 
   factory SubscriptionPlan.fromJson(Map<String, dynamic> json) {
@@ -45,6 +47,7 @@ class SubscriptionPlan {
       displayOrder: json['display_order'],
       tier: json['tier'],
       interval: json['interval'],
+      maxCatalogServices: json['max_catalog_services'],
     );
   }
 
@@ -62,6 +65,7 @@ class SubscriptionPlan {
       'display_order': displayOrder,
       'tier': tier,
       'interval': interval,
+      'max_catalog_services': maxCatalogServices,
     };
   }
 }

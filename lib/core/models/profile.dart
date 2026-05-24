@@ -86,6 +86,12 @@ class Profile {
   int? level;
   @HiveField(38)
   int? neighborScore;
+  @HiveField(39)
+  List<String>? catalogServiceIds;
+  @HiveField(40)
+  List<String>? catalogServiceNames;
+  @HiveField(41)
+  int? maxCatalogServices;
 
   Profile({
     this.id,
@@ -124,6 +130,9 @@ class Profile {
     this.xp,
     this.level,
     this.neighborScore,
+    this.catalogServiceIds,
+    this.catalogServiceNames,
+    this.maxCatalogServices,
   });
 
   Profile.fromJson(Map<String, dynamic> json) {
@@ -193,6 +202,27 @@ class Profile {
     xp = json['xp'];
     level = json['level'];
     neighborScore = json['neighbor_score'];
+    
+    // Parse Multiple Catalog Services
+    if (json['catalog_service_ids'] != null) {
+      catalogServiceIds = List<String>.from(json['catalog_service_ids'].map((e) => e.toString()));
+    } else if (catalogServiceId != null) {
+      catalogServiceIds = [catalogServiceId!];
+    } else {
+      catalogServiceIds = [];
+    }
+
+    if (json['catalog_service_names'] != null) {
+      catalogServiceNames = List<String>.from(json['catalog_service_names'].map((e) => e.toString()));
+    } else if (json['catalog_service_name'] != null) {
+      catalogServiceName = json['catalog_service_name']?.toString();
+      catalogServiceNames = [catalogServiceName!];
+    } else {
+      catalogServiceNames = [];
+    }
+
+    // Parse max catalog services from backend
+    maxCatalogServices = json['max_catalog_services'];
   }
 
   Map<String, dynamic> toJson() {
@@ -203,10 +233,9 @@ class Profile {
       data['date_of_birth'] =
           "${dateOfBirth!.year.toString().padLeft(4, '0')}-${dateOfBirth!.month.toString().padLeft(2, '0')}-${dateOfBirth!.day.toString().padLeft(2, '0')}";
     }
-    data['catalog_service'] =
-        (catalogServiceId != null && catalogServiceId!.isNotEmpty)
-        ? catalogServiceId
-        : null;
+    if (catalogServiceIds != null) {
+      data['catalog_services'] = catalogServiceIds;
+    }
     data['service'] = service;
     data['country'] = country;
     data['state'] = state;

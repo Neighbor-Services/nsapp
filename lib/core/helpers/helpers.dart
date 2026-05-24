@@ -72,6 +72,10 @@ Future<void> showServiceSelector({
   String? selectedServiceId,
   required Function(String serviceId, String serviceName) onServiceSelected,
   VoidCallback? onOthersSelected,
+  bool isMultiSelect = false,
+  List<String>? selectedServiceIds,
+  Function(List<String> serviceIds, List<String> serviceNames)? onServicesSelected,
+  int? maxAllowed,
 }) async {
   final Map<String, Category> categoriesMap = {};
   for (var service in services) {
@@ -94,6 +98,10 @@ Future<void> showServiceSelector({
       selectedServiceId: selectedServiceId,
       onServiceSelected: onServiceSelected,
       onOthersSelected: onOthersSelected,
+      isMultiSelect: isMultiSelect,
+      selectedServiceIds: selectedServiceIds,
+      onServicesSelected: onServicesSelected,
+      maxAllowed: maxAllowed,
     ),
   );
 }

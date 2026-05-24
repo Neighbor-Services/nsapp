@@ -49,6 +49,13 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       subscriptionTier: fields[32] as String?,
       performanceBadges: (fields[33] as List?)?.cast<PerformanceBadge>(),
       preferredPaymentMode: fields[34] as String?,
+      streakCount: fields[35] as int?,
+      xp: fields[36] as int?,
+      level: fields[37] as int?,
+      neighborScore: fields[38] as int?,
+      catalogServiceIds: (fields[39] as List?)?.cast<String>(),
+      catalogServiceNames: (fields[40] as List?)?.cast<String>(),
+      maxCatalogServices: fields[41] as int?,
     )
       ..portfolioItems = (fields[26] as List?)?.cast<PortfolioItem>()
       ..servicePackages = (fields[27] as List?)?.cast<ServicePackage>()
@@ -58,7 +65,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
   @override
   void write(BinaryWriter writer, Profile obj) {
     writer
-      ..writeByte(35)
+      ..writeByte(42)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -128,7 +135,21 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       ..writeByte(33)
       ..write(obj.performanceBadges)
       ..writeByte(34)
-      ..write(obj.preferredPaymentMode);
+      ..write(obj.preferredPaymentMode)
+      ..writeByte(35)
+      ..write(obj.streakCount)
+      ..writeByte(36)
+      ..write(obj.xp)
+      ..writeByte(37)
+      ..write(obj.level)
+      ..writeByte(38)
+      ..write(obj.neighborScore)
+      ..writeByte(39)
+      ..write(obj.catalogServiceIds)
+      ..writeByte(40)
+      ..write(obj.catalogServiceNames)
+      ..writeByte(41)
+      ..write(obj.maxCatalogServices);
   }
 
   @override

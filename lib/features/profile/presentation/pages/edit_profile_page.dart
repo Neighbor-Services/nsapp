@@ -13,7 +13,6 @@ import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widge
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/models/profile.dart';
 import '../../../seeker/presentation/bloc/seeker_bloc.dart' as s;
@@ -44,22 +43,24 @@ class _EditProfilePageState extends State<EditProfilePage>
   late TextEditingController zipCodeTextController;
   late TextEditingController serviceTextController;
   late TextEditingController locController;
-  
+
   String gender = "MALE";
   String countryCode = "";
   String serviceType = "";
   String catalogServiceId = "";
   String preferredPaymentMode = "ON_SITE";
   String userType = "seeker";
+  List<String> selectedCatalogServiceIds = [];
+  List<String> selectedCatalogServiceNames = [];
   bool isOthersSelected = false;
   XFile? _selectedImage;
   Profile? _currentProfile;
   DateTime? _selectedDob;
-  
+
   bool _useMap = false;
   LatLng? _mapLocation;
   List<Service> _services = [];
-  
+
   late GlobalKey<FormState> key;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -69,7 +70,7 @@ class _EditProfilePageState extends State<EditProfilePage>
     super.initState();
     context.read<CommonBloc>().add(GetServicesEvent());
     context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
-    
+
     nameTextController = TextEditingController();
     dateOfBirthTextController = TextEditingController();
     contactTextController = TextEditingController();
@@ -125,6 +126,17 @@ class _EditProfilePageState extends State<EditProfilePage>
     countryCode = profile.countryCode ?? "";
     gender = profile.gender ?? "MALE";
     catalogServiceId = profile.catalogServiceId ?? "";
+    selectedCatalogServiceIds = profile.catalogServiceIds ?? [];
+    selectedCatalogServiceNames = profile.catalogServiceNames ?? [];
+    if (selectedCatalogServiceIds.isEmpty && catalogServiceId.isNotEmpty) {
+      selectedCatalogServiceIds = [catalogServiceId];
+      if (profile.catalogServiceName != null) {
+        selectedCatalogServiceNames = [profile.catalogServiceName!];
+      }
+    }
+    if (selectedCatalogServiceNames.isNotEmpty && serviceType.isEmpty) {
+      serviceType = selectedCatalogServiceNames.join(", ");
+    }
     preferredPaymentMode = profile.preferredPaymentMode ?? "BOTH";
     userType = profile.userType ?? "seeker";
 
@@ -173,375 +185,707 @@ class _EditProfilePageState extends State<EditProfilePage>
           BlocListener<ProfileBloc, ProfileState>(
             listener: (context, state) {
               if (state is DateOfBirthProfileState) {
-            _selectedDob = state.dob;
-            dateOfBirthTextController.text = DateFormat(
-              "MMMM-dd-yyyy",
-            ).format(_selectedDob!);
-          }
-          if (state is ImageProfileState) {
-            setState(() {
-              _selectedImage = state.profilePicture;
-            });
-          }
-          if (state is UserTypeProfileState) {
-            setState(() {
-              userType = state.userType;
-            });
-          }
-          if (state is OtherServiceSelectState) {
-            setState(() {
-              isOthersSelected = state.others;
-            });
-          }
-          if (state is SuccessUpdateProfileState) {
-            context.read<ProfileBloc>().add(GetProfileStreamEvent());
-            context.read<CommonBloc>().add(GetServicesEvent());
-            
-            context.read<SettingsBloc>().add(
-              ToggleDashboardEvent(isProvider: Helpers.isProvider(userType)),
-            );
-            customAlert(context, AlertType.success, "Profile updated successfully");
-            
-            Future.delayed(const Duration(seconds: 2), () {
-              if (mounted) {
-                context.pop();
+                _selectedDob = state.dob;
+                dateOfBirthTextController.text = DateFormat(
+                  "MMMM-dd-yyyy",
+                ).format(_selectedDob!);
               }
-            });
-          }
-          if (state is FailureUpdateProfileState) {
-            customAlert(context, AlertType.error, state.message);
-          }
-          if (state is SuccessGetProfileState) {
-            setState(() => _initializeWithProfile(state.profile));
-          }
-          if (state is SuccessGetProfileStreamState) {
-            setState(() => _initializeWithProfile(state.profile));
-          }
-        },
-      ),
-    ],
-    child: BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, profileState) {
-        return BlocBuilder<CommonBloc, CommonState>(
-          builder: (context, commonState) {
-            return LoadingView(
-              isLoading: (profileState is LoadingProfileState) || (commonState is CommonLoading),
-            child: GradientBackground(
-              child: SafeArea(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700.w),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
-            child: RefreshIndicator(
-              onRefresh: () async {
+              if (state is ImageProfileState) {
+                setState(() {
+                  _selectedImage = state.profilePicture;
+                });
+              }
+              if (state is UserTypeProfileState) {
+                setState(() {
+                  userType = state.userType;
+                });
+              }
+              if (state is OtherServiceSelectState) {
+                setState(() {
+                  isOthersSelected = state.others;
+                });
+              }
+              if (state is SuccessUpdateProfileState) {
                 context.read<ProfileBloc>().add(GetProfileStreamEvent());
-                context.read<ProfileBloc>().add(GetProfileEvent());
-                await Future.delayed(const Duration(seconds: 1));
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20.w,
-                  vertical: 24.h,
-                ),
-                child: Form(
-                  key: key,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Container(
-                          padding: EdgeInsets.all(12.r),
-                          decoration: BoxDecoration(
-                            color: context.appColors.cardBackground,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color: context.appColors.glassBorder,
-                              width: 1.5.r,
-                            ),
-                          ),
-                          child: Icon(
-                            FontAwesomeIcons.chevronLeft,
-                            color: context.appColors.primaryTextColor,
-                            size: 20.r,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 32.h),
-                      Text(
-                        "EDIT PROFILE",
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.w500,
-                          color: context.appColors.primaryTextColor,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        "UPDATE YOUR INFORMATION TO KEEP IT ACCURATE",
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w500,
-                          color: context.appColors.secondaryTextColor,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                      SizedBox(height: 30.h),
-                      
-                      // Profile Picture Section
-                      Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            _showImageSourceSheet(context);
-                          },
-                          child: Stack(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(4.r),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: context.appColors.glassBorder,
-                                    width: 2.r,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: context.appColors.primaryColor.withAlpha(50),
-                                      blurRadius: 40.r,
-                                      spreadRadius: -5.r,
-                                    ),
-                                  ],
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(2.r),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: context.appColors.glassBorder,
-                                      width: 1.r,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    radius: 60.r,
-                                    backgroundColor: Colors.white.withAlpha(10),
-                                    backgroundImage: _buildProfileImageProvider(),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 4.r,
-                                right: 4.r,
-                                child: Container(
-                                  padding: EdgeInsets.all(10.r),
-                                  decoration: BoxDecoration(
-                                    color: context.appColors.primaryColor,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white.withAlpha(40),
-                                      width: 2.r,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    FontAwesomeIcons.camera,
-                                    color: Colors.white,
-                                    size: 18.r,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 40.h),
-                      
-                      // Main Form Container
-                      Container(
-                        padding: EdgeInsets.all(24.r),
-                        decoration: BoxDecoration(
-                          color: context.appColors.cardBackground,
-                          borderRadius: BorderRadius.circular(24.r),
-                          border: Border.all(
-                            color: context.appColors.glassBorder,
-                            width: 1.5.r,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            SolidTextField(
-                              controller: nameTextController,
-                              hintText: "ENTER YOUR NAME",
-                              label: "FULL NAME",
-                              prefixIcon: FontAwesomeIcons.user,
-                              validator: ValidationUtil.validateName,
-                            ),
-                            SizedBox(height: 24.h),
-                            _buildLabel("Gender"),
-                            SizedBox(height: 12.h),
-                            CustomSegmentedControl<String>(
-                              buttonLables: const ["MALE", "FEMALE"],
-                              buttonValues: const ["Male", "Female"],
-                              defaultSelected: gender.isNotEmpty 
-                                  ? "${gender[0].toUpperCase()}${gender.substring(1).toLowerCase()}" 
-                                  : "Male",
-                              onValueChanged: (val) {
-                                setState(() => gender = val.toUpperCase());
+                context.read<CommonBloc>().add(GetServicesEvent());
+
+                context.read<SettingsBloc>().add(
+                  ToggleDashboardEvent(
+                    isProvider: Helpers.isProvider(userType),
+                  ),
+                );
+                customAlert(
+                  context,
+                  AlertType.success,
+                  "Profile updated successfully",
+                );
+
+                Future.delayed(const Duration(seconds: 2), () {
+                  if (mounted) {
+                    context.pop();
+                  }
+                });
+              }
+              if (state is FailureUpdateProfileState) {
+                customAlert(context, AlertType.error, state.message);
+              }
+              if (state is SuccessGetProfileState) {
+                setState(() => _initializeWithProfile(state.profile));
+              }
+              if (state is SuccessGetProfileStreamState) {
+                setState(() => _initializeWithProfile(state.profile));
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, profileState) {
+            return BlocBuilder<CommonBloc, CommonState>(
+              builder: (context, commonState) {
+                return LoadingView(
+                  isLoading:
+                      (profileState is LoadingProfileState) ||
+                      (commonState is CommonLoading),
+                  child: GradientBackground(
+                    child: SafeArea(
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 700.w),
+                          child: FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                context.read<ProfileBloc>().add(
+                                  GetProfileStreamEvent(),
+                                );
+                                context.read<ProfileBloc>().add(
+                                  GetProfileEvent(),
+                                );
+                                await Future.delayed(
+                                  const Duration(seconds: 1),
+                                );
                               },
-                              width: 240.w,
-                              height: 50.h,
-                              radius: 16.r,
-                              selectedColor: context.appColors.primaryColor.withAlpha(40),
-                              textColor: context.appColors.primaryTextColor,
-                            ),
-                            SizedBox(height: 24.h),
-                            _buildLabel("Account Type"),
-                            SizedBox(height: 12.h),
-                            CustomSegmentedControl<String>(
-                              buttonLables: const ["SEEKER", "PROVIDER"],
-                              buttonValues: const [userTypeSeeker, userTypeProvider],
-                              defaultSelected: userType,
-                              onValueChanged: (val) {
-                                context.read<ProfileBloc>().add(SetUserTypeEvent(userType: val));
-                              },
-                              width: 240.w,
-                              height: 50.h,
-                              radius: 16.r,
-                              selectedColor: context.appColors.primaryColor.withAlpha(40),
-                              textColor: context.appColors.primaryTextColor,
-                            ),
-                            SizedBox(height: 24.h),
-                            
-                            // Location Field with Map Picker
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SolidTextField(
-                                    controller: locController,
-                                    hintText: "LOCATION",
-                                    label: "LOCATION",
-                                    prefixIcon: FontAwesomeIcons.locationDot,
-                                    validator: (val) => ValidationUtil.validateRequired(val, "Location"),
-                                  ),
+                              child: SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w,
+                                  vertical: 24.h,
                                 ),
-                                SizedBox(width: 16.w),
-                                GestureDetector(
-                                  onTap: () => _showLocationSheet(context),
+                                child: Form(
+                                  key: key,
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(height: 25.h),
-                                      Container(
-                                        width: 58.r,
-                                        height: 58.r,
-                                        decoration: BoxDecoration(
-                                          color: context.appColors.primaryColor.withAlpha(40),
-                                          borderRadius: BorderRadius.circular(18.r),
-                                          border: Border.all(color: context.appColors.primaryColor),
+                                      GestureDetector(
+                                        onTap: () => context.pop(),
+                                        child: Container(
+                                          padding: EdgeInsets.all(12.r),
+                                          decoration: BoxDecoration(
+                                            color: context
+                                                .appColors
+                                                .cardBackground,
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                            border: Border.all(
+                                              color:
+                                                  context.appColors.glassBorder,
+                                              width: 1.5.r,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            FontAwesomeIcons.chevronLeft,
+                                            color: context
+                                                .appColors
+                                                .primaryTextColor,
+                                            size: 20.r,
+                                          ),
                                         ),
-                                        child: Icon(FontAwesomeIcons.map, color: context.appColors.primaryColor),
                                       ),
+                                      SizedBox(height: 32.h),
+                                      Text(
+                                        "EDIT PROFILE",
+                                        style: TextStyle(
+                                          fontSize: 24.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: context
+                                              .appColors
+                                              .primaryTextColor,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      Text(
+                                        "UPDATE YOUR INFORMATION TO KEEP IT ACCURATE",
+                                        style: TextStyle(
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: context
+                                              .appColors
+                                              .secondaryTextColor,
+                                          letterSpacing: 1.0,
+                                        ),
+                                      ),
+                                      SizedBox(height: 30.h),
+
+                                      // Profile Picture Section
+                                      Center(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _showImageSourceSheet(context);
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.all(4.r),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: context
+                                                        .appColors
+                                                        .glassBorder,
+                                                    width: 2.r,
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: context
+                                                          .appColors
+                                                          .primaryColor
+                                                          .withAlpha(50),
+                                                      blurRadius: 40.r,
+                                                      spreadRadius: -5.r,
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(2.r),
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: context
+                                                          .appColors
+                                                          .glassBorder,
+                                                      width: 1.r,
+                                                    ),
+                                                  ),
+                                                  child: CircleAvatar(
+                                                    radius: 60.r,
+                                                    backgroundColor: Colors
+                                                        .white
+                                                        .withAlpha(10),
+                                                    backgroundImage:
+                                                        _buildProfileImageProvider(),
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                bottom: 4.r,
+                                                right: 4.r,
+                                                child: Container(
+                                                  padding: EdgeInsets.all(10.r),
+                                                  decoration: BoxDecoration(
+                                                    color: context
+                                                        .appColors
+                                                        .primaryColor,
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: Colors.white
+                                                          .withAlpha(40),
+                                                      width: 2.r,
+                                                    ),
+                                                  ),
+                                                  child: Icon(
+                                                    FontAwesomeIcons.camera,
+                                                    color: Colors.white,
+                                                    size: 18.r,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 16.h),
+                                      Center(child: _buildSubscriptionBadge()),
+                                      SizedBox(height: 32.h),
+
+                                      // Card 1: Account Type Configuration
+                                      _buildSectionCard(
+                                        title: "Account Type",
+                                        icon: FontAwesomeIcons.rightLeft,
+                                        iconColor: Colors.indigo,
+                                        children: [
+                                          CustomSegmentedControl<String>(
+                                            buttonLables: const [
+                                              "SEEKER",
+                                              "PROVIDER",
+                                            ],
+                                            buttonValues: const [
+                                              userTypeSeeker,
+                                              userTypeProvider,
+                                            ],
+                                            defaultSelected: userType,
+                                            onValueChanged: (val) {
+                                              if (Helpers.isProvider(val)) {
+                                                if (_currentProfile
+                                                        ?.isIdentityVerified !=
+                                                    true) {
+                                                  _showVerificationWarningDialog(
+                                                    context,
+                                                  );
+                                                } else {
+                                                  context
+                                                      .read<ProfileBloc>()
+                                                      .add(
+                                                        SetUserTypeEvent(
+                                                          userType: val,
+                                                        ),
+                                                      );
+                                                }
+                                              } else {
+                                                // Switch to Seeker
+                                                if (Helpers.isProvider(
+                                                  userType,
+                                                )) {
+                                                  _showSwitchToSeekerConfirmationDialog(
+                                                    context,
+                                                    val,
+                                                  );
+                                                } else {
+                                                  context
+                                                      .read<ProfileBloc>()
+                                                      .add(
+                                                        SetUserTypeEvent(
+                                                          userType: val,
+                                                        ),
+                                                      );
+                                                }
+                                              }
+                                            },
+                                            width: 240.w,
+                                            height: 50.h,
+                                            radius: 16.r,
+                                            selectedColor: context
+                                                .appColors
+                                                .primaryColor
+                                                .withAlpha(40),
+                                            textColor: context
+                                                .appColors
+                                                .primaryTextColor,
+                                          ),
+                                          if (Helpers.isProvider(userType)) ...[
+                                            SizedBox(height: 12.h),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  FontAwesomeIcons.circleCheck,
+                                                  color: Colors.green,
+                                                  size: 12.r,
+                                                ),
+                                                SizedBox(width: 6.w),
+                                                Text(
+                                                  "Verified Provider",
+                                                  style: TextStyle(
+                                                    fontSize: 11.sp,
+                                                    color: Colors.green,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                      SizedBox(height: 24.h),
+
+                                      // Card 2: Personal Profile Details
+                                      _buildSectionCard(
+                                        title: "Personal Profile",
+                                        icon: FontAwesomeIcons.user,
+                                        iconColor: Colors.blue,
+                                        children: [
+                                          SolidTextField(
+                                            controller: nameTextController,
+                                            hintText: "ENTER YOUR NAME",
+                                            label: "FULL NAME",
+                                            prefixIcon: FontAwesomeIcons.user,
+                                            validator:
+                                                ValidationUtil.validateName,
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          _buildLabel("Gender"),
+                                          SizedBox(height: 12.h),
+                                          CustomSegmentedControl<String>(
+                                            buttonLables: const [
+                                              "MALE",
+                                              "FEMALE",
+                                            ],
+                                            buttonValues: const [
+                                              "Male",
+                                              "Female",
+                                            ],
+                                            defaultSelected: gender.isNotEmpty
+                                                ? "${gender[0].toUpperCase()}${gender.substring(1).toLowerCase()}"
+                                                : "Male",
+                                            onValueChanged: (val) {
+                                              setState(
+                                                () =>
+                                                    gender = val.toUpperCase(),
+                                              );
+                                            },
+                                            width: 240.w,
+                                            height: 50.h,
+                                            radius: 16.r,
+                                            selectedColor: context
+                                                .appColors
+                                                .primaryColor
+                                                .withAlpha(40),
+                                            textColor: context
+                                                .appColors
+                                                .primaryTextColor,
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          _buildLabel("Date of Birth"),
+                                          SizedBox(height: 12.h),
+                                          SolidTextField(
+                                            controller:
+                                                dateOfBirthTextController,
+                                            hintText: "Select birth date",
+                                            label: "Date Of Birth",
+                                            readOnly: true,
+                                            prefixIcon:
+                                                FontAwesomeIcons.calendar,
+                                            onTap: () =>
+                                                context.read<ProfileBloc>().add(
+                                                  SelectDateOfBirthEvent(
+                                                    context: context,
+                                                  ),
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 24.h),
+
+                                      // Card 3: Location & Contact
+                                      _buildSectionCard(
+                                        title: "Location & Contact",
+                                        icon: FontAwesomeIcons.mapLocationDot,
+                                        iconColor: Colors.orange,
+                                        children: [
+                                          SolidTextField(
+                                            controller: contactTextController,
+                                            hintText: "PHONE NUMBER",
+                                            label: "PHONE NUMBER",
+                                            prefixIcon: FontAwesomeIcons.phone,
+                                            keyboardType: TextInputType.phone,
+                                            validator:
+                                                ValidationUtil.validatePhone,
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: SolidTextField(
+                                                  controller: locController,
+                                                  hintText: "LOCATION",
+                                                  label: "LOCATION",
+                                                  onTap: () =>
+                                                      _showLocationSheet(
+                                                        context,
+                                                      ),
+                                                  prefixIcon: FontAwesomeIcons
+                                                      .locationDot,
+                                                  validator: (val) =>
+                                                      ValidationUtil.validateRequired(
+                                                        val,
+                                                        "Location",
+                                                      ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 16.w),
+                                              GestureDetector(
+                                                onTap: () =>
+                                                    _showLocationSheet(context),
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(height: 25.h),
+                                                    Container(
+                                                      width: 58.r,
+                                                      height: 58.r,
+                                                      decoration: BoxDecoration(
+                                                        color: context
+                                                            .appColors
+                                                            .primaryColor
+                                                            .withAlpha(40),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              18.r,
+                                                            ),
+                                                        border: Border.all(
+                                                          color: context
+                                                              .appColors
+                                                              .primaryColor,
+                                                        ),
+                                                      ),
+                                                      child: Icon(
+                                                        FontAwesomeIcons.map,
+                                                        color: context
+                                                            .appColors
+                                                            .primaryColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          SolidTextField(
+                                            controller: countryTextController,
+                                            hintText: "COUNTRY",
+                                            label: "COUNTRY",
+                                            prefixIcon: FontAwesomeIcons.globe,
+                                            validator: (val) =>
+                                                ValidationUtil.validateRequired(
+                                                  val,
+                                                  "Country",
+                                                ),
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          SolidTextField(
+                                            controller: stateTextController,
+                                            hintText: "STATE",
+                                            label: "STATE",
+                                            prefixIcon:
+                                                FontAwesomeIcons.building,
+                                            validator: (val) =>
+                                                ValidationUtil.validateRequired(
+                                                  val,
+                                                  "State",
+                                                ),
+                                          ),
+                                          SizedBox(height: 24.h),
+                                          SolidTextField(
+                                            controller: zipCodeTextController,
+                                            hintText: "ZIP CODE",
+                                            label: "ZIP CODE",
+                                            prefixIcon: FontAwesomeIcons.mapPin,
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 24.h),
+
+                                      // Card 4: Service Provider Setup (only shown if Provider)
+                                      if (Helpers.isProvider(userType)) ...[
+                                        _buildSectionCard(
+                                          title: "Service Provider Setup",
+                                          icon: FontAwesomeIcons.briefcase,
+                                          iconColor: Colors.teal,
+                                          children: [
+                                            _buildLabel("Service Catalogs"),
+                                            SizedBox(height: 12.h),
+                                            _buildServicePicker(),
+                                            SizedBox(height: 16.h),
+
+                                            // Visual Chips of selected services
+                                            if (selectedCatalogServiceNames
+                                                .isNotEmpty) ...[
+                                              Wrap(
+                                                spacing: 8.w,
+                                                runSpacing: 8.h,
+                                                children: selectedCatalogServiceNames.map((
+                                                  name,
+                                                ) {
+                                                  return Chip(
+                                                    label: Text(
+                                                      name,
+                                                      style: TextStyle(
+                                                        fontSize: 12.sp,
+                                                        color: context
+                                                            .appColors
+                                                            .primaryColor,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    backgroundColor: context
+                                                        .appColors
+                                                        .primaryColor
+                                                        .withAlpha(20),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20.r,
+                                                          ),
+                                                      side: BorderSide(
+                                                        color: context
+                                                            .appColors
+                                                            .primaryColor
+                                                            .withAlpha(50),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                              SizedBox(height: 24.h),
+                                            ],
+
+                                            // Plan Upgrade Quick Link
+                                            Container(
+                                              padding: EdgeInsets.all(16.r),
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue.withAlpha(
+                                                  15,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(16.r),
+                                                border: Border.all(
+                                                  color: Colors.blue.withAlpha(
+                                                    40,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    FontAwesomeIcons.circleInfo,
+                                                    color: Colors.blueAccent,
+                                                    size: 20.r,
+                                                  ),
+                                                  SizedBox(width: 12.w),
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Need more services?",
+                                                          style: TextStyle(
+                                                            fontSize: 13.sp,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: context
+                                                                .appColors
+                                                                .primaryTextColor,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 2.h),
+                                                        Text(
+                                                          "Upgrade your subscription plan to get a higher service limit.",
+                                                          style: TextStyle(
+                                                            fontSize: 11.sp,
+                                                            color: context
+                                                                .appColors
+                                                                .secondaryTextColor,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8.w),
+                                                  TextButton(
+                                                    onPressed: () => context
+                                                        .push("/subscription"),
+                                                    child: Text(
+                                                      "Upgrade",
+                                                      style: TextStyle(
+                                                        fontSize: 12.sp,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Colors.blueAccent,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 24.h),
+
+                                            if (isOthersSelected) ...[
+                                              SolidTextField(
+                                                controller:
+                                                    serviceTextController,
+                                                hintText: "SPECIFY SERVICE",
+                                                label: "SPECIFY SERVICE",
+                                                prefixIcon: FontAwesomeIcons
+                                                    .buildingCircleCheck,
+                                                validator: (val) =>
+                                                    ValidationUtil.validateRequired(
+                                                      val,
+                                                      "Service",
+                                                    ),
+                                              ),
+                                              SizedBox(height: 24.h),
+                                            ],
+
+                                            _buildLabel(
+                                              "Preferred Payment Mode",
+                                            ),
+                                            SizedBox(height: 12.h),
+                                            CustomSegmentedControl<String>(
+                                              buttonLables: const [
+                                                "In-App",
+                                                "On-Site",
+                                              ],
+                                              buttonValues: const [
+                                                "IN_APP",
+                                                "ON_SITE",
+                                              ],
+                                              defaultSelected:
+                                                  preferredPaymentMode,
+                                              onValueChanged: (val) => setState(
+                                                () =>
+                                                    preferredPaymentMode = val,
+                                              ),
+                                              width: 240.w,
+                                              height: 50.h,
+                                              radius: 16.r,
+                                              selectedColor: context
+                                                  .appColors
+                                                  .primaryColor
+                                                  .withAlpha(40),
+                                              textColor: context
+                                                  .appColors
+                                                  .primaryTextColor,
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 24.h),
+                                      ],
+                                      SizedBox(height: 40.h),
+
+                                      // Save Button
+                                      _buildSaveButton(),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: 24.h),
-                            
-                            SolidTextField(
-                              controller: contactTextController,
-                              hintText: "PHONE NUMBER",
-                              label: "PHONE NUMBER",
-                              prefixIcon: FontAwesomeIcons.phone,
-                              keyboardType: TextInputType.phone,
-                              validator: ValidationUtil.validatePhone,
-                            ),
-                            SizedBox(height: 24.h),
-                            
-                            SolidTextField(
-                              controller: countryTextController,
-                              hintText: "COUNTRY",
-                              label: "COUNTRY",
-                              prefixIcon: FontAwesomeIcons.globe,
-                              validator: (val) => ValidationUtil.validateRequired(val, "Country"),
-                            ),
-                            SizedBox(height: 24.h),
-                            
-                            SolidTextField(
-                              controller: stateTextController,
-                              hintText: "STATE",
-                              label: "STATE",
-                              prefixIcon: FontAwesomeIcons.building,
-                              validator: (val) => ValidationUtil.validateRequired(val, "State"),
-                            ),
-                            SizedBox(height: 24.h),
-                            
-                            SolidTextField(
-                              controller: zipCodeTextController,
-                              hintText: "ZIP CODE",
-                              label: "ZIP CODE",
-                              prefixIcon: FontAwesomeIcons.mapPin,
-                            ),
-                            
-                            // Provider Specific Fields
-                            if (Helpers.isProvider(userType)) ...[
-                              SizedBox(height: 24.h),
-                              _buildLabel("Primary Service"),
-                              SizedBox(height: 12.h),
-                              _buildServicePicker(),
-                              
-                              if (isOthersSelected) ...[
-                                SizedBox(height: 24.h),
-                                SolidTextField(
-                                  controller: serviceTextController,
-                                  hintText: "SPECIFY SERVICE",
-                                  label: "SPECIFY SERVICE",
-                                  prefixIcon: FontAwesomeIcons.buildingCircleCheck,
-                                  validator: (val) => ValidationUtil.validateRequired(val, "Service"),
-                                ),
-                              ],
-                              
-                              SizedBox(height: 24.h),
-                              _buildLabel("Preferred Payment Mode"),
-                              SizedBox(height: 12.h),
-                              CustomSegmentedControl<String>(
-                                buttonLables: const ["In-App", "On-Site"],
-                                buttonValues: const ["IN_APP", "ON_SITE"],
-                                defaultSelected: preferredPaymentMode,
-                                onValueChanged: (val) => setState(() => preferredPaymentMode = val),
-                                width: 240.w,
-                                height: 50.h,
-                                radius: 16.r,
-                                selectedColor: context.appColors.primaryColor.withAlpha(40),
-                                textColor: context.appColors.primaryTextColor,
                               ),
-                            ],
-                          ],
+                            ),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 40.h),
-                      
-                      // Save Button
-                      _buildSaveButton(),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
                     ),
                   ),
-                ),
-              ),
-            ),
+                );
+              },
             );
           },
-        );
-      },
-    ),
-  ),
-);
-}
+        ),
+      ),
+    );
+  }
+
+  int _getMaxCatalogServices() {
+    // Read the backend-computed max from the profile response.
+    // This value comes from SubscriptionPlan.max_catalog_services in the DB,
+    // so it can be changed from the admin panel without a frontend update.
+    return _currentProfile?.maxCatalogServices ?? 0;
+  }
 
   ImageProvider _buildProfileImageProvider() {
     if (_selectedImage != null) {
@@ -556,22 +900,35 @@ class _EditProfilePageState extends State<EditProfilePage>
   }
 
   Widget _buildServicePicker() {
+    final maxAllowed = _getMaxCatalogServices();
+
     return GestureDetector(
       onTap: () {
         showServiceSelector(
           context: context,
           services: _services,
-          selectedServiceId: serviceType,
-          onServiceSelected: (serviceId, serviceName) {
+          isMultiSelect: true,
+          selectedServiceIds: selectedCatalogServiceIds,
+          maxAllowed: maxAllowed,
+          onServicesSelected: (serviceIds, serviceNames) {
             setState(() {
-              serviceType = serviceName;
-              catalogServiceId = serviceId;
+              selectedCatalogServiceIds = serviceIds;
+              selectedCatalogServiceNames = serviceNames;
+              if (serviceNames.isNotEmpty) {
+                serviceType = serviceNames.join(", ");
+              } else {
+                serviceType = "";
+              }
             });
-            context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
+            context.read<ProfileBloc>().add(
+              ChooseOtherServiceEvent(others: false),
+            );
           },
-          onOthersSelected: () {
-            context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: true));
-          },
+          onServiceSelected:
+              (
+                _,
+                __,
+              ) {}, // Dummy callback to satisfy non-nullable single-select arg
         );
       },
       child: Container(
@@ -583,19 +940,46 @@ class _EditProfilePageState extends State<EditProfilePage>
         ),
         child: Row(
           children: [
-            Icon(FontAwesomeIcons.crown, color: context.appColors.primaryColor.withAlpha(180)),
+            Icon(
+              FontAwesomeIcons.crown,
+              color: context.appColors.primaryColor.withAlpha(180),
+            ),
             SizedBox(width: 14.w),
             Expanded(
-              child: Text(
-                serviceType.isEmpty ? "SELECT SERVICE" : serviceType,
-                style: TextStyle(
-                  color: context.appColors.primaryTextColor,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    serviceType.isEmpty ? "SELECT SERVICES" : serviceType,
+                    style: TextStyle(
+                      color: context.appColors.primaryTextColor,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    maxAllowed > 0
+                        ? 'Tier Limit: ${selectedCatalogServiceIds.length}/$maxAllowed services'
+                        : 'Tier Limit: Unlimited services (${selectedCatalogServiceIds.length} selected)',
+                    style: TextStyle(
+                      color:
+                          maxAllowed > 0 &&
+                              selectedCatalogServiceIds.length >= maxAllowed
+                          ? Colors.orange
+                          : context.appColors.secondaryTextColor,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Icon(FontAwesomeIcons.upDown, color: context.appColors.glassBorder, size: 20.r),
+            Icon(
+              FontAwesomeIcons.upDown,
+              color: context.appColors.glassBorder,
+              size: 20.r,
+            ),
           ],
         ),
       ),
@@ -619,13 +1003,19 @@ class _EditProfilePageState extends State<EditProfilePage>
         style: ElevatedButton.styleFrom(
           backgroundColor: context.appColors.primaryColor,
           shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
           minimumSize: Size(double.infinity, 58.h),
           elevation: 0,
         ),
-        child:  Text(
+        child: Text(
           "SAVE CHANGES",
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500, letterSpacing: 1.0),
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.0,
+          ),
         ),
       ),
     );
@@ -728,7 +1118,11 @@ class _EditProfilePageState extends State<EditProfilePage>
               ),
             ),
             const Spacer(),
-            FaIcon(FontAwesomeIcons.chevronRight, color: context.appColors.glassBorder, size: 14.r),
+            FaIcon(
+              FontAwesomeIcons.chevronRight,
+              color: context.appColors.glassBorder,
+              size: 14.r,
+            ),
           ],
         ),
       ),
@@ -765,18 +1159,26 @@ class _EditProfilePageState extends State<EditProfilePage>
               label: "Use Current Location",
               onTap: () async {
                 context.read<CommonBloc>().add(UseMapEvent(useMap: false));
-                context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
+                context.read<s.SeekerBloc>().add(
+                  s.ChangeLocationEvent(change: true),
+                );
                 final userLocation = await Helpers.getLocation();
                 if (userLocation != null) {
                   if (mounted) {
-                    context.read<LocationBloc>().add(UpdateLocationEvent(location: userLocation));
+                    context.read<LocationBloc>().add(
+                      UpdateLocationEvent(location: userLocation),
+                    );
                     locController.text = userLocation.address;
                     context.pop();
                   }
                 } else {
                   if (mounted) {
                     context.pop();
-                    customAlert(context, AlertType.error, "Unable to get location.");
+                    customAlert(
+                      context,
+                      AlertType.error,
+                      "Unable to get location.",
+                    );
                   }
                 }
               },
@@ -786,7 +1188,9 @@ class _EditProfilePageState extends State<EditProfilePage>
               icon: FontAwesomeIcons.map,
               label: "Choose from Map",
               onTap: () {
-                context.read<s.SeekerBloc>().add(s.ChangeLocationEvent(change: true));
+                context.read<s.SeekerBloc>().add(
+                  s.ChangeLocationEvent(change: true),
+                );
                 context.pop();
                 context.read<CommonBloc>().add(UseMapEvent(useMap: true));
                 Helpers.getLocation();
@@ -801,6 +1205,239 @@ class _EditProfilePageState extends State<EditProfilePage>
           ],
         ),
       ),
+    );
+  }
+
+  void _showVerificationWarningDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          backgroundColor: context.appColors.cardBackground,
+          child: Container(
+            padding: EdgeInsets.all(28.r),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24.r),
+              border: Border.all(color: context.appColors.glassBorder),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16.r),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    FontAwesomeIcons.shieldHalved,
+                    color: Colors.redAccent,
+                    size: 40.r,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                Text(
+                  "Verification Required",
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: context.appColors.primaryTextColor,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  "To switch to a Provider account and offer your services, you must first complete your identity verification (background check).",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: context.appColors.secondaryTextColor,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 32.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            side: BorderSide(
+                              color: context.appColors.glassBorder,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          setState(() {});
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: context.appColors.primaryTextColor,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.appColors.primaryColor,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          setState(() {});
+                          context.push('/pending-verification');
+                        },
+                        child: Text(
+                          "Verify Now",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSwitchToSeekerConfirmationDialog(BuildContext context, String val) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          backgroundColor: context.appColors.cardBackground,
+          child: Container(
+            padding: EdgeInsets.all(28.r),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24.r),
+              border: Border.all(color: context.appColors.glassBorder),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16.r),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withAlpha(30),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    FontAwesomeIcons.triangleExclamation,
+                    color: Colors.orangeAccent,
+                    size: 40.r,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+                Text(
+                  "Void Subscription?",
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: context.appColors.primaryTextColor,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  "Switching to a Seeker account will immediately void your active provider subscription, and clear your selected service catalogs. This action cannot be undone.",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: context.appColors.secondaryTextColor,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 32.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            side: BorderSide(
+                              color: context.appColors.glassBorder,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          setState(() {});
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: context.appColors.primaryTextColor,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          context.read<ProfileBloc>().add(
+                            SetUserTypeEvent(userType: val),
+                          );
+                        },
+                        child: Text(
+                          "Yes, Switch",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -832,30 +1469,153 @@ class _EditProfilePageState extends State<EditProfilePage>
       updatedAt: DateTime.now(),
       service: serviceTextController.text.trim(),
       userType: userType,
-      catalogServiceId: catalogServiceId,
+      catalogServiceId: selectedCatalogServiceIds.isNotEmpty
+          ? selectedCatalogServiceIds.first
+          : "",
+      catalogServiceIds: selectedCatalogServiceIds,
+      catalogServiceNames: selectedCatalogServiceNames,
       preferredPaymentMode: preferredPaymentMode,
-      longitude: (_useMap && _mapLocation != null) ? _mapLocation!.longitude.toString() : profileData.longitude,
-      latitude: (_useMap && _mapLocation != null) ? _mapLocation!.latitude.toString() : profileData.latitude,
+      longitude: (_useMap && _mapLocation != null)
+          ? _mapLocation!.longitude.toString()
+          : profileData.longitude,
+      latitude: (_useMap && _mapLocation != null)
+          ? _mapLocation!.latitude.toString()
+          : profileData.latitude,
     );
 
-    context.read<ProfileBloc>().add(UpdateProfileEvent(
-      profile: profile,
-      profilePicturePath: _selectedImage?.path,
-    ));
+    context.read<ProfileBloc>().add(
+      UpdateProfileEvent(
+        profile: profile,
+        profilePicturePath: _selectedImage?.path,
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionBadge() {
+    final tier = _currentProfile?.subscriptionTier?.toUpperCase() ?? "NONE";
+    if (tier == "NONE") return const SizedBox.shrink();
+
+    Color glowColor;
+    List<Color> gradientColors;
+    IconData icon;
+
+    switch (tier) {
+      case "SILVER":
+        glowColor = Colors.blueGrey.withAlpha(50);
+        gradientColors = [Colors.blueGrey.shade600, Colors.blueGrey.shade300];
+        icon = FontAwesomeIcons.shieldHalved;
+        break;
+      case "GOLD":
+        glowColor = const Color(0xFFFFD700).withAlpha(60);
+        gradientColors = [const Color(0xFFB8860B), const Color(0xFFFFD700)];
+        icon = FontAwesomeIcons.crown;
+        break;
+      case "PLATINUM":
+        glowColor = const Color(0xFF8A2BE2).withAlpha(60);
+        gradientColors = [const Color(0xFF4B0082), const Color(0xFF8A2BE2)];
+        icon = FontAwesomeIcons.gem;
+        break;
+      default:
+        return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(30.r),
+        boxShadow: [
+          BoxShadow(color: glowColor, blurRadius: 15.r, spreadRadius: 2.r),
+        ],
+        border: Border.all(color: Colors.white.withAlpha(60), width: 1.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 14.r),
+          SizedBox(width: 8.w),
+          Text(
+            "$tier TIER",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required String title,
+    required IconData icon,
+    required Color iconColor,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(24.r),
+      decoration: BoxDecoration(
+        color: context.appColors.cardBackground,
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(color: context.appColors.glassBorder, width: 1.5.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.r),
+                decoration: BoxDecoration(
+                  color: iconColor.withAlpha(30),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(icon, color: iconColor, size: 16.r),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: context.appColors.primaryTextColor,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20.h),
+          ...children,
+        ],
+      ),
+    );
   }
 
   void _updateProfile(BuildContext context) {
-
-    if (Helpers.isProvider(userType) && serviceType.isEmpty && !isOthersSelected) {
-      customAlert(context, AlertType.warning, "Please select your service");
+    if (Helpers.isProvider(userType) &&
+        selectedCatalogServiceIds.isEmpty &&
+        !isOthersSelected) {
+      customAlert(
+        context,
+        AlertType.warning,
+        "Please select at least one service",
+      );
       return;
     }
     if (key.currentState?.validate() ?? false) {
       final profileData = _currentProfile ?? Profile();
       final nameParts = nameTextController.text.trim().split(" ");
       final firstName = nameParts.isNotEmpty ? nameParts[0] : "";
-      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
-      
+      final lastName = nameParts.length > 1
+          ? nameParts.sublist(1).join(" ")
+          : "";
+
       Profile profile = Profile(
         firstName: firstName,
         lastName: lastName,
@@ -873,12 +1633,22 @@ class _EditProfilePageState extends State<EditProfilePage>
         state: stateTextController.text.trim(),
         countryCode: countryCode,
         updatedAt: DateTime.now(),
-        service: isOthersSelected ? serviceTextController.text.trim() : serviceType,
+        service: isOthersSelected
+            ? serviceTextController.text.trim()
+            : serviceType,
         userType: userType,
-        catalogServiceId: catalogServiceId,
+        catalogServiceId: selectedCatalogServiceIds.isNotEmpty
+            ? selectedCatalogServiceIds.first
+            : "",
+        catalogServiceIds: selectedCatalogServiceIds,
+        catalogServiceNames: selectedCatalogServiceNames,
         preferredPaymentMode: preferredPaymentMode,
-        longitude: (_useMap && _mapLocation != null) ? _mapLocation!.longitude.toString() : profileData.longitude,
-        latitude: (_useMap && _mapLocation != null) ? _mapLocation!.latitude.toString() : profileData.latitude,
+        longitude: (_useMap && _mapLocation != null)
+            ? _mapLocation!.longitude.toString()
+            : profileData.longitude,
+        latitude: (_useMap && _mapLocation != null)
+            ? _mapLocation!.latitude.toString()
+            : profileData.latitude,
       );
 
       if (isOthersSelected) {
@@ -891,14 +1661,14 @@ class _EditProfilePageState extends State<EditProfilePage>
           ),
         );
       }
-      
+
       // Pass the new image path if selected
-      context.read<ProfileBloc>().add(UpdateProfileEvent(
-        profile: profile,
-        profilePicturePath: _selectedImage?.path,
-      ));
+      context.read<ProfileBloc>().add(
+        UpdateProfileEvent(
+          profile: profile,
+          profilePicturePath: _selectedImage?.path,
+        ),
+      );
     }
   }
 }
-
-

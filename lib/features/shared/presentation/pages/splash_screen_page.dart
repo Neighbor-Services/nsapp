@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
-
 
 class SplashScreenPage extends StatefulWidget {
   const SplashScreenPage({super.key});
@@ -86,7 +84,6 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -117,8 +114,8 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       ),
     );
 
-    _textSlideAnimation =
-        Tween<Offset>(begin: Offset(0, 0.2), end: Offset.zero).animate(
+    _textSlideAnimation = Tween<Offset>(begin: Offset(0, 0.2), end: Offset.zero)
+        .animate(
           CurvedAnimation(
             parent: _controller,
             curve: const Interval(0.3, 0.7, curve: Curves.easeOut),
@@ -157,14 +154,16 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       listener: (context, state) async {
         if (state is SuccessGetProfileState) {
           final profile = state.profile;
-          if (profile.firstName != null || profile.phone != null || profile.phone != "") {
+          if (profile.firstName != null &&
+              profile.userType != null &&
+              profile.phone != null) {
             bool isProvider = Helpers.isProvider(profile.userType);
             if (isProvider) {
               context.read<SettingsBloc>().add(
                 ToggleDashboardEvent(isProvider: true),
               );
             }
-            
+
             final usebiometric = await Helpers.getBool("usebiometric");
             if (isProvider && profile.isIdentityVerified != true) {
               context.go('/home');
@@ -189,120 +188,115 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       },
       child: Scaffold(
         key: scaffold,
-      body: GradientBackground(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              final textColor = context.appColors.primaryTextColor;
+        body: GradientBackground(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                final textColor = context.appColors.primaryTextColor;
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Spacer(flex: 2),
-                  Transform.scale(
-                    scale: _logoScaleAnimation.value,
-                    child: Opacity(
-                      opacity: _logoFadeAnimation.value,
-                      child: Container(
-                        padding: EdgeInsets.all(24.r),
-                        decoration: BoxDecoration(
-                          color: context.appColors.cardBackground,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: context.appColors.glassBorder,
-                            width: 1.5.r,
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Spacer(flex: 2),
+                    Transform.scale(
+                      scale: _logoScaleAnimation.value,
+                      child: Opacity(
+                        opacity: _logoFadeAnimation.value,
+                        child: Container(
+                          padding: EdgeInsets.all(24.r),
+                          decoration: BoxDecoration(
+                            color: context.appColors.cardBackground,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: context.appColors.glassBorder,
+                              width: 1.5.r,
+                            ),
                           ),
-                         
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100.r),
-                          child: Image.asset(
-                            logo2Assets,
-                            width: 110.w,
-                            height: 110.h,
-                            fit: BoxFit.cover,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100.r),
+                            child: Image.asset(
+                              logo2Assets,
+                              width: 110.w,
+                              height: 110.h,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 40.h),
-                  SlideTransition(
-                    position: _textSlideAnimation,
-                    child: FadeTransition(
-                      opacity: _textFadeAnimation,
-                      child: Column(
-                        children: [
-                          Text(
-                            'Neighbor Service',
-                            style: TextStyle(
-                              fontSize: 34.sp,
-                              fontWeight: FontWeight.w500,
-                              color: textColor,
-                              letterSpacing: 1.2,
+                    SizedBox(height: 40.h),
+                    SlideTransition(
+                      position: _textSlideAnimation,
+                      child: FadeTransition(
+                        opacity: _textFadeAnimation,
+                        child: Column(
+                          children: [
+                            Text(
+                              'Neighbor Service',
+                              style: TextStyle(
+                                fontSize: 34.sp,
+                                fontWeight: FontWeight.w500,
+                                color: textColor,
+                                letterSpacing: 1.2,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 16.h),
-                          SlideTransition(
-                            position: _subtitleSlideAnimation,
-                            child: FadeTransition(
-                              opacity: _subtitleFadeAnimation,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 30.w,
-                                ),
-                                child: Text(
-                                  'Connecting your business and\nyour side hustle to neighbors',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: context.appColors.secondaryTextColor,
-                                    height: 1.6,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 0.5,
+                            SizedBox(height: 16.h),
+                            SlideTransition(
+                              position: _subtitleSlideAnimation,
+                              child: FadeTransition(
+                                opacity: _subtitleFadeAnimation,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 30.w,
+                                  ),
+                                  child: Text(
+                                    'Connecting your business and\nyour side hustle to neighbors',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color:
+                                          context.appColors.secondaryTextColor,
+                                      height: 1.6,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(flex: 3),
+                    FadeTransition(
+                      opacity: _subtitleFadeAnimation,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: 40.w,
+                            height: 40.h,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                context.appColors.secondaryTextColor,
+                              ),
+                              strokeWidth: 3.r,
+                            ),
                           ),
+                          SizedBox(height: 60.h),
                         ],
                       ),
                     ),
-                  ),
-                  const Spacer(flex: 3),
-                  FadeTransition(
-                    opacity: _subtitleFadeAnimation,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: 40.w,
-                          height: 40.h,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              context.appColors.secondaryTextColor,
-                            ),
-                            strokeWidth: 3.r,
-                          ),
-                        ),
-                        SizedBox(height: 60.h),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 }
-
-
-
-
-
-

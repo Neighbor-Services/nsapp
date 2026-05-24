@@ -87,7 +87,9 @@ class _BiometricPageState extends State<BiometricPage> {
               final profile = profileState is SuccessGetProfileState
                   ? profileState.profile
                   : null;
-              if (profile?.firstName != null) {
+              if (profile?.firstName != null &&
+                  profile?.userType != null &&
+                  profile?.phone != null) {
                 if (Helpers.isProvider(profile!.userType)) {
                   context.read<SettingsBloc>().add(
                     ToggleDashboardEvent(isProvider: true),
@@ -129,8 +131,11 @@ class _BiometricPageState extends State<BiometricPage> {
                             shape: BoxShape.circle,
                             border: Border.all(color: glassBorderColor),
                           ),
-                          child: FaIcon(FontAwesomeIcons.fingerprint,
-                              color: contentColor, size: 80.r),
+                          child: FaIcon(
+                            FontAwesomeIcons.fingerprint,
+                            color: contentColor,
+                            size: 80.r,
+                          ),
                         ),
                         SizedBox(height: 30.h),
                         Text(
@@ -146,13 +151,19 @@ class _BiometricPageState extends State<BiometricPage> {
                         SizedBox(height: 10.h),
                         Text(
                           "Authenticate to continue",
-                          style: TextStyle(fontSize: 16.sp, color: secondaryColor),
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: secondaryColor,
+                          ),
                         ),
                         SizedBox(height: 50.h),
                         if (!_isAuthenticating)
                           TextButton.icon(
                             onPressed: auth,
-                            icon: FaIcon(FontAwesomeIcons.lockOpen, color: contentColor),
+                            icon: FaIcon(
+                              FontAwesomeIcons.lockOpen,
+                              color: contentColor,
+                            ),
                             label: Text(
                               "UNLOCK",
                               style: TextStyle(
@@ -186,5 +197,3 @@ class _BiometricPageState extends State<BiometricPage> {
     );
   }
 }
-
-

@@ -529,6 +529,11 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       priorityText = "1.5x matching boost";
     }
 
+    final maxServices = plan.maxCatalogServices ?? 1;
+    final limitText = maxServices == 0
+        ? "Unlimited catalog services"
+        : "$maxServices catalog service${maxServices > 1 ? 's' : ''}";
+
     return GestureDetector(
       onTap: () async {
         if (plan.id != null) {
@@ -604,6 +609,13 @@ class _SubscriptionPageState extends State<SubscriptionPage>
             _buildBenefitItem(
               priorityText,
               FontAwesomeIcons.arrowTrendUp,
+              false,
+              textColor,
+              secondaryTextColor,
+            ),
+            _buildBenefitItem(
+              limitText,
+              FontAwesomeIcons.briefcase,
               false,
               textColor,
               secondaryTextColor,
