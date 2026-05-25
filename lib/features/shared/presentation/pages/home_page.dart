@@ -40,9 +40,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (userId != null) {
         context.read<ProfileBloc>().add(CreateStripeCustomerEvent(userId: userId));
       }
-      if (Helpers.isProvider(profileState.profile.userType)) {
-        context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: true));
-      }
+      final isProvider = Helpers.isProvider(profileState.profile.userType);
+      context.read<SettingsBloc>().add(ToggleDashboardEvent(isProvider: isProvider));
     }
 
     context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());

@@ -158,11 +158,9 @@ class _SplashScreenPageState extends State<SplashScreenPage>
               profile.userType != null &&
               profile.phone != null) {
             bool isProvider = Helpers.isProvider(profile.userType);
-            if (isProvider) {
-              context.read<SettingsBloc>().add(
-                ToggleDashboardEvent(isProvider: true),
-              );
-            }
+            context.read<SettingsBloc>().add(
+              ToggleDashboardEvent(isProvider: isProvider),
+            );
 
             final usebiometric = await Helpers.getBool("usebiometric");
             if (isProvider && profile.isIdentityVerified != true) {

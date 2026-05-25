@@ -56,6 +56,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
   String _userType = userTypeProvider;
   bool _others = false;
   bool _useMap = false;
+  bool _pendingProfileSubmit = false;
   LatLng? _mapLocation;
   List<Service> _services = [];
 
@@ -273,8 +274,27 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
         );
         return;
       }
+
+      // For providers with a selected plan, subscribe FIRST then create profile
+      // after successful payment. This ensures the backend serializer finds an
+      // active subscription when validating catalog_services.
+      setState(() => _pendingProfileSubmit = true);
+      context.read<SubscriptionBloc>().add(
+        MakeSubscriptionEvent(
+          planId: _selectedPlanId!,
+          context: context,
+        ),
+      );
+      return;
     }
 
+    // For seekers (no subscription needed), create profile directly
+    _createProfile();
+  }
+
+  /// Actually creates the profile. Called directly for seekers, or after
+  /// successful subscription payment for providers.
+  void _createProfile() {
     final userLoc = context.read<LocationBloc>().state.location;
     final nameParts = nameTextController.text.trim().split(" ");
     final firstName = nameParts.isNotEmpty ? nameParts[0] : "";
@@ -355,15 +375,6 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
               } else if (state is OtherServiceSelectState) {
                 setState(() => _others = state.others);
               } else if (state is SuccessCreateProfileState) {
-                // After profile creation, subscribe if a plan was selected
-                if (_selectedPlanId != null && _selectedPlanId!.isNotEmpty) {
-                  context.read<SubscriptionBloc>().add(
-                    MakeSubscriptionEvent(
-                      planId: _selectedPlanId!,
-                      context: context,
-                    ),
-                  );
-                }
                 context.read<ProfileBloc>().add(GetProfileEvent());
                 customAlert(
                   context,
@@ -372,7 +383,14 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                 );
                 Future.delayed(const Duration(seconds: 3), () {
                   if (mounted) {
-                    context.go("/home");
+                    final profile = state.profile;
+                    if (profile != null &&
+                        Helpers.isProvider(profile.userType) &&
+                        profile.isIdentityVerified != true) {
+                      context.go("/pending-verification");
+                    } else {
+                      context.go("/home");
+                    }
                   }
                 });
               } else if (state is FailureCreateProfileState) {
@@ -402,6 +420,29 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
               if (state is SuccessMakeSubscriptionState) {
                 context.read<SubscriptionBloc>().add(
                   CheckUserSubscriptionEvent(),
+                );
+              }
+              if (state is ValidUserSubscriptionState) {
+                if (_pendingProfileSubmit) {
+                  if (state.isValid) {
+                    _pendingProfileSubmit = false;
+                    _createProfile();
+                  } else {
+                    _pendingProfileSubmit = false;
+                    customAlert(
+                      context,
+                      AlertType.error,
+                      "We could not verify your active subscription. Please try again.",
+                    );
+                  }
+                }
+              }
+              if (state is SubscriptionFailure && _pendingProfileSubmit) {
+                _pendingProfileSubmit = false;
+                customAlert(
+                  context,
+                  AlertType.error,
+                  state.message ?? "Subscription failed. Please try again.",
                 );
               }
             },
@@ -1299,7 +1340,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            "\$${plan.price?.toInt() ?? 0}",
+                            "\$${plan.price?.toStringAsFixed(2) ?? '0.00'}",
                             style: TextStyle(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.w500,

@@ -580,7 +580,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  "\$${plan.price?.toInt() ?? 0}",
+                  "\$${plan.price?.toStringAsFixed(2) ?? '0.00'}",
                   style: TextStyle(
                     fontSize: 32.sp,
                     fontWeight: FontWeight.w500,
