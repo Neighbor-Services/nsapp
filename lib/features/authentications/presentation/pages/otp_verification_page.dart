@@ -111,7 +111,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                       width: 2.r,
                                     ),
                                   ),
-                                  child: Icon(
+                                  child: FaIcon(
                                     FontAwesomeIcons.envelopeCircleCheck,
                                     size: 50.r,
                                     color: context.appColors.primaryColor,
@@ -210,7 +210,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon(
+                                              FaIcon(
                                                 FontAwesomeIcons.rotateRight,
                                                 size: 18.r,
                                                 color: secondaryTextColor,

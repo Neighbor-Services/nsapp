@@ -236,7 +236,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
                     color: context.appColors.errorColor.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     FontAwesomeIcons.heart,
                     size: 60.r,
                     color: context.appColors.errorColor,
@@ -409,7 +409,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
 
 
   Widget _buildActionButton({
-    required IconData icon,
+    required FaIconData icon,
     required Color color,
     required VoidCallback onTap,
   }) {
@@ -425,7 +425,7 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
             width: 1.5.r,
           ),
         ),
-        child: Icon(icon, color: color, size: 18.r),
+        child: FaIcon(icon, color: color, size: 18.r),
       ),
     );
   }

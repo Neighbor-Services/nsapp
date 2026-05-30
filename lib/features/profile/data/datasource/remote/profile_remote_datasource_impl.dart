@@ -104,12 +104,12 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (e is DioException) {
         final errorData = e.response?.data;
         debugPrint("UPDATE PROFILE ERROR: ${e.response?.statusCode} - $errorData");
+        throw Exception(errorData.toString());
       } else {
         debugPrint("UPDATE PROFILE UNKNOWN ERROR: $e");
+        throw Exception(e.toString());
       }
-      return false;
     }
-
   }
 
   @override

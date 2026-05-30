@@ -37,32 +37,32 @@ class ListSkeletonLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: itemCount,
+    return Padding(
       padding: EdgeInsets.all(16.r),
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: 16.h),
-          child: Row(
-            children: [
-              SkeletonWidget(width: 50.r, height: 50.r, borderRadius: 25.r),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SkeletonWidget(width: 150.w, height: 16.h),
-                    SizedBox(height: 8.h),
-                    SkeletonWidget(width: 100.w, height: 12.h),
-                  ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(itemCount, (index) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 16.h),
+            child: Row(
+              children: [
+                SkeletonWidget(width: 50.r, height: 50.r, borderRadius: 25.r),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonWidget(width: 150.w, height: 16.h),
+                      SizedBox(height: 8.h),
+                      SkeletonWidget(width: 100.w, height: 12.h),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }

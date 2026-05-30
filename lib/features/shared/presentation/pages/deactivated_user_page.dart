@@ -56,7 +56,7 @@ class _DeactivatedUserPageState extends State<DeactivatedUserPage> {
                                 color: context.appColors.errorColor.withAlpha(50),
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.ban,
                                 color: context.appColors.errorColor,
                                 size: 80.r,

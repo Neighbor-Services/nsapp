@@ -57,7 +57,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                           color: Colors.white.withAlpha(15),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.xmark,
                           color: Colors.white,
                           size: 20.r,
@@ -132,7 +132,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       borderRadius: BorderRadius.circular(16.r),
                       borderSide: BorderSide(color: context.appColors.secondaryColor),
                     ),
-                    prefixIcon: Icon(
+                    prefixIcon: FaIcon(
                       FontAwesomeIcons.locationDot,
                       color: Colors.white.withAlpha(150),
                       size: 20.r,

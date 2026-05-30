@@ -189,7 +189,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget> {
                                       ),
                                       child: Row(
                                         children: [
-                                           Icon(
+                                           FaIcon(
                                             FontAwesomeIcons.star,
                                             color: context.appColors.secondaryColor,
                                             size: 16.r,

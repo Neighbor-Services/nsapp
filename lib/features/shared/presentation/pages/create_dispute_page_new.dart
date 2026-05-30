@@ -227,7 +227,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
                             ),
 
-                            child: Icon(
+                            child: FaIcon(
 
                               FontAwesomeIcons.chevronLeft,
 
@@ -315,7 +315,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
                                   ),
 
-                                  child: Icon(
+                                  child: FaIcon(
 
                                     FontAwesomeIcons.gavel,
 
@@ -449,7 +449,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
                                       children: [
 
-                                        Icon(
+                                        FaIcon(
 
                                           FontAwesomeIcons.user,
 
@@ -485,7 +485,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
                                         ),
 
-                                        Icon(
+                                        FaIcon(
 
                                           FontAwesomeIcons.chevronRight,
 
@@ -625,7 +625,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
                               children: [
 
-                                Icon(
+                                FaIcon(
 
                                   FontAwesomeIcons.circleInfo,
 
@@ -755,7 +755,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
                   children: [
 
-                    Icon(
+                    FaIcon(
 
                       FontAwesomeIcons.comment,
 
@@ -935,7 +935,7 @@ class _CreateDisputePageNewState extends State<CreateDisputePageNew> {
 
                           : null,
 
-                      trailing: Icon(
+                      trailing: FaIcon(
 
                         FontAwesomeIcons.chevronRight,
 

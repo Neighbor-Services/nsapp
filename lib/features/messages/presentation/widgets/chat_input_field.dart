@@ -59,7 +59,7 @@ class ChatInputField extends StatelessWidget {
               shape: BoxShape.circle,
              
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.paperPlane,
               color: Colors.white,
               size: 20.r,

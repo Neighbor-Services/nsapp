@@ -68,7 +68,7 @@ class _ProviderAppointmentListPageState
                 width: 1.5.r,
               ),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 16.r,

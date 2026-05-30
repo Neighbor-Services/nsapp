@@ -223,7 +223,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 width: 1.5.r,
               ),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 20.r,
@@ -273,7 +273,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
         ),
         child: Row(
           children: [
-            Icon(FontAwesomeIcons.briefcase, color: context.appColors.primaryColor, size: 20.r),
+            FaIcon(FontAwesomeIcons.briefcase, color: context.appColors.primaryColor, size: 20.r),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
@@ -283,7 +283,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 ),
               ),
             ),
-            Icon(FontAwesomeIcons.chevronDown, size: 16.r, color: context.appColors.hintTextColor),
+            FaIcon(FontAwesomeIcons.chevronDown, size: 16.r, color: context.appColors.hintTextColor),
           ],
         ),
       ),
@@ -333,7 +333,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(FontAwesomeIcons.locationCrosshairs),
+              leading: const FaIcon(FontAwesomeIcons.locationCrosshairs),
               title: const Text("Use Current Location"),
               onTap: () async {
                 context.read<CommonBloc>().add(UseMapEvent(useMap: false));
@@ -347,7 +347,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               },
             ),
             ListTile(
-              leading: const Icon(FontAwesomeIcons.map),
+              leading: const FaIcon(FontAwesomeIcons.map),
               title: const Text("Pick from Map"),
               onTap: () {
                 context.read<CommonBloc>().add(UseMapEvent(useMap: true));
@@ -433,7 +433,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      FaIcon(
                         FontAwesomeIcons.image,
                         color: context.appColors.primaryColor,
                         size: 32.r,
@@ -468,7 +468,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(FontAwesomeIcons.camera),
+              leading: const FaIcon(FontAwesomeIcons.camera),
               title: const Text("Camera"),
               onTap: () {
                 context.read<SeekerBloc>().add(SelectImageFromCameraEvent());
@@ -476,7 +476,7 @@ class _SeekerUpdateRequestPageState extends State<SeekerUpdateRequestPage>
               },
             ),
             ListTile(
-              leading: const Icon(FontAwesomeIcons.images),
+              leading: const FaIcon(FontAwesomeIcons.images),
               title: const Text("Gallery"),
               onTap: () {
                 context.read<SeekerBloc>().add(SelectImageFromGalleryEvent());

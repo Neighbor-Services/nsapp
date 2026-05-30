@@ -102,7 +102,7 @@ class _ReportPageState extends State<ReportPage> {
                                             ),
                                           ],
                                   ),
-                                  child: Icon(
+                                  child: FaIcon(
                                     FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 20.r,
@@ -156,7 +156,7 @@ class _ReportPageState extends State<ReportPage> {
                                             isExpanded: true,
                                             dropdownColor:
                                                 context.appColors.cardBackground,
-                                            icon: Icon(
+                                            icon: FaIcon(
                                               FontAwesomeIcons.chevronDown,
                                               color: context
                                                   .appColors.primaryTextColor,

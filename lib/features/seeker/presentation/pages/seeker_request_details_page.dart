@@ -76,7 +76,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                     color: Colors.greenAccent.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     FontAwesomeIcons.circleCheck,
                     color: Colors.greenAccent,
                     size: 64.r,
@@ -164,7 +164,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             color: context.appColors.warningColor.withAlpha(30),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
+                          child: FaIcon(
                             FontAwesomeIcons.clock,
                             color: context.appColors.warningColor,
                             size: 36.r,
@@ -259,7 +259,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                FaIcon(
                                   FontAwesomeIcons.calendarDay,
                                   color: tempSelectedDate != null
                                       ? context.appColors.primaryColor
@@ -551,7 +551,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                       width: 1.5.r,
                                     ),
                                   ),
-                                  child: Icon(
+                                  child: FaIcon(
                                     FontAwesomeIcons.chevronLeft,
                                     color: textColor,
                                     size: 18.r,
@@ -592,7 +592,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                           8.r,
                                         ),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.fileLines,
                                         color: context.appColors.primaryColor,
                                         size: 24.r,
@@ -677,7 +677,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                 const SizedBox(height: 20),
                                 Row(
                                   children: [
-                                    Icon(
+                                    FaIcon(
                                       FontAwesomeIcons.moneyBillWave,
                                       color: context.appColors.primaryColor,
                                       size: 18.r,
@@ -872,7 +872,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                           color: context.appColors.errorColor.withAlpha(20),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.circleExclamation,
                           color: context.appColors.errorColor,
                           size: 60.r,
@@ -980,7 +980,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                   color: context.appColors.errorColor.withAlpha(30),
                   shape: BoxShape.circle,
                 ),
-                child:  Icon(
+                child:  FaIcon(
                   FontAwesomeIcons.trashCan,
                   color: context.appColors.errorColor,
                   size: 32.r,
@@ -1248,7 +1248,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                 SizedBox(height: 4.h),
                 Row(
                   children: [
-                     Icon(
+                     FaIcon(
                       FontAwesomeIcons.star,
                       color: context.appColors.warningColor,
                       size: 16.r,
@@ -1308,7 +1308,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             color: context.appColors.primaryColor.withAlpha(40),
             borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(
+          child: FaIcon(
             FontAwesomeIcons.circleXmark,
             color: context.appColors.errorColor,
           ),
@@ -1379,7 +1379,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
             color: context.appColors.primaryColor.withAlpha(40),
             borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(
+          child: FaIcon(
             FontAwesomeIcons.circleCheck,
             color: context.appColors.primaryColor,
           ),
@@ -1440,7 +1440,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 1,
               child: Row(
                 children: [
-                   Icon(
+                   FaIcon(
                     FontAwesomeIcons.eye,
                     color: context.appColors.infoColor,
                     size: 20.r,
@@ -1462,7 +1462,7 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
               value: 2,
               child: Row(
                 children: [
-                   Icon(
+                   FaIcon(
                     FontAwesomeIcons.comment,
                     color: context.appColors.successColor,
                     size: 20.r,

@@ -158,7 +158,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
                           color: context.appColors.primaryColor.withAlpha(50),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.compass,
                           color: context.appColors.primaryColor,
                           size: 24.r,
@@ -216,7 +216,7 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
               onTap: () => Navigator.pop(context),
               child: SolidContainer(
                 padding: EdgeInsets.all(12.r),
-                child: Icon(
+                child: FaIcon(
                   FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
@@ -229,10 +229,10 @@ class _MapDirectionPageState extends State<MapDirectionPage> {
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String label, String value) {
+  Widget _buildInfoItem(FaIconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, color: context.appColors.primaryColor, size: 20.r),
+        FaIcon(icon, color: context.appColors.primaryColor, size: 20.r),
         SizedBox(width: 8.w),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -99,7 +99,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                                 color: context.appColors.glassBorder,
                               ),
                             ),
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.chevronLeft,
                               color: context.appColors.primaryTextColor,
                               size: 18.r,
@@ -332,7 +332,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(
+                      const FaIcon(
                         FontAwesomeIcons.locationDot,
                         size: 12,
                         color: Colors.white70,
@@ -358,7 +358,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
             Positioned(
               top: 8,
               right: 8,
-              child: _buildFavoriteIcon(profile, context, favorites),
+              child: _buildFavoriteFaIcon(profile, context, favorites),
             ),
             Positioned(
               top: 8,
@@ -372,7 +372,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
+                    const FaIcon(
                       FontAwesomeIcons.star,
                       color: Color(0xFFFFD700),
                       size: 14,
@@ -417,7 +417,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                   ),
                 ),
                 child: PopupMenuButton(
-                  icon: const Icon(
+                  icon: const FaIcon(
                     FontAwesomeIcons.ellipsisVertical,
                     color: Colors.white70,
                     size: 20,
@@ -433,7 +433,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         value: 1,
                         child: Row(
                           children: [
-                            Icon(FontAwesomeIcons.eye, color: iconColor),
+                            FaIcon(FontAwesomeIcons.eye, color: iconColor),
                             const SizedBox(width: 10),
                             Text(
                               "DETAILS",
@@ -451,7 +451,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
                         value: 2,
                         child: Row(
                           children: [
-                            Icon(FontAwesomeIcons.comment, color: iconColor),
+                            FaIcon(FontAwesomeIcons.comment, color: iconColor),
                             const SizedBox(width: 10),
                             Text(
                               "CHAT",
@@ -476,7 +476,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
     );
   }
 
-  Widget _buildFavoriteIcon(
+  Widget _buildFavoriteFaIcon(
     Profile profile,
     BuildContext context,
     List<Favorite> favorites,
@@ -494,7 +494,7 @@ class _SeekerProviderSearchPageState extends State<SeekerProviderSearchPage> {
         padding: EdgeInsets.all(6),
         borderRadius: BorderRadius.circular(50),
         backgroundColor: Colors.black.withAlpha(50),
-        child: Icon(
+        child: FaIcon(
           isFav ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
           color: isFav ? context.appColors.errorColor : Colors.white,
           size: 18,

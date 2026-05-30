@@ -218,7 +218,7 @@ class PlatformPopupMenu extends StatelessWidget {
                               color: context.appColors.errorColor.withAlpha(30),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.rightFromBracket,
                               size: 32.r,
                               color: context.appColors.errorColor,

@@ -167,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage>
                                           color: context.appColors.glassBorder,
                                         ),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.chevronLeft,
                                         color: textColor,
                                         size: 20.r,
@@ -390,33 +390,33 @@ class _SettingsPageState extends State<SettingsPage>
                               _buildSectionHeader("Account Management"),
                               SizedBox(height: 12.h),
                               _buildSettingsCard(context, [
-                                _buildSettingsTile(
-                                  context: context,
-                                  icon: FontAwesomeIcons.rightLeft,
-                                  iconColor: Colors.indigo,
-                                  title: "Change User Type",
-                                  subtitle:
-                                      "Switch between seeker and provider",
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (context) => Container(
-                                        width: size(context).width,
-                                        padding: EdgeInsets.all(24.r),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              context.appColors.cardBackground,
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(25.r),
-                                          ),
-                                        ),
-                                        child: const ChangeUserTypeWidget(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                _buildDivider(context),
+                                // _buildSettingsTile(
+                                //   context: context,
+                                //   icon: FontAwesomeIcons.rightLeft,
+                                //   iconColor: Colors.indigo,
+                                //   title: "Change User Type",
+                                //   subtitle:
+                                //       "Switch between seeker and provider",
+                                //   onTap: () {
+                                //     showModalBottomSheet(
+                                //       context: context,
+                                //       backgroundColor: Colors.transparent,
+                                //       builder: (context) => Container(
+                                //         width: size(context).width,
+                                //         padding: EdgeInsets.all(24.r),
+                                //         decoration: BoxDecoration(
+                                //           color:
+                                //               context.appColors.cardBackground,
+                                //           borderRadius: BorderRadius.vertical(
+                                //             top: Radius.circular(25.r),
+                                //           ),
+                                //         ),
+                                //         child: const ChangeUserTypeWidget(),
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
+                                // _buildDivider(context),
                                 _buildSettingsTile(
                                   context: context,
                                   icon: FontAwesomeIcons.clockRotateLeft,
@@ -494,7 +494,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Widget _buildSettingsTile({
     required BuildContext context,
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required String title,
     required String subtitle,
@@ -518,10 +518,12 @@ class _SettingsPageState extends State<SettingsPage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Icon(
-                icon,
-                color: context.appColors.primaryColor,
-                size: 22.r,
+              child: Center(
+                child: FaIcon(
+                  icon,
+                  color: context.appColors.primaryColor,
+                  size: 22.r,
+                ),
               ),
             ),
             SizedBox(width: 14.w),
@@ -548,7 +550,7 @@ class _SettingsPageState extends State<SettingsPage>
             if (trailing != null)
               trailing
             else if (onTap != null)
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.chevronRight,
                 color: textColor.withAlpha(100),
               ),
@@ -721,7 +723,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Widget _buildPaymentOption({
     required BuildContext context,
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     required String description,
     required String value,
@@ -757,7 +759,7 @@ class _SettingsPageState extends State<SettingsPage>
                     : context.appColors.surfaceBackground,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: FaIcon(
                 icon,
                 color: isSelected
                     ? context.appColors.primaryColor

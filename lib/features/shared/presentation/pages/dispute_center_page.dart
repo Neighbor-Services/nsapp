@@ -350,7 +350,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
       
                   children: [
       
-                    Icon(FontAwesomeIcons.circleExclamation, color: context.appColors.errorColor, size: 24.r),
+                    FaIcon(FontAwesomeIcons.circleExclamation, color: context.appColors.errorColor, size: 24.r),
       
                     SizedBox(width: 16.w),
       
@@ -570,7 +570,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
       
                       if (_evidenceFile != null) ...[
       
-                        Icon(FontAwesomeIcons.solidImage, color: context.appColors.primaryColor, size: 32.r),
+                        FaIcon(FontAwesomeIcons.solidImage, color: context.appColors.primaryColor, size: 32.r),
       
                         SizedBox(height: 8.h),
       
@@ -578,7 +578,7 @@ class _DisputeCenterPageState extends State<DisputeCenterPage> {
       
                       ] else ...[
       
-                        Icon(FontAwesomeIcons.cloudArrowUp, color: context.appColors.primaryColor, size: 32.r),
+                        FaIcon(FontAwesomeIcons.cloudArrowUp, color: context.appColors.primaryColor, size: 32.r),
       
                         SizedBox(height: 8.h),
       

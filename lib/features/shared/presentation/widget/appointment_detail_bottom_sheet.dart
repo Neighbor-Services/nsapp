@@ -455,7 +455,7 @@ class _AppointmentDetailBottomSheetState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(FontAwesomeIcons.circleCheck, color: Colors.green, size: 20.r),
+                    FaIcon(FontAwesomeIcons.circleCheck, color: Colors.green, size: 20.r),
                     SizedBox(width: 8.w),
                     Text(
                       "SERVICE VERIFIED",
@@ -485,7 +485,7 @@ class _AppointmentDetailBottomSheetState
                 if (!_isEditing)
                   IconButton(
                     onPressed: () => setState(() => _isEditing = true),
-                    icon: Icon(
+                    icon: FaIcon(
                       FontAwesomeIcons.penToSquare,
                       color: context.appColors.hintTextColor,
                     ),
@@ -575,7 +575,7 @@ class _AppointmentDetailBottomSheetState
                       context.push('/app/provider/requests/${req.id}', extra: requestData);
                     }
                   },
-                  icon: Icon(
+                  icon: FaIcon(
                     FontAwesomeIcons.arrowUpRightFromSquare,
                     size: 18.r,
                     color: context.appColors.primaryColor,
@@ -656,7 +656,7 @@ class _AppointmentDetailBottomSheetState
 
   Widget _buildInfoSection(
     BuildContext context, {
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     String? subtitle,
     String? trailing,
@@ -680,7 +680,7 @@ class _AppointmentDetailBottomSheetState
               color: context.appColors.secondaryColor.withAlpha(20),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: context.appColors.hintTextColor, size: 20.r),
+            child: FaIcon(icon, color: context.appColors.hintTextColor, size: 20.r),
           ),
           SizedBox(width: 16.w),
           Expanded(

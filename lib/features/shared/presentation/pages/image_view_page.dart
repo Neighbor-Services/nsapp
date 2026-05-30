@@ -48,7 +48,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                       errorWidget: (context, url, error) => Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          FaIcon(
                             FontAwesomeIcons.image,
                             size: 100.r,
                             color: Colors.white.withAlpha(100),
@@ -80,7 +80,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white.withAlpha(30)),
                     ),
-                    child: Icon(
+                    child: FaIcon(
                       FontAwesomeIcons.arrowLeft,
                       color: Colors.white,
                       size: 24.r,

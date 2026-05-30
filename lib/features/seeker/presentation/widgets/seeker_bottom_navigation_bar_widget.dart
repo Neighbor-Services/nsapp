@@ -126,7 +126,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
 
   Widget _buildNavIcon({
     required BuildContext context,
-    required IconData icon,
+    required FaIconData icon,
     required bool isActive,
     required String label,
     required VoidCallback onTap,
@@ -149,7 +149,7 @@ class SeekerBottomNavigationBarWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              FaIcon(
                 icon,
                 size: 26.r,
                 color: isActive ? context.appColors.primaryColor : inactiveColor,

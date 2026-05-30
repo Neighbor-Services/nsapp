@@ -35,7 +35,7 @@ class PerformanceBadgeWidget extends StatelessWidget {
             width: 1.r,
           ),
         ),
-        child: Icon(
+        child: FaIcon(
           _getBadgeIcon(badge.iconType),
           color: _getBadgeColor(context, badge.iconType),
           size: size.r,
@@ -44,7 +44,7 @@ class PerformanceBadgeWidget extends StatelessWidget {
     );
   }
 
-  IconData _getBadgeIcon(String? type) {
+  FaIconData _getBadgeIcon(String? type) {
     switch (type) {
       case 'bolt':
         return FontAwesomeIcons.bolt;

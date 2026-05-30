@@ -294,7 +294,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                               width: 1.5.r,
                                             ),
                                           ),
-                                          child: Icon(
+                                          child: FaIcon(
                                             FontAwesomeIcons.chevronLeft,
                                             color: context
                                                 .appColors
@@ -395,7 +395,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                       width: 2.r,
                                                     ),
                                                   ),
-                                                  child: Icon(
+                                                  child: FaIcon(
                                                     FontAwesomeIcons.camera,
                                                     color: Colors.white,
                                                     size: 18.r,
@@ -474,13 +474,15 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                 .appColors
                                                 .primaryTextColor,
                                           ),
-                                          if (Helpers.isProvider(userType)) ...[
+                                          if (_currentProfile
+                                                        ?.isIdentityVerified ==
+                                                    true) ...[
                                             SizedBox(height: 12.h),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                Icon(
+                                                FaIcon(
                                                   FontAwesomeIcons.circleCheck,
                                                   color: Colors.green,
                                                   size: 12.r,
@@ -630,11 +632,13 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                               .primaryColor,
                                                         ),
                                                       ),
-                                                      child: Icon(
-                                                        FontAwesomeIcons.map,
-                                                        color: context
-                                                            .appColors
-                                                            .primaryColor,
+                                                      child: Center(
+                                                        child: FaIcon(
+                                                          FontAwesomeIcons.map,
+                                                          color: context
+                                                              .appColors
+                                                              .primaryColor,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -750,7 +754,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                               ),
                                               child: Row(
                                                 children: [
-                                                  Icon(
+                                                  FaIcon(
                                                     FontAwesomeIcons.circleInfo,
                                                     color: Colors.blueAccent,
                                                     size: 20.r,
@@ -940,7 +944,7 @@ class _EditProfilePageState extends State<EditProfilePage>
         ),
         child: Row(
           children: [
-            Icon(
+            FaIcon(
               FontAwesomeIcons.crown,
               color: context.appColors.primaryColor.withAlpha(180),
             ),
@@ -975,7 +979,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                 ],
               ),
             ),
-            Icon(
+            FaIcon(
               FontAwesomeIcons.upDown,
               color: context.appColors.glassBorder,
               size: 20.r,
@@ -1015,6 +1019,7 @@ class _EditProfilePageState extends State<EditProfilePage>
             fontSize: 18.sp,
             fontWeight: FontWeight.w500,
             letterSpacing: 1.0,
+            color: Colors.white,
           ),
         ),
       ),
@@ -1091,7 +1096,7 @@ class _EditProfilePageState extends State<EditProfilePage>
   }
 
   Widget _buildSheetItem({
-    required IconData icon,
+    required FaIconData icon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -1107,7 +1112,7 @@ class _EditProfilePageState extends State<EditProfilePage>
         ),
         child: Row(
           children: [
-            Icon(icon, color: context.appColors.infoColor, size: 24.r),
+            FaIcon(icon, color: context.appColors.infoColor, size: 24.r),
             SizedBox(width: 16.w),
             Text(
               label,
@@ -1233,7 +1238,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                     color: Colors.red.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     FontAwesomeIcons.shieldHalved,
                     color: Colors.redAccent,
                     size: 40.r,
@@ -1349,7 +1354,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                     color: Colors.orange.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     FontAwesomeIcons.triangleExclamation,
                     color: Colors.orangeAccent,
                     size: 40.r,
@@ -1497,7 +1502,7 @@ class _EditProfilePageState extends State<EditProfilePage>
 
     Color glowColor;
     List<Color> gradientColors;
-    IconData icon;
+    FaIconData icon;
 
     switch (tier) {
       case "SILVER":
@@ -1536,7 +1541,7 @@ class _EditProfilePageState extends State<EditProfilePage>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 14.r),
+          FaIcon(icon, color: Colors.white, size: 14.r),
           SizedBox(width: 8.w),
           Text(
             "$tier TIER",
@@ -1554,7 +1559,7 @@ class _EditProfilePageState extends State<EditProfilePage>
 
   Widget _buildSectionCard({
     required String title,
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required List<Widget> children,
   }) {
@@ -1576,7 +1581,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                   color: iconColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(icon, color: iconColor, size: 16.r),
+                child: FaIcon(icon, color: iconColor, size: 16.r),
               ),
               SizedBox(width: 12.w),
               Text(
@@ -1660,15 +1665,15 @@ class _EditProfilePageState extends State<EditProfilePage>
             ),
           ),
         );
+      } else {
+        // Pass the new image path if selected
+        context.read<ProfileBloc>().add(
+          UpdateProfileEvent(
+            profile: profile,
+            profilePicturePath: _selectedImage?.path,
+          ),
+        );
       }
-
-      // Pass the new image path if selected
-      context.read<ProfileBloc>().add(
-        UpdateProfileEvent(
-          profile: profile,
-          profilePicturePath: _selectedImage?.path,
-        ),
-      );
     }
   }
 }

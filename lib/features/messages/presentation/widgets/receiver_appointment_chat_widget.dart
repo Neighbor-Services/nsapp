@@ -86,7 +86,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                               color: iconBgColor,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.calendar,
                               color: iconColor,
                               size: 18.r,
@@ -152,7 +152,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
                             value: 1,
                             child: Row(
                               children: [
-                                Icon(
+                                FaIcon(
                                   FontAwesomeIcons.hardDrive,
                                   size: 18.r,
                                   color: secondaryTextColor,
@@ -225,7 +225,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
   }
 
   Widget _buildInfoRow(
-    IconData icon,
+    FaIconData icon,
     String text,
     Color textColor,
     Color iconColor,
@@ -240,7 +240,7 @@ class ReceiverAppointmentChatWidget extends StatelessWidget {
             color: iconBgColor,
             borderRadius: BorderRadius.circular(8.r),
           ),
-          child: Icon(icon, color: context.appColors.primaryTextColor, size: 14.r),
+          child: FaIcon(icon, color: context.appColors.primaryTextColor, size: 14.r),
         ),
         SizedBox(width: 12.w),
         Expanded(

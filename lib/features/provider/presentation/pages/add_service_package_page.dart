@@ -72,7 +72,7 @@ class _AddServicePackagePageState extends State<AddServicePackagePage> {
                 width: 1.5.r,
               ),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,

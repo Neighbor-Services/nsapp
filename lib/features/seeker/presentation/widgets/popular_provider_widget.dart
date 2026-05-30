@@ -253,7 +253,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
                                   ),
                                 ),
                                 if (profile.isIdentityVerified == true)
-                                  Icon(
+                                  FaIcon(
                                     FontAwesomeIcons.circleCheck,
                                     color: Colors.blueAccent,
                                     size: 16.r,
@@ -317,7 +317,7 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
 
   Widget _buildTierBadge(String tier) {
     Color tierColor;
-    IconData icon;
+    FaIconData icon;
     
     switch (tier.toUpperCase()) {
       case 'PLATINUM':
@@ -400,10 +400,12 @@ class _PopularProviderWidgetState extends State<PopularProviderWidget> {
           color: Colors.black.withAlpha(100),
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          isFavorite ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
-          color: isFavorite ? Colors.redAccent : Colors.white,
-          size: 16.r,
+        child: Center(
+          child: FaIcon(
+            isFavorite ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
+            color: isFavorite ? Colors.redAccent : Colors.white,
+            size: 16.r,
+          ),
         ),
       ),
     );

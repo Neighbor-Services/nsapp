@@ -65,7 +65,7 @@ class _NoInternetPageState extends State<NoInternetPage> {
                       color: context.appColors.errorColor.withAlpha(30),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: FaIcon(
                       FontAwesomeIcons.wifi,
                       color: context.appColors.errorColor,
                       size: 64.r,

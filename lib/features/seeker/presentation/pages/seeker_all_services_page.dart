@@ -42,7 +42,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                             width: 1.5.r,
                           ),
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.chevronLeft,
                           color: textColor,
                           size: 20.r,
@@ -98,7 +98,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.magnifyingGlass,
                               size: 64.r,
                               color: textColor.withAlpha(50),
@@ -197,7 +197,7 @@ class SeekerAllServicesPage extends StatelessWidget {
               Positioned(
                 right: -5.r,
                 bottom: -5.r,
-                child: Icon(
+                child: FaIcon(
                   icon,
                   size: 60.r,
                   color: context.appColors.primaryColor.withAlpha(20),
@@ -215,7 +215,7 @@ class SeekerAllServicesPage extends StatelessWidget {
                         color: context.appColors.primaryColor,
                         borderRadius: BorderRadius.circular(10.r),
                       ),
-                      child: Icon(icon, color: Colors.white, size: 20.r),
+                      child: FaIcon(icon, color: Colors.white, size: 20.r),
                     ),
                     Text(
                       (service.name ?? "Service").toUpperCase(),

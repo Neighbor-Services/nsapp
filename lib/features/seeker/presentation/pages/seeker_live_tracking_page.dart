@@ -127,7 +127,7 @@ class _SeekerLiveTrackingPageState extends State<SeekerLiveTrackingPage> {
                 borderRadius: BorderRadius.circular(12.r),
                 borderColor: context.appColors.glassBorder,
                 borderWidth: 1.5.r,
-                child: Icon(
+                child: FaIcon(
                   FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
@@ -154,7 +154,7 @@ class _SeekerLiveTrackingPageState extends State<SeekerLiveTrackingPage> {
                               : Colors.grey.withAlpha(50),
                           shape: BoxShape.circle,
                         ),
-                        child:  Icon(
+                        child:  FaIcon(
                           FontAwesomeIcons.locationArrow,
                           color: _providerLocation != null 
                               ? context.appColors.secondaryColor

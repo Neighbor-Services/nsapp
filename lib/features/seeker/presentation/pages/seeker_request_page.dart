@@ -118,7 +118,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                                         width: 1.5.r,
                                       ),
                                     ),
-                                    child: Icon(
+                                    child: FaIcon(
                                       FontAwesomeIcons.chevronLeft,
                                       color: context.appColors.primaryTextColor,
                                       size: 16.r,
@@ -180,7 +180,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.fileLines,
                 size: 60.r,
                 color: context.appColors.glassBorder,
@@ -280,7 +280,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   const Center(
-                                    child: Icon(
+                                    child: FaIcon(
                                       FontAwesomeIcons.image,
                                       color: Colors.white54,
                                     ),
@@ -672,14 +672,14 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
   PopupMenuItem _buildPopupMenuItem(
     String value,
     String text,
-    IconData icon,
+    FaIconData icon,
   
   ) {
     return PopupMenuItem(
       value: value,
       child: Row(
         children: [
-          Icon(icon, size: 20.r, color: context.appColors.primaryTextColor),
+          FaIcon(icon, size: 20.r, color: context.appColors.primaryTextColor),
           SizedBox(width: 12.w),
           Text(
             text.toUpperCase(),
@@ -695,7 +695,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String label) {
+  Widget _buildInfoChip(FaIconData icon, String label) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
@@ -709,7 +709,7 @@ class _SeekerRequestPageState extends State<SeekerRequestPage>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14.r, color: context.appColors.primaryColor),
+          FaIcon(icon, size: 14.r, color: context.appColors.primaryColor),
           SizedBox(width: 6.w),
           Text(
             label.toUpperCase(),

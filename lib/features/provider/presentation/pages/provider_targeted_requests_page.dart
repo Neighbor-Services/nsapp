@@ -92,7 +92,7 @@ class _ProviderTargetedRequestsPageState
                 width: 1.5.r,
               ),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,
@@ -187,7 +187,7 @@ class _ProviderTargetedRequestsPageState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.handshake,
                 size: 60.r,
                 color: context.appColors.glassBorder,
@@ -399,7 +399,7 @@ class _ProviderTargetedRequestsPageState
                         SizedBox(height: 6.h),
                         Row(
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.calendar,
                               size: 12.r,
                               color: context.appColors.secondaryTextColor,
@@ -424,7 +424,7 @@ class _ProviderTargetedRequestsPageState
                 // Arrow
                 Padding(
                   padding: EdgeInsets.only(right: 16.w),
-                  child: Icon(
+                  child: FaIcon(
                     FontAwesomeIcons.chevronRight,
                     color: context.appColors.secondaryTextColor,
                   ),

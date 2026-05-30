@@ -67,7 +67,7 @@ class PortfolioGallery extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      FaIcon(
                         FontAwesomeIcons.camera,
                         color: context.appColors.secondaryColor,
                         size: 16.r,
@@ -94,7 +94,7 @@ class PortfolioGallery extends StatelessWidget {
             width: double.infinity,
             child: Column(
               children: [
-                Icon(
+                FaIcon(
                   FontAwesomeIcons.images,
                   color: emptyIconColor,
                   size: 48.r,
@@ -189,7 +189,7 @@ class PortfolioGallery extends StatelessWidget {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                       Icon(
+                                       FaIcon(
                                         FontAwesomeIcons.wandMagicSparkles,
                                         size: 12.r,
                                         color: context.appColors.infoColor,
@@ -309,7 +309,7 @@ class PortfolioGallery extends StatelessWidget {
                                 color: Colors.white.withAlpha(40),
                               ),
                             ),
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.xmark,
                               color: Colors.white,
                               size: 20.r,
@@ -324,7 +324,7 @@ class PortfolioGallery extends StatelessWidget {
                 if (item.tags != null && item.tags!.isNotEmpty) ...[
                    Row(
                     children: [
-                      Icon(
+                      FaIcon(
                         FontAwesomeIcons.wandMagicSparkles,
                         color: context.appColors.infoColor,
                         size: 16.r,

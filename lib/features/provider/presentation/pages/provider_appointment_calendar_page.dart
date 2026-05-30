@@ -181,7 +181,7 @@ class _ProviderAppointmentCalendarPageState
                                         width: 1.5.r,
                                       ),
                                     ),
-                                    child: Icon(
+                                    child: FaIcon(
                                       FontAwesomeIcons.chevronLeft,
                                       color: context.appColors.primaryTextColor,
                                       size: 20.r,
@@ -592,7 +592,7 @@ class _ProviderAppointmentCalendarPageState
                                 extra: requestData,
                               );
                             },
-                            icon: Icon(
+                            icon: FaIcon(
                               FontAwesomeIcons.arrowUpRightFromSquare,
                               size: 18.r,
                               color: context.appColors.primaryColor,
@@ -735,7 +735,7 @@ class _ProviderAppointmentCalendarPageState
   }
 
   Widget _buildDetailRow(
-    IconData icon,
+    FaIconData icon,
     String label,
     String value,
     bool isDark,
@@ -757,7 +757,7 @@ class _ProviderAppointmentCalendarPageState
               color: iconBg,
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Icon(icon, color: iconColor, size: 20.r),
+            child: FaIcon(icon, color: iconColor, size: 20.r),
           ),
           SizedBox(width: 16.w),
           Expanded(
@@ -1079,7 +1079,7 @@ class _ProviderAppointmentCalendarPageState
                   child: DropdownButtonFormField<String>(
                     initialValue: selectedProposalId,
                     dropdownColor: context.appColors.primaryBackground,
-                    icon: Icon(
+                    icon: FaIcon(
                       FontAwesomeIcons.chevronDown,
                       color: context.appColors.secondaryTextColor,
                     ),

@@ -66,7 +66,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
                               width: 1.5.r,
                             ),
                           ),
-                          child: Icon(
+                          child: FaIcon(
                             FontAwesomeIcons.chevronLeft,
                             color: context.appColors.primaryTextColor,
                             size: 20.r,
@@ -119,7 +119,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              FaIcon(
                                 FontAwesomeIcons.list,
                                 size: 64.r,
                                 color: Colors.white.withAlpha(50),
@@ -220,7 +220,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
               Positioned(
                 right: -10.r,
                 bottom: -10.r,
-                child: Icon(icon, size: 70.r, color: context.appColors.glassBorder),
+                child: FaIcon(icon, size: 70.r, color: context.appColors.glassBorder),
               ),
               Padding(
                 padding: EdgeInsets.all(12.r),
@@ -228,7 +228,7 @@ class _ProviderAllServicesPageState extends State<ProviderAllServicesPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(icon, color: context.appColors.primaryColor, size: 24.r),
+                    FaIcon(icon, color: context.appColors.primaryColor, size: 24.r),
                     Text(
                       (service.name ?? "Service").toUpperCase(),
                       style: TextStyle(

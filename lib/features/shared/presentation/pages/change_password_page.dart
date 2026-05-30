@@ -73,7 +73,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                                   color: context.appColors.glassBorder,
                                 ),
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.chevronLeft,
                                 color: textColor,
                                 size: 18.r,

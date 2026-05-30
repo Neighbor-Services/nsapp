@@ -96,7 +96,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                                 color: context.appColors.primaryColor,
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.calendar,
                                 color: Colors.white,
                                 size: 18.r,
@@ -115,7 +115,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                           ],
                         ),
                         PopupMenuButton(
-                          icon: Icon(
+                          icon: FaIcon(
                             FontAwesomeIcons.ellipsis,
                             color: context.appColors.primaryTextColor,
                           ),
@@ -162,7 +162,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
                               value: 1,
                               child: Row(
                                 children: [
-                                  Icon(
+                                  FaIcon(
                                     FontAwesomeIcons.hardDrive,
                                     size: 18.r,
                                     color: popupIconColor,
@@ -240,7 +240,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String text, BuildContext context) {
+  Widget _buildInfoRow(FaIconData icon, String text, BuildContext context) {
     return Row(
       children: [
         Container(
@@ -249,7 +249,7 @@ class SenderAppointmentChatWidget extends StatelessWidget {
             color: context.appColors.primaryColor,
             borderRadius: BorderRadius.circular(8.r),
           ),
-          child: Icon(icon, color: Colors.white, size: 14.r),
+          child: FaIcon(icon, color: Colors.white, size: 14.r),
         ),
         SizedBox(width: 12.w),
         Expanded(

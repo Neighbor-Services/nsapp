@@ -23,7 +23,7 @@ class DialogUtils {
             ? context.appColors.warningColor
             : context.appColors.errorColor;
 
-        IconData alertIcon = (type == AlertType.success)
+        FaIconData alertIcon = (type == AlertType.success)
             ? FontAwesomeIcons.circleCheck
             : (type == AlertType.warning)
             ? FontAwesomeIcons.triangleExclamation
@@ -72,7 +72,7 @@ class DialogUtils {
                         width: 2,
                       ),
                     ),
-                    child: Icon(alertIcon, color: alertColor, size: 40),
+                    child: FaIcon(alertIcon, color: alertColor, size: 40),
                   ),
                   const SizedBox(height: 20),
                   Text(

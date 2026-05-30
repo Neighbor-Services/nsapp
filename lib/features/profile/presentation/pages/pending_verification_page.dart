@@ -51,7 +51,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(
+            icon: FaIcon(
               FontAwesomeIcons.arrowRightFromBracket,
               color: colors.primaryTextColor.withAlpha(200),
             ),
@@ -204,7 +204,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
               ),
             ],
           ),
-          child: Icon(
+          child: FaIcon(
             FontAwesomeIcons.shieldHalved,
             size: 48.r,
             color: colors.primaryColor,
@@ -255,7 +255,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
 
   Widget _buildStepNode({
     required String title,
-    required IconData icon,
+    required FaIconData icon,
     required bool isCompleted,
     required bool isActive,
     required AppColorsExtension colors,
@@ -294,7 +294,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
                   ]
                 : null,
           ),
-          child: Icon(
+          child: FaIcon(
             icon,
             size: 16.r,
             color: iconColor,
@@ -334,7 +334,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
         children: [
           Row(
             children: [
-              Icon(FontAwesomeIcons.circleInfo, color: colors.primaryColor, size: 20.r),
+              FaIcon(FontAwesomeIcons.circleInfo, color: colors.primaryColor, size: 20.r),
               SizedBox(width: 12.w),
               Text(
                 "How it works",
@@ -373,7 +373,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
   }
 
   Widget _buildInfoRow({
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     required String description,
     required AppColorsExtension colors,
@@ -383,7 +383,7 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 2.h),
-          child: Icon(icon, color: colors.secondaryTextColor.withAlpha(200), size: 16.r),
+          child: FaIcon(icon, color: colors.secondaryTextColor.withAlpha(200), size: 16.r),
         ),
         SizedBox(width: 14.w),
         Expanded(

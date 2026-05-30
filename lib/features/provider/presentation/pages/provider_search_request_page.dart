@@ -80,7 +80,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 color: context.appColors.glassBorder,
                               ),
                             ),
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.chevronLeft,
                               color: context.appColors.primaryTextColor,
                               size: 18.r,
@@ -313,7 +313,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                 child:
                                     (profile.profilePictureUrl == null ||
                                         profile.profilePictureUrl!.isEmpty)
-                                    ? Icon(
+                                    ? FaIcon(
                                         FontAwesomeIcons.user,
                                         size: 14.r,
                                         color: iconColor,
@@ -340,7 +340,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                                     ),
                                     Row(
                                       children: [
-                                        Icon(
+                                        FaIcon(
                                           FontAwesomeIcons.locationDot,
                                           size: 12.r,
                                           color: secondaryTextColor,
@@ -412,7 +412,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           value: 1,
                           child: Row(
                             children: [
-                              Icon(
+                              FaIcon(
                                 FontAwesomeIcons.eye,
                                 color: popupTextColor,
                                 size: 20.r,
@@ -434,7 +434,7 @@ class _ProviderSearchRequestPageState extends State<ProviderSearchRequestPage> {
                           value: 2,
                           child: Row(
                             children: [
-                              Icon(
+                              FaIcon(
                                 FontAwesomeIcons.comment,
                                 color: popupTextColor,
                                 size: 20.r,

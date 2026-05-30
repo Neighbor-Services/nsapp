@@ -128,7 +128,7 @@ class _AboutPageState extends State<AboutPage>
                                         color: context.appColors.glassBorder,
                                       ),
                                     ),
-                                    child: Icon(
+                                    child: FaIcon(
                                       FontAwesomeIcons.chevronLeft,
                                       color: context.appColors.primaryTextColor,
                                       size: 16.r,
@@ -159,7 +159,7 @@ class _AboutPageState extends State<AboutPage>
                                                 .withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(20.r),
                                           ),
-                                        child: Icon(
+                                        child: FaIcon(
                                           FontAwesomeIcons.images,
                                           size: 60.r,
                                           color: context.appColors.primaryColor,
@@ -234,7 +234,7 @@ class _AboutPageState extends State<AboutPage>
                                                       ) ??
                                                       0.0,
                                                   itemBuilder: (context, index) =>
-                                                      const Icon(
+                                                      const FaIcon(
                                                         FontAwesomeIcons.star,
                                                         color: Colors.amber,
                                                       ),
@@ -377,7 +377,7 @@ class _AboutPageState extends State<AboutPage>
                             letterSpacing: 1.0,
                           ),
                         ),
-                        icon: Icon(
+                        icon: FaIcon(
                           FontAwesomeIcons.penToSquare,
                           color: context.appColors.primaryColor,
                         ),
@@ -401,7 +401,7 @@ class _AboutPageState extends State<AboutPage>
 
   Widget _buildActionBtn({
     required String label,
-    required IconData icon,
+    required FaIconData icon,
     required Color color,
     required VoidCallback onTap,
     bool isBorder = false,
@@ -420,7 +420,7 @@ class _AboutPageState extends State<AboutPage>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            FaIcon(
               icon,
               color: isBorder ? context.appColors.primaryColor : Colors.white,
               size: 20.r,

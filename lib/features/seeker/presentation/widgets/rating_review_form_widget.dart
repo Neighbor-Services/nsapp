@@ -115,8 +115,8 @@ class _RatingReviewFormWidgetState extends State<RatingReviewFormWidget> {
                     size: 48.r,
                     color: context.appColors.secondaryColor,
                     borderColor: context.appColors.secondaryTextColor,
-                    emptyIcon: FontAwesomeIcons.star,
-                    filledIcon: FontAwesomeIcons.star,
+                    emptyIcon: Icons.star_border,
+                    filledIcon: Icons.star,
                     onRatingChanged: isLoading
                         ? null
                         : (rating) {

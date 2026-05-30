@@ -171,7 +171,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(
+                                  FaIcon(
                                     FontAwesomeIcons.images,
                                     color:
                                         context.appColors.primaryBackground,
@@ -246,7 +246,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
   }
 
   Widget _buildInfoSection({
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     required String content,
   }) {
@@ -264,7 +264,7 @@ class _PortfolioWidgetState extends State<PortfolioWidget> {
                   color: context.appColors.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(
+                child: FaIcon(
                   icon,
                   color: context.appColors.primaryColor,
                   size: 20.r,

@@ -44,7 +44,7 @@ class SubscribeDialogWidget extends StatelessWidget {
                     color: context.appColors.warningColor.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child:  Icon(
+                  child:  FaIcon(
                     FontAwesomeIcons.star,
                     size: 40.r,
                     color: context.appColors.warningColor,

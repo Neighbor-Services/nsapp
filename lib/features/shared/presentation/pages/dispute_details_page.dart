@@ -42,7 +42,7 @@ class DisputeDetailsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(color: context.appColors.glassBorder),
               ),
-              child: Icon(
+              child: FaIcon(
                 FontAwesomeIcons.chevronLeft,
                 color: textColor,
                 size: 18.r,
@@ -83,7 +83,7 @@ class DisputeDetailsPage extends StatelessWidget {
                                   ).withAlpha(50),
                                 ),
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.gavel,
                                 color: _getStatusColor(context, dispute.status),
                                 size: 32.r,
@@ -255,7 +255,7 @@ class DisputeDetailsPage extends StatelessWidget {
 
   Widget _buildInfoRow(
     BuildContext context,
-    IconData icon,
+    FaIconData icon,
     String label,
     String value,
     Color textColor,
@@ -269,7 +269,7 @@ class DisputeDetailsPage extends StatelessWidget {
             color: context.appColors.glassBorder,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: textColor, size: 16.r),
+          child: FaIcon(icon, color: textColor, size: 16.r),
         ),
         SizedBox(width: 14.w),
         Expanded(

@@ -166,7 +166,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        FaIcon(
                           FontAwesomeIcons.magnifyingGlass,
                           size: 60.r,
                           color: context.appColors.glassBorder,
@@ -216,7 +216,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(
+                                    FaIcon(
                                       isExpanded
                                           ? FontAwesomeIcons.chevronDown
                                           : FontAwesomeIcons.chevronRight,
@@ -334,7 +334,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                               borderRadius:
                                                   BorderRadius.circular(12.r),
                                             ),
-                                            child: Icon(
+                                            child: FaIcon(
                                               FontAwesomeIcons.briefcase,
                                               color: context.appColors.secondaryColor,
                                               size: 24.r,
@@ -377,7 +377,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                             ),
                                           ),
                                           if (isSelected)
-                                             Icon(
+                                             FaIcon(
                                               FontAwesomeIcons.circleCheck,
                                               color: context.appColors.secondaryColor,
                                               size: 24.r,
@@ -426,7 +426,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                       color: context.appColors.glassBorder,
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
-                                    child: Icon(
+                                    child: FaIcon(
                                       FontAwesomeIcons.circlePlus,
                                       color: context.appColors.primaryTextColor,
                                       size: 24.r,

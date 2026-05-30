@@ -63,7 +63,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: borderColor, width: 1.5.r),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 16.r,
@@ -199,7 +199,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                     SizedBox(height: 4.h),
                                                     Row(
                                                       children: [
-                                                        Icon(
+                                                      Icon(
                                                           Icons
                                                               .person_outline_rounded,
                                                           size: 14.r,
@@ -283,7 +283,7 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
                                                         10.r,
                                                       ),
                                                 ),
-                                                child: Icon(
+                                                child: FaIcon(
                                                   FontAwesomeIcons.calendar,
                                                   size: 16.r,
                                                   color: context

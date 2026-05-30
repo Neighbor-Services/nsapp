@@ -110,7 +110,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
                                       color: context.appColors.glassBorder,
                                     ),
                                   ),
-                                  child: Icon(
+                                  child: FaIcon(
                                     FontAwesomeIcons.chevronLeft,
                                     color: context.appColors.primaryTextColor,
                                     size: 18.r,

@@ -78,7 +78,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                             width: 1.5.r,
                           ),
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.chevronLeft,
                           color: textColor,
                           size: 20.r,
@@ -147,7 +147,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.magnifyingGlass,
                               size: 80.r,
                               color: secondaryTextColor.withAlpha(60),
@@ -289,7 +289,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                       ),
                       if (profile.isIdentityVerified == true) ...[
                         SizedBox(width: 4.w),
-                        Icon(
+                        FaIcon(
                           FontAwesomeIcons.circleCheck,
                           color: context.appColors.infoColor,
                           size: 16.r,
@@ -323,7 +323,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
                         ),
                       ),
                       SizedBox(width: 12.w),
-                      Icon(
+                      FaIcon(
                         FontAwesomeIcons.locationDot,
                         color: secondaryTextColor,
                         size: 16.r,
@@ -346,7 +346,7 @@ class _ProvidersByServicePageState extends State<ProvidersByServicePage> {
               ),
             ),
             // Arrow Icon
-            Icon(
+            FaIcon(
               FontAwesomeIcons.chevronRight,
               color: context.appColors.glassBorder,
               size: 18.r,

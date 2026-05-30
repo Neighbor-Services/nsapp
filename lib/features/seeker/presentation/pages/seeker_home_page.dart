@@ -211,7 +211,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   //         borderRadius: BorderRadius.circular(12),
   //         border: Border.all(color: Colors.white.withAlpha(30)),
   //       ),
-  //       child: Icon(icon, color: Colors.white, size: 20),
+  //       child: FaIcon(icon, color: Colors.white, size: 20),
   //     ),
   //   );
   // }
@@ -227,7 +227,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
         children: [
           Row(
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.wandMagicSparkles,
                 color: context.appColors.primaryColor,
                 size: 22.r,
@@ -443,7 +443,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                 ),
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 icon,
                                 color: context.appColors.primaryColor,
                                 size: 24.r,
@@ -524,7 +524,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                         color: context.appColors.primaryColor.withAlpha(40),
                         borderRadius: BorderRadius.circular(14.r),
                       ),
-                      child: Icon(
+                      child: FaIcon(
                         FontAwesomeIcons.clock,
                         color: context.appColors.primaryColor,
                         size: 24.r,
@@ -713,7 +713,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.locationDot,
                 color: context.appColors.primaryColor,
                 size: 12.r,
@@ -731,7 +731,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(width: 4.w),
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.chevronDown,
                 size: 10.r,
                 color: context.appColors.secondaryTextColor,
@@ -845,7 +845,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
   // }) {
   //   return Column(
   //     children: [
-  //       FaIcon(icon, color: iconColor, size: 20.r),
+  //       FaFaIcon(icon, color: iconColor, size: 20.r),
   //       SizedBox(height: 6.h),
   //       Text(
   //         value,

@@ -188,7 +188,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
               borderRadius: BorderRadius.circular(14.r),
               border: Border.all(color: borderColor),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: textColor,
               size: 20.r,
@@ -360,7 +360,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        FaIcon(
                           FontAwesomeIcons.cloudArrowUp,
                           color: context.appColors.secondaryTextColor,
                           size: 32.r,
@@ -413,7 +413,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
                                 color: Colors.black54,
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.xmark,
                                 color: Colors.white,
                                 size: 14.r,

@@ -107,7 +107,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                     width: 1.5.w,
                   ),
                 ),
-                child: Icon(
+                child: FaIcon(
                   FontAwesomeIcons.chevronLeft,
                   color: context.appColors.primaryTextColor,
                   size: 20.r,
@@ -132,7 +132,7 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
                           color: context.appColors.infoColor.withAlpha(50),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.motorcycle,
                           color: context.appColors.infoColor,
                           size: 24.r,

@@ -132,7 +132,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                             ),
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          child: Icon(
+                          child: FaIcon(
                             FontAwesomeIcons.rightLeft,
                             color: context.appColors.secondaryColor,
                             size: 24.r,
@@ -256,7 +256,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(
+                                        FaIcon(
                                           FontAwesomeIcons.briefcase,
                                           color:
                                               serviceType != null &&
@@ -287,7 +287,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                                             ),
                                           ),
                                         ),
-                                        Icon(
+                                        FaIcon(
                                           FontAwesomeIcons.chevronDown,
                                           color: subtitleColor,
                                         ),
@@ -423,7 +423,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     color: Colors.red.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     FontAwesomeIcons.shieldHalved,
                     color: Colors.redAccent,
                     size: 40.r,
@@ -544,7 +544,7 @@ class _ChangeUserTypeWidgetState extends State<ChangeUserTypeWidget> {
                     color: Colors.orange.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     FontAwesomeIcons.triangleExclamation,
                     color: Colors.orangeAccent,
                     size: 40.r,

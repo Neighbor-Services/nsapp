@@ -152,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage>
                                           width: 1.5.r,
                                         ),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.chevronLeft,
                                         color: context.appColors.primaryTextColor,
                                         size: 20.r,
@@ -171,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage>
                                           width: 1.5.r,
                                         ),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.penToSquare,
                                         color: context.appColors.primaryTextColor,
                                         size: 20.r,
@@ -214,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.circleExclamation,
                 size: 60.r,
                 color: context.appColors.errorColor,
@@ -316,7 +316,7 @@ class _ProfilePageState extends State<ProfilePage>
             ),
             if (profile.isIdentityVerified == true) ...[
               SizedBox(width: 8.w),
-               Icon(
+               FaIcon(
                 FontAwesomeIcons.circleCheck,
                 color: context.appColors.infoColor,
                 size: 26.r,
@@ -349,7 +349,7 @@ class _ProfilePageState extends State<ProfilePage>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              FaIcon(
                 isProvider
                     ? FontAwesomeIcons.briefcase
                     : FontAwesomeIcons.user,
@@ -496,7 +496,7 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  Widget _buildInfoRow(String label, String value, IconData icon) {
+  Widget _buildInfoRow(String label, String value, FaIconData icon) {
     final labelColor = context.appColors.secondaryTextColor;
     final valueColor = context.appColors.primaryTextColor;
  
@@ -520,7 +520,7 @@ class _ProfilePageState extends State<ProfilePage>
                 borderRadius: BorderRadius.circular(10.r),
                 border: Border.all(color: context.appColors.glassBorder),
               ),
-              child: Icon(icon, color: context.appColors.primaryColor, size: 25.r),
+              child: FaIcon(icon, color: context.appColors.primaryColor, size: 25.r),
             ),
             SizedBox(width: 14.w),
             Expanded(

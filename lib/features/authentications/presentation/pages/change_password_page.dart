@@ -110,7 +110,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                   color: context.appColors.glassBorder,
                                 ),
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.chevronLeft,
                                 color: isDark ? Colors.white : Colors.black,
                                 size: 18.r,
@@ -151,7 +151,7 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                                   width: 2.r,
                                 ),
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.asterisk,
                                 size: 50.r,
                                 color: context.appColors.primaryColor,

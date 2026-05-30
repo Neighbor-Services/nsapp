@@ -7,7 +7,6 @@ import 'package:nsapp/core/helpers/use_case.dart';
 import 'package:nsapp/core/models/appointment.dart';
 import 'package:nsapp/core/models/favorite.dart';
 import 'package:nsapp/core/models/profile.dart';
-import 'package:nsapp/core/models/user.dart';
 import 'package:nsapp/core/models/rate.dart';
 import 'package:nsapp/core/models/request.dart';
 import 'package:nsapp/core/models/request_accept.dart';
@@ -223,26 +222,25 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     });
 
     on<AddToFavoriteEvent>((event, emit) async {
-      // Optimistic Update: Add a temporary favorite object
-      final tempFavorite = Favorite(
-        id: "temp_${event.userId}",
-        favoriteUser: Profile(
-          id: event.userId,
-          user: User(id: event.userId),
-        ),
-      );
-      _myFavorites.add(tempFavorite);
-      emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+      // // Optimistic Update: Add a temporary favorite object
+      // final tempFavorite = Favorite(
+      //   id: "temp_${event.userId}",
+      //   favoriteUser: Profile(
+      //     id: event.userId,
+      //     user: User(id: event.userId),
+      //   ),
+      // );
+      // _myFavorites.add(tempFavorite);
+      // emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
 
       final results = await addToFavoriteUseCase(event.userId);
       results.fold(
         (l) {
-          // Rollback on failure
-          _myFavorites.removeWhere((f) => f.id == "temp_${event.userId}");
-          emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+          add(GetMyFavoritesEvent());
           emit(FailureAddToFavoriteState(message: l.message));
         },
         (r) {
+          add(GetMyFavoritesEvent());
           // Emit success — widget listeners will trigger a single
           // GetMyFavoritesEvent to sync the temp favourite with the
           // real server record.
@@ -252,26 +250,28 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
     }, transformer: sequential());
 
     on<RemoveFromFavoriteEvent>((event, emit) async {
-      // Optimistic Update: Remove from local list
-      final removedIndex = _myFavorites.indexWhere((f) => f.id == event.userId);
-      Favorite? removedFavorite;
-      if (removedIndex != -1) {
-        removedFavorite = _myFavorites.removeAt(removedIndex);
-      }
-      emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+      // // Optimistic Update: Remove from local list
+      // final removedIndex = _myFavorites.indexWhere((f) => f.id == event.userId);
+      // Favorite? removedFavorite;
+      // if (removedIndex != -1) {
+      //   removedFavorite = _myFavorites.removeAt(removedIndex);
+      // }
+      // emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
 
       final results = await removeFromFavoriteUseCase(event.userId);
       results.fold(
         (l) {
-          // Rollback on failure
-          if (removedFavorite != null) {
-            _myFavorites.add(removedFavorite);
-            emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
-          }
+          // // Rollback on failure
+          // if (removedFavorite != null) {
+          //   _myFavorites.add(removedFavorite);
+          //   emit(SuccessGetMyFavoritesState(profiles: List.from(_myFavorites)));
+          // }
+          add(GetMyFavoritesEvent());
           emit(FailureRemoveFromFavoriteState(message: l.message));
         },
         (r) {
           // Success
+          add(GetMyFavoritesEvent());
           emit(SuccessRemoveFromFavoriteState());
         },
       );
@@ -287,11 +287,11 @@ class SeekerBloc extends HydratedBloc<SeekerEvent, SeekerState> {
         },
         (r) {
           debugPrint("SeekerBloc: Successfully fetched ${r.length} favorites");
-          _myFavorites = r;
+          // _myFavorites = r;
           emit(SuccessGetMyFavoritesState(profiles: r));
         },
       );
-    }, transformer: restartable());
+    });
 
     // SeekerBackPressedEvent removed
 

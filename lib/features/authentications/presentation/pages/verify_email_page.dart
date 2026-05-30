@@ -107,7 +107,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                       width: 2.r,
                                     ),
                                   ),
-                                  child: Icon(
+                                  child: FaIcon(
                                     FontAwesomeIcons.userShield,
                                     size: 50.r,
                                     color: context.appColors.primaryColor,

@@ -318,7 +318,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            FaIcon(
               FontAwesomeIcons.comment,
               size: 64.r,
               color: iconColor,
@@ -545,9 +545,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildListTile({required IconData icon, required String title, required VoidCallback onTap, required Color color}) {
+  Widget _buildListTile({required FaIconData icon, required String title, required VoidCallback onTap, required Color color}) {
     return ListTile(
-      leading: Icon(icon, color: color, size: 20.r),
+      leading: FaIcon(icon, color: color, size: 20.r),
       title: Text(title, style: TextStyle(color: color, fontSize: 16.sp, fontWeight: FontWeight.w400)),
       onTap: onTap,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
@@ -744,7 +744,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   Widget _buildOptionButton(
-    IconData icon,
+    FaIconData icon,
     String label,
     VoidCallback onTap,
     bool isDark,
@@ -759,7 +759,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           Container(
             padding: EdgeInsets.all(16.r),
             decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-            child: Icon(icon, color: iconColor, size: 30.r),
+            child: FaIcon(icon, color: iconColor, size: 30.r),
           ),
           SizedBox(height: 8.h),
           Text(
@@ -871,7 +871,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   Widget _buildPickerRow(
-    IconData icon,
+    FaIconData icon,
     String label,
     String value,
     VoidCallback onTap,
@@ -889,7 +889,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         ),
         child: Row(
           children: [
-            Icon(icon, color: context.appColors.secondaryColor, size: 24.r),
+            FaIcon(icon, color: context.appColors.secondaryColor, size: 24.r),
             SizedBox(width: 16.w),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

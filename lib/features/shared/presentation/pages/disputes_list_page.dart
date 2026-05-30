@@ -62,7 +62,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                                       color: context.appColors.glassBorder,
                                     ),
                                   ),
-                                  child: Icon(
+                                  child: FaIcon(
                                     FontAwesomeIcons.chevronLeft,
                                     color: textColor,
                                     size: 18.r,
@@ -175,7 +175,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                     color: context.appColors.warningColor.withAlpha(50),
                   ),
                 ),
-                child: Icon(
+                child: FaIcon(
                   FontAwesomeIcons.gavel,
                   color: context.appColors.warningColor,
                   size: 40.r,
@@ -282,7 +282,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                             ],
                           ),
                         ),
-                        Icon(
+                        FaIcon(
                           FontAwesomeIcons.chevronRight,
                           color: secondaryTextColor,
                           size: 14.r,
@@ -313,7 +313,7 @@ class _DisputesListPageState extends State<DisputesListPage> {
                     SizedBox(height: 16.h),
                     Row(
                       children: [
-                        Icon(
+                        FaIcon(
                           FontAwesomeIcons.clock,
                           color: secondaryTextColor,
                           size: 14.r,

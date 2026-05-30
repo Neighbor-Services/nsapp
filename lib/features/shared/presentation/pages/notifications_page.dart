@@ -213,7 +213,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                                                     .glassBorder,
                                               ),
                                             ),
-                                            child: Icon(
+                                            child: FaIcon(
                                               FontAwesomeIcons.chevronLeft,
                                               color: context
                                                   .appColors
@@ -305,7 +305,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 color: context.appColors.glassBorder,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: FaIcon(
                 FontAwesomeIcons.bellSlash,
                 size: 50.r,
                 color: context.appColors.glassBorder,
@@ -384,12 +384,14 @@ class _NotificationsPageState extends State<NotificationsPage>
                       ).withAlpha(40),
                       borderRadius: BorderRadius.circular(16.r),
                     ),
-                    child: Icon(
-                      _getNotificationIcon(notification.notificationType),
-                      color: _getNotificationColor(
-                        notification.notificationType,
+                    child: Center(
+                      child: FaIcon(
+                        _getNotificationFaIcon(notification.notificationType),
+                        color: _getNotificationColor(
+                          notification.notificationType,
+                        ),
+                        size: 26.r,
                       ),
-                      size: 26.r,
                     ),
                   ),
                   SizedBox(width: 16.w),
@@ -436,7 +438,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                         SizedBox(height: 10.h),
                         Row(
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.clock,
                               size: 12.r,
                               color: context.appColors.hintTextColor,
@@ -466,7 +468,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
   }
 
-  IconData _getNotificationIcon(String? notificationType) {
+  FaIconData _getNotificationFaIcon(String? notificationType) {
     switch (notificationType?.toLowerCase()) {
       case "message":
         return FontAwesomeIcons.comment;
@@ -542,14 +544,16 @@ class _NotificationsPageState extends State<NotificationsPage>
                 ).withAlpha(40),
                 borderRadius: BorderRadius.circular(24.r),
               ),
-              child: Icon(
-                _getNotificationIcon(
-                  notificationData.notification!.notificationType,
+              child: Center(
+                child: FaIcon(
+                  _getNotificationFaIcon(
+                    notificationData.notification!.notificationType,
+                  ),
+                  color: _getNotificationColor(
+                    notificationData.notification!.notificationType,
+                  ),
+                  size: 38.r,
                 ),
-                color: _getNotificationColor(
-                  notificationData.notification!.notificationType,
-                ),
-                size: 38.r,
               ),
             ),
             SizedBox(height: 24.h),

@@ -1,6 +1,7 @@
 // ignore_for_file: unused_field
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nsapp/core/core.dart';
 
 class SolidButton extends StatefulWidget {
@@ -9,7 +10,7 @@ class SolidButton extends StatefulWidget {
   final bool isLoading;
   final double? width;
   final double height;
-  final IconData? icon;
+  final FaIconData? icon;
   final String? imagePath;
   final bool isPrimary;
   final List<Color>? gradientColors;
@@ -127,7 +128,7 @@ class _SolidButtonState extends State<SolidButton>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (widget.icon != null) ...[
-                        Icon(widget.icon, color: textColor, size: 20.r),
+                        FaIcon(widget.icon, color: textColor, size: 20.r),
                         SizedBox(width: 10.w),
                       ] else if (widget.imagePath != null) ...[
                         Image.asset(widget.imagePath!, width: 20.r, height: 20.r),

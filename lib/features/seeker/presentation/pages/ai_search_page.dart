@@ -65,7 +65,7 @@ class _AISearchPageState extends State<AISearchPage> {
                 width: 1.5.r,
               ),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 16.r,
@@ -90,7 +90,7 @@ class _AISearchPageState extends State<AISearchPage> {
                       SizedBox(height: 35.h),
                       Row(
                         children: [
-                           Icon(
+                           FaIcon(
                             FontAwesomeIcons.wandMagicSparkles,
                             color: context.appColors.secondaryColor,
                             size: 24.r,
@@ -143,7 +143,7 @@ class _AISearchPageState extends State<AISearchPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                FaIcon(
                                   FontAwesomeIcons.magnifyingGlass,
                                   size: 64.r,
                                   color: Colors.white.withAlpha(60),
@@ -188,7 +188,7 @@ class _AISearchPageState extends State<AISearchPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              FaIcon(
                                 FontAwesomeIcons.circleExclamation,
                                 color: context.appColors.errorColor,
                                 size: 48.r,
@@ -214,7 +214,7 @@ class _AISearchPageState extends State<AISearchPage> {
                               builder: (context, value, child) {
                                 return Transform.scale(
                                   scale: value,
-                                  child: Icon(
+                                  child: FaIcon(
                                     FontAwesomeIcons.wandMagicSparkles,
                                     size: 80.r,
                                     color: context.appColors.secondaryColor.withAlpha(100),

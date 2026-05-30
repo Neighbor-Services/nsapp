@@ -106,7 +106,7 @@ class _ProviderActiveTasksPageState
                                           width: 1.5.r,
                                         ),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.chevronLeft,
                                         color: context.appColors.primaryTextColor,
                                         size: 18.r,
@@ -190,7 +190,7 @@ class _ProviderActiveTasksPageState
                                                     color: context.appColors.cardBackground,
                                                     shape: BoxShape.circle,
                                                   ),
-                                                  child: Icon(
+                                                  child: FaIcon(
                                                     FontAwesomeIcons.briefcase,
                                                     size: 64.r,
                                                     color: context.appColors.glassBorder,
@@ -336,7 +336,7 @@ class _ProviderActiveTasksPageState
                                 width: double.infinity,
                                 height: 140.h,
                                 color: context.appColors.primaryColor.withAlpha(50),
-                                child: Icon(
+                                child: FaIcon(
                                   FontAwesomeIcons.image,
                                   color: context.appColors.primaryColor,
                                 ),
@@ -346,7 +346,7 @@ class _ProviderActiveTasksPageState
                           width: double.infinity,
                           height: 140.h,
                           color: context.appColors.primaryColor.withAlpha(50),
-                          child: Icon(
+                          child: FaIcon(
                             FontAwesomeIcons.fileLines,
                             color: context.appColors.primaryColor,
                             size: 40.r,
@@ -368,8 +368,8 @@ class _ProviderActiveTasksPageState
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          _getStatusIcon(isApproved, isAssignedToMe, status),
+                        FaIcon(
+                          _getStatusFaIcon(isApproved, isAssignedToMe, status),
                           size: 14.r,
                           color: context.appColors.primaryColor,
                         ),
@@ -404,7 +404,7 @@ class _ProviderActiveTasksPageState
                           color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.ellipsis,
                           color: context.appColors.primaryTextColor,
                           size: 20.r,
@@ -458,7 +458,7 @@ class _ProviderActiveTasksPageState
                       ],
                     ),
                   ),
-                  Icon(
+                  FaIcon(
                     FontAwesomeIcons.chevronRight,
                     color: context.appColors.secondaryTextColor,
                   ),
@@ -473,7 +473,7 @@ class _ProviderActiveTasksPageState
   }
 
 
-  IconData _getStatusIcon(bool isApproved, bool isAssignedToMe, String status) {
+  FaIconData _getStatusFaIcon(bool isApproved, bool isAssignedToMe, String status) {
     if (isAssignedToMe && isApproved) {
       if (status == 'DONE') return FontAwesomeIcons.circleCheck;
       if (status == 'IN_PROGRESS') return FontAwesomeIcons.clock;
@@ -575,7 +575,7 @@ class _ProviderActiveTasksPageState
 
   PopupMenuItem<int> _buildMenuItem(
     int value,
-    IconData icon,
+    FaIconData icon,
     String text,
     Color color,
   ) {
@@ -583,7 +583,7 @@ class _ProviderActiveTasksPageState
       value: value,
       child: Row(
         children: [
-          Icon(icon, color: color, size: 20.r),
+          FaIcon(icon, color: color, size: 20.r),
           SizedBox(width: 12.w),
           Text(
             text.toUpperCase(),

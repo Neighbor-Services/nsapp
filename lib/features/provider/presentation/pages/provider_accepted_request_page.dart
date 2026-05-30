@@ -121,7 +121,7 @@ class _ProviderAcceptedRequestPageState
                                           width: 1.5.r,
                                         ),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.chevronLeft,
                                         color: context.appColors.primaryTextColor,
                                         size: 20.r,
@@ -188,7 +188,7 @@ class _ProviderAcceptedRequestPageState
                                                 color: context.appColors.cardBackground,
                                                 shape: BoxShape.circle,
                                               ),
-                                              child: Icon(
+                                              child: FaIcon(
                                                 FontAwesomeIcons.clockRotateLeft,
                                                 size: 64.r,
                                                 color: context.appColors.glassBorder,
@@ -338,7 +338,7 @@ class _ProviderAcceptedRequestPageState
                                 width: double.infinity,
                                 height: 140.h,
                                 color: context.appColors.primaryColor.withAlpha(50),
-                                child: Icon(
+                                child: FaIcon(
                                   FontAwesomeIcons.image,
                                   color: context.appColors.primaryColor,
                                 ),
@@ -348,7 +348,7 @@ class _ProviderAcceptedRequestPageState
                           width: double.infinity,
                           height: 140.h,
                           color: context.appColors.primaryColor.withAlpha(50),
-                          child: Icon(
+                          child: FaIcon(
                             FontAwesomeIcons.fileLines,
                             color: context.appColors.primaryColor,
                             size: 40.r,
@@ -370,9 +370,10 @@ class _ProviderAcceptedRequestPageState
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          _getStatusIcon(isApproved, isAssignedToMe, status),
-                          size: 14.r,
+                        SizedBox(width: 15,),
+                        FaIcon(
+                          _getStatusFaIcon(isApproved, isAssignedToMe, status),
+                          size: 10.r,
                           color: context.appColors.primaryColor,
                         ),
                         SizedBox(width: 8.w),
@@ -406,7 +407,7 @@ class _ProviderAcceptedRequestPageState
                           color: context.appColors.cardBackground,
                           borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.ellipsis,
                           color: context.appColors.primaryTextColor,
                           size: 20.r,
@@ -460,7 +461,7 @@ class _ProviderAcceptedRequestPageState
                       ],
                     ),
                   ),
-                  Icon(
+                  FaIcon(
                     FontAwesomeIcons.chevronRight,
                     color: context.appColors.secondaryTextColor,
                   ),
@@ -475,7 +476,7 @@ class _ProviderAcceptedRequestPageState
   }
 
 
-  IconData _getStatusIcon(bool isApproved, bool isAssignedToMe, String status) {
+  FaIconData _getStatusFaIcon(bool isApproved, bool isAssignedToMe, String status) {
     if (isAssignedToMe && isApproved) {
       if (status == 'DONE') return FontAwesomeIcons.circleCheck;
       if (status == 'IN_PROGRESS') return FontAwesomeIcons.clock;
@@ -650,7 +651,7 @@ class _ProviderAcceptedRequestPageState
 
   PopupMenuItem<int> _buildMenuItem(
     int value,
-    IconData icon,
+    FaIconData icon,
     String text,
     Color color,
   ) {
@@ -658,7 +659,7 @@ class _ProviderAcceptedRequestPageState
       value: value,
       child: Row(
         children: [
-          Icon(icon, color: color, size: 20.r),
+          FaIcon(icon, color: color, size: 20.r),
           SizedBox(width: 12.w),
           Text(
             text.toUpperCase(),

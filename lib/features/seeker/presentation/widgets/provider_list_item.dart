@@ -104,7 +104,7 @@ class ProviderListItem extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Icon(
+                              FaIcon(
                                 FontAwesomeIcons.locationDot,
                                 size: 14.r,
                                 color: appGreyColor,

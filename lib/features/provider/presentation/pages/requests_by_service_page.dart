@@ -82,7 +82,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                             width: 1.5.r,
                           ),
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.chevronLeft,
                           color: backBtnIconColor,
                           size: 20.r,
@@ -142,7 +142,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.magnifyingGlass,
                               size: 80.r,
                               color: secondaryTextColor.withAlpha(60),
@@ -303,7 +303,7 @@ class _RequestsByServicePageState extends State<RequestsByServicePage> {
               SizedBox(height: 8.h),
               Row(
                 children: [
-                  Icon(
+                  FaIcon(
                     FontAwesomeIcons.users,
                     color: context.appColors.infoColor.withAlpha(200),
                     size: 16.r,

@@ -237,7 +237,7 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
             });
             _currentMessages = merged;
           }
-          final roomId = Helpers.createChatRoom(sender: _currentSenderId!, receiver: event.receiver);
+          final roomId = Helpers.createChatRoom(sender: _currentSenderId, receiver: event.receiver);
           _saveMessagesToHive(roomId, _currentMessages);
           emit(SuccessGetMessageState(messages: List.from(_currentMessages)));
         },

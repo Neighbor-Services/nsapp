@@ -121,7 +121,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
 
   Widget _buildNavIcon({
     required BuildContext context,
-    required IconData icon,
+    required FaIconData icon,
     required String label,
     required bool isActive,
     required VoidCallback onTap,
@@ -144,7 +144,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              FaIcon(
                 icon,
                 size: 26.r,
                 color: isActive ? context.appColors.primaryColor : inactiveColor,
@@ -194,7 +194,7 @@ class ProviderButtonNavigationBarWidget extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: Icon(
+          child: FaIcon(
             FontAwesomeIcons.briefcase,
             size: 26.r,
             color: isDark ? Colors.white : primary,

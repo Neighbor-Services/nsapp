@@ -151,7 +151,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                                       color: context.appColors.secondaryColor.withAlpha(60),
                                     ),
                                   ),
-                                  child:  Icon(
+                                  child:  FaIcon(
                                     FontAwesomeIcons.comment,
                                     color: context.appColors.secondaryColor,
                                     size: 22.r,
@@ -222,7 +222,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                FaIcon(
                   FontAwesomeIcons.comment,
                   size: 64.r,
                   color: context.appColors.secondaryColor.withAlpha(150),
@@ -377,7 +377,7 @@ class _MyMessagesPageState extends State<MyMessagesPage>
                   ),
                 )
               else
-                Icon(
+                FaIcon(
                   FontAwesomeIcons.chevronRight,
                   color: context.appColors.glassBorder,
                   size: 24.r,

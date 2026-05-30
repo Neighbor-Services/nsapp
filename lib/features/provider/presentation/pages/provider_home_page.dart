@@ -275,7 +275,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                                       ),
                                     ),
                                     SizedBox(width: 8.w),
-                                    Icon(
+                                    FaIcon(
                                       FontAwesomeIcons.chevronRight,
                                       size: 10.r,
                                       color: context.appColors.primaryColor,
@@ -408,7 +408,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.locationDot,
                 color: context.appColors.primaryColor,
                 size: 12.r,
@@ -426,7 +426,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(width: 4.w),
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.chevronDown,
                 size: 10.r,
                 color: context.appColors.secondaryTextColor,
@@ -533,7 +533,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   }
 
   Widget _buildGamificationItem({
-    required IconData icon,
+    required FaIconData icon,
     required Color iconColor,
     required String label,
     required String value,
@@ -566,7 +566,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
   Widget _buildDashboardStat(
     String label,
     String value,
-    IconData icon,
+    FaIconData icon,
     Color iconColor,
   ) {
     return Expanded(
@@ -585,7 +585,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(
+              child: FaIcon(
                 icon,
                 color: context.appColors.primaryColor,
                 size: 20.r,
@@ -665,7 +665,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 color: context.appColors.secondaryColor.withAlpha(40),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: FaIcon(
                 FontAwesomeIcons.arrowRight,
                 color: context.appColors.secondaryColor,
                 size: 20.r,
@@ -738,10 +738,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(16.r),
               ),
-              child: Icon(
-                FontAwesomeIcons.handshake,
-                color: context.appColors.primaryColor,
-                size: 26.r,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.handshake,
+                  color: context.appColors.primaryColor,
+                  size: 26.r,
+                ),
               ),
             ),
             SizedBox(width: 20.w),
@@ -807,10 +809,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(16.r),
               ),
-              child: Icon(
-                FontAwesomeIcons.locationCrosshairs,
-                color: context.appColors.primaryColor,
-                size: 26.r,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.locationCrosshairs,
+                  color: context.appColors.primaryColor,
+                  size: 26.r,
+                ),
               ),
             ),
             SizedBox(width: 20.w),
@@ -869,10 +873,12 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 color: context.appColors.primaryColor.withAlpha(40),
                 borderRadius: BorderRadius.circular(16.r),
               ),
-              child: Icon(
-                FontAwesomeIcons.wallet,
-                color: context.appColors.primaryColor,
-                size: 26.r,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.wallet,
+                  color: context.appColors.primaryColor,
+                  size: 26.r,
+                ),
               ),
             ),
             SizedBox(width: 20.w),

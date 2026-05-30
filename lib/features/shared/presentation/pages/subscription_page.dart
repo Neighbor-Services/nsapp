@@ -140,7 +140,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                                       borderRadius: BorderRadius.circular(14.r),
                                       border: Border.all(color: borderColor),
                                     ),
-                                    child: Icon(
+                                    child: FaIcon(
                                       FontAwesomeIcons.chevronLeft,
                                       color: textColor,
                                       size: 20.r,
@@ -233,7 +233,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           padding: EdgeInsets.all(32.r),
           child: Column(
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.sliders,
                 size: 40.r,
                 color: context.appColors.primaryColor,
@@ -309,7 +309,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
       return Column(
         children: [
-          Icon(
+          FaIcon(
             FontAwesomeIcons.crown,
             size: 60.r,
             color: secondaryTextColor.withAlpha(220),
@@ -469,7 +469,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   Widget _buildEmptyPlans(Color textColor, Color secondaryTextColor) {
     return Column(
       children: [
-        Icon(FontAwesomeIcons.faceFrown, size: 48.r, color: secondaryTextColor),
+        FaIcon(FontAwesomeIcons.faceFrown, size: 48.r, color: secondaryTextColor),
         SizedBox(height: 16.h),
         Text(
           "No plans found for this interval",
@@ -491,7 +491,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
     Color primaryColor;
     List<Color> gradientColors;
-    IconData tierIcon;
+    FaIconData tierIcon;
 
     switch (plan.tier) {
       case 'PLATINUM':
@@ -558,7 +558,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 color: context.appColors.primaryColor.withAlpha(20),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: FaIcon(
                 tierIcon,
                 color: context.appColors.primaryColor,
                 size: 32.r,
@@ -664,7 +664,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
   Widget _buildBenefitItem(
     String text,
-    IconData icon,
+    FaIconData icon,
     bool isHighlighted,
     Color textColor,
     Color secondaryTextColor,
@@ -673,7 +673,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       padding: EdgeInsets.only(bottom: 10.h),
       child: Row(
         children: [
-          Icon(icon, size: 16.r, color: secondaryTextColor),
+          FaIcon(icon, size: 16.r, color: secondaryTextColor),
           SizedBox(width: 8.w),
           Text(
             text.toUpperCase(),
@@ -698,7 +698,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       padding: EdgeInsets.only(bottom: 10.h),
       child: Row(
         children: [
-          Icon(
+          FaIcon(
             FontAwesomeIcons.circleCheck,
             size: 16.r,
             color: isHighlighted ? Colors.white70 : secondaryTextColor,

@@ -382,7 +382,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           ),
                           child: Row(
                             children: [
-                              Icon(
+                              FaIcon(
                                 FontAwesomeIcons.circleCheck,
                                 color: context.appColors.successColor,
                                 size: 20.r,
@@ -419,7 +419,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       borderRadius: BorderRadius.circular(14.r),
                       border: Border.all(color: context.appColors.glassBorder),
                     ),
-                    child: Icon(
+                    child: FaIcon(
                       FontAwesomeIcons.calendar,
                       color: context.appColors.primaryColor,
                       size: 24.r,
@@ -540,7 +540,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               customAlert(context, AlertType.error, "You are not authorized to view this request");
                             }
                           },
-                          icon: Icon(
+                          icon: FaIcon(
                             FontAwesomeIcons.arrowUpRightFromSquare,
                             size: 18.r,
                             color: context.appColors.primaryColor,
@@ -652,7 +652,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
     );
   }
 
-  Widget _buildDetailRow(IconData icon, String label, String value) {
+  Widget _buildDetailRow(FaIconData icon, String label, String value) {
     final iconBg = context.appColors.glassBorder;
     final iconColor = context.appColors.secondaryTextColor;
     final labelColor = context.appColors.glassBorder;
@@ -670,7 +670,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               color: iconBg,
               borderRadius: BorderRadius.circular(10.r),
             ),
-            child: Icon(icon, color: iconColor, size: 18.r),
+            child: FaIcon(icon, color: iconColor, size: 18.r),
           ),
           SizedBox(width: 12.w),
           Expanded(

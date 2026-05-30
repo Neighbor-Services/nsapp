@@ -81,7 +81,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: context.appColors.glassBorder),
               ),
-              child: Icon(
+              child: FaIcon(
                 FontAwesomeIcons.chevronLeft,
                 color: textColor,
                 size: 18,
@@ -127,7 +127,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                                   color: context.appColors.warningColor.withAlpha(50),
                                 ),
                               ),
-                              child:  Icon(
+                              child:  FaIcon(
                                 FontAwesomeIcons.gavel,
                                 color: context.appColors.warningColor,
                                 size: 28,
@@ -219,7 +219,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                         padding: EdgeInsets.all(16),
                         child: Row(
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.circleInfo,
                               color: context.appColors.infoColor.withAlpha(200),
                               size: 24,

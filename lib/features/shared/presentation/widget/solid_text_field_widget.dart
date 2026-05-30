@@ -10,7 +10,7 @@ class SolidTextField extends StatefulWidget {
   final bool obscureText;
   final bool isMultiLine;
   final String? Function(String?)? validator;
-  final IconData? prefixIcon;
+  final FaIconData? prefixIcon;
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final ValueChanged<String>? onChanged;
@@ -129,15 +129,21 @@ class _SolidTextFieldState extends State<SolidTextField>
               hintText: widget.hintText,
               hintStyle: TextStyle(color: hintColor, fontSize: 14.sp),
               prefixIcon: widget.prefixIcon != null
-                  ? Icon(
-                      widget.prefixIcon,
-                      color: iconColor,
-                      size: 20.r,
-                    )
+                  ? SizedBox(
+                    width: 30,
+                    height: 40,
+                    child: Center(
+                      child: FaIcon(
+                          widget.prefixIcon,
+                          color: iconColor,
+                          size: 20.r,
+                        ),
+                    ),
+                  )
                   : null,
               suffixIcon: widget.obscureText
                   ? IconButton(
-                      icon: Icon(
+                      icon: FaIcon(
                         _obscureText
                             ? FontAwesomeIcons.eyeSlash
                             : FontAwesomeIcons.eye,

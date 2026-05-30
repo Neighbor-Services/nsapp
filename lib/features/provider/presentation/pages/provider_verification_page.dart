@@ -55,7 +55,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                 width: 1.5.r,
               ),
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.chevronLeft,
               color: context.appColors.primaryTextColor,
               size: 18.r,
@@ -165,7 +165,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      FaIcon(
                         FontAwesomeIcons.camera,
                         color: context.appColors.primaryTextColor,
                         size: 40.r,

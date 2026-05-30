@@ -241,7 +241,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                             ),
                                             child: Row(
                                               children: [
-                                                Icon(
+                                                FaIcon(
                                                   FontAwesomeIcons.circleExclamation,
                                                   color: context.appColors.errorColor,
                                                   size: 20.r,

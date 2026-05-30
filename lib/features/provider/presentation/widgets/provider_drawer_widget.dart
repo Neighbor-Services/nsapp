@@ -264,7 +264,7 @@ class ProviderDrawerWidget extends StatelessWidget {
             child:  Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                FaIcon(
                   FontAwesomeIcons.helmetSafety,
                   size: 12.r,
                   color: context.appColors.primaryColor,
@@ -289,7 +289,7 @@ class ProviderDrawerWidget extends StatelessWidget {
 
   Widget _buildDrawerItem(
     BuildContext context, {
-    required IconData icon,
+    required FaIconData icon,
     required String title,
     required VoidCallback onTap,
     bool isSelected = false,
@@ -318,7 +318,7 @@ class ProviderDrawerWidget extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(
+                FaIcon(
                   icon,
                   color: isSelected
                       ? context.appColors.primaryColor
@@ -344,7 +344,7 @@ class ProviderDrawerWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(BuildContext context, IconData icon, VoidCallback onTap, bool isDark) {
+  Widget _buildIconButton(BuildContext context, FaIconData icon, VoidCallback onTap, bool isDark) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -356,7 +356,7 @@ class ProviderDrawerWidget extends StatelessWidget {
             color: context.appColors.primaryColor,
           ),
         ),
-        child: Icon(
+        child: FaIcon(
           icon,
           color: context.appColors.primaryColor,
           size: 20.r,
@@ -396,7 +396,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                           color: context.appColors.errorColor.withAlpha(30),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.rightFromBracket,
                           size: 32.r,
                           color: context.appColors.errorColor,

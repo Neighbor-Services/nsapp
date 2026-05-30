@@ -23,7 +23,7 @@ class _AuditLogPageState extends State<AuditLogPage> {
     context.read<ProfileBloc>().add(GetAuditLogsEvent());
   }
 
-  IconData _getIcon(String? action) {
+  FaIconData _getFaIcon(String? action) {
     if (action == null) return FontAwesomeIcons.circleQuestion;
     switch (action) {
       case 'LOGIN':
@@ -106,7 +106,7 @@ class _AuditLogPageState extends State<AuditLogPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(FontAwesomeIcons.circleExclamation, size: 40, color: Colors.grey),
+                  const FaIcon(FontAwesomeIcons.circleExclamation, size: 40, color: Colors.grey),
                   SizedBox(height: 16.h),
                   CustomTextWidget(text: state.message),
                   TextButton(
@@ -123,7 +123,7 @@ class _AuditLogPageState extends State<AuditLogPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(FontAwesomeIcons.clockRotateLeft, size: 64, color: Colors.grey.withOpacity(0.5)),
+                  FaIcon(FontAwesomeIcons.clockRotateLeft, size: 64, color: Colors.grey.withOpacity(0.5)),
                   SizedBox(height: 16.h),
                   const CustomTextWidget(text: "No activity history found.", color: Colors.grey),
                 ],
@@ -160,8 +160,8 @@ class _AuditLogPageState extends State<AuditLogPage> {
                               color: color.withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
-                              _getIcon(log.action),
+                            child: FaIcon(
+                              _getFaIcon(log.action),
                               color: color,
                               size: 18.r,
                             ),
@@ -187,7 +187,7 @@ class _AuditLogPageState extends State<AuditLogPage> {
                               ],
                             ),
                           ),
-                          Icon(
+                          FaIcon(
                             FontAwesomeIcons.chevronRight,
                             color: context.appColors.secondaryTextColor.withOpacity(0.3),
                             size: 14.r,
@@ -242,7 +242,7 @@ class _AuditLogPageState extends State<AuditLogPage> {
                       color: _getColor(log.action).withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(_getIcon(log.action), color: _getColor(log.action), size: 24.r),
+                    child: FaIcon(_getFaIcon(log.action), color: _getColor(log.action), size: 24.r),
                   ),
                   SizedBox(width: 16.w),
                   Expanded(

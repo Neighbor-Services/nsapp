@@ -89,7 +89,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                                 ).dividerColor.withAlpha(60),
                               ),
                             ),
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.chevronLeft,
                               color: textColor,
                               size: 20.r,
@@ -151,7 +151,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            FaIcon(
               FontAwesomeIcons.circleExclamation,
               size: 56.r,
               color: subtitleColor,
@@ -198,7 +198,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            FaIcon(
               FontAwesomeIcons.circleInfo,
               size: 56.r,
               color: subtitleColor,
@@ -242,7 +242,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    FaIcon(
                       _docType == 'TERMS'
                           ? FontAwesomeIcons.gavel
                           : FontAwesomeIcons.shieldHalved,

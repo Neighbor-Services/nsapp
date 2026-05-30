@@ -112,7 +112,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                   width: 1.r,
                                 ),
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.chevronLeft,
                                 color: isDark ? Colors.white : Colors.black,
                                 size: 18.r,
@@ -143,7 +143,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                   width: 2.r,
                                 ),
                               ),
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.key,
                                 size: 50.r,
                                 color: context.appColors.primaryColor,

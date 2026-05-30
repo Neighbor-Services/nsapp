@@ -57,7 +57,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          FaIcon(
                             FontAwesomeIcons.map,
                             size: 60.r,
                             color: context.appColors.glassBorder,
@@ -125,7 +125,7 @@ class _SearchLocationMapWidgetState extends State<SearchLocationMapWidget> {
                                       color: context.appColors.primaryColor.withAlpha(40),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: Icon(
+                                    child: FaIcon(
                                       FontAwesomeIcons.locationDot,
                                       color: context.appColors.primaryColor,
                                       size: 20.r,

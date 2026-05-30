@@ -112,7 +112,7 @@ class SenderChatImageWidget extends StatelessWidget {
                             height: 150.h,
                             width: double.infinity,
                             color: context.appColors.cardBackground,
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.image,
                               size: 40.r,
                               color: context.appColors.primaryTextColor,

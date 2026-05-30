@@ -148,7 +148,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                                   ],
                                 ),
                               ),
-                              Icon(
+                              FaIcon(
                                 FontAwesomeIcons.locationDot,
                                 size: 50.r,
                                 color: context.appColors.errorColor,
@@ -199,7 +199,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                         ),
                         child: Row(
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.magnifyingGlass,
                               color: context.appColors.secondaryTextColor,
                               size: 20.r,
@@ -260,7 +260,7 @@ class _MapLocationPageState extends State<MapLocationPage> {
                         border:
                             Border.all(color: context.appColors.glassBorder),
                       ),
-                      child: Icon(
+                      child: FaIcon(
                         FontAwesomeIcons.locationCrosshairs,
                         color: context.appColors.primaryTextColor,
                         size: 24.r,

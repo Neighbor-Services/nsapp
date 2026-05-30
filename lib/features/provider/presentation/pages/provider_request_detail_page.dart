@@ -173,7 +173,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                           width: 1.5.r,
                                         ),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.chevronLeft,
                                         color: context.appColors.primaryTextColor,
                                         size: 20.r,
@@ -204,7 +204,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                                         color: context.appColors.primaryColor,
                                         borderRadius: BorderRadius.circular(14.r),
                                       ),
-                                      child: Icon(
+                                      child: FaIcon(
                                         FontAwesomeIcons.comment,
                                         color: Colors.white,
                                         size: 20.r,
@@ -299,7 +299,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
                           errorBuilder: (context, _, __) => Container(
                             color: Colors.white.withAlpha(10),
                             child: Center(
-                              child: Icon(
+                              child: FaIcon(
                                 FontAwesomeIcons.image,
                                 color: Colors.white24,
                                 size: 50.r,
@@ -438,7 +438,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
         children: [
           Row(
             children: [
-               Icon(
+               FaIcon(
                 FontAwesomeIcons.circleInfo,
                 color: context.appColors.primaryColor,
                 size: 20.r,
@@ -588,7 +588,7 @@ class _ProviderRequestDetailPageState extends State<ProviderRequestDetailPage>
   //     child: Row(
   //       mainAxisSize: MainAxisSize.min,
   //       children: [
-  //         Icon(icon, size: 14.r, color: color),
+  //         FaIcon(icon, size: 14.r, color: color),
   //         SizedBox(width: 6.w),
   //         Text(
   //           status.toUpperCase(),

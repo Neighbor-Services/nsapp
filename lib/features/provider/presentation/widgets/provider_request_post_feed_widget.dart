@@ -116,7 +116,7 @@ class _ProviderRequestPostFeedWidgetState
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(
+                                            FaIcon(
                                               FontAwesomeIcons.locationDot,
                                               size: 10,
                                               color: Colors.white

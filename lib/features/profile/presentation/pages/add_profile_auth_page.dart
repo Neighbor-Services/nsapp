@@ -280,10 +280,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
       // active subscription when validating catalog_services.
       setState(() => _pendingProfileSubmit = true);
       context.read<SubscriptionBloc>().add(
-        MakeSubscriptionEvent(
-          planId: _selectedPlanId!,
-          context: context,
-        ),
+        MakeSubscriptionEvent(planId: _selectedPlanId!, context: context),
       );
       return;
     }
@@ -523,7 +520,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                       borderRadius: BorderRadius.circular(10.r),
                       border: Border.all(color: context.appColors.glassBorder),
                     ),
-                    child: Icon(
+                    child: FaIcon(
                       FontAwesomeIcons.chevronLeft,
                       color: context.appColors.primaryTextColor,
                       size: 14.r,
@@ -682,7 +679,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                         ),
                       ],
                     ),
-                    child: Icon(
+                    child: FaIcon(
                       FontAwesomeIcons.camera,
                       color: Colors.white,
                       size: 16.r,
@@ -714,8 +711,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                     prefixIcon: FontAwesomeIcons.user,
                     validator: (val) {
                       if (val!.isEmpty) return "Name is required";
-                      if (containSpecial(val))
+                      if (containSpecial(val)) {
                         return "Special characters not allowed";
+                      }
                       return null;
                     },
                   ),
@@ -782,7 +780,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                   color: context.appColors.primaryColor.withAlpha(15),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: FaIcon(
                   FontAwesomeIcons.locationDot,
                   color: context.appColors.primaryColor,
                   size: 36.r,
@@ -819,7 +817,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                             color: context.appColors.primaryColor.withAlpha(60),
                           ),
                         ),
-                        child: Icon(
+                        child: FaIcon(
                           FontAwesomeIcons.locationCrosshairs,
                           color: context.appColors.primaryColor,
                         ),
@@ -879,7 +877,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    FaIcon(
                       FontAwesomeIcons.circleInfo,
                       color: context.appColors.primaryColor,
                       size: 18.r,
@@ -929,7 +927,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                   color: context.appColors.primaryColor.withAlpha(15),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: FaIcon(
                   FontAwesomeIcons.briefcase,
                   color: context.appColors.primaryColor,
                   size: 36.r,
@@ -989,7 +987,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    FaIcon(
                       FontAwesomeIcons.briefcase,
                       color: context.appColors.primaryColor.withAlpha(200),
                     ),
@@ -1031,7 +1029,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                         ],
                       ),
                     ),
-                    Icon(
+                    FaIcon(
                       FontAwesomeIcons.upDown,
                       color: context.appColors.secondaryTextColor,
                       size: 20.r,
@@ -1081,7 +1079,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
               ),
               child: Row(
                 children: [
-                  Icon(
+                  FaIcon(
                     FontAwesomeIcons.circleInfo,
                     color: context.appColors.primaryColor,
                     size: 18.r,
@@ -1127,7 +1125,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
               color: context.appColors.primaryColor.withAlpha(15),
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: FaIcon(
               FontAwesomeIcons.crown,
               color: context.appColors.primaryColor,
               size: 36.r,
@@ -1219,7 +1217,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
       padding: EdgeInsets.all(40.r),
       child: Column(
         children: [
-          Icon(
+          FaIcon(
             FontAwesomeIcons.faceFrown,
             size: 40.r,
             color: context.appColors.secondaryTextColor,
@@ -1240,7 +1238,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
   Widget _buildPlanCard(SubscriptionPlan plan) {
     final isSelected = _selectedPlanId == plan.id;
 
-    IconData tierIcon;
+    FaIconData tierIcon;
     switch (plan.tier) {
       case 'PLATINUM':
         tierIcon = FontAwesomeIcons.wandMagicSparkles;
@@ -1314,7 +1312,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                     color: context.appColors.primaryColor.withAlpha(20),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: FaIcon(
                     tierIcon,
                     color: context.appColors.primaryColor,
                     size: 22.r,
@@ -1377,7 +1375,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                     ),
                   ),
                   child: isSelected
-                      ? Icon(
+                      ? FaIcon(
                           FontAwesomeIcons.check,
                           color: Colors.white,
                           size: 14.r,
@@ -1408,7 +1406,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                   padding: EdgeInsets.only(bottom: 6.h),
                   child: Row(
                     children: [
-                      Icon(
+                      FaIcon(
                         FontAwesomeIcons.circleCheck,
                         size: 14.r,
                         color: context.appColors.secondaryTextColor,
@@ -1436,7 +1434,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
     );
   }
 
-  Widget _buildBenefitChip(String text, IconData icon) {
+  Widget _buildBenefitChip(String text, FaIconData icon) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
@@ -1447,7 +1445,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12.r, color: context.appColors.secondaryTextColor),
+          FaIcon(icon, size: 12.r, color: context.appColors.secondaryTextColor),
           SizedBox(width: 6.w),
           Text(
             text.toUpperCase(),
@@ -1750,7 +1748,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
   }
 
   Widget _buildSheetItem({
-    required IconData icon,
+    required FaIconData icon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -1770,7 +1768,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
         ),
         child: Row(
           children: [
-            Icon(icon, color: context.appColors.primaryColor, size: 26.r),
+            FaIcon(icon, color: context.appColors.primaryColor, size: 26.r),
             SizedBox(width: 18.w),
             Text(
               label,
