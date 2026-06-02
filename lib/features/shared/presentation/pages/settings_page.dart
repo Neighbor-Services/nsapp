@@ -10,7 +10,6 @@ import 'package:nsapp/features/authentications/presentation/bloc/authentication_
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/settings/settings_bloc.dart';
 import 'package:nsapp/features/wallet/presentation/bloc/wallet_bloc.dart';
-import 'package:nsapp/features/shared/presentation/widget/change_user_type_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/connect_account_setup_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_button_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';

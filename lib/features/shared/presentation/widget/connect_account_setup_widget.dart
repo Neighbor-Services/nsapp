@@ -42,14 +42,18 @@ class ConnectAccountSetupWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              FaIcon(FontAwesomeIcons.circleInfo, color: context.appColors.infoColor, size: 24.r),
+              FaIcon(
+                FontAwesomeIcons.circleInfo,
+                color: context.appColors.infoColor,
+                size: 24.r,
+              ),
               SizedBox(width: 12.w),
               Expanded(
                 child: Text(
                   "You'll be redirected to a secure page to complete setup.",
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: context.appColors.glassBorder,
+                    color: context.appColors.primaryTextColor,
                   ),
                 ),
               ),
@@ -67,7 +71,3 @@ class ConnectAccountSetupWidget extends StatelessWidget {
     );
   }
 }
-
-
-
-

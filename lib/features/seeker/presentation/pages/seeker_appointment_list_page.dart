@@ -63,10 +63,12 @@ class _SeekerAppointmentListPageState extends State<SeekerAppointmentListPage> {
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: borderColor, width: 1.5.r),
             ),
-            child: FaIcon(
-              FontAwesomeIcons.chevronLeft,
-              color: textColor,
-              size: 16.r,
+            child: Center(
+              child: FaIcon(
+                FontAwesomeIcons.chevronLeft,
+                color: textColor,
+                size: 16.r,
+              ),
             ),
           ),
         ),

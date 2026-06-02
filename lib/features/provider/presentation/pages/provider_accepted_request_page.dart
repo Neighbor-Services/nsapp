@@ -188,10 +188,12 @@ class _ProviderAcceptedRequestPageState
                                                 color: context.appColors.cardBackground,
                                                 shape: BoxShape.circle,
                                               ),
-                                              child: FaIcon(
-                                                FontAwesomeIcons.clockRotateLeft,
-                                                size: 64.r,
-                                                color: context.appColors.glassBorder,
+                                              child: Center(
+                                                child: FaIcon(
+                                                  FontAwesomeIcons.clockRotateLeft,
+                                                  size: 64.r,
+                                                  color: context.appColors.glassBorder,
+                                                ),
                                               ),
                                             ),
                                             SizedBox(height: 32.h),
@@ -338,9 +340,11 @@ class _ProviderAcceptedRequestPageState
                                 width: double.infinity,
                                 height: 140.h,
                                 color: context.appColors.primaryColor.withAlpha(50),
-                                child: FaIcon(
-                                  FontAwesomeIcons.image,
-                                  color: context.appColors.primaryColor,
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.image,
+                                    color: context.appColors.primaryColor,
+                                  ),
                                 ),
                               ),
                         )
@@ -348,10 +352,12 @@ class _ProviderAcceptedRequestPageState
                           width: double.infinity,
                           height: 140.h,
                           color: context.appColors.primaryColor.withAlpha(50),
-                          child: FaIcon(
-                            FontAwesomeIcons.fileLines,
-                            color: context.appColors.primaryColor,
-                            size: 40.r,
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.fileLines,
+                              color: context.appColors.primaryColor,
+                              size: 40.r,
+                            ),
                           ),
                         ),
                 ),

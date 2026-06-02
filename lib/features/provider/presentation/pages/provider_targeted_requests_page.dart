@@ -1,4 +1,3 @@
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -92,10 +91,12 @@ class _ProviderTargetedRequestsPageState
                 width: 1.5.r,
               ),
             ),
-            child: FaIcon(
-              FontAwesomeIcons.chevronLeft,
-              color: context.appColors.primaryTextColor,
-              size: 18.r,
+            child: Center(
+              child: FaIcon(
+                FontAwesomeIcons.chevronLeft,
+                color: context.appColors.primaryTextColor,
+                size: 18.r,
+              ),
             ),
           ),
         ),
@@ -141,10 +142,19 @@ class _ProviderTargetedRequestsPageState
                         Expanded(
                           child: RefreshIndicator(
                             onRefresh: () async {
-                              setState(() { currentPage = 1; hasReachedMax = false; });
-                              context.read<ProviderBloc>().add(GetTargetedRequestsEvent());
-                              context.read<ProfileBloc>().add(GetProfileStreamEvent());
-                              context.read<ProfileBloc>().add(GetProfileEvent());
+                              setState(() {
+                                currentPage = 1;
+                                hasReachedMax = false;
+                              });
+                              context.read<ProviderBloc>().add(
+                                GetTargetedRequestsEvent(),
+                              );
+                              context.read<ProfileBloc>().add(
+                                GetProfileStreamEvent(),
+                              );
+                              context.read<ProfileBloc>().add(
+                                GetProfileEvent(),
+                              );
                               await Future.delayed(const Duration(seconds: 1));
                             },
                             child: _buildRequestsList(context, state),
@@ -162,10 +172,7 @@ class _ProviderTargetedRequestsPageState
     );
   }
 
-  Widget _buildRequestsList(
-    BuildContext context,
-    ProviderState state,
-  ) {
+  Widget _buildRequestsList(BuildContext context, ProviderState state) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
@@ -228,12 +235,7 @@ class _ProviderTargetedRequestsPageState
       itemCount: requests.length + (isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
         if (index < requests.length) {
-          return _buildRequestCard(
-            context,
-            requests[index],
-            index,
-            isDark,
-          );
+          return _buildRequestCard(context, requests[index], index, isDark);
         } else {
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 24.h),
@@ -266,7 +268,10 @@ class _ProviderTargetedRequestsPageState
           context.read<ProviderBloc>().add(
             ReloadProfileEvent(request: data.request?.id ?? ""),
           );
-          context.push('/app/provider/requests/${data.request!.id}', extra: data);
+          context.push(
+            '/app/provider/requests/${data.request!.id}',
+            extra: data,
+          );
         },
         child: Padding(
           padding: EdgeInsets.only(bottom: 16.h),
@@ -297,7 +302,9 @@ class _ProviderTargetedRequestsPageState
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.white.withAlpha(10),
-                                  child: const Center(child: LoadingWidget(count: 1)),
+                                  child: const Center(
+                                    child: LoadingWidget(count: 1),
+                                  ),
                                 ),
                                 errorWidget: (context, url, error) =>
                                     Image.asset(person, fit: BoxFit.cover),
@@ -360,7 +367,6 @@ class _ProviderTargetedRequestsPageState
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                           
                           ],
                         ),
                         SizedBox(height: 6.h),
@@ -437,10 +443,3 @@ class _ProviderTargetedRequestsPageState
     );
   }
 }
-
-
-
-
-
-
-

@@ -80,7 +80,8 @@ class _SeekerFavoritePageState extends State<SeekerFavoritePage>
           current is SuccessRemoveFromFavoriteState ||
           current is FailureGetMyFavoritesState ||
           current is LoadingSeekerState ||
-          current is InitialSeekerState,
+          current is InitialSeekerState ||
+          current is SuccessAddToFavoriteState,
         builder: (context, state) {
           return LoadingView(
             isLoading: state is LoadingSeekerState,

@@ -63,7 +63,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
           title: Text(
             'RAISE DISPUTE',
             style: TextStyle(
-              color: textColor, 
+              color: textColor,
               fontWeight: FontWeight.w500,
               fontSize: 18,
               letterSpacing: 1.2,
@@ -81,10 +81,12 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: context.appColors.glassBorder),
               ),
-              child: FaIcon(
-                FontAwesomeIcons.chevronLeft,
-                color: textColor,
-                size: 18,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.chevronLeft,
+                  color: textColor,
+                  size: 18,
+                ),
               ),
             ),
           ),
@@ -94,7 +96,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
             listener: (context, state) {
               if (state is SuccessCreateDisputeState) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                   SnackBar(
+                  SnackBar(
                     content: Text('Dispute raised successfully.'),
                     backgroundColor: context.appColors.successColor,
                   ),
@@ -121,16 +123,21 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                               width: 56,
                               height: 56,
                               decoration: BoxDecoration(
-                                color: context.appColors.warningColor.withAlpha(30),
+                                color: context.appColors.warningColor.withAlpha(
+                                  30,
+                                ),
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: context.appColors.warningColor.withAlpha(50),
+                                  color: context.appColors.warningColor
+                                      .withAlpha(50),
                                 ),
                               ),
-                              child:  FaIcon(
-                                FontAwesomeIcons.gavel,
-                                color: context.appColors.warningColor,
-                                size: 28,
+                              child: Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.gavel,
+                                  color: context.appColors.warningColor,
+                                  size: 28,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -164,7 +171,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                         ),
                       ),
                       const SizedBox(height: 24),
-      
+
                       // Form Section
                       SolidContainer(
                         padding: EdgeInsets.all(20),
@@ -213,7 +220,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                         ),
                       ),
                       const SizedBox(height: 24),
-      
+
                       // Info Card
                       SolidContainer(
                         padding: EdgeInsets.all(16),
@@ -238,7 +245,7 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
                         ),
                       ),
                       const SizedBox(height: 24),
-      
+
                       // Submit Button
                       SolidButton(
                         label: 'SUBMIT DISPUTE',
@@ -260,9 +267,3 @@ class _CreateDisputePageState extends State<CreateDisputePage> {
     );
   }
 }
-
-
-
-
-
-

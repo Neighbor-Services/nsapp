@@ -143,13 +143,13 @@ class _AddAboutPageState extends State<AddAboutPage> {
                                 SizedBox(height: 32.h),
                                 _buildFormSection(),
                                 SizedBox(height: 24.h),
-                                _buildPortfolioImagesSection(
-                                  context,
-                                  isDark,
-                                  textColor,
-                                  state,
-                                ),
-                                SizedBox(height: 48.h),
+                                // _buildPortfolioImagesSection(
+                                //   context,
+                                //   isDark,
+                                //   textColor,
+                                //   state,
+                                // ),
+                                // SizedBox(height: 48.h),
                                 _buildSaveButton(context),
                                 SizedBox(height: 100.h),
                               ],
@@ -302,136 +302,136 @@ class _AddAboutPageState extends State<AddAboutPage> {
     );
   }
 
-  Widget _buildPortfolioImagesSection(
-    BuildContext context,
-    bool isDark,
-    Color textColor,
-    ProfileState state,
-  ) {
-    return SolidContainer(
-      padding: EdgeInsets.all(24.r),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-               CustomTextWidget(
-                text: "SHOWCASE IMAGES",
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                color: context.appColors.secondaryColor,
-                letterSpacing: 1.5,
-              ),
-              IconButton(
-                onPressed: () {
-                  context.read<ProfileBloc>().add(
-                    SelectImagesFromGalleryEvent(),
-                  );
-                },
-                icon: FaIcon(FontAwesomeIcons.image, color: textColor),
-                tooltip: "Add Images",
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Builder(
-            builder: (context) {
-              // Use reactive state to get images
-              final selectedImages = state is ImagesProfileState ? state.images : null;
-              if (selectedImages == null || selectedImages.isEmpty) {
-                return GestureDetector(
-                  onTap: () {
-                    context.read<ProfileBloc>().add(
-                      SelectImagesFromGalleryEvent(),
-                    );
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 120.h,
-                    decoration: BoxDecoration(
-                      color: context.appColors.cardBackground,
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: context.appColors.glassBorder,
-                        style: BorderStyle.solid,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.cloudArrowUp,
-                          color: context.appColors.secondaryTextColor,
-                          size: 32.r,
-                        ),
-                        SizedBox(height: 8.h),
-                        Text(
-                          "Tap to upload work samples",
-                          style: TextStyle(
-                            color: context.appColors.secondaryTextColor,
-                            fontSize: 13.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
+  // Widget _buildPortfolioImagesSection(
+  //   BuildContext context,
+  //   bool isDark,
+  //   Color textColor,
+  //   ProfileState state,
+  // ) {
+  //   return SolidContainer(
+  //     padding: EdgeInsets.all(24.r),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //              CustomTextWidget(
+  //               text: "SHOWCASE IMAGES",
+  //               fontSize: 12.sp,
+  //               fontWeight: FontWeight.w500,
+  //               color: context.appColors.secondaryColor,
+  //               letterSpacing: 1.5,
+  //             ),
+  //             IconButton(
+  //               onPressed: () {
+  //                 context.read<ProfileBloc>().add(
+  //                   SelectImagesFromGalleryEvent(),
+  //                 );
+  //               },
+  //               icon: FaIcon(FontAwesomeIcons.image, color: textColor),
+  //               tooltip: "Add Images",
+  //             ),
+  //           ],
+  //         ),
+  //         // SizedBox(height: 16.h),
+  //         // Builder(
+  //         //   builder: (context) {
+  //         //     // Use reactive state to get images
+  //         //     final selectedImages = state is ImagesProfileState ? state.images : null;
+  //         //     if (selectedImages == null || selectedImages.isEmpty) {
+  //         //       return GestureDetector(
+  //         //         onTap: () {
+  //         //           context.read<ProfileBloc>().add(
+  //         //             SelectImagesFromGalleryEvent(),
+  //         //           );
+  //         //         },
+  //         //         child: Container(
+  //         //           width: double.infinity,
+  //         //           height: 120.h,
+  //         //           decoration: BoxDecoration(
+  //         //             color: context.appColors.cardBackground,
+  //         //             borderRadius: BorderRadius.circular(16.r),
+  //         //             border: Border.all(
+  //         //               color: context.appColors.glassBorder,
+  //         //               style: BorderStyle.solid,
+  //         //             ),
+  //         //           ),
+  //         //           child: Column(
+  //         //             mainAxisAlignment: MainAxisAlignment.center,
+  //         //             children: [
+  //         //               FaIcon(
+  //         //                 FontAwesomeIcons.cloudArrowUp,
+  //         //                 color: context.appColors.secondaryTextColor,
+  //         //                 size: 32.r,
+  //         //               ),
+  //         //               SizedBox(height: 8.h),
+  //         //               Text(
+  //         //                 "Tap to upload work samples",
+  //         //                 style: TextStyle(
+  //         //                   color: context.appColors.secondaryTextColor,
+  //         //                   fontSize: 13.sp,
+  //         //                 ),
+  //         //               ),
+  //         //             ],
+  //         //           ),
+  //         //         ),
+  //         //       );
+  //         //     }
 
-              return SizedBox(
-                height: 120.h,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: selectedImages.length,
-                  separatorBuilder: (c, i) => SizedBox(width: 12.w),
-                  itemBuilder: (context, index) {
-                    return Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16.r),
-                          child: Image.file(
-                            File(selectedImages[index].path),
-                            width: 120.w,
-                            height: 120.h,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Positioned(
-                          top: 4.h,
-                          right: 4.w,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedImages.removeAt(index);
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(4.r),
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                shape: BoxShape.circle,
-                              ),
-                              child: FaIcon(
-                                FontAwesomeIcons.xmark,
-                                color: Colors.white,
-                                size: 14.r,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  //         //     return SizedBox(
+  //         //       height: 120.h,
+  //         //       child: ListView.separated(
+  //         //         scrollDirection: Axis.horizontal,
+  //         //         physics: const BouncingScrollPhysics(),
+  //         //         itemCount: selectedImages.length,
+  //         //         separatorBuilder: (c, i) => SizedBox(width: 12.w),
+  //         //         itemBuilder: (context, index) {
+  //         //           return Stack(
+  //         //             children: [
+  //         //               ClipRRect(
+  //         //                 borderRadius: BorderRadius.circular(16.r),
+  //         //                 child: Image.file(
+  //         //                   File(selectedImages[index].path),
+  //         //                   width: 120.w,
+  //         //                   height: 120.h,
+  //         //                   fit: BoxFit.cover,
+  //         //                 ),
+  //         //               ),
+  //         //               Positioned(
+  //         //                 top: 4.h,
+  //         //                 right: 4.w,
+  //         //                 child: GestureDetector(
+  //         //                   onTap: () {
+  //         //                     setState(() {
+  //         //                       selectedImages.removeAt(index);
+  //         //                     });
+  //         //                   },
+  //         //                   child: Container(
+  //         //                     padding: EdgeInsets.all(4.r),
+  //         //                     decoration: BoxDecoration(
+  //         //                       color: Colors.black54,
+  //         //                       shape: BoxShape.circle,
+  //         //                     ),
+  //         //                     child: FaIcon(
+  //         //                       FontAwesomeIcons.xmark,
+  //         //                       color: Colors.white,
+  //         //                       size: 14.r,
+  //         //                     ),
+  //         //                   ),
+  //         //                 ),
+  //         //               ),
+  //         //             ],
+  //         //           );
+  //         //         },
+  //         //       ),
+  //         //     );
+  //         //   },
+  //         // ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildSaveButton(BuildContext context) {
     return Container(

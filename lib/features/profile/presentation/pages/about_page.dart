@@ -159,10 +159,12 @@ class _AboutPageState extends State<AboutPage>
                                                 .withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(20.r),
                                           ),
-                                        child: FaIcon(
-                                          FontAwesomeIcons.images,
-                                          size: 60.r,
-                                          color: context.appColors.primaryColor,
+                                        child: Center(
+                                          child: FaIcon(
+                                            FontAwesomeIcons.images,
+                                            size: 60.r,
+                                            color: context.appColors.primaryColor,
+                                          ),
                                         ),
                                       ),
                                       Transform.translate(

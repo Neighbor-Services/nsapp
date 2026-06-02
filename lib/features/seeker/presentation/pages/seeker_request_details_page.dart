@@ -675,34 +675,34 @@ class _SeekerRequestDetailsPageState extends State<SeekerRequestDetailsPage> {
                                   height: 1,
                                 ),
                                 const SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.moneyBillWave,
-                                      color: context.appColors.primaryColor,
-                                      size: 18.r,
-                                    ),
-                                    SizedBox(width: 12.w),
-                                    Text(
-                                      "PAYMENT MODE:",
-                                      style: TextStyle(
-                                        color: context.appColors.hintTextColor,
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Text(
-                                      requestData.request?.paymentMode == 'ON_SITE' ? "ON-SITE" : "IN-APP",
-                                      style: TextStyle(
-                                        color: context.appColors.primaryColor,
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // Row(
+                                //   children: [
+                                //     FaIcon(
+                                //       FontAwesomeIcons.moneyBillWave,
+                                //       color: context.appColors.primaryColor,
+                                //       size: 18.r,
+                                //     ),
+                                //     SizedBox(width: 12.w),
+                                //     Text(
+                                //       "PAYMENT MODE:",
+                                //       style: TextStyle(
+                                //         color: context.appColors.hintTextColor,
+                                //         fontSize: 12.sp,
+                                //         fontWeight: FontWeight.w500,
+                                //         letterSpacing: 0.5,
+                                //       ),
+                                //     ),
+                                //     const Spacer(),
+                                //     Text(
+                                //       requestData.request?.paymentMode == 'ON_SITE' ? "ON-SITE" : "IN-APP",
+                                //       style: TextStyle(
+                                //         color: context.appColors.primaryColor,
+                                //         fontSize: 13.sp,
+                                //         fontWeight: FontWeight.w600,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
                           ),

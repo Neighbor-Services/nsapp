@@ -204,10 +204,12 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
               ),
             ],
           ),
-          child: FaIcon(
-            FontAwesomeIcons.shieldHalved,
-            size: 48.r,
-            color: colors.primaryColor,
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.shieldHalved,
+              size: 48.r,
+              color: colors.primaryColor,
+            ),
           ),
         ),
       ],
@@ -294,10 +296,12 @@ class _PendingVerificationPageState extends State<PendingVerificationPage> {
                   ]
                 : null,
           ),
-          child: FaIcon(
-            icon,
-            size: 16.r,
-            color: iconColor,
+          child: Center(
+            child: FaIcon(
+              icon,
+              size: 16.r,
+              color: iconColor,
+            ),
           ),
         ),
         SizedBox(height: 8.h),

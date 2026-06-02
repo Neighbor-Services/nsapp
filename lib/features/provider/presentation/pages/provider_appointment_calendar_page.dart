@@ -181,10 +181,12 @@ class _ProviderAppointmentCalendarPageState
                                         width: 1.5.r,
                                       ),
                                     ),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.chevronLeft,
-                                      color: context.appColors.primaryTextColor,
-                                      size: 20.r,
+                                    child: Center(
+                                      child: FaIcon(
+                                        FontAwesomeIcons.chevronLeft,
+                                        color: context.appColors.primaryTextColor,
+                                        size: 20.r,
+                                      ),
                                     ),
                                   ),
                                 ),

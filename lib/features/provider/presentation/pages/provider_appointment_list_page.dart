@@ -68,10 +68,12 @@ class _ProviderAppointmentListPageState
                 width: 1.5.r,
               ),
             ),
-            child: FaIcon(
-              FontAwesomeIcons.chevronLeft,
-              color: textColor,
-              size: 16.r,
+            child: Center(
+              child: FaIcon(
+                FontAwesomeIcons.chevronLeft,
+                color: textColor,
+                size: 16.r,
+              ),
             ),
           ),
         ),

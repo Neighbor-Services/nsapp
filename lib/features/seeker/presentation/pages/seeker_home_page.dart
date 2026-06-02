@@ -84,116 +84,130 @@ class _SeekerHomePageState extends State<SeekerHomePage>
       endDrawer: const FilterDrawer(),
       body: GradientBackground(
         child: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 800.w),
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    context.read<CommonBloc>().add(GetServicesEvent());
-                    context.read<SeekerBloc>().add(GetMyRequestEvent());
-                    context.read<ProfileBloc>().add(GetProfileStreamEvent());
-                    context.read<ProfileBloc>().add(GetProfileEvent());
-                    context.read<SeekerBloc>().add(GetPopularProvidersEvent());
-                    context.read<SeekerBloc>().add(GetMyFavoritesEvent());
-                    await Future.delayed(const Duration(seconds: 1));
-                  },
-                  child: ListView(
-                    key: const PageStorageKey('seeker_home_list'),
-                    physics: const BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics(),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isLargeScreen ? 32.w : 20.w,
-                      vertical: 20.h,
-                    ),
-                    children: [
-                      // Dynamic Greeting & Location
-                      _buildHeader(context),
-                      SizedBox(height: 16.h),
-
-                      // // Gamification Dashboard
-                      // BlocBuilder<ProfileBloc, ProfileState>(
-                      //   buildWhen: (previous, current) =>
-                      //     current is SuccessGetProfileState ||
-                      //     current is SuccessGetProfileStreamState,
-                      //   builder: (context, state) {
-                      //     final profile = state.profile;
-                      //     return _buildAnimatedSection(0.2.toInt(), _buildGamificationBar(context, profile));
-                      //   },
-                      // ),
-                      // SizedBox(height: 24.h),
-
-                      // AI-Powered Hero Section
-                      _buildAnimatedSection(
-                        0,
-                        _buildHero(context, isLargeScreen),
-                      ),
-                      _buildAnimatedSection(
-                        0.5.toInt(),
-                        _buildLiveStatusTicker(context),
-                      ),
-
-                      // Active Request Section
-                      _buildAnimatedSection(
-                        1,
-                        _buildActiveRequestSection(context),
-                      ),
-                      SizedBox(height: 32.h),
-
-                      // My Favorites Section
-                      _buildAnimatedSection(2, _buildFavoritesSection(context)),
-                      SizedBox(height: 32.h),
-
-                      // Popular Providers Section
-                      _buildAnimatedSection(
-                        3,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionHeader(
-                              context,
-                              "Top Rated Professionals",
-                            ),
-                            SizedBox(height: 16.h),
-                            SizedBox(
-                              height: 200.h,
-                              child: PopularProviderWidget(),
-                            ),
-                          ],
+          child: BlocConsumer<SeekerBloc, SeekerState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              return Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 800.w),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        context.read<CommonBloc>().add(GetServicesEvent());
+                        context.read<SeekerBloc>().add(GetMyRequestEvent());
+                        context.read<ProfileBloc>().add(
+                          GetProfileStreamEvent(),
+                        );
+                        context.read<ProfileBloc>().add(GetProfileEvent());
+                        context.read<SeekerBloc>().add(
+                          GetPopularProvidersEvent(),
+                        );
+                        context.read<SeekerBloc>().add(GetMyFavoritesEvent());
+                        await Future.delayed(const Duration(seconds: 1));
+                      },
+                      child: ListView(
+                        key: const PageStorageKey('seeker_home_list'),
+                        physics: const BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics(),
                         ),
-                      ),
-                      SizedBox(height: 32.h),
-
-                      // Available Services Section
-                      _buildAnimatedSection(
-                        4,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSectionHeader(
-                              context,
-                              "Explore Categories",
-                              onViewAll: () {
-                                context.push('/all-services');
-                              },
-                            ),
-                            SizedBox(height: 16.h),
-                            BlocBuilder<CommonBloc, CommonState>(
-                              builder: (context, state) {
-                                return _buildServicesGrid(context, state);
-                              },
-                            ),
-                          ],
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isLargeScreen ? 32.w : 20.w,
+                          vertical: 20.h,
                         ),
+                        children: [
+                          // Dynamic Greeting & Location
+                          _buildHeader(context),
+                          SizedBox(height: 16.h),
+
+                          // // Gamification Dashboard
+                          // BlocBuilder<ProfileBloc, ProfileState>(
+                          //   buildWhen: (previous, current) =>
+                          //     current is SuccessGetProfileState ||
+                          //     current is SuccessGetProfileStreamState,
+                          //   builder: (context, state) {
+                          //     final profile = state.profile;
+                          //     return _buildAnimatedSection(0.2.toInt(), _buildGamificationBar(context, profile));
+                          //   },
+                          // ),
+                          // SizedBox(height: 24.h),
+
+                          // AI-Powered Hero Section
+                          _buildAnimatedSection(
+                            0,
+                            _buildHero(context, isLargeScreen),
+                          ),
+                          _buildAnimatedSection(
+                            0.5.toInt(),
+                            _buildLiveStatusTicker(context),
+                          ),
+
+                          // Active Request Section
+                          _buildAnimatedSection(
+                            1,
+                            _buildActiveRequestSection(context),
+                          ),
+                          SizedBox(height: 32.h),
+
+                          // My Favorites Section
+                          // _buildAnimatedSection(
+                          //   2,
+                          //   _buildFavoritesSection(context),
+                          // ),
+                          // SizedBox(height: 32.h),
+
+                          // Popular Providers Section
+                          _buildAnimatedSection(
+                            2,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildSectionHeader(
+                                  context,
+                                  "Top Rated Professionals",
+                                ),
+                                SizedBox(height: 16.h),
+                                SizedBox(
+                                  height: 200.h,
+                                  child: PopularProviderWidget(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 32.h),
+
+                          // Available Services Section
+                          _buildAnimatedSection(
+                            3,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildSectionHeader(
+                                  context,
+                                  "Explore Categories",
+                                  onViewAll: () {
+                                    context.push('/all-services');
+                                  },
+                                ),
+                                SizedBox(height: 16.h),
+                                BlocBuilder<CommonBloc, CommonState>(
+                                  builder: (context, state) {
+                                    return _buildServicesGrid(context, state);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 40.h),
+                        ],
                       ),
-                      SizedBox(height: 40.h),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
@@ -934,8 +948,7 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                                   ? CachedNetworkImageProvider(
                                       profile.profilePictureUrl!,
                                     )
-                                  : const AssetImage(person)
-                                        as ImageProvider,
+                                  : const AssetImage(person) as ImageProvider,
                             ),
                           ),
                           SizedBox(height: 8.h),

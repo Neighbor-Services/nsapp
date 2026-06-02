@@ -344,7 +344,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return null;
     } catch (e) {
       if (e is DioException) {
-        debugPrint("BG CHECK INIT ERROR: ${e.response?.data}");
+        debugPrint("BG CHECK INIT ERROR: status=${e.response?.statusCode} data=${e.response?.data}");
+      } else {
+        debugPrint("BG CHECK INIT ERROR (unexpected): $e");
       }
       return null;
     }

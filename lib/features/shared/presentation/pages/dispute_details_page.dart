@@ -42,10 +42,12 @@ class DisputeDetailsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(color: context.appColors.glassBorder),
               ),
-              child: FaIcon(
-                FontAwesomeIcons.chevronLeft,
-                color: textColor,
-                size: 18.r,
+              child: Center(
+                child: FaIcon(
+                  FontAwesomeIcons.chevronLeft,
+                  color: textColor,
+                  size: 18.r,
+                ),
               ),
             ),
           ),
@@ -83,10 +85,12 @@ class DisputeDetailsPage extends StatelessWidget {
                                   ).withAlpha(50),
                                 ),
                               ),
-                              child: FaIcon(
-                                FontAwesomeIcons.gavel,
-                                color: _getStatusColor(context, dispute.status),
-                                size: 32.r,
+                              child: Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.gavel,
+                                  color: _getStatusColor(context, dispute.status),
+                                  size: 32.r,
+                                ),
                               ),
                             ),
                             Container(

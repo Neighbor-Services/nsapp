@@ -145,16 +145,21 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
                               height: 100.r,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: context.appColors.primaryColor.withAlpha(20),
+                                color: context.appColors.primaryColor.withAlpha(
+                                  20,
+                                ),
                                 border: Border.all(
-                                  color: context.appColors.primaryColor.withAlpha(50),
+                                  color: context.appColors.primaryColor
+                                      .withAlpha(50),
                                   width: 2.r,
                                 ),
                               ),
-                              child: FaIcon(
-                                FontAwesomeIcons.asterisk,
-                                size: 50.r,
-                                color: context.appColors.primaryColor,
+                              child: Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.asterisk,
+                                  size: 50.r,
+                                  color: context.appColors.primaryColor,
+                                ),
                               ),
                             ),
                             SizedBox(height: 32.h),
@@ -273,8 +278,3 @@ class _ChangePasswordMainPageState extends State<ChangePasswordMainPage>
     );
   }
 }
-
-
-
-
-
