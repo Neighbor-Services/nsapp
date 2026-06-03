@@ -1,4 +1,3 @@
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,12 +49,7 @@ class _ReportPageState extends State<ReportPage> {
             setState(() => _isLoading = false);
             customAlert(context, AlertType.success, "Report Sent Successfully");
             Future.delayed(const Duration(seconds: 3), () {
-              final settingsState = context.read<SettingsBloc>().state;
-              if (settingsState.isProvider) {
-                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
-              } else {
-                context.read<SeekerBloc>().add(ChangeSeekerTabEvent(tabIndex: 1));
-              }
+              context.push("/home");
             });
           } else if (state is FailureAddReportState) {
             setState(() => _isLoading = false);
@@ -138,50 +132,52 @@ class _ReportPageState extends State<ReportPage> {
                                 ),
                               ),
                               SizedBox(height: 30.h),
-                                SolidContainer(
-                                  padding: EdgeInsets.all(20.r),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      _buildLabel("Issue Type"),
-                                      SizedBox(height: 10.h),
-                                      SolidContainer(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16.w,
-                                        ),
-                                        borderRadius: BorderRadius.circular(15.r),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton<String>(
-                                            value: title,
-                                            isExpanded: true,
-                                            dropdownColor:
-                                                context.appColors.cardBackground,
-                                            icon: FaIcon(
-                                              FontAwesomeIcons.chevronDown,
-                                              color: context
-                                                  .appColors.primaryTextColor,
-                                            ),
-                                            style: TextStyle(
-                                              color: context
-                                                  .appColors.primaryTextColor,
-                                            ),
-                                            items: reportIssues.map((
-                                              String value,
-                                            ) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              );
-                                            }).toList(),
-                                            onChanged: (val) {
-                                              setState(() {
-                                                title = val!;
-                                              });
-                                            },
+                              SolidContainer(
+                                padding: EdgeInsets.all(20.r),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildLabel("Issue Type"),
+                                    SizedBox(height: 10.h),
+                                    SolidContainer(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15.r),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
+                                          value: title,
+                                          isExpanded: true,
+                                          dropdownColor:
+                                              context.appColors.cardBackground,
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.chevronDown,
+                                            color: context
+                                                .appColors
+                                                .primaryTextColor,
                                           ),
+                                          style: TextStyle(
+                                            color: context
+                                                .appColors
+                                                .primaryTextColor,
+                                          ),
+                                          items: reportIssues.map((
+                                            String value,
+                                          ) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          onChanged: (val) {
+                                            setState(() {
+                                              title = val!;
+                                            });
+                                          },
                                         ),
                                       ),
-                                      SizedBox(height: 20.h),
+                                    ),
+                                    SizedBox(height: 20.h),
                                     SolidTextField(
                                       controller: descriptionController,
                                       hintText:
@@ -200,12 +196,15 @@ class _ReportPageState extends State<ReportPage> {
                                       width: double.infinity,
                                       height: 55.h,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16.r),
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: context.appColors.secondaryColor.withAlpha(
-                                              100,
-                                            ),
+                                            color: context
+                                                .appColors
+                                                .secondaryColor
+                                                .withAlpha(100),
                                             blurRadius: 15.r,
                                             offset: Offset(0, 5.h),
                                           ),
@@ -224,15 +223,15 @@ class _ReportPageState extends State<ReportPage> {
                                           if (key.currentState!.validate()) {
                                             setState(() => _isLoading = true);
                                             context.read<SettingsBloc>().add(
-                                                  AddReportEvent(
-                                                    report: Report(
-                                                      reason:
-                                                          "[$title] ${descriptionController.text}",
-                                                      resourceType: "system",
-                                                      resourceId: "global",
-                                                    ),
-                                                  ),
-                                                );
+                                              AddReportEvent(
+                                                report: Report(
+                                                  reason:
+                                                      "[$title] ${descriptionController.text}",
+                                                  resourceType: "system",
+                                                  resourceId: "global",
+                                                ),
+                                              ),
+                                            );
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -286,5 +285,3 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 }
-
-
