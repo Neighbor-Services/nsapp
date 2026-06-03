@@ -40,6 +40,17 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
   String _searchQuery = '';
   final List<String> _selectedIds = [];
 
+  /// Hard cap on selections — regardless of plan tier, never allow more than 5.
+  static const int _absoluteMaxSelections = 5;
+
+  int get _effectiveMaxAllowed {
+    final planMax = widget.maxAllowed;
+    // If plan allows unlimited (0) or is not set, use the hard cap.
+    if (planMax == null || planMax <= 0) return _absoluteMaxSelections;
+    // Otherwise, take the lesser of the plan limit and the hard cap.
+    return planMax < _absoluteMaxSelections ? planMax : _absoluteMaxSelections;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -137,12 +148,10 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                if (widget.isMultiSelect && widget.maxAllowed != null) ...[
+                if (widget.isMultiSelect) ...[
                   SizedBox(height: 8.h),
                   Text(
-                    widget.maxAllowed == 0
-                        ? 'Unlimited services allowed on your plan'
-                        : 'Select up to ${widget.maxAllowed} services based on your plan',
+                    'Select up to $_effectiveMaxAllowed services',
                     style: TextStyle(
                       color: context.appColors.secondaryTextColor,
                       fontSize: 14.sp,
@@ -270,14 +279,12 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                                           if (_selectedIds.contains(service.id!)) {
                                             _selectedIds.remove(service.id!);
                                           } else {
-                                            // Enforce max limit if set (0 = unlimited)
-                                            if (widget.maxAllowed != null &&
-                                                widget.maxAllowed! > 0 &&
-                                                _selectedIds.length >= widget.maxAllowed!) {
+                                            // Enforce max limit (hard cap of 5)
+                                            if (_selectedIds.length >= _effectiveMaxAllowed) {
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 SnackBar(
                                                   content: Text(
-                                                    'Your subscription tier limit is ${widget.maxAllowed} service catalogs. Please upgrade for more.'
+                                                    'You can select up to $_effectiveMaxAllowed service catalogs.'
                                                   ),
                                                   behavior: SnackBarBehavior.floating,
                                                 ),
@@ -486,7 +493,7 @@ class _SearchableServiceSelectorState extends State<SearchableServiceSelector> {
                   ),
                   child: Center(
                     child: Text(
-                      'CONFIRM SELECTION (${_selectedIds.length}${widget.maxAllowed != null && widget.maxAllowed! > 0 ? "/${widget.maxAllowed}" : ""})',
+                      'CONFIRM SELECTION (${_selectedIds.length}/$_effectiveMaxAllowed)',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,

@@ -184,7 +184,8 @@ class _ProviderAppointmentCalendarPageState
                                     child: Center(
                                       child: FaIcon(
                                         FontAwesomeIcons.chevronLeft,
-                                        color: context.appColors.primaryTextColor,
+                                        color:
+                                            context.appColors.primaryTextColor,
                                         size: 20.r,
                                       ),
                                     ),
@@ -215,8 +216,8 @@ class _ProviderAppointmentCalendarPageState
                                     ),
                                   ],
                                 ),
-                                const Spacer(),
-                                _buildAddButton(),
+                                // const Spacer(),
+                                // _buildAddButton(),
                               ],
                             ),
                           ),

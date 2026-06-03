@@ -70,10 +70,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
       builder: (context, value, child) {
         return Transform.translate(
           offset: Offset(0, 50 * (1 - value)),
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
+          child: Opacity(opacity: value, child: child),
         );
       },
       child: child,
@@ -114,13 +111,21 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                       opacity: _fadeAnimation,
                       child: RefreshIndicator(
                         onRefresh: () async {
-                          context.read<ProviderBloc>().add(SearchRequestEvent());
-                          context.read<ProviderBloc>().add(GetAcceptedRequestEvent());
+                          context.read<ProviderBloc>().add(
+                            SearchRequestEvent(),
+                          );
+                          context.read<ProviderBloc>().add(
+                            GetAcceptedRequestEvent(),
+                          );
                           context.read<CommonBloc>().add(GetServicesEvent());
                           context.read<WalletBloc>().add(GetMyWalletEvent());
-                          context.read<ProfileBloc>().add(GetProfileStreamEvent());
+                          context.read<ProfileBloc>().add(
+                            GetProfileStreamEvent(),
+                          );
                           context.read<ProfileBloc>().add(GetProfileEvent());
-                          context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
+                          context.read<SubscriptionBloc>().add(
+                            CheckUserSubscriptionEvent(),
+                          );
                           await Future.delayed(const Duration(seconds: 1));
                         },
                         child: ListView(
@@ -132,52 +137,70 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                             horizontal: isLargeScreen ? 32.w : 20.w,
                             vertical: 20.h,
                           ),
-                        children: [
-                          _buildAnimatedSection(0, _buildHeader(context)),
-                          SizedBox(height: 16.h),
-                          // _buildAnimatedSection(1, _buildGamificationBar(context, profile)),
-                          // SizedBox(height: 24.h),
+                          children: [
+                            _buildAnimatedSection(0, _buildHeader(context)),
+                            SizedBox(height: 16.h),
+                            // _buildAnimatedSection(1, _buildGamificationBar(context, profile)),
+                            // SizedBox(height: 24.h),
 
-                          // Performance Dashboard
-                          _buildAnimatedSection(2, _buildDashboard(context, isLargeScreen)),
-                          SizedBox(height: 32.h),
-
-                          // Search Bar
-                          _buildAnimatedSection(1, _buildSearchBar(context)),
-                          SizedBox(height: 32.h),
-
-                          // Recent Requests Section
-                          _buildAnimatedSection(2, Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildSectionHeader(context, "Recent Requests"),
-                              SizedBox(height: 16.h),
-                              SizedBox(
-                                height: 250.h,
-                                child: const ProviderRecentRequestWidget(),
-                              ),
-                            ],
-                          )),
-                          SizedBox(height: 32.h),
-
-                          _buildAnimatedSection(3, Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildSectionHeader(context, "Explore More"),
-                              SizedBox(height: 16.h),
-                              _buildDirectRequestsCard(context),
-                            ],
-                          )),
-                          SizedBox(height: 16.h),
-                          _buildAnimatedSection(4, _buildExploreCard(context)),
-                          SizedBox(height: 16.h),
-                          if (profile?.preferredPaymentMode != 'ON_SITE') ...[
-                            _buildAnimatedSection(5, _buildWalletCard(context)),
+                            // Performance Dashboard
+                            _buildAnimatedSection(
+                              2,
+                              _buildDashboard(context, isLargeScreen),
+                            ),
                             SizedBox(height: 32.h),
-                          ],
 
-                          SizedBox(height: 40.h),
-                        ],
+                            // Search Bar
+                            _buildAnimatedSection(1, _buildSearchBar(context)),
+                            SizedBox(height: 32.h),
+
+                            // Recent Requests Section
+                            _buildAnimatedSection(
+                              2,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildSectionHeader(
+                                    context,
+                                    "Recent Requests",
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  SizedBox(
+                                    height: 250.h,
+                                    child: const ProviderRecentRequestWidget(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 32.h),
+
+                            _buildAnimatedSection(
+                              3,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildSectionHeader(context, "Explore More"),
+                                  SizedBox(height: 16.h),
+                                  _buildDirectRequestsCard(context),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 16.h),
+                            _buildAnimatedSection(
+                              4,
+                              _buildExploreCard(context),
+                            ),
+                            SizedBox(height: 16.h),
+                            if (profile?.preferredPaymentMode != 'ON_SITE') ...[
+                              _buildAnimatedSection(
+                                5,
+                                _buildWalletCard(context),
+                              ),
+                              SizedBox(height: 32.h),
+                            ],
+
+                            SizedBox(height: 40.h),
+                          ],
                         ),
                       ),
                     ),
@@ -201,7 +224,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 final wallet = (walletState is SuccessGetMyWalletState)
                     ? walletState.wallet
                     : null;
-                
+
                 Profile? profile = profileState.profile;
 
                 if (profile == null) return const SizedBox.shrink();
@@ -248,7 +271,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                             ),
                             GestureDetector(
                               onTap: () {
-                                  context.push("/wallet");
+                                context.push("/wallet");
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -329,15 +352,15 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     }
 
     return BlocBuilder<ProfileBloc, ProfileState>(
-      buildWhen: (previous, current) => 
-        current is SuccessGetProfileState || 
-        current is SuccessGetProfileStreamState,
+      buildWhen: (previous, current) =>
+          current is SuccessGetProfileState ||
+          current is SuccessGetProfileStreamState,
       builder: (context, state) {
         final profile = state.profile;
         String name = profile?.firstName ?? "Neighbor";
 
         return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
               child: Column(
@@ -356,37 +379,6 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                context.push("/notifications");
-              },
-              child: Container(
-                padding: EdgeInsets.all(12.r),
-                decoration: BoxDecoration(
-                  color: context.appColors.cardBackground,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: context.appColors.glassBorder),
-                ),
-                child: Stack(
-                  children: [
-                    FaIcon(FontAwesomeIcons.bell, size: 20.r, color: context.appColors.primaryTextColor),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        width: 8.r,
-                        height: 8.r,
-                        decoration: const BoxDecoration(
-                          color: Colors.redAccent,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         );
       },
@@ -399,7 +391,7 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         final address = (state.location.city.isNotEmpty)
             ? "${state.location.city}, ${state.location.state}"
             : "Locating...";
-        
+
         return GestureDetector(
           onTap: () {
             HapticFeedback.selectionClick();
@@ -468,14 +460,22 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                 label: "$streak DAY STREAK",
                 value: "STREAK",
               ),
-              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+              Container(
+                height: 30.h,
+                width: 1,
+                color: context.appColors.glassBorder,
+              ),
               _buildGamificationItem(
                 icon: FontAwesomeIcons.shieldHeart,
                 iconColor: Colors.blueAccent,
                 label: "NEIGHBOR SCORE",
                 value: "$score",
               ),
-              Container(height: 30.h, width: 1, color: context.appColors.glassBorder),
+              Container(
+                height: 30.h,
+                width: 1,
+                color: context.appColors.glassBorder,
+              ),
               _buildGamificationItem(
                 icon: FontAwesomeIcons.bolt,
                 iconColor: Colors.yellowAccent,
@@ -500,7 +500,9 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.bold,
-                        color: context.appColors.primaryTextColor.withAlpha(180),
+                        color: context.appColors.primaryTextColor.withAlpha(
+                          180,
+                        ),
                         letterSpacing: 1.0,
                       ),
                     ),
@@ -520,7 +522,9 @@ class _ProviderHomePageState extends State<ProviderHomePage>
                   child: LinearProgressIndicator(
                     value: ((profile.xp ?? 0) % 1000) / 1000,
                     backgroundColor: Colors.white.withAlpha(40),
-                    valueColor: AlwaysStoppedAnimation<Color>(context.appColors.primaryTextColor),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      context.appColors.primaryTextColor,
+                    ),
                     minHeight: 4.h,
                   ),
                 ),
@@ -575,7 +579,10 @@ class _ProviderHomePageState extends State<ProviderHomePage>
         decoration: BoxDecoration(
           color: context.appColors.cardBackground,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: context.appColors.glassBorder, width: 1.5.r),
+          border: Border.all(
+            color: context.appColors.glassBorder,
+            width: 1.5.r,
+          ),
         ),
         child: Row(
           children: [
@@ -912,5 +919,3 @@ class _ProviderHomePageState extends State<ProviderHomePage>
     );
   }
 }
-
-

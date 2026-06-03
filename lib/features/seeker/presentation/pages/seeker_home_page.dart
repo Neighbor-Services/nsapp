@@ -625,41 +625,6 @@ class _SeekerHomePageState extends State<SeekerHomePage>
                 ],
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.mediumImpact();
-                context.push("/notifications");
-              },
-              child: Container(
-                padding: EdgeInsets.all(12.r),
-                decoration: BoxDecoration(
-                  color: context.appColors.cardBackground,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: context.appColors.glassBorder),
-                ),
-                child: Stack(
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.bell,
-                      size: 20.r,
-                      color: context.appColors.primaryTextColor,
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        width: 8.r,
-                        height: 8.r,
-                        decoration: const BoxDecoration(
-                          color: Colors.redAccent,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         );
       },

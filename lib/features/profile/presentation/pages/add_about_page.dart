@@ -75,7 +75,9 @@ class _AddAboutPageState extends State<AddAboutPage> {
             );
             Future.delayed(const Duration(seconds: 3), () {
               if (mounted) {
-                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
+                context.read<ProviderBloc>().add(
+                  ChangeProviderTabEvent(tabIndex: 1),
+                );
               }
             });
           } else if (state is FailureAddAboutState) {
@@ -88,21 +90,19 @@ class _AddAboutPageState extends State<AddAboutPage> {
             }
             companyNameController.text = aboutData.about?.name ?? "";
             addressController.text = aboutData.about?.address ?? "";
-            specificationController.text =
-                aboutData.about?.specification ?? "";
+            specificationController.text = aboutData.about?.specification ?? "";
             descriptionController.text = aboutData.about?.description ?? "";
-            experienceController.text =
-                (aboutData.about?.experienceYears ?? 0).toString();
-            skillsController.text = (aboutData.about?.skills ?? []).join(
+            experienceController.text = (aboutData.about?.experienceYears ?? 0)
+                .toString();
+            skillsController.text = (aboutData.about?.skills ?? []).join(", ");
+            educationController.text = aboutData.about?.education ?? "";
+            languagesController.text = (aboutData.about?.languages ?? []).join(
               ", ",
             );
-            educationController.text = aboutData.about?.education ?? "";
-            languagesController.text = (aboutData.about?.languages ?? [])
-                .join(", ");
           }
         },
         builder: (context, state) {
-          final isDark = Theme.of(context).brightness == Brightness.dark;
+          // final isDark = Theme.of(context).brightness == Brightness.dark;
           final textColor = context.appColors.primaryTextColor;
           final secondaryTextColor = context.appColors.glassBorder;
           final buttonColor = context.appColors.glassBorder;
@@ -120,7 +120,9 @@ class _AddAboutPageState extends State<AddAboutPage> {
                       await Future.delayed(const Duration(seconds: 1));
                     },
                     child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics(),
+                      ),
                       padding: EdgeInsets.symmetric(
                         horizontal: 24.w,
                         vertical: 10.h,
@@ -159,7 +161,6 @@ class _AddAboutPageState extends State<AddAboutPage> {
                       ),
                     ),
                   ),
-
                 ),
               ),
             ),
@@ -222,7 +223,7 @@ class _AddAboutPageState extends State<AddAboutPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           CustomTextWidget(
+          CustomTextWidget(
             text: "BUSINESS DETAILS",
             fontSize: 12.sp,
             fontWeight: FontWeight.w500,
@@ -499,5 +500,3 @@ class _AddAboutPageState extends State<AddAboutPage> {
     );
   }
 }
-
-

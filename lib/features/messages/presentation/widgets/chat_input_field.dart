@@ -24,7 +24,6 @@ class ChatInputField extends StatelessWidget {
 
     return Row(
       children: [
-        
         Expanded(
           child: TextField(
             controller: controller,
@@ -44,12 +43,7 @@ class ChatInputField extends StatelessWidget {
           color: iconColor,
           tooltip: "Send Image",
         ),
-        IconButton(
-          onPressed: onSchedule,
-          icon: const FaIcon(FontAwesomeIcons.calendar),
-          color: iconColor,
-          tooltip: "Schedule Appointment",
-        ),
+
         GestureDetector(
           onTap: onSend,
           child: Container(
@@ -57,7 +51,6 @@ class ChatInputField extends StatelessWidget {
             decoration: BoxDecoration(
               color: context.appColors.primaryColor,
               shape: BoxShape.circle,
-             
             ),
             child: FaIcon(
               FontAwesomeIcons.paperPlane,
@@ -70,7 +63,3 @@ class ChatInputField extends StatelessWidget {
     );
   }
 }
-
-
-
-

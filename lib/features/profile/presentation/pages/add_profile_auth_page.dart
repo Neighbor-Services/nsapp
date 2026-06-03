@@ -802,29 +802,6 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                   ),
                 ),
                 SizedBox(width: 12.w),
-                GestureDetector(
-                  onTap: () => _showLocationBottomSheet(context),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 25.h),
-                      Container(
-                        width: 58.w,
-                        height: 58.h,
-                        decoration: BoxDecoration(
-                          color: context.appColors.primaryColor.withAlpha(25),
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: context.appColors.primaryColor.withAlpha(60),
-                          ),
-                        ),
-                        child: FaIcon(
-                          FontAwesomeIcons.locationCrosshairs,
-                          color: context.appColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
             SizedBox(height: 24.h),
@@ -844,7 +821,7 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
             CustomSegmentedControl<String>(
               buttonLables: const [userTypeSeeker, userTypeProvider],
               buttonValues: const [userTypeSeeker, userTypeProvider],
-              defaultSelected: _userType == 'provider'
+              defaultSelected: _userType == userTypeProvider
                   ? userTypeProvider
                   : userTypeSeeker,
               onValueChanged: (val) {
@@ -1375,10 +1352,12 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                     ),
                   ),
                   child: isSelected
-                      ? FaIcon(
-                          FontAwesomeIcons.check,
-                          color: Colors.white,
-                          size: 14.r,
+                      ? Center(
+                          child: FaIcon(
+                            FontAwesomeIcons.check,
+                            color: Colors.white,
+                            size: 14.r,
+                          ),
                         )
                       : null,
                 ),
