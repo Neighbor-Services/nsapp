@@ -109,6 +109,32 @@ class MessageRemoteDatasourceImpl extends MessageRemoteDatasource {
       return response.statusCode == 200;
     } catch (e) { rethrow; }
   }
+
+  @override
+  Future<bool> blockChat({required String conversationId, required String userId}) async {
+    try {
+      final String token = await Helpers.getString("token");
+      final response = await _dio.post(
+        '$baseMessagesUrl/chat/conversations/block_chat/',
+        data: {"conversation_id": conversationId, "user_id": userId},
+        options: Options(headers: dioHeaders(token)),
+      );
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) { rethrow; }
+  }
+
+  @override
+  Future<bool> unblockChat({required String conversationId, required String userId}) async {
+    try {
+      final String token = await Helpers.getString("token");
+      final response = await _dio.post(
+        '$baseMessagesUrl/chat/conversations/unblock_chat/',
+        data: {"conversation_id": conversationId, "user_id": userId},
+        options: Options(headers: dioHeaders(token)),
+      );
+      return response.statusCode == 200;
+    } catch (e) { rethrow; }
+  }
 }
 
 

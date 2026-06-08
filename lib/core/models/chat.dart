@@ -63,6 +63,10 @@ class ChatData {
   String? version;
   @HiveField(8)
   int? unreadCount;
+  @HiveField(9)
+  bool? isBlocked;
+  @HiveField(10)
+  bool? isBlockedByMe;
 
   ChatData({
     this.id,
@@ -74,6 +78,8 @@ class ChatData {
     this.lastMessage,
     this.version,
     this.unreadCount,
+    this.isBlocked,
+    this.isBlockedByMe,
   });
 
   ChatData.fromJson(Map<String, dynamic> json) {
@@ -87,6 +93,8 @@ class ChatData {
     lastMessage = json['last_message'] != null
         ? Message.fromJson(json['last_message'])
         : null;
+    isBlocked = json['is_blocked'];
+    isBlockedByMe = json['is_blocked_by_me'];
     version = json['version'];
   }
 
@@ -102,6 +110,8 @@ class ChatData {
     if (lastMessage != null) {
       data['last_message'] = lastMessage!.toJson();
     }
+    data['is_blocked'] = isBlocked;
+    data['is_blocked_by_me'] = isBlockedByMe;
     data['version'] = version;
     return data;
   }

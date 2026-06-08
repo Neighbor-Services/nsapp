@@ -176,8 +176,3 @@ class _LiveTrackingPageState extends State<LiveTrackingPage> {
     );
   }
 }
-
-
-
-
-

@@ -146,6 +146,38 @@ class MessagesRepositoryImpl extends MessagesRepository {
       return Left(ErrorHandler.handle(e));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> blockChat(String conversationId, String userId) async {
+    try {
+      final results = await messageRemoteDatasource.blockChat(
+        conversationId: conversationId,
+        userId: userId,
+      );
+      if (results) {
+        return Right(results);
+      }
+      return Left(Failure(message: "An error occurred"));
+    } catch (e) {
+      return Left(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> unblockChat(String conversationId, String userId) async {
+    try {
+      final results = await messageRemoteDatasource.unblockChat(
+        conversationId: conversationId,
+        userId: userId,
+      );
+      if (results) {
+        return Right(results);
+      }
+      return Left(Failure(message: "An error occurred"));
+    } catch (e) {
+      return Left(ErrorHandler.handle(e));
+    }
+  }
 }
 
 

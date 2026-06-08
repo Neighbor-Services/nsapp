@@ -95,4 +95,17 @@ class SendMessageStatusEvent extends MessageEvent {
   SendMessageStatusEvent({required this.messageId, required this.status});
 }
 
+class BlockChatEvent extends MessageEvent {
+  final String conversationId;
+  final String userId;
+  BlockChatEvent({required this.conversationId, required this.userId});
+}
+
+class UnblockChatEvent extends MessageEvent {
+  final String conversationId;
+  final String userId;
+  UnblockChatEvent({required this.conversationId, required this.userId});
+}
+
+
 

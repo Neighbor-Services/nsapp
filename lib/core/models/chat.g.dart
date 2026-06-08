@@ -66,13 +66,15 @@ class ChatDataAdapter extends TypeAdapter<ChatData> {
       lastMessage: fields[6] as Message?,
       version: fields[7] as String?,
       unreadCount: fields[8] as int?,
+      isBlocked: fields[9] as bool?,
+      isBlockedByMe: fields[10] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ChatData obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -90,7 +92,11 @@ class ChatDataAdapter extends TypeAdapter<ChatData> {
       ..writeByte(7)
       ..write(obj.version)
       ..writeByte(8)
-      ..write(obj.unreadCount);
+      ..write(obj.unreadCount)
+      ..writeByte(9)
+      ..write(obj.isBlocked)
+      ..writeByte(10)
+      ..write(obj.isBlockedByMe);
   }
 
   @override

@@ -10,6 +10,8 @@ abstract class MessageRemoteDatasource {
   Future<bool> updateMessage(Message message);
   Future<bool> deleteMessage(Message message);
   Future<bool> setSeen({required String messageID});
+  Future<bool> blockChat({required String conversationId, required String userId});
+  Future<bool> unblockChat({required String conversationId, required String userId});
 }
 
 

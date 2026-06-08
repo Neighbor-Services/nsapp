@@ -10,8 +10,6 @@ import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widge
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 
-import '../../../provider/presentation/bloc/provider_bloc.dart';
-import '../../../seeker/presentation/bloc/seeker_bloc.dart';
 import '../bloc/settings/settings_bloc.dart';
 import 'package:nsapp/core/core.dart';
 

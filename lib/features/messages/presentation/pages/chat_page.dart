@@ -46,6 +46,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   bool _isOnline = false;
   bool _isLoadingOlder = false;
   String? _currentSenderId;
+  bool _isBlocked = false;
+  bool _isBlockedByMe = false;
 
   @override
   void initState() {
@@ -60,6 +62,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     _receiver = messageBloc.receiverProfile;
     _isTyping = messageBloc.isTyping;
     _isOnline = messageBloc.isOnline;
+    _isBlocked = messageBloc.isBlocked;
+    _isBlockedByMe = messageBloc.isBlockedByMe;
 
     // Get initial receiver from Bloc state as fallback
     final messageState = messageBloc.state;
@@ -161,7 +165,33 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               setState(() {
                 _isTyping = state.isTyping;
                 _isOnline = state.isOnline;
+                _isBlocked = state.isBlocked;
+                _isBlockedByMe = state.isBlockedByMe;
               });
+            } else if (state is SuccessBlockChatState) {
+              setState(() {
+                _isBlocked = true;
+                _isBlockedByMe = true;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('User blocked successfully')),
+              );
+            } else if (state is SuccessUnblockChatState) {
+              setState(() {
+                _isBlocked = false;
+                _isBlockedByMe = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('User unblocked successfully')),
+              );
+            } else if (state is FailureBlockChatState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            } else if (state is FailureUnblockChatState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
             }
           },
         ),
@@ -246,29 +276,58 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 8.r,
-                        height: 8.r,
-                        decoration: BoxDecoration(
-                          color: _isOnline
-                              ? context.appColors.successColor
-                              : Colors.grey,
-                          shape: BoxShape.circle,
+                  if (!_isBlocked)
+                    Row(
+                      children: [
+                        Container(
+                          width: 8.r,
+                          height: 8.r,
+                          decoration: BoxDecoration(
+                            color: _isOnline
+                                ? context.appColors.successColor
+                                : Colors.grey,
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        _isTyping
-                            ? "Typing..."
-                            : (_isOnline ? "Online" : "Offline"),
-                        style: TextStyle(color: subtitleColor, fontSize: 12.sp),
-                      ),
-                    ],
-                  ),
+                        SizedBox(width: 6.w),
+                        Text(
+                          _isTyping
+                              ? "Typing..."
+                              : (_isOnline ? "Online" : "Offline"),
+                          style: TextStyle(color: subtitleColor, fontSize: 12.sp),
+                        ),
+                      ],
+                    ),
                 ],
               ),
+            ),
+            PopupMenuButton<String>(
+              icon: FaIcon(
+                FontAwesomeIcons.ellipsisVertical,
+                color: iconColor,
+                size: 20.r,
+              ),
+              onSelected: (value) {
+                if (value == 'block') {
+                  _showBlockConfirmDialog();
+                } else if (value == 'unblock') {
+                  _showUnblockConfirmDialog();
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  if (!_isBlockedByMe)
+                    const PopupMenuItem<String>(
+                      value: 'block',
+                      child: Text('Block User'),
+                    )
+                  else
+                    const PopupMenuItem<String>(
+                      value: 'unblock',
+                      child: Text('Unblock User'),
+                    ),
+                ];
+              },
             ),
           ],
         ),
@@ -362,6 +421,33 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   }
 
   Widget _buildInputArea(BuildContext context) {
+    if (_isBlocked) {
+      return Container(
+        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 20.h),
+        color: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.r, vertical: 16.r),
+          decoration: BoxDecoration(
+            color: context.appColors.cardBackground,
+            borderRadius: BorderRadius.circular(28.r),
+            border: Border.all(color: context.appColors.glassBorder),
+          ),
+          child: Center(
+            child: Text(
+              _isBlockedByMe
+                  ? "You blocked this user. Unblock to send messages."
+                  : "This conversation is blocked.",
+              style: TextStyle(
+                color: context.appColors.hintTextColor,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     final bgColor = context.appColors.cardBackground;
     final borderColor = context.appColors.glassBorder;
     final shadowColor = context.appColors.glassBorder;
@@ -957,6 +1043,90 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         ),
       );
     }
+  }
+
+  void _showBlockConfirmDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Block User?'),
+          content: const Text('Are you sure you want to block this user? You will not be able to send or receive messages in this conversation.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Block', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                final chatBloc = context.read<MessageBloc>();
+                final matchingChat = chatBloc.myChats.firstWhere(
+                  (c) => c.other?.user?.id == _receiver.user?.id,
+                  orElse: () => Chat(),
+                );
+                final conversationId = matchingChat.chat?.id;
+                if (conversationId != null && _receiver.user?.id != null) {
+                  chatBloc.add(BlockChatEvent(
+                    conversationId: conversationId,
+                    userId: _receiver.user!.id!,
+                  ));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Cannot block: Conversation ID not found')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showUnblockConfirmDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Unblock User?'),
+          content: const Text('Are you sure you want to unblock this user? You will be able to send and receive messages again.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Unblock'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                final chatBloc = context.read<MessageBloc>();
+                final matchingChat = chatBloc.myChats.firstWhere(
+                  (c) => c.other?.user?.id == _receiver.user?.id,
+                  orElse: () => Chat(),
+                );
+                final conversationId = matchingChat.chat?.id;
+                if (conversationId != null && _receiver.user?.id != null) {
+                  chatBloc.add(UnblockChatEvent(
+                    conversationId: conversationId,
+                    userId: _receiver.user!.id!,
+                  ));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Cannot unblock: Conversation ID not found')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

@@ -79,6 +79,14 @@ class _MyMessagesPageState extends State<MyMessagesPage>
               _isLoading = false;
               _errorMessage = state.message;
             });
+          } else if (state is SuccessBlockChatState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Chat blocked successfully')),
+            );
+          } else if (state is FailureBlockChatState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
           }
         },
         builder: (context, state) {
@@ -302,6 +310,9 @@ class _MyMessagesPageState extends State<MyMessagesPage>
           
           context.push("/chat");
         },
+        onLongPress: () {
+          _showBlockOptions(context, chat);
+        },
         borderRadius: BorderRadius.circular(20.r),
         child: Container(
           padding: EdgeInsets.all(16.r),
@@ -386,6 +397,80 @@ class _MyMessagesPageState extends State<MyMessagesPage>
           ),
         ),
       ),
+    );
+  }
+
+  void _showBlockOptions(BuildContext context, Chat chat) {
+    if (chat.other == null || chat.chat == null) return;
+    
+    final sheetColor = context.appColors.cardBackground;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => Container(
+        padding: EdgeInsets.all(24.r),
+        decoration: BoxDecoration(
+          color: sheetColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: context.appColors.glassBorder,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            ListTile(
+              leading: const Icon(Icons.block, color: Colors.red),
+              title: Text(
+                "Block ${chat.other!.firstName ?? 'User'}",
+                style: TextStyle(color: Colors.red, fontSize: 16.sp),
+              ),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                _showBlockConfirmDialog(context, chat);
+              },
+            ),
+            SizedBox(height: 12.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showBlockConfirmDialog(BuildContext context, Chat chat) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Block ${chat.other!.firstName ?? "User"}?'),
+          content: const Text('Are you sure you want to block this user? The conversation will be hidden/archived.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Block', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                context.read<MessageBloc>().add(BlockChatEvent(
+                  conversationId: chat.chat!.id!,
+                  userId: chat.other!.user!.id!,
+                ));
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -7,12 +7,16 @@ class ChatStatusState extends MessageState {
   final bool isOnline;
   final String? targetUserId;
   final bool isConnected;
+  final bool isBlocked;
+  final bool isBlockedByMe;
 
   ChatStatusState({
     this.isTyping = false,
     this.isOnline = false,
     this.targetUserId,
     this.isConnected = false,
+    this.isBlocked = false,
+    this.isBlockedByMe = false,
   });
 }
 
@@ -96,3 +100,18 @@ final class FailureSetSeenMessageState extends MessageState {
   final String message;
   FailureSetSeenMessageState({required this.message});
 }
+
+final class SuccessBlockChatState extends MessageState {}
+
+final class FailureBlockChatState extends MessageState {
+  final String message;
+  FailureBlockChatState({required this.message});
+}
+
+final class SuccessUnblockChatState extends MessageState {}
+
+final class FailureUnblockChatState extends MessageState {
+  final String message;
+  FailureUnblockChatState({required this.message});
+}
+

@@ -34,6 +34,8 @@ import 'package:nsapp/features/messages/domain/usecase/get_my_messages_use_case.
 import 'package:nsapp/features/messages/domain/usecase/reload_message_receiver_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/set_seen_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/update_message_use_case.dart';
+import 'package:nsapp/features/messages/domain/usecase/block_chat_use_case.dart';
+import 'package:nsapp/features/messages/domain/usecase/unblock_chat_use_case.dart';
 import 'package:nsapp/features/messages/presentation/bloc/message_bloc.dart';
 import 'package:nsapp/features/profile/data/datasource/remote/profile_remote_datasource.dart';
 import 'package:nsapp/features/profile/data/datasource/remote/profile_remote_datasource_impl.dart';
@@ -244,6 +246,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteMessageUseCase(sl()));
   sl.registerLazySingleton(() => UpdateMessageUseCase(sl()));
   sl.registerLazySingleton(() => SetSeenUseCase(sl()));
+  sl.registerLazySingleton(() => BlockChatUseCase(sl()));
+  sl.registerLazySingleton(() => UnblockChatUseCase(sl()));
 
   // Profile
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
@@ -409,7 +413,7 @@ Future<void> init() async {
     ),
   );
 
-  sl.registerFactory(() => MessageBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => MessageBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
 
   sl.registerFactory(

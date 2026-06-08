@@ -12,6 +12,8 @@ abstract class MessagesRepository {
   Future<Either<Failure, bool>> deleteMessage(Message message);
   Future<Either<Failure, bool>> updateMessage(Message message);
   Future<Either<Failure, bool>> setSeen(String messageID);
+  Future<Either<Failure, bool>> blockChat(String conversationId, String userId);
+  Future<Either<Failure, bool>> unblockChat(String conversationId, String userId);
 }
 
 

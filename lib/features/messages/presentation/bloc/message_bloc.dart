@@ -18,6 +18,8 @@ import 'package:nsapp/features/messages/domain/usecase/get_my_messages_use_case.
 import 'package:nsapp/features/messages/domain/usecase/reload_message_receiver_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/set_seen_use_case.dart';
 import 'package:nsapp/features/messages/domain/usecase/update_message_use_case.dart';
+import 'package:nsapp/features/messages/domain/usecase/block_chat_use_case.dart';
+import 'package:nsapp/features/messages/domain/usecase/unblock_chat_use_case.dart';
 import 'package:nsapp/core/services/hive_service.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -32,6 +34,8 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
   final DeleteMessageUseCase deleteMessageUseCase;
   final UpdateMessageUseCase updateMessageUseCase;
   final SetSeenUseCase setSeenUseCase;
+  final BlockChatUseCase blockChatUseCase;
+  final UnblockChatUseCase unblockChatUseCase;
   final HiveService hiveService;
 
   // Local instance-based variables
@@ -47,12 +51,17 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
   bool _setAppointment = false;
   bool _isWithImage = false;
   bool _isConnected = false;
+  bool _isBlocked = false;
+  bool _isBlockedByMe = false;
 
   // Getters for synchronous initial state reading by UI
   List<ChatMessage> get currentMessages => _currentMessages;
   Profile get receiverProfile => _receiverProfile;
+  List<Chat> get myChats => _myChats;
   bool get isTyping => _isTyping;
   bool get isOnline => _isOnline;
+  bool get isBlocked => _isBlocked;
+  bool get isBlockedByMe => _isBlockedByMe;
 
   WebSocketChannel? _messageChannel;
   StreamSubscription? _wsSubscription;
@@ -71,6 +80,8 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
     this.deleteMessageUseCase,
     this.updateMessageUseCase,
     this.setSeenUseCase,
+    this.blockChatUseCase,
+    this.unblockChatUseCase,
     this.hiveService,
   ) : super(MessageInitial()) {
     
@@ -80,11 +91,25 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
         _currentMessages = [];
         _isTyping = false;
         _isOnline = false;
+        _isBlocked = false;
+        _isBlockedByMe = false;
       }
       await _closeWebSocket();
       _currentSenderId = event.sender;
       _targetUserId = event.receiver;
       _retryCount = 0;
+
+      // Initialize block status from the existing chats list if available
+      try {
+        final matchingChat = _myChats.firstWhere(
+          (chat) => chat.other?.user?.id == _targetUserId,
+          orElse: () => Chat(),
+        );
+        if (matchingChat.chat != null) {
+          _isBlocked = matchingChat.chat!.isBlocked ?? false;
+          _isBlockedByMe = matchingChat.chat!.isBlockedByMe ?? false;
+        }
+      } catch (_) {}
 
       // Load from Hive for instant UI
       final roomId = Helpers.createChatRoom(sender: _currentSenderId!, receiver: _targetUserId!);
@@ -109,10 +134,48 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
         isOnline: _isOnline,
         targetUserId: _targetUserId,
         isConnected: _isConnected,
+        isBlocked: _isBlocked,
+        isBlockedByMe: _isBlockedByMe,
       ));
       // Always emit the current message list so the UI stays in sync,
       // even when the list is empty (e.g. after deleting the last message).
       emit(SuccessGetMessageState(messages: List.from(_currentMessages)));
+    });
+
+    on<BlockChatEvent>((event, emit) async {
+      emit(LoadingMessageState());
+      final results = await blockChatUseCase(BlockChatParams(
+        conversationId: event.conversationId,
+        userId: event.userId,
+      ));
+      results.fold(
+        (l) => emit(FailureBlockChatState(message: l.message ?? "")),
+        (r) {
+          _isBlocked = true;
+          _isBlockedByMe = true;
+          add(GetMyMessagesEvent());
+          emit(SuccessBlockChatState());
+          add(GetChatStatusEvent());
+        },
+      );
+    });
+
+    on<UnblockChatEvent>((event, emit) async {
+      emit(LoadingMessageState());
+      final results = await unblockChatUseCase(UnblockChatParams(
+        conversationId: event.conversationId,
+        userId: event.userId,
+      ));
+      results.fold(
+        (l) => emit(FailureUnblockChatState(message: l.message ?? "")),
+        (r) {
+          _isBlocked = false;
+          _isBlockedByMe = false;
+          add(GetMyMessagesEvent());
+          emit(SuccessUnblockChatState());
+          add(GetChatStatusEvent());
+        },
+      );
     });
 
     on<ChatEvent>((event, emit) async {
@@ -416,6 +479,17 @@ class MessageBloc extends HydratedBloc<MessageEvent, MessageState> {
               _isOnline = data['status'] == 'online';
               add(GetChatStatusEvent());
             }
+          } else if (type == 'block_status') {
+            final blockerId = data['blocker_id'];
+            final isBlockedVal = data['is_blocked'];
+            if (isBlockedVal == true) {
+              _isBlocked = true;
+              _isBlockedByMe = blockerId == _currentSenderId;
+            } else {
+              _isBlocked = false;
+              _isBlockedByMe = false;
+            }
+            add(GetChatStatusEvent());
           }
         },
         onError: (error) {
