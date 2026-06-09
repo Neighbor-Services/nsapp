@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nsapp/core/models/services_model.dart';
+import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -550,8 +551,7 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                 .primaryTextColor,
                                           ),
                                           SizedBox(height: 24.h),
-                                          _buildLabel("Date of Birth"),
-                                          SizedBox(height: 12.h),
+                                          
                                           SolidTextField(
                                             controller:
                                                 dateOfBirthTextController,
@@ -567,6 +567,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                                                   ),
                                                 ),
                                           ),
+                                          SizedBox(height: 8.h),
+                  CustomTextWidget(text: "Note: You must be 18 years before you can be accepted on the platform", color: Colors.red, fontSize: 12.sp,),
+                
                                         ],
                                       ),
                                       SizedBox(height: 24.h),

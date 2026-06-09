@@ -15,6 +15,7 @@ import 'package:nsapp/core/models/subscription_plan.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/seeker/presentation/bloc/seeker_bloc.dart' as s;
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
+import 'package:nsapp/features/shared/presentation/widget/custom_text_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_text_field_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -746,6 +747,8 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                       return null;
                     },
                   ),
+                  SizedBox(height: 8.h),
+                  CustomTextWidget(text: "Note: You must be 18 years before you can be accepted on the platform", color: Colors.red, fontSize: 12.sp,),
                 ],
               ),
             ),

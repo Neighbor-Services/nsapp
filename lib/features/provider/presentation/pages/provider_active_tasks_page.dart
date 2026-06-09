@@ -336,9 +336,12 @@ class _ProviderActiveTasksPageState
                                 width: double.infinity,
                                 height: 140.h,
                                 color: context.appColors.primaryColor.withAlpha(50),
-                                child: FaIcon(
-                                  FontAwesomeIcons.image,
-                                  color: context.appColors.primaryColor,
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.image,
+                                    color: context.appColors.primaryColor,
+                                    size: 40.r,
+                                  ),
                                 ),
                               ),
                         )
@@ -346,10 +349,12 @@ class _ProviderActiveTasksPageState
                           width: double.infinity,
                           height: 140.h,
                           color: context.appColors.primaryColor.withAlpha(50),
-                          child: FaIcon(
-                            FontAwesomeIcons.fileLines,
-                            color: context.appColors.primaryColor,
-                            size: 40.r,
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.fileLines,
+                              color: context.appColors.primaryColor,
+                              size: 40.r,
+                            ),
                           ),
                         ),
                 ),

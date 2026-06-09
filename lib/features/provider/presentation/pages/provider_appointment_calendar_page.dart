@@ -361,6 +361,19 @@ class _ProviderAppointmentCalendarPageState
               controller: EventController()..addAll(events),
               child: SolidContainer(
                 child: MonthView(
+                  // headerBuilder: (date) {
+                  //   return Column(
+                  //     children: [
+                  //       Center(
+                  //         child: CustomTextWidget(text: DateFormat("MMMM-yyyy").format(date)),
+                  //       ),
+                  //       SizedBox(height: 20,),
+                  //     ],
+                  //   );
+                  // },
+                  headerStringBuilder: (date, {secondaryDate}) {
+                    return DateFormat("MMMM-yyyy").format(date);
+                  },
                   borderColor: borderColor,
                   cellBuilder:
                       (date, events, isToday, isInMonth, hideDaysNotInMonth) {
@@ -595,10 +608,12 @@ class _ProviderAppointmentCalendarPageState
                                 extra: requestData,
                               );
                             },
-                            icon: FaIcon(
-                              FontAwesomeIcons.arrowUpRightFromSquare,
-                              size: 18.r,
-                              color: context.appColors.primaryColor,
+                            icon: Center(
+                              child: FaIcon(
+                                FontAwesomeIcons.arrowUpRightFromSquare,
+                                size: 18.r,
+                                color: context.appColors.primaryColor,
+                              ),
                             ),
                             label: Text(
                               "VIEW FULL DETAILS",
@@ -760,7 +775,7 @@ class _ProviderAppointmentCalendarPageState
               color: iconBg,
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: FaIcon(icon, color: iconColor, size: 20.r),
+            child: Center(child: FaIcon(icon, color: iconColor, size: 20.r)),
           ),
           SizedBox(width: 16.w),
           Expanded(

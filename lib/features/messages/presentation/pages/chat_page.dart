@@ -173,25 +173,17 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 _isBlocked = true;
                 _isBlockedByMe = true;
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('User blocked successfully')),
-              );
+              customAlert(context, AlertType.success, 'User blocked successfully');
             } else if (state is SuccessUnblockChatState) {
               setState(() {
                 _isBlocked = false;
                 _isBlockedByMe = false;
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('User unblocked successfully')),
-              );
+              customAlert(context, AlertType.success, 'User unblocked successfully');
             } else if (state is FailureBlockChatState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              customAlert(context, AlertType.error, state.message);
             } else if (state is FailureUnblockChatState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              customAlert(context, AlertType.error, state.message);
             }
           },
         ),
@@ -1050,35 +1042,55 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Block User?'),
-          content: const Text('Are you sure you want to block this user? You will not be able to send or receive messages in this conversation.'),
+          backgroundColor: context.appColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          title: Text(
+            'BLOCK USER',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: context.appColors.errorColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to block this user? You will not be able to send or receive messages in this conversation.',
+            style: TextStyle(color: context.appColors.secondaryTextColor),
+          ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: context.appColors.secondaryTextColor),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Block', style: TextStyle(color: Colors.red)),
+              child: Text(
+                'BLOCK',
+                style: TextStyle(
+                  color: context.appColors.errorColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
+                if (_receiver.user?.id == null) {
+                  customAlert(context, AlertType.error, 'Cannot block: User not found');
+                  return;
+                }
                 final chatBloc = context.read<MessageBloc>();
                 final matchingChat = chatBloc.myChats.firstWhere(
                   (c) => c.other?.user?.id == _receiver.user?.id,
                   orElse: () => Chat(),
                 );
-                final conversationId = matchingChat.chat?.id;
-                if (conversationId != null && _receiver.user?.id != null) {
-                  chatBloc.add(BlockChatEvent(
-                    conversationId: conversationId,
-                    userId: _receiver.user!.id!,
-                  ));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cannot block: Conversation ID not found')),
-                  );
-                }
+                chatBloc.add(BlockChatEvent(
+                  conversationId: matchingChat.chat?.id ?? '',
+                  userId: _receiver.user!.id!,
+                ));
               },
             ),
           ],
@@ -1092,35 +1104,55 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Unblock User?'),
-          content: const Text('Are you sure you want to unblock this user? You will be able to send and receive messages again.'),
+          backgroundColor: context.appColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          title: Text(
+            'UNBLOCK USER',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: context.appColors.primaryTextColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to unblock this user? You will be able to send and receive messages again.',
+            style: TextStyle(color: context.appColors.secondaryTextColor),
+          ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: context.appColors.secondaryTextColor),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Unblock'),
+              child: Text(
+                'UNBLOCK',
+                style: TextStyle(
+                  color: context.appColors.primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
+                if (_receiver.user?.id == null) {
+                  customAlert(context, AlertType.error, 'Cannot unblock: User not found');
+                  return;
+                }
                 final chatBloc = context.read<MessageBloc>();
                 final matchingChat = chatBloc.myChats.firstWhere(
                   (c) => c.other?.user?.id == _receiver.user?.id,
                   orElse: () => Chat(),
                 );
-                final conversationId = matchingChat.chat?.id;
-                if (conversationId != null && _receiver.user?.id != null) {
-                  chatBloc.add(UnblockChatEvent(
-                    conversationId: conversationId,
-                    userId: _receiver.user!.id!,
-                  ));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cannot unblock: Conversation ID not found')),
-                  );
-                }
+                chatBloc.add(UnblockChatEvent(
+                  conversationId: matchingChat.chat?.id ?? '',
+                  userId: _receiver.user!.id!,
+                ));
               },
             ),
           ],

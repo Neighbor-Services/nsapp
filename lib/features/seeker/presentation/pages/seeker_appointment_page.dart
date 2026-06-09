@@ -133,10 +133,12 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                                             width: 1.5.r,
                                           ),
                                         ),
-                                        child: FaIcon(
-                                          FontAwesomeIcons.chevronLeft,
-                                          size: 18.r,
-                                          color: context.appColors.primaryTextColor,
+                                        child: Center(
+                                          child: FaIcon(
+                                            FontAwesomeIcons.chevronLeft,
+                                            size: 18.r,
+                                            color: context.appColors.primaryTextColor,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -231,6 +233,9 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               child: SolidContainer(
                 backgroundColor: context.appColors.cardBackground,
                 child: MonthView(
+                  headerStringBuilder: (date, {secondaryDate}) {
+                    return DateFormat("MMMM-yyyy").format(date);
+                  },
                   borderColor: borderColor,
                   cellBuilder:
                       (date, events, isToday, isInMonth, hideDaysNotInMonth) {
@@ -382,10 +387,12 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                           ),
                           child: Row(
                             children: [
-                              FaIcon(
-                                FontAwesomeIcons.circleCheck,
-                                color: context.appColors.successColor,
-                                size: 20.r,
+                              Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.circleCheck,
+                                  color: context.appColors.successColor,
+                                  size: 20.r,
+                                ),
                               ),
                               SizedBox(width: 12.w),
                               Expanded(
@@ -419,10 +426,12 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                       borderRadius: BorderRadius.circular(14.r),
                       border: Border.all(color: context.appColors.glassBorder),
                     ),
-                    child: FaIcon(
-                      FontAwesomeIcons.calendar,
-                      color: context.appColors.primaryColor,
-                      size: 24.r,
+                    child: Center(
+                      child: FaIcon(
+                        FontAwesomeIcons.calendar,
+                        color: context.appColors.primaryColor,
+                        size: 24.r,
+                      ),
                     ),
                   ),
                   SizedBox(width: 16.w),
@@ -540,10 +549,12 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
                               customAlert(context, AlertType.error, "You are not authorized to view this request");
                             }
                           },
-                          icon: FaIcon(
-                            FontAwesomeIcons.arrowUpRightFromSquare,
-                            size: 18.r,
-                            color: context.appColors.primaryColor,
+                          icon: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.arrowUpRightFromSquare,
+                              size: 18.r,
+                              color: context.appColors.primaryColor,
+                            ),
                           ),
                           label: Text(
                             "VIEW FULL DETAILS",
@@ -670,7 +681,7 @@ class _SeekerAppointmentPageState extends State<SeekerAppointmentPage>
               color: iconBg,
               borderRadius: BorderRadius.circular(10.r),
             ),
-            child: FaIcon(icon, color: iconColor, size: 18.r),
+            child: Center(child: FaIcon(icon, color: iconColor, size: 18.r)),
           ),
           SizedBox(width: 12.w),
           Expanded(

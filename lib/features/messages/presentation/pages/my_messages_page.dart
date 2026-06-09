@@ -7,6 +7,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nsapp/core/core.dart';
+import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/empty_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
@@ -80,13 +81,9 @@ class _MyMessagesPageState extends State<MyMessagesPage>
               _errorMessage = state.message;
             });
           } else if (state is SuccessBlockChatState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Chat blocked successfully')),
-            );
+            customAlert(context, AlertType.success, 'Chat blocked successfully');
           } else if (state is FailureBlockChatState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            customAlert(context, AlertType.error, state.message);
           }
         },
         builder: (context, state) {
@@ -409,28 +406,40 @@ class _MyMessagesPageState extends State<MyMessagesPage>
       context: context,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => Container(
-        padding: EdgeInsets.all(24.r),
+        padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 40.h),
         decoration: BoxDecoration(
           color: sheetColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+          border: Border.all(
+            color: context.appColors.glassBorder,
+            width: 1.r,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40.w,
-              height: 4.h,
+              width: 45.w,
+              height: 5.h,
               decoration: BoxDecoration(
                 color: context.appColors.glassBorder,
-                borderRadius: BorderRadius.circular(2.r),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
             SizedBox(height: 24.h),
             ListTile(
-              leading: const Icon(Icons.block, color: Colors.red),
+              leading: FaIcon(
+                FontAwesomeIcons.ban,
+                color: context.appColors.errorColor,
+                size: 20.r,
+              ),
               title: Text(
                 "Block ${chat.other!.firstName ?? 'User'}",
-                style: TextStyle(color: Colors.red, fontSize: 16.sp),
+                style: TextStyle(
+                  color: context.appColors.errorColor,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               onTap: () {
                 Navigator.of(sheetContext).pop();
@@ -449,17 +458,40 @@ class _MyMessagesPageState extends State<MyMessagesPage>
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Block ${chat.other!.firstName ?? "User"}?'),
-          content: const Text('Are you sure you want to block this user? The conversation will be hidden/archived.'),
+          backgroundColor: context.appColors.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          title: Text(
+            'BLOCK USER',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: context.appColors.errorColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to block this user? The conversation will be hidden/archived.',
+            style: TextStyle(color: context.appColors.secondaryTextColor),
+          ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: context.appColors.secondaryTextColor),
+              ),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
-              child: const Text('Block', style: TextStyle(color: Colors.red)),
+              child: Text(
+                'BLOCK',
+                style: TextStyle(
+                  color: context.appColors.errorColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 context.read<MessageBloc>().add(BlockChatEvent(

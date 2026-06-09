@@ -805,10 +805,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
-              if (Navigator.of(context).canPop()) {
-                context.pop(); // Pop notifications page first
-              }
-              await Future.delayed(const Duration(milliseconds: 100));
+              if (!mounted) return;
               context.push(
                 '/app/provider/requests/$requestId',
                 extra: state.request,
@@ -860,9 +857,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               }
 
               seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
-              if (Navigator.of(context).canPop()) {
-                context.pop(); // Pop notifications page first
-              }
+              if (!mounted) return;
               context.push(
                 '/app/requests/${requestData.request?.id}',
                 extra: requestData,
@@ -876,9 +871,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             }
           } else {
             dismissLoader();
-            if (Navigator.of(context).canPop()) {
-              context.pop(); // Pop notifications page first
-            }
+            if (!mounted) return;
             context.push('/seeker-requests');
           }
         }
@@ -894,9 +887,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           }
         } else {
           seekerBloc.add(seeker_bloc.GetAppointmentsEvent());
-          if (Navigator.of(context).canPop()) {
-            context.pop(); // Pop notifications page first
-          }
+          if (!mounted) return;
           context.push('/seeker-appointments');
         }
         break;
