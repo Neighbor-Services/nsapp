@@ -19,10 +19,7 @@ class SubscribeDialogWidget extends StatelessWidget {
           builder: (context, value, child) {
             return Transform.scale(
               scale: value,
-              child: Opacity(
-                opacity: (value - 0.8) / 0.2,
-                child: child,
-              ),
+              child: Opacity(opacity: 1, child: child),
             );
           },
           child: Container(
@@ -33,7 +30,6 @@ class SubscribeDialogWidget extends StatelessWidget {
               color: Color(0xFF1E1E2E),
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(color: Colors.white12, width: 1.r),
-             
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -44,7 +40,7 @@ class SubscribeDialogWidget extends StatelessWidget {
                     color: context.appColors.warningColor.withAlpha(30),
                     shape: BoxShape.circle,
                   ),
-                  child:  FaIcon(
+                  child: FaIcon(
                     FontAwesomeIcons.star,
                     size: 40.r,
                     color: context.appColors.warningColor,

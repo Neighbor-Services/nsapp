@@ -469,7 +469,11 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   Widget _buildEmptyPlans(Color textColor, Color secondaryTextColor) {
     return Column(
       children: [
-        FaIcon(FontAwesomeIcons.faceFrown, size: 48.r, color: secondaryTextColor),
+        FaIcon(
+          FontAwesomeIcons.faceFrown,
+          size: 48.r,
+          color: secondaryTextColor,
+        ),
         SizedBox(height: 16.h),
         Text(
           "No plans found for this interval",
@@ -515,150 +519,155 @@ class _SubscriptionPageState extends State<SubscriptionPage>
         tierIcon = FontAwesomeIcons.star;
     }
 
-    String commissionText = "20% platform fee";
-    String priorityText = "Standard visibility";
+    // String commissionText = "20% platform fee";
+    // String priorityText = "Standard visibility";
 
-    if (plan.tier == 'SILVER') {
-      commissionText = "15% platform fee";
-      priorityText = "1.1x visibility boost";
-    } else if (plan.tier == 'GOLD') {
-      commissionText = "10% platform fee";
-      priorityText = "1.2x visibility boost";
-    } else if (plan.tier == 'PLATINUM') {
-      commissionText = "5% platform fee";
-      priorityText = "1.5x matching boost";
-    }
+    // if (plan.tier == 'SILVER') {
+    //   commissionText = "15% platform fee";
+    //   priorityText = "1.1x visibility boost";
+    // } else if (plan.tier == 'GOLD') {
+    //   commissionText = "10% platform fee";
+    //   priorityText = "1.2x visibility boost";
+    // } else if (plan.tier == 'PLATINUM') {
+    //   commissionText = "5% platform fee";
+    //   priorityText = "1.5x matching boost";
+    // }
 
     final maxServices = plan.maxCatalogServices ?? 1;
     final limitText = maxServices == 0
         ? "Unlimited catalog services"
         : "$maxServices catalog service${maxServices > 1 ? 's' : ''}";
 
-    return GestureDetector(
-      onTap: () async {
-        if (plan.id != null) {
-          // context.read<SubscriptionBloc>().add(
-          //   MakeSubscriptionEvent(planId: plan.id!, context: context),
-          // );
-        }
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, profileState) {
+        // TODO: implement listener
       },
-      child: Container(
-        padding: EdgeInsets.all(24.r),
-        decoration: BoxDecoration(
-          color: context.appColors.cardBackground,
-          borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(color: context.appColors.glassBorder),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(12.r),
-              decoration: BoxDecoration(
-                color: context.appColors.primaryColor.withAlpha(20),
-                shape: BoxShape.circle,
-              ),
-              child: FaIcon(
-                tierIcon,
-                color: context.appColors.primaryColor,
-                size: 32.r,
-              ),
+      builder: (context, profileState) {
+        return GestureDetector(
+          onTap: () async {
+            if (plan.id != null) {
+              // context.read<SubscriptionBloc>().add(
+              //   MakeSubscriptionEvent(planId: plan.id!, context: context),
+              // );
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.all(24.r),
+            decoration: BoxDecoration(
+              color: context.appColors.cardBackground,
+              borderRadius: BorderRadius.circular(24.r),
+              border: Border.all(color: context.appColors.glassBorder),
             ),
-            SizedBox(height: 20.h),
-            Text(
-              (plan.name ?? "Plan").toUpperCase(),
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w500,
-                color: textColor,
-                letterSpacing: 1.1,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "\$${plan.price?.toStringAsFixed(2) ?? '0.00'}",
-                  style: TextStyle(
-                    fontSize: 32.sp,
-                    fontWeight: FontWeight.w500,
-                    color: textColor,
+                Container(
+                  padding: EdgeInsets.all(12.r),
+                  decoration: BoxDecoration(
+                    color: context.appColors.primaryColor.withAlpha(20),
+                    shape: BoxShape.circle,
+                  ),
+                  child: FaIcon(
+                    tierIcon,
+                    color: context.appColors.primaryColor,
+                    size: 32.r,
                   ),
                 ),
+                SizedBox(height: 20.h),
                 Text(
-                  "/${plan.interval == 'year' ? 'YR' : 'MO'}",
+                  (plan.name ?? "Plan").toUpperCase(),
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
-                    color: secondaryTextColor,
+                    color: textColor,
+                    letterSpacing: 1.1,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      "\$${plan.price?.toStringAsFixed(2) ?? '0.00'}",
+                      style: TextStyle(
+                        fontSize: 32.sp,
+                        fontWeight: FontWeight.w500,
+                        color: textColor,
+                      ),
+                    ),
+                    Text(
+                      "/${plan.interval == 'year' ? 'YR' : 'MO'}",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: secondaryTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24.h),
+
+                _buildBenefitItem(
+                  limitText,
+                  FontAwesomeIcons.briefcase,
+                  false,
+                  textColor,
+                  secondaryTextColor,
+                ),
+
+                Divider(color: context.appColors.glassBorder, height: 32.h),
+
+                ...features.map(
+                  (feature) =>
+                      _buildFeatureItem(feature, false, secondaryTextColor),
+                ),
+
+                SizedBox(height: 24.h),
+                GestureDetector(
+                  onTap: () {
+                    if (profileState.profile!.catalogServiceNames!.length >
+                        plan.maxCatalogServices!) {
+                      customAlert(
+                        context,
+                        AlertType.warning,
+                        "Your profile service catalog number exceeds the maximum number of service for the selected plan",
+                      );
+                    } else {
+                      context.read<SubscriptionBloc>().add(
+                        MakeSubscriptionEvent(
+                          planId: plan.id!,
+                          context: context,
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 54.h,
+                    decoration: BoxDecoration(
+                      color: context.appColors.primaryColor.withAlpha(30),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: context.appColors.glassBorder),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: context.appColors.primaryColor,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 24.h),
-
-            _buildBenefitItem(
-              commissionText,
-              FontAwesomeIcons.wallet,
-              false,
-              textColor,
-              secondaryTextColor,
-            ),
-            _buildBenefitItem(
-              priorityText,
-              FontAwesomeIcons.arrowTrendUp,
-              false,
-              textColor,
-              secondaryTextColor,
-            ),
-            _buildBenefitItem(
-              limitText,
-              FontAwesomeIcons.briefcase,
-              false,
-              textColor,
-              secondaryTextColor,
-            ),
-
-            Divider(color: context.appColors.glassBorder, height: 32.h),
-
-            ...features.map(
-              (feature) =>
-                  _buildFeatureItem(feature, false, secondaryTextColor),
-            ),
-
-            SizedBox(height: 24.h),
-            GestureDetector(
-              onTap: () {
-                context.read<SubscriptionBloc>().add(
-                  MakeSubscriptionEvent(planId: plan.id!, context: context),
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                height: 54.h,
-                decoration: BoxDecoration(
-                  color: context.appColors.primaryColor.withAlpha(30),
-                  borderRadius: BorderRadius.circular(16.r),
-                  border: Border.all(color: context.appColors.glassBorder),
-                ),
-                child: Center(
-                  child: Text(
-                    "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: context.appColors.primaryColor,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

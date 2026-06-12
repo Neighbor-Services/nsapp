@@ -105,7 +105,9 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                             icon: Container(
                               padding: EdgeInsets.all(8.r),
                               decoration: BoxDecoration(
-                                color: context.appColors.glassBorder.withAlpha(20),
+                                color: context.appColors.glassBorder.withAlpha(
+                                  20,
+                                ),
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: context.appColors.glassBorder,
@@ -137,16 +139,21 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                               height: 100.r,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: context.appColors.primaryColor.withAlpha(20),
+                                color: context.appColors.primaryColor.withAlpha(
+                                  20,
+                                ),
                                 border: Border.all(
-                                  color: context.appColors.primaryColor.withAlpha(50),
+                                  color: context.appColors.primaryColor
+                                      .withAlpha(50),
                                   width: 2.r,
                                 ),
                               ),
-                              child: FaIcon(
-                                FontAwesomeIcons.key,
-                                size: 50.r,
-                                color: context.appColors.primaryColor,
+                              child: Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.key,
+                                  size: 50.r,
+                                  color: context.appColors.primaryColor,
+                                ),
                               ),
                             ),
                             SizedBox(height: 32.h),
@@ -163,7 +170,9 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
                                       style: TextStyle(
                                         fontSize: 22.sp,
                                         fontWeight: FontWeight.w500,
-                                        color: isDark ? Colors.white : Colors.black,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black,
                                         letterSpacing: 1.0,
                                       ),
                                     ),
@@ -271,8 +280,3 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>
     );
   }
 }
-
-
-
-
-

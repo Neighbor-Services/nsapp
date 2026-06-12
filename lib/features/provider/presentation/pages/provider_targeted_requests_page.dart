@@ -197,7 +197,7 @@ class _ProviderTargetedRequestsPageState
               FaIcon(
                 FontAwesomeIcons.handshake,
                 size: 60.r,
-                color: context.appColors.glassBorder,
+                color: context.appColors.primaryColor,
               ),
               SizedBox(height: 16.h),
               Text(
@@ -205,7 +205,7 @@ class _ProviderTargetedRequestsPageState
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w400,
-                  color: context.appColors.glassBorder,
+                  color: context.appColors.primaryTextColor,
                 ),
               ),
               SizedBox(height: 8.h),
@@ -214,7 +214,7 @@ class _ProviderTargetedRequestsPageState
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.sp,
-                  color: context.appColors.glassBorder,
+                  color: context.appColors.secondaryTextColor,
                 ),
               ),
             ],

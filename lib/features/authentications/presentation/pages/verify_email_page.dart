@@ -107,10 +107,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                       width: 2.r,
                                     ),
                                   ),
-                                  child: FaIcon(
-                                    FontAwesomeIcons.userShield,
-                                    size: 50.r,
-                                    color: context.appColors.primaryColor,
+                                  child: Center(
+                                    child: FaIcon(
+                                      FontAwesomeIcons.userShield,
+                                      size: 50.r,
+                                      color: context.appColors.primaryColor,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: 32.h),
@@ -151,22 +153,26 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
                                             : fieldWidth + 10,
                                         showFieldAsBox: true,
                                         borderWidth: 1.5.r,
-                                        borderRadius: BorderRadius.circular(12.r),
-                                        fillColor: context.appColors.glassBorder,
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
+                                        fillColor:
+                                            context.appColors.glassBorder,
                                         filled: true,
-                                        borderColor: context.appColors.glassBorder,
-                                        focusedBorderColor: context.appColors.secondaryColor,
+                                        borderColor:
+                                            context.appColors.glassBorder,
+                                        focusedBorderColor:
+                                            context.appColors.secondaryColor,
                                         enabledBorderColor: Colors.white
                                             .withAlpha(20),
                                         cursorColor: Colors.white,
                                         textStyle: TextStyle(
-                                          fontSize: (fieldWidth > 40 ? 24 : 18).sp,
+                                          fontSize:
+                                              (fieldWidth > 40 ? 24 : 18).sp,
                                           fontWeight: FontWeight.w500,
                                           color: Colors.white,
                                         ),
-                                        margin: EdgeInsets.only(
-                                          right: 12.0.w,
-                                        ),
+                                        margin: EdgeInsets.only(right: 12.0.w),
                                         onSubmit: (code) {
                                           verificationCode = code;
                                         },
@@ -218,6 +224,3 @@ class _VerifyEmailPageState extends State<VerifyEmailPage>
     );
   }
 }
-
-
-

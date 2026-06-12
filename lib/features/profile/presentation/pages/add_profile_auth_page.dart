@@ -203,13 +203,13 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
           return false;
         }
         return true;
-      case 2: // Account Setup (Provider only)
+      case 3: // Account Setup (Provider only)
         if (Helpers.isProvider(_userType) && !_others && serviceType.isEmpty) {
           customAlert(context, AlertType.warning, "Please select your service");
           return false;
         }
         return true;
-      case 3: // Subscription (Provider only)
+      case 2: // Subscription (Provider only)
         if (Helpers.isProvider(_userType) && _selectedPlanId == null) {
           customAlert(
             context,
@@ -608,8 +608,8 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
       return [
         _buildStep1PersonalInfo(),
         _buildStep2LocationContact(),
-        _buildStep3AccountSetup(),
-        _buildStep4Subscription(),
+        _buildStep3Subscription(),
+        _buildStep4AccountSetup(),
       ];
     } else {
       return [_buildStep1PersonalInfo(), _buildStep2LocationContact()];
@@ -748,7 +748,12 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
                     },
                   ),
                   SizedBox(height: 8.h),
-                  CustomTextWidget(text: "Note: You must be 18 years before you can be accepted on the platform", color: Colors.red, fontSize: 12.sp,),
+                  CustomTextWidget(
+                    text:
+                        "Note: You must be 18 years before you can be accepted on the platform",
+                    color: Colors.red,
+                    fontSize: 12.sp,
+                  ),
                 ],
               ),
             ),
@@ -883,9 +888,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
     );
   }
 
-  // ─── STEP 3: ACCOUNT SETUP (Provider Only) ───────────────────
+  // ─── STEP 4: ACCOUNT SETUP (Provider Only) ───────────────────
 
-  Widget _buildStep3AccountSetup() {
+  Widget _buildStep4AccountSetup() {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
       physics: const BouncingScrollPhysics(),
@@ -1084,9 +1089,9 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
     );
   }
 
-  // ─── STEP 4: SUBSCRIPTION PLAN ───────────────────────────────
+  // ─── STEP 3: SUBSCRIPTION PLAN ───────────────────────────────
 
-  Widget _buildStep4Subscription() {
+  Widget _buildStep3Subscription() {
     final plans =
         _allPlans.where((plan) => plan.interval == _selectedInterval).toList()
           ..sort(
@@ -1233,18 +1238,18 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
         tierIcon = FontAwesomeIcons.star;
     }
 
-    String commissionText = "20% platform fee";
-    String priorityText = "Standard visibility";
-    if (plan.tier == 'SILVER') {
-      commissionText = "15% platform fee";
-      priorityText = "1.1x visibility boost";
-    } else if (plan.tier == 'GOLD') {
-      commissionText = "10% platform fee";
-      priorityText = "1.2x visibility boost";
-    } else if (plan.tier == 'PLATINUM') {
-      commissionText = "5% platform fee";
-      priorityText = "1.5x matching boost";
-    }
+    // String commissionText = "20% platform fee";
+    // String priorityText = "Standard visibility";
+    // if (plan.tier == 'SILVER') {
+    //   commissionText = "15% platform fee";
+    //   priorityText = "1.1x visibility boost";
+    // } else if (plan.tier == 'GOLD') {
+    //   commissionText = "10% platform fee";
+    //   priorityText = "1.2x visibility boost";
+    // } else if (plan.tier == 'PLATINUM') {
+    //   commissionText = "5% platform fee";
+    //   priorityText = "1.5x matching boost";
+    // }
 
     final maxServices = plan.maxCatalogServices ?? 1;
     final limitText = maxServices == 0
@@ -1373,8 +1378,6 @@ class _AddProfileAuthPageState extends State<AddProfileAuthPage>
               spacing: 8.w,
               runSpacing: 8.h,
               children: [
-                _buildBenefitChip(commissionText, FontAwesomeIcons.wallet),
-                _buildBenefitChip(priorityText, FontAwesomeIcons.arrowTrendUp),
                 _buildBenefitChip(limitText, FontAwesomeIcons.briefcase),
               ],
             ),

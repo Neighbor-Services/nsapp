@@ -175,10 +175,12 @@ class _DisputesListPageState extends State<DisputesListPage> {
                     color: context.appColors.warningColor.withAlpha(50),
                   ),
                 ),
-                child: FaIcon(
-                  FontAwesomeIcons.gavel,
-                  color: context.appColors.warningColor,
-                  size: 40.r,
+                child: Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.gavel,
+                    color: context.appColors.warningColor,
+                    size: 40.r,
+                  ),
                 ),
               ),
               SizedBox(height: 20.h),

@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
 import 'package:nsapp/core/models/notification.dart' as not;
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:nsapp/features/shared/presentation/widget/loading_view.dart';
 
 import 'package:nsapp/features/shared/presentation/widget/skeleton_widget.dart';
 import 'package:nsapp/features/shared/presentation/widget/gradient_background_widget.dart';
@@ -40,6 +41,7 @@ class _NotificationsPageState extends State<NotificationsPage>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   Profile? _currentProfile;
+  bool isLoading = false;
 
   final PagingController<int, not.NotificationData> _pagingController =
       PagingController(firstPageKey: 1);
@@ -147,131 +149,138 @@ class _NotificationsPageState extends State<NotificationsPage>
           builder: (context, settingsState) {
             return BlocBuilder<NotificationBloc, NotificationState>(
               builder: (context, state) {
-                return GradientBackground(
-                  child: SafeArea(
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 700.w),
-                        child: FadeTransition(
-                          opacity: _fadeAnimation,
-                          child: RefreshIndicator(
-                            onRefresh: () async {
-                              _pagingController.refresh();
-                              context.read<ProfileBloc>().add(
-                                GetProfileStreamEvent(),
-                              );
-                              context.read<ProfileBloc>().add(
-                                GetProfileEvent(),
-                              );
-                            },
-                            child: CustomScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              slivers: [
-                                SliverToBoxAdapter(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: isLargeScreen ? 32.w : 20.w,
-                                      vertical: 24.h,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (Navigator.of(
-                                              context,
-                                            ).canPop()) {
-                                              context.pop();
-                                            } else {
-                                              if (settingsState.isProvider) {
-                                                context
-                                                    .read<ProviderBloc>()
-                                                    .add(
-                                                      ChangeProviderTabEvent(
-                                                        tabIndex: 1,
-                                                      ),
-                                                    );
+                return LoadingView(
+                  isLoading: isLoading,
+                  child: GradientBackground(
+                    child: SafeArea(
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 700.w),
+                          child: FadeTransition(
+                            opacity: _fadeAnimation,
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                _pagingController.refresh();
+                                context.read<ProfileBloc>().add(
+                                  GetProfileStreamEvent(),
+                                );
+                                context.read<ProfileBloc>().add(
+                                  GetProfileEvent(),
+                                );
+                              },
+                              child: CustomScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                slivers: [
+                                  SliverToBoxAdapter(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: isLargeScreen ? 32.w : 20.w,
+                                        vertical: 24.h,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (Navigator.of(
+                                                context,
+                                              ).canPop()) {
+                                                context.pop();
                                               } else {
-                                                context.read<SeekerBloc>().add(
-                                                  ChangeSeekerTabEvent(
-                                                    tabIndex: 1,
-                                                  ),
-                                                );
+                                                if (settingsState.isProvider) {
+                                                  context
+                                                      .read<ProviderBloc>()
+                                                      .add(
+                                                        ChangeProviderTabEvent(
+                                                          tabIndex: 1,
+                                                        ),
+                                                      );
+                                                } else {
+                                                  context
+                                                      .read<SeekerBloc>()
+                                                      .add(
+                                                        ChangeSeekerTabEvent(
+                                                          tabIndex: 1,
+                                                        ),
+                                                      );
+                                                }
                                               }
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(12.r),
-                                            decoration: BoxDecoration(
-                                              color: context
-                                                  .appColors
-                                                  .cardBackground,
-                                              borderRadius:
-                                                  BorderRadius.circular(12.r),
-                                              border: Border.all(
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.all(12.r),
+                                              decoration: BoxDecoration(
                                                 color: context
                                                     .appColors
-                                                    .glassBorder,
+                                                    .cardBackground,
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                                border: Border.all(
+                                                  color: context
+                                                      .appColors
+                                                      .glassBorder,
+                                                ),
+                                              ),
+                                              child: FaIcon(
+                                                FontAwesomeIcons.chevronLeft,
+                                                color: context
+                                                    .appColors
+                                                    .primaryTextColor,
+                                                size: 20.r,
                                               ),
                                             ),
-                                            child: FaIcon(
-                                              FontAwesomeIcons.chevronLeft,
+                                          ),
+                                          SizedBox(width: 16.w),
+                                          Text(
+                                            "NOTIFICATIONS",
+                                            style: TextStyle(
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.w500,
                                               color: context
                                                   .appColors
                                                   .primaryTextColor,
-                                              size: 20.r,
+                                              letterSpacing: 1.2,
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(width: 16.w),
-                                        Text(
-                                          "NOTIFICATIONS",
-                                          style: TextStyle(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: context
-                                                .appColors
-                                                .primaryTextColor,
-                                            letterSpacing: 1.2,
-                                          ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SliverPadding(
-                                  padding: EdgeInsets.only(
-                                    left: isLargeScreen ? 32.w : 16.w,
-                                    right: isLargeScreen ? 32.w : 16.w,
-                                    bottom: 24.h,
-                                  ),
-                                  sliver: PagedSliverList<int, not.NotificationData>(
-                                    pagingController: _pagingController,
-                                    builderDelegate:
-                                        PagedChildBuilderDelegate<
-                                          not.NotificationData
-                                        >(
-                                          itemBuilder: (context, item, index) =>
-                                              _buildNotificationCard(
-                                                context,
-                                                item,
-                                                index,
-                                              ),
-                                          firstPageProgressIndicatorBuilder:
-                                              (_) => const ListSkeletonLoader(),
-                                          newPageProgressIndicatorBuilder:
-                                              (_) => const Padding(
-                                                padding: EdgeInsets.all(16.0),
-                                                child: Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
+                                  SliverPadding(
+                                    padding: EdgeInsets.only(
+                                      left: isLargeScreen ? 32.w : 16.w,
+                                      right: isLargeScreen ? 32.w : 16.w,
+                                      bottom: 24.h,
+                                    ),
+                                    sliver: PagedSliverList<int, not.NotificationData>(
+                                      pagingController: _pagingController,
+                                      builderDelegate:
+                                          PagedChildBuilderDelegate<
+                                            not.NotificationData
+                                          >(
+                                            itemBuilder:
+                                                (context, item, index) =>
+                                                    _buildNotificationCard(
+                                                      context,
+                                                      item,
+                                                      index,
+                                                    ),
+                                            firstPageProgressIndicatorBuilder:
+                                                (_) =>
+                                                    const ListSkeletonLoader(),
+                                            newPageProgressIndicatorBuilder:
+                                                (_) => const Padding(
+                                                  padding: EdgeInsets.all(16.0),
+                                                  child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
                                                 ),
-                                              ),
-                                          noItemsFoundIndicatorBuilder: (_) =>
-                                              _buildEmptyState(),
-                                        ),
+                                            noItemsFoundIndicatorBuilder: (_) =>
+                                                _buildEmptyState(),
+                                          ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -579,8 +588,11 @@ class _NotificationsPageState extends State<NotificationsPage>
               textAlign: TextAlign.center,
             ),
             if (notificationData.notification!.notificationType
-                    ?.toLowerCase() !=
-                "system") ...[
+                        ?.toLowerCase() !=
+                    "system" ||
+                notificationData.notification!.notificationType
+                        ?.toLowerCase() !=
+                    "subscription") ...[
               SizedBox(height: 32.h),
               SizedBox(
                 width: double.infinity,
@@ -640,6 +652,9 @@ class _NotificationsPageState extends State<NotificationsPage>
   }
 
   Future<void> _navigateToDetails(not.NotificationData notificationData) async {
+    setState(() {
+      isLoading = true;
+    });
     final notification = notificationData.notification;
     final data = notification?.data;
     final type = notification?.notificationType?.toLowerCase();
@@ -649,73 +664,73 @@ class _NotificationsPageState extends State<NotificationsPage>
     final messageBloc = context.read<MessageBloc>();
     final providerBloc = context.read<ProviderBloc>();
     final seekerBloc = context.read<SeekerBloc>();
+    final profile = context.read<ProfileBloc>().state.profile;
 
     Navigator.of(context).pop(); // Close bottom sheet
 
     if (!mounted) return;
     final pageContext = context;
 
-    bool loaderDismissed = false;
-    BuildContext? dialogContext;
-    showDialog(
-      context: pageContext,
-      barrierDismissible: false,
-      builder: (ctx) {
-        dialogContext = ctx;
-        if (loaderDismissed) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (ctx.mounted && Navigator.of(ctx).canPop()) {
-              Navigator.of(ctx).pop();
-            }
-          });
-        }
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: Center(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 28.h),
-                decoration: BoxDecoration(
-                  color: pageContext.appColors.cardBackground.withAlpha(217),
-                  borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(
-                    color: pageContext.appColors.glassBorder,
-                    width: 1.2.r,
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(
-                      color: pageContext.appColors.primaryColor,
-                      strokeWidth: 3.5.r,
-                    ),
-                    SizedBox(height: 20.h),
-                    Text(
-                      "LOADING DETAILS...",
-                      style: TextStyle(
-                        color: pageContext.appColors.primaryTextColor,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    // bool loaderDismissed = false;
+    // BuildContext? dialogContext;
+    // showDialog(
+    //   context: pageContext,
+    //   barrierDismissible: false,
+    //   builder: (ctx) {
+    //     dialogContext = ctx;
+    //     if (loaderDismissed) {
+    //       WidgetsBinding.instance.addPostFrameCallback((_) {
+    //         if (ctx.mounted && Navigator.of(ctx).canPop()) {
+    //           // Navigator.of(ctx).pop();
+    //         }
+    //       });
+    //     }
+    //     return BackdropFilter(
+    //       filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+    //       child: Dialog(
+    //         backgroundColor: Colors.transparent,
+    //         elevation: 0,
+    //         child: Center(
+    //           child: Container(
+    //             padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 28.h),
+    //             decoration: BoxDecoration(
+    //               color: pageContext.appColors.cardBackground.withAlpha(217),
+    //               borderRadius: BorderRadius.circular(24.r),
+    //               border: Border.all(
+    //                 color: pageContext.appColors.glassBorder,
+    //                 width: 1.2.r,
+    //               ),
+    //             ),
+    //             child: Column(
+    //               mainAxisSize: MainAxisSize.min,
+    //               children: [
+    //                 CircularProgressIndicator(
+    //                   color: pageContext.appColors.primaryColor,
+    //                   strokeWidth: 3.5.r,
+    //                 ),
+    //                 SizedBox(height: 20.h),
+    //                 Text(
+    //                   "LOADING DETAILS...",
+    //                   style: TextStyle(
+    //                     color: pageContext.appColors.primaryTextColor,
+    //                     fontSize: 12.sp,
+    //                     fontWeight: FontWeight.w600,
+    //                     letterSpacing: 1.2,
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
 
     void dismissLoader() {
-      loaderDismissed = true;
-      if (dialogContext != null && Navigator.of(dialogContext!).canPop()) {
-        Navigator.of(dialogContext!).pop();
-      }
+      setState(() {
+        isLoading = false;
+      });
     }
 
     switch (type) {
@@ -766,7 +781,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             } else {
               seekerBloc.add(ChangeSeekerTabEvent(tabIndex: 4));
             }
-            context.pop(); // Go back to home
+            // context.pop(); // Go back to home
           }
         } else {
           // No sender info at all — go to messages tab as fallback.
@@ -777,7 +792,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           } else {
             seekerBloc.add(ChangeSeekerTabEvent(tabIndex: 4));
           }
-          context.pop(); // Go back to home
+          // context.pop(); // Go back to home
         }
         break;
 
@@ -805,11 +820,15 @@ class _NotificationsPageState extends State<NotificationsPage>
             dismissLoader();
 
             if (state is SuccessGetRequestDetailState) {
-              if (!mounted) return;
-              context.push(
-                '/app/provider/requests/$requestId',
-                extra: state.request,
-              );
+              if (state.request.user!.user!.id == profile!.user!.id) {
+                context.push('/app/requests/$requestId', extra: state.request);
+              } else {
+                // if (!mounted) return;
+                context.push(
+                  '/app/provider/requests/$requestId',
+                  extra: state.request,
+                );
+              }
             } else {
               customAlert(
                 pageContext,
@@ -857,7 +876,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               }
 
               seekerBloc.add(SeekerRequestDetailEvent(request: requestData));
-              if (!mounted) return;
+              // if (!mounted) return;
               context.push(
                 '/app/requests/${requestData.request?.id}',
                 extra: requestData,

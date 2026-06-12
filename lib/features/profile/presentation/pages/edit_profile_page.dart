@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 
 import 'dart:io';
 
@@ -57,6 +58,7 @@ class _EditProfilePageState extends State<EditProfilePage>
   XFile? _selectedImage;
   Profile? _currentProfile;
   DateTime? _selectedDob;
+  bool _isValidSubscription = false;
 
   bool _useMap = false;
   LatLng? _mapLocation;
@@ -70,6 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage>
   void initState() {
     super.initState();
     context.read<CommonBloc>().add(GetServicesEvent());
+    context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
     context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
 
     nameTextController = TextEditingController();
@@ -163,6 +166,18 @@ class _EditProfilePageState extends State<EditProfilePage>
     return Scaffold(
       body: MultiBlocListener(
         listeners: [
+          BlocListener<SubscriptionBloc, SubscriptionState>(
+            listener: (context, subscriptionState) {
+              context.read<SubscriptionBloc>().add(
+                CheckUserSubscriptionEvent(),
+              );
+              if (subscriptionState is ValidUserSubscriptionState) {
+                setState(() {
+                  _isValidSubscription = subscriptionState.isValid;
+                });
+              }
+            },
+          ),
           BlocListener<CommonBloc, CommonState>(
             listener: (context, state) {
               if (state is SuccessGetServicesState) {
@@ -243,632 +258,697 @@ class _EditProfilePageState extends State<EditProfilePage>
           builder: (context, profileState) {
             return BlocBuilder<CommonBloc, CommonState>(
               builder: (context, commonState) {
-                return LoadingView(
-                  isLoading:
-                      (profileState is LoadingProfileState) ||
-                      (commonState is CommonLoading),
-                  child: GradientBackground(
-                    child: SafeArea(
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: 700.w),
-                          child: FadeTransition(
-                            opacity: _fadeAnimation,
-                            child: RefreshIndicator(
-                              onRefresh: () async {
-                                context.read<ProfileBloc>().add(
-                                  GetProfileStreamEvent(),
-                                );
-                                context.read<ProfileBloc>().add(
-                                  GetProfileEvent(),
-                                );
-                                await Future.delayed(
-                                  const Duration(seconds: 1),
-                                );
-                              },
-                              child: SingleChildScrollView(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 20.w,
-                                  vertical: 24.h,
-                                ),
-                                child: Form(
-                                  key: key,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () => context.pop(),
-                                        child: Container(
-                                          padding: EdgeInsets.all(12.r),
-                                          decoration: BoxDecoration(
-                                            color: context
-                                                .appColors
-                                                .cardBackground,
-                                            borderRadius: BorderRadius.circular(
-                                              12.r,
-                                            ),
-                                            border: Border.all(
-                                              color:
-                                                  context.appColors.glassBorder,
-                                              width: 1.5.r,
-                                            ),
-                                          ),
-                                          child: FaIcon(
-                                            FontAwesomeIcons.chevronLeft,
-                                            color: context
-                                                .appColors
-                                                .primaryTextColor,
-                                            size: 20.r,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 32.h),
-                                      Text(
-                                        "EDIT PROFILE",
-                                        style: TextStyle(
-                                          fontSize: 24.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: context
-                                              .appColors
-                                              .primaryTextColor,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      Text(
-                                        "UPDATE YOUR INFORMATION TO KEEP IT ACCURATE",
-                                        style: TextStyle(
-                                          fontSize: 10.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: context
-                                              .appColors
-                                              .secondaryTextColor,
-                                          letterSpacing: 1.0,
-                                        ),
-                                      ),
-                                      SizedBox(height: 30.h),
-
-                                      // Profile Picture Section
-                                      Center(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            _showImageSourceSheet(context);
-                                          },
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.all(4.r),
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                    color: context
-                                                        .appColors
-                                                        .glassBorder,
-                                                    width: 2.r,
-                                                  ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: context
-                                                          .appColors
-                                                          .primaryColor
-                                                          .withAlpha(50),
-                                                      blurRadius: 40.r,
-                                                      spreadRadius: -5.r,
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: Container(
-                                                  padding: EdgeInsets.all(2.r),
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                      color: context
-                                                          .appColors
-                                                          .glassBorder,
-                                                      width: 1.r,
-                                                    ),
-                                                  ),
-                                                  child: CircleAvatar(
-                                                    radius: 60.r,
-                                                    backgroundColor: Colors
-                                                        .white
-                                                        .withAlpha(10),
-                                                    backgroundImage:
-                                                        _buildProfileImageProvider(),
-                                                  ),
+                return BlocBuilder<SubscriptionBloc, SubscriptionState>(
+                  builder: (context, subscriptionState) {
+                    return LoadingView(
+                      isLoading:
+                          (profileState is LoadingProfileState) ||
+                          (commonState is CommonLoading),
+                      child: GradientBackground(
+                        child: SafeArea(
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: 700.w),
+                              child: FadeTransition(
+                                opacity: _fadeAnimation,
+                                child: RefreshIndicator(
+                                  onRefresh: () async {
+                                    context.read<ProfileBloc>().add(
+                                      GetProfileStreamEvent(),
+                                    );
+                                    context.read<ProfileBloc>().add(
+                                      GetProfileEvent(),
+                                    );
+                                    await Future.delayed(
+                                      const Duration(seconds: 1),
+                                    );
+                                  },
+                                  child: SingleChildScrollView(
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 20.w,
+                                      vertical: 24.h,
+                                    ),
+                                    child: Form(
+                                      key: key,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () => context.pop(),
+                                            child: Container(
+                                              padding: EdgeInsets.all(12.r),
+                                              decoration: BoxDecoration(
+                                                color: context
+                                                    .appColors
+                                                    .cardBackground,
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                                border: Border.all(
+                                                  color: context
+                                                      .appColors
+                                                      .glassBorder,
+                                                  width: 1.5.r,
                                                 ),
                                               ),
-                                              Positioned(
-                                                bottom: 4.r,
-                                                right: 4.r,
-                                                child: Container(
-                                                  padding: EdgeInsets.all(10.r),
-                                                  decoration: BoxDecoration(
-                                                    color: context
-                                                        .appColors
-                                                        .primaryColor,
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                      color: Colors.white
-                                                          .withAlpha(40),
-                                                      width: 2.r,
-                                                    ),
-                                                  ),
-                                                  child: FaIcon(
-                                                    FontAwesomeIcons.camera,
-                                                    color: Colors.white,
-                                                    size: 18.r,
-                                                  ),
-                                                ),
+                                              child: FaIcon(
+                                                FontAwesomeIcons.chevronLeft,
+                                                color: context
+                                                    .appColors
+                                                    .primaryTextColor,
+                                                size: 20.r,
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 16.h),
-                                      Center(child: _buildSubscriptionBadge()),
-                                      SizedBox(height: 32.h),
-
-                                      // Card 1: Account Type Configuration
-                                      _buildSectionCard(
-                                        title: "Account Type",
-                                        icon: FontAwesomeIcons.rightLeft,
-                                        iconColor: Colors.indigo,
-                                        children: [
-                                          CustomSegmentedControl<String>(
-                                            buttonLables: const [
-                                              "SEEKER",
-                                              "PROVIDER",
-                                            ],
-                                            buttonValues: const [
-                                              userTypeSeeker,
-                                              userTypeProvider,
-                                            ],
-                                            defaultSelected: userType,
-                                            onValueChanged: (val) {
-                                              if (Helpers.isProvider(val)) {
-                                                if (_currentProfile
-                                                        ?.isIdentityVerified !=
-                                                    true) {
-                                                  _showVerificationWarningDialog(
-                                                    context,
-                                                  );
-                                                } else {
-                                                  context
-                                                      .read<ProfileBloc>()
-                                                      .add(
-                                                        SetUserTypeEvent(
-                                                          userType: val,
-                                                        ),
-                                                      );
-                                                }
-                                              } else {
-                                                // Switch to Seeker
-                                                if (Helpers.isProvider(
-                                                  userType,
-                                                )) {
-                                                  _showSwitchToSeekerConfirmationDialog(
-                                                    context,
-                                                    val,
-                                                  );
-                                                } else {
-                                                  context
-                                                      .read<ProfileBloc>()
-                                                      .add(
-                                                        SetUserTypeEvent(
-                                                          userType: val,
-                                                        ),
-                                                      );
-                                                }
-                                              }
-                                            },
-                                            width: 240.w,
-                                            height: 50.h,
-                                            radius: 16.r,
-                                            selectedColor: context
-                                                .appColors
-                                                .primaryColor
-                                                .withAlpha(40),
-                                            textColor: context
-                                                .appColors
-                                                .primaryTextColor,
-                                          ),
-                                          if (_currentProfile
-                                                        ?.isIdentityVerified ==
-                                                    true) ...[
-                                            SizedBox(height: 12.h),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                FaIcon(
-                                                  FontAwesomeIcons.circleCheck,
-                                                  color: Colors.green,
-                                                  size: 12.r,
-                                                ),
-                                                SizedBox(width: 6.w),
-                                                Text(
-                                                  "Verified Provider",
-                                                  style: TextStyle(
-                                                    fontSize: 11.sp,
-                                                    color: Colors.green,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
                                             ),
-                                          ],
-                                        ],
-                                      ),
-                                      SizedBox(height: 24.h),
-
-                                      // Card 2: Personal Profile Details
-                                      _buildSectionCard(
-                                        title: "Personal Profile",
-                                        icon: FontAwesomeIcons.user,
-                                        iconColor: Colors.blue,
-                                        children: [
-                                          SolidTextField(
-                                            controller: nameTextController,
-                                            hintText: "ENTER YOUR NAME",
-                                            label: "FULL NAME",
-                                            prefixIcon: FontAwesomeIcons.user,
-                                            validator:
-                                                ValidationUtil.validateName,
                                           ),
-                                          SizedBox(height: 24.h),
-                                          _buildLabel("Gender"),
-                                          SizedBox(height: 12.h),
-                                          CustomSegmentedControl<String>(
-                                            buttonLables: const [
-                                              "MALE",
-                                              "FEMALE",
-                                            ],
-                                            buttonValues: const [
-                                              "Male",
-                                              "Female",
-                                            ],
-                                            defaultSelected: gender.isNotEmpty
-                                                ? "${gender[0].toUpperCase()}${gender.substring(1).toLowerCase()}"
-                                                : "Male",
-                                            onValueChanged: (val) {
-                                              setState(
-                                                () =>
-                                                    gender = val.toUpperCase(),
-                                              );
-                                            },
-                                            width: 240.w,
-                                            height: 50.h,
-                                            radius: 16.r,
-                                            selectedColor: context
-                                                .appColors
-                                                .primaryColor
-                                                .withAlpha(40),
-                                            textColor: context
-                                                .appColors
-                                                .primaryTextColor,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          
-                                          SolidTextField(
-                                            controller:
-                                                dateOfBirthTextController,
-                                            hintText: "Select birth date",
-                                            label: "Date Of Birth",
-                                            readOnly: true,
-                                            prefixIcon:
-                                                FontAwesomeIcons.calendar,
-                                            onTap: () =>
-                                                context.read<ProfileBloc>().add(
-                                                  SelectDateOfBirthEvent(
-                                                    context: context,
-                                                  ),
-                                                ),
+                                          SizedBox(height: 32.h),
+                                          Text(
+                                            "EDIT PROFILE",
+                                            style: TextStyle(
+                                              fontSize: 24.sp,
+                                              fontWeight: FontWeight.w500,
+                                              color: context
+                                                  .appColors
+                                                  .primaryTextColor,
+                                              letterSpacing: 0.5,
+                                            ),
                                           ),
                                           SizedBox(height: 8.h),
-                  CustomTextWidget(text: "Note: You must be 18 years before you can be accepted on the platform", color: Colors.red, fontSize: 12.sp,),
-                
-                                        ],
-                                      ),
-                                      SizedBox(height: 24.h),
+                                          Text(
+                                            "UPDATE YOUR INFORMATION TO KEEP IT ACCURATE",
+                                            style: TextStyle(
+                                              fontSize: 10.sp,
+                                              fontWeight: FontWeight.w500,
+                                              color: context
+                                                  .appColors
+                                                  .secondaryTextColor,
+                                              letterSpacing: 1.0,
+                                            ),
+                                          ),
+                                          SizedBox(height: 30.h),
 
-                                      // Card 3: Location & Contact
-                                      _buildSectionCard(
-                                        title: "Location & Contact",
-                                        icon: FontAwesomeIcons.mapLocationDot,
-                                        iconColor: Colors.orange,
-                                        children: [
-                                          SolidTextField(
-                                            controller: contactTextController,
-                                            hintText: "PHONE NUMBER",
-                                            label: "PHONE NUMBER",
-                                            prefixIcon: FontAwesomeIcons.phone,
-                                            keyboardType: TextInputType.phone,
-                                            validator:
-                                                ValidationUtil.validatePhone,
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: SolidTextField(
-                                                  controller: locController,
-                                                  hintText: "LOCATION",
-                                                  label: "LOCATION",
-                                                  onTap: () =>
-                                                      _showLocationSheet(
-                                                        context,
-                                                      ),
-                                                  prefixIcon: FontAwesomeIcons
-                                                      .locationDot,
-                                                  validator: (val) =>
-                                                      ValidationUtil.validateRequired(
-                                                        val,
-                                                        "Location",
-                                                      ),
-                                                ),
-                                              ),
-                                              SizedBox(width: 16.w),
-                                              GestureDetector(
-                                                onTap: () =>
-                                                    _showLocationSheet(context),
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(height: 25.h),
-                                                    Container(
-                                                      width: 58.r,
-                                                      height: 58.r,
-                                                      decoration: BoxDecoration(
-                                                        color: context
-                                                            .appColors
-                                                            .primaryColor
-                                                            .withAlpha(40),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              18.r,
-                                                            ),
-                                                        border: Border.all(
-                                                          color: context
-                                                              .appColors
-                                                              .primaryColor,
-                                                        ),
-                                                      ),
-                                                      child: Center(
-                                                        child: FaIcon(
-                                                          FontAwesomeIcons.map,
-                                                          color: context
-                                                              .appColors
-                                                              .primaryColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          SolidTextField(
-                                            controller: countryTextController,
-                                            hintText: "COUNTRY",
-                                            label: "COUNTRY",
-                                            prefixIcon: FontAwesomeIcons.globe,
-                                            validator: (val) =>
-                                                ValidationUtil.validateRequired(
-                                                  val,
-                                                  "Country",
-                                                ),
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          SolidTextField(
-                                            controller: stateTextController,
-                                            hintText: "STATE",
-                                            label: "STATE",
-                                            prefixIcon:
-                                                FontAwesomeIcons.building,
-                                            validator: (val) =>
-                                                ValidationUtil.validateRequired(
-                                                  val,
-                                                  "State",
-                                                ),
-                                          ),
-                                          SizedBox(height: 24.h),
-                                          SolidTextField(
-                                            controller: zipCodeTextController,
-                                            hintText: "ZIP CODE",
-                                            label: "ZIP CODE",
-                                            prefixIcon: FontAwesomeIcons.mapPin,
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 24.h),
-
-                                      // Card 4: Service Provider Setup (only shown if Provider)
-                                      if (Helpers.isProvider(userType)) ...[
-                                        _buildSectionCard(
-                                          title: "Service Provider Setup",
-                                          icon: FontAwesomeIcons.briefcase,
-                                          iconColor: Colors.teal,
-                                          children: [
-                                            _buildLabel("Service Catalogs"),
-                                            SizedBox(height: 12.h),
-                                            _buildServicePicker(),
-                                            SizedBox(height: 16.h),
-
-                                            // Visual Chips of selected services
-                                            if (selectedCatalogServiceNames
-                                                .isNotEmpty) ...[
-                                              Wrap(
-                                                spacing: 8.w,
-                                                runSpacing: 8.h,
-                                                children: selectedCatalogServiceNames.map((
-                                                  name,
-                                                ) {
-                                                  return Chip(
-                                                    label: Text(
-                                                      name,
-                                                      style: TextStyle(
-                                                        fontSize: 12.sp,
-                                                        color: context
-                                                            .appColors
-                                                            .primaryColor,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    backgroundColor: context
-                                                        .appColors
-                                                        .primaryColor
-                                                        .withAlpha(20),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            20.r,
-                                                          ),
-                                                      side: BorderSide(
-                                                        color: context
-                                                            .appColors
-                                                            .primaryColor
-                                                            .withAlpha(50),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                              ),
-                                              SizedBox(height: 24.h),
-                                            ],
-
-                                            // Plan Upgrade Quick Link
-                                            Container(
-                                              padding: EdgeInsets.all(16.r),
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue.withAlpha(
-                                                  15,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(16.r),
-                                                border: Border.all(
-                                                  color: Colors.blue.withAlpha(
-                                                    40,
-                                                  ),
-                                                ),
-                                              ),
-                                              child: Row(
+                                          // Profile Picture Section
+                                          Center(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                _showImageSourceSheet(context);
+                                              },
+                                              child: Stack(
                                                 children: [
-                                                  FaIcon(
-                                                    FontAwesomeIcons.circleInfo,
-                                                    color: Colors.blueAccent,
-                                                    size: 20.r,
-                                                  ),
-                                                  SizedBox(width: 12.w),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          "Need more services?",
-                                                          style: TextStyle(
-                                                            fontSize: 13.sp,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: context
-                                                                .appColors
-                                                                .primaryTextColor,
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: 2.h),
-                                                        Text(
-                                                          "Upgrade your subscription plan to get a higher service limit.",
-                                                          style: TextStyle(
-                                                            fontSize: 11.sp,
-                                                            color: context
-                                                                .appColors
-                                                                .secondaryTextColor,
-                                                          ),
+                                                  Container(
+                                                    padding: EdgeInsets.all(
+                                                      4.r,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                        color: context
+                                                            .appColors
+                                                            .glassBorder,
+                                                        width: 2.r,
+                                                      ),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: context
+                                                              .appColors
+                                                              .primaryColor
+                                                              .withAlpha(50),
+                                                          blurRadius: 40.r,
+                                                          spreadRadius: -5.r,
                                                         ),
                                                       ],
                                                     ),
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(
+                                                        2.r,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color: context
+                                                              .appColors
+                                                              .glassBorder,
+                                                          width: 1.r,
+                                                        ),
+                                                      ),
+                                                      child: CircleAvatar(
+                                                        radius: 60.r,
+                                                        backgroundColor: Colors
+                                                            .white
+                                                            .withAlpha(10),
+                                                        backgroundImage:
+                                                            _buildProfileImageProvider(),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  SizedBox(width: 8.w),
-                                                  TextButton(
-                                                    onPressed: () => context
-                                                        .push("/subscription"),
-                                                    child: Text(
-                                                      "Upgrade",
-                                                      style: TextStyle(
-                                                        fontSize: 12.sp,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Colors.blueAccent,
+                                                  Positioned(
+                                                    bottom: 4.r,
+                                                    right: 4.r,
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(
+                                                        10.r,
+                                                      ),
+                                                      decoration: BoxDecoration(
+                                                        color: context
+                                                            .appColors
+                                                            .primaryColor,
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                          color: Colors.white
+                                                              .withAlpha(40),
+                                                          width: 2.r,
+                                                        ),
+                                                      ),
+                                                      child: FaIcon(
+                                                        FontAwesomeIcons.camera,
+                                                        color: Colors.white,
+                                                        size: 18.r,
                                                       ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                            SizedBox(height: 24.h),
+                                          ),
+                                          SizedBox(height: 16.h),
+                                          Center(
+                                            child: _buildSubscriptionBadge(),
+                                          ),
+                                          SizedBox(height: 32.h),
 
-                                            if (isOthersSelected) ...[
+                                          // Card 1: Account Type Configuration
+                                          _buildSectionCard(
+                                            title: "Account Type",
+                                            icon: FontAwesomeIcons.rightLeft,
+                                            iconColor: Colors.indigo,
+                                            children: [
+                                              CustomSegmentedControl<String>(
+                                                buttonLables: const [
+                                                  "SEEKER",
+                                                  "PROVIDER",
+                                                ],
+                                                buttonValues: const [
+                                                  userTypeSeeker,
+                                                  userTypeProvider,
+                                                ],
+                                                defaultSelected: userType,
+                                                onValueChanged: (val) {
+                                                  if (Helpers.isProvider(val)) {
+                                                    if (_currentProfile
+                                                            ?.isIdentityVerified !=
+                                                        true) {
+                                                      _showVerificationWarningDialog(
+                                                        context,
+                                                      );
+                                                    } else {
+                                                      context
+                                                          .read<ProfileBloc>()
+                                                          .add(
+                                                            SetUserTypeEvent(
+                                                              userType: val,
+                                                            ),
+                                                          );
+                                                    }
+                                                  } else {
+                                                    // Switch to Seeker
+                                                    if (Helpers.isProvider(
+                                                      userType,
+                                                    )) {
+                                                      _showSwitchToSeekerConfirmationDialog(
+                                                        context,
+                                                        val,
+                                                      );
+                                                    } else {
+                                                      context
+                                                          .read<ProfileBloc>()
+                                                          .add(
+                                                            SetUserTypeEvent(
+                                                              userType: val,
+                                                            ),
+                                                          );
+                                                    }
+                                                  }
+                                                },
+                                                width: 240.w,
+                                                height: 50.h,
+                                                radius: 16.r,
+                                                selectedColor: context
+                                                    .appColors
+                                                    .primaryColor
+                                                    .withAlpha(40),
+                                                textColor: context
+                                                    .appColors
+                                                    .primaryTextColor,
+                                              ),
+                                              if (_currentProfile
+                                                      ?.isIdentityVerified ==
+                                                  true) ...[
+                                                SizedBox(height: 12.h),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    FaIcon(
+                                                      FontAwesomeIcons
+                                                          .circleCheck,
+                                                      color: Colors.green,
+                                                      size: 12.r,
+                                                    ),
+                                                    SizedBox(width: 6.w),
+                                                    Text(
+                                                      "Verified Provider",
+                                                      style: TextStyle(
+                                                        fontSize: 11.sp,
+                                                        color: Colors.green,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                          SizedBox(height: 24.h),
+
+                                          // Card 2: Personal Profile Details
+                                          _buildSectionCard(
+                                            title: "Personal Profile",
+                                            icon: FontAwesomeIcons.user,
+                                            iconColor: Colors.blue,
+                                            children: [
+                                              SolidTextField(
+                                                controller: nameTextController,
+                                                hintText: "ENTER YOUR NAME",
+                                                label: "FULL NAME",
+                                                prefixIcon:
+                                                    FontAwesomeIcons.user,
+                                                validator:
+                                                    ValidationUtil.validateName,
+                                              ),
+                                              SizedBox(height: 24.h),
+                                              _buildLabel("Gender"),
+                                              SizedBox(height: 12.h),
+                                              CustomSegmentedControl<String>(
+                                                buttonLables: const [
+                                                  "MALE",
+                                                  "FEMALE",
+                                                ],
+                                                buttonValues: const [
+                                                  "Male",
+                                                  "Female",
+                                                ],
+                                                defaultSelected:
+                                                    gender.isNotEmpty
+                                                    ? "${gender[0].toUpperCase()}${gender.substring(1).toLowerCase()}"
+                                                    : "Male",
+                                                onValueChanged: (val) {
+                                                  setState(
+                                                    () => gender = val
+                                                        .toUpperCase(),
+                                                  );
+                                                },
+                                                width: 240.w,
+                                                height: 50.h,
+                                                radius: 16.r,
+                                                selectedColor: context
+                                                    .appColors
+                                                    .primaryColor
+                                                    .withAlpha(40),
+                                                textColor: context
+                                                    .appColors
+                                                    .primaryTextColor,
+                                              ),
+                                              SizedBox(height: 24.h),
+
                                               SolidTextField(
                                                 controller:
-                                                    serviceTextController,
-                                                hintText: "SPECIFY SERVICE",
-                                                label: "SPECIFY SERVICE",
-                                                prefixIcon: FontAwesomeIcons
-                                                    .buildingCircleCheck,
+                                                    dateOfBirthTextController,
+                                                hintText: "Select birth date",
+                                                label: "Date Of Birth",
+                                                readOnly: true,
+                                                prefixIcon:
+                                                    FontAwesomeIcons.calendar,
+                                                onTap: () => context
+                                                    .read<ProfileBloc>()
+                                                    .add(
+                                                      SelectDateOfBirthEvent(
+                                                        context: context,
+                                                      ),
+                                                    ),
+                                              ),
+                                              SizedBox(height: 8.h),
+                                              CustomTextWidget(
+                                                text:
+                                                    "Note: You must be 18 years or above before you can be accepted on the platform",
+                                                color: Colors.red,
+                                                fontSize: 12.sp,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 24.h),
+
+                                          // Card 3: Location & Contact
+                                          _buildSectionCard(
+                                            title: "Location & Contact",
+                                            icon:
+                                                FontAwesomeIcons.mapLocationDot,
+                                            iconColor: Colors.orange,
+                                            children: [
+                                              SolidTextField(
+                                                controller:
+                                                    contactTextController,
+                                                hintText: "PHONE NUMBER",
+                                                label: "PHONE NUMBER",
+                                                prefixIcon:
+                                                    FontAwesomeIcons.phone,
+                                                keyboardType:
+                                                    TextInputType.phone,
+                                                validator: ValidationUtil
+                                                    .validatePhone,
+                                              ),
+                                              SizedBox(height: 24.h),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: SolidTextField(
+                                                      controller: locController,
+                                                      hintText: "LOCATION",
+                                                      label: "LOCATION",
+                                                      onTap: () =>
+                                                          _showLocationSheet(
+                                                            context,
+                                                          ),
+                                                      prefixIcon:
+                                                          FontAwesomeIcons
+                                                              .locationDot,
+                                                      validator: (val) =>
+                                                          ValidationUtil.validateRequired(
+                                                            val,
+                                                            "Location",
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 16.w),
+                                                  GestureDetector(
+                                                    onTap: () =>
+                                                        _showLocationSheet(
+                                                          context,
+                                                        ),
+                                                    child: Column(
+                                                      children: [
+                                                        SizedBox(height: 25.h),
+                                                        Container(
+                                                          width: 58.r,
+                                                          height: 58.r,
+                                                          decoration: BoxDecoration(
+                                                            color: context
+                                                                .appColors
+                                                                .primaryColor
+                                                                .withAlpha(40),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  18.r,
+                                                                ),
+                                                            border: Border.all(
+                                                              color: context
+                                                                  .appColors
+                                                                  .primaryColor,
+                                                            ),
+                                                          ),
+                                                          child: Center(
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .map,
+                                                              color: context
+                                                                  .appColors
+                                                                  .primaryColor,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 24.h),
+                                              SolidTextField(
+                                                controller:
+                                                    countryTextController,
+                                                hintText: "COUNTRY",
+                                                label: "COUNTRY",
+                                                prefixIcon:
+                                                    FontAwesomeIcons.globe,
                                                 validator: (val) =>
                                                     ValidationUtil.validateRequired(
                                                       val,
-                                                      "Service",
+                                                      "Country",
                                                     ),
                                               ),
                                               SizedBox(height: 24.h),
-                                            ],
-
-                                            _buildLabel(
-                                              "Preferred Payment Mode",
-                                            ),
-                                            SizedBox(height: 12.h),
-                                            CustomSegmentedControl<String>(
-                                              buttonLables: const [
-                                                "In-App",
-                                                "On-Site",
-                                              ],
-                                              buttonValues: const [
-                                                "IN_APP",
-                                                "ON_SITE",
-                                              ],
-                                              defaultSelected:
-                                                  preferredPaymentMode,
-                                              onValueChanged: (val) => setState(
-                                                () =>
-                                                    preferredPaymentMode = val,
+                                              SolidTextField(
+                                                controller: stateTextController,
+                                                hintText: "STATE",
+                                                label: "STATE",
+                                                prefixIcon:
+                                                    FontAwesomeIcons.building,
+                                                validator: (val) =>
+                                                    ValidationUtil.validateRequired(
+                                                      val,
+                                                      "State",
+                                                    ),
                                               ),
-                                              width: 240.w,
-                                              height: 50.h,
-                                              radius: 16.r,
-                                              selectedColor: context
-                                                  .appColors
-                                                  .primaryColor
-                                                  .withAlpha(40),
-                                              textColor: context
-                                                  .appColors
-                                                  .primaryTextColor,
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 24.h),
-                                      ],
-                                      SizedBox(height: 40.h),
+                                              SizedBox(height: 24.h),
+                                              SolidTextField(
+                                                controller:
+                                                    zipCodeTextController,
+                                                hintText: "ZIP CODE",
+                                                label: "ZIP CODE",
+                                                prefixIcon:
+                                                    FontAwesomeIcons.mapPin,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 24.h),
 
-                                      // Save Button
-                                      _buildSaveButton(),
-                                    ],
+                                          // Card 4: Service Provider Setup (only shown if Provider)
+                                          if (Helpers.isProvider(userType)) ...[
+                                            _buildSectionCard(
+                                              title: "Service Provider Setup",
+                                              icon: FontAwesomeIcons.briefcase,
+                                              iconColor: Colors.teal,
+                                              children: [
+                                                (_isValidSubscription)
+                                                    ? _buildLabel(
+                                                        "Service Catalogs",
+                                                      )
+                                                    : SizedBox.shrink(),
+                                                SizedBox(height: 12.h),
+                                                (_isValidSubscription)
+                                                    ? _buildServicePicker()
+                                                    : CustomTextWidget(
+                                                        text:
+                                                            "Your must have an active subscription before you can choose services",
+                                                        color: context
+                                                            .appColors
+                                                            .errorColor,
+                                                        fontSize: 16.sp,
+                                                      ),
+                                                SizedBox(height: 16.h),
+
+                                                // Visual Chips of selected services
+                                                if (selectedCatalogServiceNames
+                                                    .isNotEmpty) ...[
+                                                  (_isValidSubscription)
+                                                      ? Wrap(
+                                                          spacing: 8.w,
+                                                          runSpacing: 8.h,
+                                                          children: selectedCatalogServiceNames.map((
+                                                            name,
+                                                          ) {
+                                                            return Chip(
+                                                              label: Text(
+                                                                name,
+                                                                style: TextStyle(
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  color: context
+                                                                      .appColors
+                                                                      .primaryColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                              backgroundColor:
+                                                                  context
+                                                                      .appColors
+                                                                      .primaryColor
+                                                                      .withAlpha(
+                                                                        20,
+                                                                      ),
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      20.r,
+                                                                    ),
+                                                                side: BorderSide(
+                                                                  color: context
+                                                                      .appColors
+                                                                      .primaryColor
+                                                                      .withAlpha(
+                                                                        50,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                        )
+                                                      : SizedBox.shrink(),
+                                                  SizedBox(height: 24.h),
+                                                ],
+
+                                                // Plan Upgrade Quick Link
+                                                Container(
+                                                  padding: EdgeInsets.all(16.r),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue
+                                                        .withAlpha(15),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          16.r,
+                                                        ),
+                                                    border: Border.all(
+                                                      color: Colors.blue
+                                                          .withAlpha(40),
+                                                    ),
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      FaIcon(
+                                                        FontAwesomeIcons
+                                                            .circleInfo,
+                                                        color:
+                                                            Colors.blueAccent,
+                                                        size: 20.r,
+                                                      ),
+                                                      SizedBox(width: 12.w),
+                                                      Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              "Need more services?",
+                                                              style: TextStyle(
+                                                                fontSize: 13.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: context
+                                                                    .appColors
+                                                                    .primaryTextColor,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 2.h,
+                                                            ),
+                                                            Text(
+                                                              "Upgrade your subscription plan to get a higher service limit.",
+                                                              style: TextStyle(
+                                                                fontSize: 11.sp,
+                                                                color: context
+                                                                    .appColors
+                                                                    .secondaryTextColor,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 8.w),
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            context.push(
+                                                              "/subscription",
+                                                            ),
+                                                        child: Text(
+                                                          "Upgrade",
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors
+                                                                .blueAccent,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(height: 24.h),
+
+                                                if (isOthersSelected) ...[
+                                                  SolidTextField(
+                                                    controller:
+                                                        serviceTextController,
+                                                    hintText: "SPECIFY SERVICE",
+                                                    label: "SPECIFY SERVICE",
+                                                    prefixIcon: FontAwesomeIcons
+                                                        .buildingCircleCheck,
+                                                    validator: (val) =>
+                                                        ValidationUtil.validateRequired(
+                                                          val,
+                                                          "Service",
+                                                        ),
+                                                  ),
+                                                  SizedBox(height: 24.h),
+                                                ],
+
+                                                _buildLabel(
+                                                  "Preferred Payment Mode",
+                                                ),
+                                                SizedBox(height: 12.h),
+                                                CustomSegmentedControl<String>(
+                                                  buttonLables: const [
+                                                    "In-App",
+                                                    "On-Site",
+                                                  ],
+                                                  buttonValues: const [
+                                                    "IN_APP",
+                                                    "ON_SITE",
+                                                  ],
+                                                  defaultSelected:
+                                                      preferredPaymentMode,
+                                                  onValueChanged: (val) =>
+                                                      setState(
+                                                        () =>
+                                                            preferredPaymentMode =
+                                                                val,
+                                                      ),
+                                                  width: 240.w,
+                                                  height: 50.h,
+                                                  radius: 16.r,
+                                                  selectedColor: context
+                                                      .appColors
+                                                      .primaryColor
+                                                      .withAlpha(40),
+                                                  textColor: context
+                                                      .appColors
+                                                      .primaryTextColor,
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 24.h),
+                                          ],
+                                          SizedBox(height: 40.h),
+
+                                          // Save Button
+                                          _buildSaveButton(),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -876,8 +956,8 @@ class _EditProfilePageState extends State<EditProfilePage>
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             );
