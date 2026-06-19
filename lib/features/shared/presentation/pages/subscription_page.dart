@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nsapp/core/helpers/helpers.dart';
+import 'package:nsapp/core/models/profile.dart';
 import 'package:nsapp/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:nsapp/features/shared/presentation/bloc/subscription/subscription_bloc.dart';
 import 'package:nsapp/features/shared/presentation/widget/solid_container_widget.dart';
@@ -31,6 +32,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   @override
   void initState() {
     super.initState();
+    context.read<ProfileBloc>().add(GetProfileEvent());
     context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
     context.read<SubscriptionBloc>().add(GetSubscriptionPlansEvent());
 
@@ -85,7 +87,8 @@ class _SubscriptionPageState extends State<SubscriptionPage>
           }
           if (state is SuccessMakeSubscriptionState) {
             context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
-            customAlert(context, AlertType.success, "Subscription Made");
+            context.read<ProfileBloc>().add(GetProfileEvent());
+            _subscriptionMade(context);
           }
         },
         builder: (context, state) {
@@ -151,23 +154,24 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
                               SizedBox(height: 24.h),
 
-                              _isValid
-                                  ? _buildActiveSubscription(
-                                      context,
-                                      isDark,
-                                      textColor,
-                                      secondaryTextColor,
-                                    )
-                                  : _buildSubscriptionPlans(
-                                      context,
-                                      isLargeScreen,
-                                      isDark,
-                                      textColor,
-                                      secondaryTextColor,
-                                      buttonColor,
-                                      borderColor,
-                                      state,
-                                    ),
+                              // _isValid
+                              //     ? _buildActiveSubscription(
+                              //         context,
+                              //         isDark,
+                              //         textColor,
+                              //         secondaryTextColor,
+                              //       )
+                              // :
+                              _buildSubscriptionPlans(
+                                context,
+                                isLargeScreen,
+                                isDark,
+                                textColor,
+                                secondaryTextColor,
+                                buttonColor,
+                                borderColor,
+                                state,
+                              ),
                             ],
                           ),
                         ),
@@ -191,63 +195,63 @@ class _SubscriptionPageState extends State<SubscriptionPage>
   ) {
     return Column(
       children: [
-        SizedBox(height: 60.h),
-        Container(
-          width: 120.w,
-          height: 120.h,
-          decoration: BoxDecoration(
-            color: context.appColors.primaryColor,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: FaIcon(
-              FontAwesomeIcons.check,
-              color: Colors.white,
-              size: 60.r,
-            ),
-          ),
-        ),
-        SizedBox(height: 40.h),
-        Text(
-          "YOU'RE SUBSCRIBED!",
-          style: TextStyle(
-            fontSize: 24.sp,
-            fontWeight: FontWeight.w500,
-            color: textColor,
-            letterSpacing: 1.2,
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Text(
-          "Enjoy unlimited access to your premium benefits",
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: context.appColors.secondaryTextColor,
-            letterSpacing: 0.3,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 60.h),
+        // SizedBox(height: 60.h),
 
+        // Container(
+        //   width: 120.w,
+        //   height: 120.h,
+        //   decoration: BoxDecoration(
+        //     color: context.appColors.primaryColor,
+        //     shape: BoxShape.circle,
+        //   ),
+        //   child: Center(
+        //     child: FaIcon(
+        //       FontAwesomeIcons.check,
+        //       color: Colors.white,
+        //       size: 60.r,
+        //     ),
+        //   ),
+        // ),
+        // SizedBox(height: 40.h),
+        // Text(
+        //   "YOU'RE SUBSCRIBED!",
+        //   style: TextStyle(
+        //     fontSize: 24.sp,
+        //     fontWeight: FontWeight.w500,
+        //     color: textColor,
+        //     letterSpacing: 1.2,
+        //   ),
+        // ),
+        // SizedBox(height: 12.h),
+        // Text(
+        //   "Enjoy unlimited access to your premium benefits",
+        //   style: TextStyle(
+        //     fontSize: 14.sp,
+        //     color: context.appColors.secondaryTextColor,
+        //     letterSpacing: 0.3,
+        //   ),
+        //   textAlign: TextAlign.center,
+        // ),
+        // SizedBox(height: 60.h),
         SolidContainer(
           padding: EdgeInsets.all(32.r),
           child: Column(
             children: [
-              FaIcon(
-                FontAwesomeIcons.sliders,
-                size: 40.r,
-                color: context.appColors.primaryColor,
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                "MANAGE SUBSCRIPTION",
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                  letterSpacing: 0.5,
-                ),
-              ),
+              // FaIcon(
+              //   FontAwesomeIcons.sliders,
+              //   size: 40.r,
+              //   color: context.appColors.primaryColor,
+              // ),
+              // SizedBox(height: 20.h),
+              // Text(
+              //   "MANAGE SUBSCRIPTION",
+              //   style: TextStyle(
+              //     fontSize: 18.sp,
+              //     fontWeight: FontWeight.w500,
+              //     color: textColor,
+              //     letterSpacing: 0.5,
+              //   ),
+              // ),
               SizedBox(height: 8.h),
               Text(
                 "Cancel anytime with no hidden fees",
@@ -263,9 +267,7 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 height: 54.h,
                 child: OutlinedButton(
                   onPressed: () {
-                    context.read<SubscriptionBloc>().add(
-                      DeleteUserSubscriptionEvent(),
-                    );
+                    _cancelSubscription(context);
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: context.appColors.errorColor,
@@ -307,88 +309,104 @@ class _SubscriptionPageState extends State<SubscriptionPage>
               (a, b) => (a.displayOrder ?? 0).compareTo(b.displayOrder ?? 0),
             );
 
-      return Column(
-        children: [
-          FaIcon(
-            FontAwesomeIcons.crown,
-            size: 60.r,
-            color: secondaryTextColor.withAlpha(220),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            "CHOOSE YOUR PLAN",
-            style: TextStyle(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.w500,
-              color: textColor,
-              letterSpacing: 1.2,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            "Unlock premium features and grow your business",
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: secondaryTextColor,
-              letterSpacing: 0.3,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 40.h),
+      return BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, profileState) {
+          return Column(
+            children: [
+              FaIcon(
+                _isValid ? FontAwesomeIcons.check : FontAwesomeIcons.crown,
+                size: 60.r,
+                color: secondaryTextColor.withAlpha(220),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                _isValid ? "SUBSCRIPTION IS ACTIVE" : "CHOOSE YOUR PLAN",
+                style: TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w500,
+                  color: textColor,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                _isValid
+                    ? "You currently on the ${profileState.profile?.subscriptionInterval ?? ''} subscription"
+                    : "Unlock premium features and grow your business",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: secondaryTextColor,
+                  letterSpacing: 0.3,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 40.h),
 
-          _buildIntervalToggle(
-            isDark,
-            textColor,
-            secondaryTextColor,
-            buttonColor,
-            borderColor,
-          ),
+              _buildIntervalToggle(
+                isDark,
+                textColor,
+                secondaryTextColor,
+                buttonColor,
+                borderColor,
+              ),
 
-          SizedBox(height: 40.h),
+              SizedBox(height: 40.h),
 
-          if (plans.isEmpty)
-            _buildEmptyPlans(textColor, secondaryTextColor)
-          else
-            isLargeScreen
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: plans
-                        .map(
-                          (plan) => Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              child: _buildPlanCard(
-                                plan,
-                                context,
-                                plan.tier == 'GOLD',
-                                isDark,
-                                textColor,
-                                secondaryTextColor,
+              if (plans.isEmpty)
+                _buildEmptyPlans(textColor, secondaryTextColor)
+              else
+                isLargeScreen
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: plans
+                            .map(
+                              (plan) => Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10.w,
+                                  ),
+                                  child: _buildPlanCard(
+                                    plan,
+                                    context,
+                                    plan.tier == 'GOLD',
+                                    isDark,
+                                    textColor,
+                                    secondaryTextColor,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  )
-                : Column(
-                    children: plans
-                        .map(
-                          (plan) => Padding(
-                            padding: EdgeInsets.only(bottom: 20.h),
-                            child: _buildPlanCard(
-                              plan,
-                              context,
-                              plan.tier == 'GOLD',
-                              isDark,
-                              textColor,
-                              secondaryTextColor,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-          SizedBox(height: 40.h),
-        ],
+                            )
+                            .toList(),
+                      )
+                    : Column(
+                        children: plans
+                            .map(
+                              (plan) => Padding(
+                                padding: EdgeInsets.only(bottom: 20.h),
+                                child: _buildPlanCard(
+                                  plan,
+                                  context,
+                                  plan.tier == 'GOLD',
+                                  isDark,
+                                  textColor,
+                                  secondaryTextColor,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+              SizedBox(height: 20.h),
+              (_isValid)
+                  ? _buildActiveSubscription(
+                      context,
+                      isDark,
+                      textColor,
+                      secondaryTextColor,
+                    )
+                  : SizedBox.shrink(),
+            ],
+          );
+        },
       );
     }
 
@@ -540,23 +558,25 @@ class _SubscriptionPageState extends State<SubscriptionPage>
 
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, profileState) {
-        // TODO: implement listener
+        setState(() {});
       },
       builder: (context, profileState) {
         return GestureDetector(
-          onTap: () async {
-            if (plan.id != null) {
-              // context.read<SubscriptionBloc>().add(
-              //   MakeSubscriptionEvent(planId: plan.id!, context: context),
-              // );
-            }
-          },
           child: Container(
             padding: EdgeInsets.all(24.r),
             decoration: BoxDecoration(
               color: context.appColors.cardBackground,
               borderRadius: BorderRadius.circular(24.r),
-              border: Border.all(color: context.appColors.glassBorder),
+              border: Border.all(
+                color: _isValid
+                    ? (profileState.profile!.maxCatalogServices! ==
+                                  plan.maxCatalogServices! &&
+                              profileState.profile!.subscriptionInterval! ==
+                                  plan.interval!)
+                          ? context.appColors.primaryColor
+                          : context.appColors.glassBorder
+                    : context.appColors.glassBorder,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -626,20 +646,32 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                 SizedBox(height: 24.h),
                 GestureDetector(
                   onTap: () {
-                    if (profileState.profile!.catalogServiceNames!.length >
-                        plan.maxCatalogServices!) {
-                      customAlert(
-                        context,
-                        AlertType.warning,
-                        "Your profile service catalog number exceeds the maximum number of service for the selected plan",
-                      );
+                    if (_isValid) {
+                      if (profileState.profile!.maxCatalogServices! !=
+                          plan.maxCatalogServices!) {
+                        _downgradeSubscription(
+                          context,
+                          "",
+                          plan,
+                          profileState.profile!,
+                        );
+                      }
                     } else {
-                      context.read<SubscriptionBloc>().add(
-                        MakeSubscriptionEvent(
-                          planId: plan.id!,
-                          context: context,
-                        ),
-                      );
+                      if (profileState.profile!.catalogServiceNames!.length >
+                          plan.maxCatalogServices!) {
+                        customAlert(
+                          context,
+                          AlertType.warning,
+                          "Your profile service catalog number exceeds the maximum number of service for the selected plan",
+                        );
+                      } else {
+                        context.read<SubscriptionBloc>().add(
+                          MakeSubscriptionEvent(
+                            planId: plan.id!,
+                            context: context,
+                          ),
+                        );
+                      }
                     }
                   },
                   child: Container(
@@ -652,7 +684,20 @@ class _SubscriptionPageState extends State<SubscriptionPage>
                     ),
                     child: Center(
                       child: Text(
-                        "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
+                        _isValid
+                            ? profileState.profile!.maxCatalogServices! <
+                                      plan.maxCatalogServices!
+                                  ? "UPGRADE TO ${plan.tier?.toUpperCase() ?? 'PLAN'}"
+                                  : profileState.profile!.maxCatalogServices! >
+                                        plan.maxCatalogServices!
+                                  ? "DOWNGRADE TO ${plan.tier?.toUpperCase() ?? 'PLAN'}"
+                                  : (profileState
+                                            .profile!
+                                            .subscriptionInterval! !=
+                                        plan.interval!)
+                                  ? "USE THIS RECURING INTERVAL"
+                                  : "YOUR CURRENT PLAN"
+                            : "CHOOSE ${plan.tier?.toUpperCase() ?? 'PLAN'}",
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
@@ -773,4 +818,364 @@ class _SubscriptionPageState extends State<SubscriptionPage>
       ],
     );
   }
+}
+
+void _downgradeSubscription(
+  BuildContext context,
+  String val,
+  SubscriptionPlan plan,
+  Profile profile,
+) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext dialogContext) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.r),
+        ),
+        backgroundColor: context.appColors.cardBackground,
+        child: Container(
+          padding: EdgeInsets.all(28.r),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.r),
+            border: Border.all(color: context.appColors.glassBorder),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16.r),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withAlpha(30),
+                  shape: BoxShape.circle,
+                ),
+                child: FaIcon(
+                  FontAwesomeIcons.triangleExclamation,
+                  color: Colors.orangeAccent,
+                  size: 40.r,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                (profile.maxCatalogServices! < plan.maxCatalogServices!)
+                    ? "Upgrade Your Subscription"
+                    : "Downgrade Your Subscription?",
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: context.appColors.primaryTextColor,
+                  letterSpacing: 0.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                (profile.maxCatalogServices! < plan.maxCatalogServices!)
+                    ? "This will void your previous subscription without refund. Are you sure you want to proceed?"
+                    : "You can download once your subscription cycle ends",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.secondaryTextColor,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 32.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14.r),
+                          side: BorderSide(
+                            color: context.appColors.glassBorder,
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                      },
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: context.appColors.primaryTextColor,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  (profile.maxCatalogServices! < plan.maxCatalogServices!)
+                      ? Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              padding: EdgeInsets.symmetric(vertical: 14.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                              context.read<SubscriptionBloc>().add(
+                                MakeSubscriptionEvent(
+                                  planId: plan.id!,
+                                  context: context,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Proceed",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _subscriptionMade(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext dialogContext) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.r),
+        ),
+        backgroundColor: context.appColors.cardBackground,
+        child: Container(
+          padding: EdgeInsets.all(28.r),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.r),
+            border: Border.all(color: context.appColors.glassBorder),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16.r),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(30),
+                  shape: BoxShape.circle,
+                ),
+                child: FaIcon(
+                  FontAwesomeIcons.check,
+                  color: Colors.green,
+                  size: 40.r,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                "Subscription successful",
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: context.appColors.primaryTextColor,
+                  letterSpacing: 0.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "You can select services. Will you like to update your profile now?",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.secondaryTextColor,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 32.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14.r),
+                          side: BorderSide(
+                            color: context.appColors.glassBorder,
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                      },
+                      child: Text(
+                        "Later",
+                        style: TextStyle(
+                          color: context.appColors.primaryTextColor,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14.r),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        context.push("/edit-profile");
+                      },
+                      child: Text(
+                        "Yes, Proceed",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _cancelSubscription(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext dialogContext) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.r),
+        ),
+        backgroundColor: context.appColors.cardBackground,
+        child: Container(
+          padding: EdgeInsets.all(28.r),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.r),
+            border: Border.all(color: context.appColors.glassBorder),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16.r),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withAlpha(30),
+                  shape: BoxShape.circle,
+                ),
+                child: FaIcon(
+                  FontAwesomeIcons.triangleExclamation,
+                  color: Colors.orangeAccent,
+                  size: 40.r,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                "Cancel Subscription",
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: context.appColors.primaryTextColor,
+                  letterSpacing: 0.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "Cancelling your subscription will take effect at the end of the your subscription billing cycle. Do you want to proceed?",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: context.appColors.secondaryTextColor,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 32.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14.r),
+                          side: BorderSide(
+                            color: context.appColors.glassBorder,
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                      },
+                      child: Text(
+                        "Later",
+                        style: TextStyle(
+                          color: context.appColors.primaryTextColor,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14.r),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        context.read<SubscriptionBloc>().add(
+                          DeleteUserSubscriptionEvent(),
+                        );
+                      },
+                      child: Text(
+                        "Yes, Proceed",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

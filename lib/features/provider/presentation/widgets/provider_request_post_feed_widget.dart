@@ -72,7 +72,7 @@ class _ProviderRequestPostFeedWidgetState
                             radius: 25,
                             backgroundImage:
                                 (requestData.user?.profilePictureUrl != null &&
-                                        requestData.user!.profilePictureUrl! != "")
+                                    requestData.user!.profilePictureUrl! != "")
                                 ? CachedNetworkImageProvider(
                                     requestData.user!.profilePictureUrl!,
                                   )
@@ -89,46 +89,45 @@ class _ProviderRequestPostFeedWidgetState
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   CustomTextWidget(
-                                    text: requestData.user?.firstName ?? "Unknown",
+                                    text:
+                                        requestData.user?.firstName ??
+                                        "Unknown",
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.white,
                                   ),
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      if (requestData.request?.createdAt != null)
+                                      if (requestData.request?.createdAt !=
+                                          null)
                                         CustomTextWidget(
                                           text: DateFormat("MMM d, HH:mm")
                                               .format(
-                                                requestData
-                                                    .request!
-                                                    .createdAt!,
+                                                requestData.request!.createdAt!,
                                               ),
                                           fontSize: 12,
-                                          color: Colors.white.withAlpha(
-                                            150,
-                                          ),
+                                          color: Colors.white.withAlpha(150),
                                         ),
-                                      if (requestData.request?.distance !=
-                                          null)
+                                      if (requestData.request?.distance != null)
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             FaIcon(
                                               FontAwesomeIcons.locationDot,
                                               size: 10,
-                                              color: Colors.white
-                                                  .withAlpha(100),
+                                              color: Colors.white.withAlpha(
+                                                100,
+                                              ),
                                             ),
                                             const SizedBox(width: 2),
                                             CustomTextWidget(
                                               text:
                                                   "${requestData.request!.distance!.toStringAsFixed(1)}km",
                                               fontSize: 10,
-                                              color: Colors.white
-                                                  .withAlpha(100),
+                                              color: Colors.white.withAlpha(
+                                                100,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -138,9 +137,7 @@ class _ProviderRequestPostFeedWidgetState
                               ),
                               const SizedBox(height: 4),
                               CustomTextWidget(
-                                text:
-                                    requestData.request?.service?.name ??
-                                    "",
+                                text: requestData.request?.service?.name ?? "",
                                 fontSize: 14,
                                 color: Colors.lightBlueAccent,
                                 fontWeight: FontWeight.w400,
@@ -175,7 +172,3 @@ class _ProviderRequestPostFeedWidgetState
     );
   }
 }
-
-
-
-

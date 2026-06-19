@@ -71,6 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage>
   @override
   void initState() {
     super.initState();
+    context.read<ProfileBloc>().add(GetProfileEvent());
     context.read<CommonBloc>().add(GetServicesEvent());
     context.read<SubscriptionBloc>().add(CheckUserSubscriptionEvent());
     context.read<ProfileBloc>().add(ChooseOtherServiceEvent(others: false));
@@ -236,9 +237,9 @@ class _EditProfilePageState extends State<EditProfilePage>
                   "Profile updated successfully",
                 );
 
-                Future.delayed(const Duration(seconds: 2), () {
+                Future.delayed(const Duration(seconds: 3), () {
                   if (mounted) {
-                    context.pop();
+                    context.go('/home');
                   }
                 });
               }

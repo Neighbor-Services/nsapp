@@ -92,6 +92,8 @@ class Profile {
   List<String>? catalogServiceNames;
   @HiveField(41)
   int? maxCatalogServices;
+  @HiveField(42)
+  String? subscriptionInterval;
 
   Profile({
     this.id,
@@ -133,6 +135,7 @@ class Profile {
     this.catalogServiceIds,
     this.catalogServiceNames,
     this.maxCatalogServices,
+    this.subscriptionInterval,
   });
 
   Profile.fromJson(Map<String, dynamic> json) {
@@ -157,6 +160,7 @@ class Profile {
     address = json['address'];
     rating = json['rating']?.toString();
     deviceToken = json['device_token'];
+    subscriptionInterval = json['subscription_interval'];
     profilePictureUrl = json['profile_picture_url'] ?? json['profile_picture'];
     userType = json['user_type'];
     longitude = json['longitude']?.toString();
@@ -202,10 +206,12 @@ class Profile {
     xp = json['xp'];
     level = json['level'];
     neighborScore = json['neighbor_score'];
-    
+
     // Parse Multiple Catalog Services
     if (json['catalog_service_ids'] != null) {
-      catalogServiceIds = List<String>.from(json['catalog_service_ids'].map((e) => e.toString()));
+      catalogServiceIds = List<String>.from(
+        json['catalog_service_ids'].map((e) => e.toString()),
+      );
     } else if (catalogServiceId != null) {
       catalogServiceIds = [catalogServiceId!];
     } else {
@@ -213,7 +219,9 @@ class Profile {
     }
 
     if (json['catalog_service_names'] != null) {
-      catalogServiceNames = List<String>.from(json['catalog_service_names'].map((e) => e.toString()));
+      catalogServiceNames = List<String>.from(
+        json['catalog_service_names'].map((e) => e.toString()),
+      );
     } else if (json['catalog_service_name'] != null) {
       catalogServiceName = json['catalog_service_name']?.toString();
       catalogServiceNames = [catalogServiceName!];
@@ -253,12 +261,10 @@ class Profile {
         ? latitude
         : null;
     data['bio'] = bio;
-    data['subscription_tier'] = subscriptionTier ?? 'NONE';
+    // data['subscription_tier'] = subscriptionTier ?? 'NONE';
     data['preferred_payment_mode'] = preferredPaymentMode ?? 'ON_SITE';
-    
+
     data.removeWhere((key, value) => value == null);
     return data;
   }
 }
-
-

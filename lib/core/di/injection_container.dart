@@ -1,7 +1,7 @@
-import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:get_it/get_it.dart';
 import 'package:nsapp/core/config/app_config.dart';
 import 'package:nsapp/core/utils/dio_interceptor.dart';
@@ -145,7 +145,7 @@ Future<void> init() async {
       final ByteData data = await rootBundle.load('assets/certs/cloudflare_roots.pem');
       rootCaBytes = data.buffer.asUint8List();
     } catch (e) {
-      print("Warning: Could not load cloudflare_roots.pem: $e");
+      debugPrint("Warning: Could not load cloudflare_roots.pem: $e");
     }
   }
 

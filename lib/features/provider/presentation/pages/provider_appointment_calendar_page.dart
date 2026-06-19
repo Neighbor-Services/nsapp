@@ -261,6 +261,7 @@ class _ProviderAppointmentCalendarPageState
     }
   }
 
+  // ignore: unused_element
   Widget _buildAddButton() {
     return GestureDetector(
       onTap: () {

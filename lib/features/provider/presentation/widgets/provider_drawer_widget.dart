@@ -23,9 +23,9 @@ class ProviderDrawerWidget extends StatelessWidget {
     final secondaryTextColor = context.appColors.glassBorder;
 
     return BlocBuilder<ProfileBloc, ProfileState>(
-      buildWhen: (previous, current) => 
-        current is SuccessGetProfileState || 
-        current is SuccessGetProfileStreamState,
+      buildWhen: (previous, current) =>
+          current is SuccessGetProfileState ||
+          current is SuccessGetProfileStreamState,
       builder: (context, profileState) {
         final profile = (profileState is SuccessGetProfileState)
             ? profileState.profile
@@ -44,12 +44,20 @@ class ProviderDrawerWidget extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: bgColor,
-                  border: Border(right: BorderSide(color: borderColor, width: 0.5.w)),
+                  border: Border(
+                    right: BorderSide(color: borderColor, width: 0.5.w),
+                  ),
                 ),
                 child: SafeArea(
                   child: Column(
                     children: [
-                      _buildHeader(context, profile, isDark, textColor, secondaryTextColor),
+                      _buildHeader(
+                        context,
+                        profile,
+                        isDark,
+                        textColor,
+                        secondaryTextColor,
+                      ),
                       SizedBox(height: 20.h),
                       Expanded(
                         child: ListView(
@@ -61,7 +69,9 @@ class ProviderDrawerWidget extends StatelessWidget {
                               title: "Home",
                               onTap: () {
                                 Navigator.pop(context);
-                                context.read<ProviderBloc>().add(ChangeProviderTabEvent(tabIndex: 1));
+                                context.read<ProviderBloc>().add(
+                                  ChangeProviderTabEvent(tabIndex: 1),
+                                );
                               },
                               isSelected: currentPage == 1,
                               isDark: isDark,
@@ -102,7 +112,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                             ),
                             _buildDrawerItem(
                               context,
-                              icon: FontAwesomeIcons.video,
+                              icon: FontAwesomeIcons.moneyBillTransfer,
                               title: "Subscription",
                               onTap: () {
                                 Navigator.pop(context);
@@ -218,7 +228,6 @@ class ProviderDrawerWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: context.appColors.primaryGradient,
-                  
                 ),
                 child: CircleAvatar(
                   radius: 32.r,
@@ -251,7 +260,10 @@ class ProviderDrawerWidget extends StatelessWidget {
           SizedBox(height: 4.h),
           Text(
             profile.user?.email ?? "",
-            style: TextStyle(color: context.appColors.secondaryTextColor, fontSize: 12.sp),
+            style: TextStyle(
+              color: context.appColors.secondaryTextColor,
+              fontSize: 12.sp,
+            ),
           ),
           SizedBox(height: 12.h),
           Container(
@@ -259,9 +271,11 @@ class ProviderDrawerWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: context.appColors.primaryColor.withAlpha(30),
               borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(color: context.appColors.primaryColor.withAlpha(50)),
+              border: Border.all(
+                color: context.appColors.primaryColor.withAlpha(50),
+              ),
             ),
-            child:  Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 FaIcon(
@@ -311,9 +325,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                   ? context.appColors.glassBorder
                   : Colors.transparent,
               border: isSelected
-                  ? Border.all(
-                      color: context.appColors.glassBorder,
-                    )
+                  ? Border.all(color: context.appColors.glassBorder)
                   : null,
             ),
             child: Row(
@@ -344,7 +356,12 @@ class ProviderDrawerWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(BuildContext context, FaIconData icon, VoidCallback onTap, bool isDark) {
+  Widget _buildIconButton(
+    BuildContext context,
+    FaIconData icon,
+    VoidCallback onTap,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -352,15 +369,9 @@ class ProviderDrawerWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.appColors.primaryColor.withAlpha(50),
           shape: BoxShape.circle,
-          border: Border.all(
-            color: context.appColors.primaryColor,
-          ),
+          border: Border.all(color: context.appColors.primaryColor),
         ),
-        child: FaIcon(
-          icon,
-          color: context.appColors.primaryColor,
-          size: 20.r,
-        ),
+        child: FaIcon(icon, color: context.appColors.primaryColor, size: 20.r),
       ),
     );
   }
@@ -424,9 +435,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                             child: TextButton(
                               onPressed: () => context.pop(),
                               style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 12.h,
-                                ),
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                   side: BorderSide(color: borderColor),
@@ -456,9 +465,7 @@ class ProviderDrawerWidget extends StatelessWidget {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: context.appColors.errorColor,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 12.h,
-                                ),
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
@@ -487,15 +494,15 @@ class ProviderDrawerWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(24.r),
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: context.appColors.glassBorder,
-            ),
-          ),
+          border: Border(top: BorderSide(color: context.appColors.glassBorder)),
         ),
         child: Row(
           children: [
-            FaIcon(FontAwesomeIcons.rightFromBracket, color: context.appColors.errorColor, size: 20.r),
+            FaIcon(
+              FontAwesomeIcons.rightFromBracket,
+              color: context.appColors.errorColor,
+              size: 20.r,
+            ),
             SizedBox(width: 12.w),
             Text(
               "Logout",
@@ -511,5 +518,3 @@ class ProviderDrawerWidget extends StatelessWidget {
     );
   }
 }
-
-

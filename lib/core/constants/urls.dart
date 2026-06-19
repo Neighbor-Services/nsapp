@@ -1,4 +1,4 @@
-import 'package:nsapp/core/config/app_config.dart';
+
 
 String domaineUrl = 'https://neighborservice.com';
 String baseUrl = 'https://neighborservice.com/api/v1';

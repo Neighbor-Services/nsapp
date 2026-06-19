@@ -56,6 +56,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       catalogServiceIds: (fields[39] as List?)?.cast<String>(),
       catalogServiceNames: (fields[40] as List?)?.cast<String>(),
       maxCatalogServices: fields[41] as int?,
+      subscriptionInterval: fields[42] as String?,
     )
       ..portfolioItems = (fields[26] as List?)?.cast<PortfolioItem>()
       ..servicePackages = (fields[27] as List?)?.cast<ServicePackage>()
@@ -65,7 +66,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
   @override
   void write(BinaryWriter writer, Profile obj) {
     writer
-      ..writeByte(42)
+      ..writeByte(43)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -149,7 +150,9 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       ..writeByte(40)
       ..write(obj.catalogServiceNames)
       ..writeByte(41)
-      ..write(obj.maxCatalogServices);
+      ..write(obj.maxCatalogServices)
+      ..writeByte(42)
+      ..write(obj.subscriptionInterval);
   }
 
   @override
