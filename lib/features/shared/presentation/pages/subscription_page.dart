@@ -1108,7 +1108,7 @@ void _cancelSubscription(BuildContext context) {
               ),
               SizedBox(height: 16.h),
               Text(
-                "Cancelling your subscription will take effect at the end of the your subscription billing cycle. Do you want to proceed?",
+                "Cancelling your subscription will let you loss access to premium benefits. Do you want to proceed?",
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: context.appColors.secondaryTextColor,
